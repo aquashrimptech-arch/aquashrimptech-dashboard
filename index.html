@@ -182,20 +182,8 @@ footer{position:relative;z-index:5;text-align:center;padding:18px;font-size:.68r
 //   Após criar o Apps Script de leitura em cada planilha,
 //   cole a URL gerada no campo correspondente abaixo.
 // ════════════════════════════════════════════════════════
-const CONFIG = {
-  viveiros: [
-    {
-      nome: "Viveiro 01",
-      url: "https://script.google.com/macros/s/AKfycbzLcX8x5CSvV-HlttTHmhKBoycD31eypwH1RkmSDu5fqRA7SJTGt9QpYE_0086IBrMyJA/exec"
-      // Exemplo:
-      // url: "https://script.google.com/macros/s/AKfycbzLcX8x5CSvV-HlttTHmhKBoycD31eypwH1RkmSDu5fqRA7SJTGt9QpYE_0086IBrMyJA/exec"
-    },
-    // Para adicionar Viveiro 02, copie o bloco acima e ajuste:
-    // { nome: "Viveiro 02", url: "COLE_AQUI_A_URL_DO_APPS_SCRIPT_VIVEIRO_02" },
-  ],
-  estoqueUrl: "https://script.google.com/macros/s/AKfycbxaZpPI2_5f4M7ojpxvliklpwBCkHALYIV6jmoZewS7Bd01ET4rgzFhveRZvtvI433s/exec"
-};
-
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbwFPRQ1Sruj_pgqB2B8DZEH8fGQv8jIfj1NqYyJpfDym4J30IXG6z3ivu0B1GkQS3R24Q/exec";
 // ════════════════════════════════════════════════════════
 // ▶ DADOS — carregados via fetch das planilhas reais
 // ════════════════════════════════════════════════════════
@@ -232,31 +220,29 @@ setInterval(tickClock, 1000); tickClock();
 // ▶ FETCH DADOS
 // ════════════════════════════════════════════════════════
 async function carregarDados() {
-  // Carrega viveiros em paralelo
-  const promises = CONFIG.viveiros.map(async (cfg) => {
-    try {
-      const res = await fetch(cfg.url);
-      const d   = await res.json();
-      d._url    = cfg.url;
-      return d;
-    } catch(e) {
-      return { _erro: true, nome: cfg.nome };
-    }
-  });
 
-  const resultados = await Promise.all(promises);
-  DADOS.viveiros = resultados;
-
-  // Carrega estoque
   try {
-    const res = await fetch(CONFIG.estoqueUrl);
-    const d   = await res.json();
-    DADOS.estoque = d.estoque || [];
+
+    const cliente = "CLEUDO";
+
+    const res = await fetch(
+      API_URL + "?cliente=" + cliente
+    );
+
+    const dados = await res.json();
+
+    console.log(dados);
+
+    alert("API conectada com sucesso!");
+
   } catch(e) {
-    DADOS.estoque = [];
+
+    console.error(e);
+
+    alert("Erro ao conectar API");
+
   }
 
-  renderTudo();
 }
 
 // ════════════════════════════════════════════════════════
@@ -556,43 +542,7 @@ function urlConfigurada(url) {
 // Verifica se pelo menos uma URL está configurada
 const algumConfigurado = CONFIG.viveiros.some(v => urlConfigurada(v.url)) || urlConfigurada(CONFIG.estoqueUrl);
 
-if (algumConfigurado) {
-  // Dados reais
-  carregarDados();
-  // Recarrega a cada 5 minutos automaticamente
-  setInterval(carregarDados, 5 * 60 * 1000);
-} else {
-  // Modo demonstração com dados reais do Viveiro 01 lidos das planilhas
-  DADOS.viveiros = [
-    {
-      nome: "Viveiro 01",
-      povoado: 150000,
-      dataInicio: "2026-05-21",
-      pesoMedio: 13,
-      biomassa: 1950,
-      racaoTotal: 92,
-      custoCiclo: 5363.40,
-      biometria: [
-        { semana:1, data:"2026-05-21T10:40:07", peso:12, ganho:null, crec:null, biomassa:1800 },
-        { semana:2, data:"2026-05-21T10:40:13", peso:13, ganho:1,    crec:0.0833, biomassa:1950 },
-      ],
-      historico: [
-        { cultivo:1, data:"21/05/26", dias:1, kg:1956,  receita:45000, c_racao:363.4,  c_insumos:363.4,  c_total:726.8,  lucro:44273.2,  resultado:"✅ Lucro",    l_acum:44273.2  },
-        { cultivo:2, data:"21/05/26", dias:1, kg:1,     receita:1,     c_racao:363.4,  c_insumos:363.4,  c_total:726.8,  lucro:-725.8,   resultado:"❌ Prejuízo", l_acum:-725.8  },
-        { cultivo:3, data:"21/05/26", dias:1, kg:2000,  receita:50000, c_racao:363.4,  c_insumos:5000,   c_total:5363.4, lucro:44636.6,  resultado:"✅ Lucro",    l_acum:43910.8 },
-        { cultivo:4, data:"21/05/26", dias:1, kg:2500,  receita:50000, c_racao:363.4,  c_insumos:5000,   c_total:5363.4, lucro:44636.6,  resultado:"✅ Lucro",    l_acum:88547.4 },
-        { cultivo:5, data:"21/05/26", dias:1, kg:2000,  receita:60000, c_racao:363.4,  c_insumos:5000,   c_total:5363.4, lucro:54636.6,  resultado:"✅ Lucro",    l_acum:143184  },
-        { cultivo:6, data:"21/05/26", dias:1, kg:5000,  receita:90000, c_racao:363.4,  c_insumos:5000,   c_total:5363.4, lucro:84636.6,  resultado:"✅ Lucro",    l_acum:227820.6},
-        { cultivo:7, data:"21/05/26", dias:1, kg:500,   receita:20,    c_racao:363.4,  c_insumos:5000,   c_total:5363.4, lucro:-5343.4,  resultado:"❌ Prejuízo", l_acum:222477.2},
-      ]
-    }
-  ];
-  DADOS.estoque = [
-    { produto:"Ração",             unidade:"kg",     qtd:210, custo:3.95, total:829.5, situacao:"🟢 OK" },
-    { produto:"Fio vermelho 2,5mm",unidade:"metros", qtd:50,  custo:5.0,  total:250,   situacao:"🟢 OK" },
-    { produto:"Fio Preto 2,5mm",   unidade:"metros", qtd:50,  custo:5.0,  total:250,   situacao:"🟢 OK" },
-  ];
-  renderTudo();
+carregarDados();
 
   // Aviso de modo demo
   document.querySelector("main").insertAdjacentHTML("afterbegin",
