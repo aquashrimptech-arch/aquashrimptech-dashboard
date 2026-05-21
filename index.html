@@ -14,7 +14,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 #login-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
 .login-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 0 60px rgba(0,229,255,.08);animation:fadeUp .4s ease}
 .login-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:32px;gap:12px}
-.login-logo img{width:90px;height:90px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(0,229,255,.4))}
+.login-logo img{width:135px;height:135px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(0,229,255,.4))}
 .login-logo .logo-fallback{display:none;font-size:2.8rem}
 .login-brand{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:var(--accent);letter-spacing:.06em;text-align:center;text-shadow:0 0 20px rgba(0,229,255,.3)}
 .login-sub{font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;text-align:center}
@@ -193,18 +193,11 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
   </div>
   <div id="tab-historico" class="tab-panel">
     <div class="section-title">Cultivos Finalizados</div>
-    <div class="table-wrap">
-      <div class="table-head">
-        <span class="table-title" id="hist-titulo">Histórico</span>
-        <span id="lucro-acum" class="pill pill-green"></span>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Cultivo</th><th>Data</th><th>Dias</th><th>Kg</th><th>Receita</th><th>C.Ração</th><th>C.Insumos</th><th>C.Total</th><th>Lucro</th><th>Resultado</th></tr></thead>
-          <tbody id="hist-tbody"></tbody>
-        </table>
-      </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <span id="hist-titulo" style="font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700"></span>
+      <span id="lucro-acum" class="pill pill-green"></span>
     </div>
+    <!-- tabelas geradas dinamicamente por renderHistorico() -->
   </div>
   <div id="tab-estoque" class="tab-panel">
     <div class="section-title">Situação dos Insumos</div>
@@ -494,17 +487,86 @@ function renderBiometria() {
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ HISTÓRICO
+// ▶ HISTÓRICO — separado por viveiro, filtra datas inválidas
 // ════════════════════════════════════════════════════════
 function renderHistorico() {
-  let linhas=[];
-  DADOS.viveiros.filter(x=>!x._erro).forEach(v=>{ (v.historico||[]).forEach(h=>linhas.push({viveiro:v.nome,...h})); });
-  document.getElementById("hist-titulo").textContent="Histórico — "+(CLIENTE?.nome||"");
-  const ult=linhas[linhas.length-1];
-  if(ult) document.getElementById("lucro-acum").textContent="Acumulado: "+R(ult.l_acum);
-  document.getElementById("hist-tbody").innerHTML=!linhas.length
-    ?`<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:30px">Nenhum cultivo finalizado</td></tr>`
-    :linhas.map(r=>{ const isL=String(r.resultado||"").toLowerCase().includes("lucro"); return `<tr><td>${r.cultivo}</td><td>${r.data}</td><td>${r.dias}d</td><td>${Nf(r.kg)}</td><td>${R(r.receita)}</td><td>${R(r.c_racao)}</td><td>${R(r.c_insumos)}</td><td>${R(r.c_total)}</td><td class="${isL?"tag-lucro":"tag-prejuizo"}">${R(r.lucro)}</td><td><span class="pill ${isL?"pill-green":"pill-red"}">${r.resultado}</span></td></tr>`; }).join("");
+  const viveirosValidos = DADOS.viveiros.filter(x => !x._erro);
+  const tabHist = document.getElementById("tab-historico");
+
+  // Remove tabelas antigas (exceto section-title)
+  tabHist.querySelectorAll(".table-wrap").forEach(el => el.remove());
+  tabHist.querySelectorAll(".hist-lucro-acum-wrap").forEach(el => el.remove());
+
+  document.getElementById("hist-titulo").textContent = "Cultivos Finalizados — " + (CLIENTE?.nome || "");
+  document.getElementById("lucro-acum").textContent = "";
+
+  if (!viveirosValidos.length) {
+    tabHist.insertAdjacentHTML("beforeend",
+      `<div class="error-msg">Nenhum viveiro disponível.</div>`);
+    return;
+  }
+
+  let lucroGlobal = 0;
+
+  viveirosValidos.forEach(v => {
+    // Filtra: remove linhas inválidas (totais da planilha, epoch 1969/1970, sem receita real)
+    const linhas = (v.historico || []).filter(h => {
+      // Rejeita se não tiver data ou data inválida
+      const d = parseData(h.data);
+      if (!d) return false;
+      if (d.getFullYear() < 2000) return false;   // epoch zero (1969/1970) e datas antigas
+      // Rejeita linha de totais da planilha
+      const cultNome = String(h.cultivo || "").trim().toUpperCase();
+      if (!cultNome) return false;                 // cultivo vazio = linha de total
+      if (cultNome.includes("TOTAL") || cultNome.includes("SOMA")) return false;
+      // Rejeita se for um número puro (ex: "2 cultivos" viram como número no Sheets)
+      if (/^\d/.test(cultNome) && !cultNome.startsWith("CULTIVO")) return false;
+      // Rejeita se receita e kg forem ambos suspeitos de acumulado (receita > 200.000 com dias > 200)
+      if ((!h.dias || h.dias > 500)) return false; // dias absurdos = linha de totais
+      return true;
+    });
+
+    const lucroV = linhas.reduce((s, h) => s + (h.lucro || 0), 0);
+    lucroGlobal += lucroV;
+
+    const rows = !linhas.length
+      ? `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px">Nenhum cultivo finalizado ainda</td></tr>`
+      : linhas.map(r => {
+          const isL = String(r.resultado || "").toLowerCase().includes("lucro");
+          return `<tr>
+            <td>${r.cultivo}</td><td>${r.data}</td><td>${r.dias}d</td><td>${Nf(r.kg)}</td>
+            <td>${R(r.receita)}</td><td>${R(r.c_racao)}</td><td>${R(r.c_insumos)}</td>
+            <td>${R(r.c_total)}</td>
+            <td class="${isL ? "tag-lucro" : "tag-prejuizo"}">${R(r.lucro)}</td>
+            <td><span class="pill ${isL ? "pill-green" : "pill-red"}">${r.resultado}</span></td>
+          </tr>`;
+        }).join("");
+
+    const isLucroV = lucroV >= 0;
+    tabHist.insertAdjacentHTML("beforeend", `
+      <div class="table-wrap" style="margin-bottom:18px">
+        <div class="table-head">
+          <span class="table-title">📋 ${v.nome}</span>
+          <span class="pill ${isLucroV ? "pill-green" : "pill-red"}">
+            ${linhas.length} cultivo(s) · Lucro total: ${R(lucroV)}
+          </span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>Cultivo</th><th>Data</th><th>Dias</th><th>Kg</th>
+              <th>Receita</th><th>C.Ração</th><th>C.Insumos</th>
+              <th>C.Total</th><th>Lucro</th><th>Resultado</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`);
+  });
+
+  // Lucro acumulado global no topo
+  document.getElementById("lucro-acum").textContent =
+    "Acumulado total: " + R(lucroGlobal);
 }
 
 // ════════════════════════════════════════════════════════
