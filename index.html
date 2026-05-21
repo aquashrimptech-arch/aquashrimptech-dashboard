@@ -233,7 +233,9 @@ async function carregarDados() {
 
     console.log(dados);
 
-    alert("API conectada com sucesso!");
+    DADOS = dados;
+
+    renderTudo();
 
   } catch(e) {
 
@@ -244,7 +246,6 @@ async function carregarDados() {
   }
 
 }
-
 // ════════════════════════════════════════════════════════
 // ▶ RENDER PAINEL — KPIs
 // ════════════════════════════════════════════════════════
