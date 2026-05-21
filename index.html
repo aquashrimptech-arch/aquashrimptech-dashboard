@@ -264,14 +264,13 @@ function renderKpiGeral() {
   });
 
   const kpis = [
-    { label:"Biomassa Total",    value: Nf(totalBiomassa)+" kg", cls:"accent", sub: v.length+" viveiro(s) ativo(s)" },
-    { label:"Custo Total Ciclos", value: R(totalCusto),          cls:"warn",   sub:"Ciclos em andamento" },
-    { label:"Ração Acumulada",   value: Nf(totalRacao)+" kg",   cls:"",       sub:"Ciclo atual" },
-    { label:"Lucro Acumulado",   value: R(lucroAcum),           cls:"green",  sub:"Histórico de cultivos" },
-    { label:"Viveiros",          value: CONFIG.viveiros.length, cls:"accent", sub:"Configurados" },
-    { label:"Erros de Conexão",  value: DADOS.viveiros.filter(x=>x._erro).length, cls: DADOS.viveiros.some(x=>x._erro)?"danger":"green", sub:"Planilhas offline" },
-  ];
-
+  { label:"Biomassa Total",    value: Nf(totalBiomassa)+" kg", cls:"accent", sub: v.length+" viveiro(s) ativo(s)" },
+  { label:"Custo Total Ciclos", value: R(totalCusto),          cls:"warn",   sub:"Ciclos em andamento" },
+  { label:"Ração Acumulada",   value: Nf(totalRacao)+" kg",   cls:"",       sub:"Ciclo atual" },
+  { label:"Lucro Acumulado",   value: R(lucroAcum),           cls:"green",  sub:"Histórico de cultivos" },
+  { label:"Viveiros",          value: DADOS.viveiros.length, cls:"accent", sub:"Configurados" },
+  { label:"Erros de Conexão",  value: DADOS.viveiros.filter(x=>x._erro).length, cls: DADOS.viveiros.some(x=>x._erro)?"danger":"green", sub:"Planilhas offline" },
+];
   document.getElementById("kpi-geral").innerHTML = kpis.map(k => `
     <div class="kpi-card ${k.cls}">
       <div class="kpi-label">${k.label}</div>
