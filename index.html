@@ -535,22 +535,9 @@ function renderTudo() {
   renderEstoque();
 }
 
-function urlConfigurada(url) {
-  return url && !url.startsWith("COLE_") && url.length > 20;
-}
-
-// Verifica se pelo menos uma URL está configurada
-const algumConfigurado = CONFIG.viveiros.some(v => urlConfigurada(v.url)) || urlConfigurada(CONFIG.estoqueUrl);
 
 carregarDados();
 
-  // Aviso de modo demo
-  document.querySelector("main").insertAdjacentHTML("afterbegin",
-    `<div class="error-msg" style="margin-bottom:20px">
-      ⚠️ <strong>Modo demonstração</strong> — Exibindo dados reais das planilhas (leitura estática).
-      Para dados ao vivo, crie o Apps Script de leitura e cole as URLs no bloco <code>CONFIG</code> deste arquivo.
-    </div>`);
-}
 </script>
 </body>
 </html>
