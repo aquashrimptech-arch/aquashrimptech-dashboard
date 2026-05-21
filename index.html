@@ -313,7 +313,10 @@ const LD = () => `<div class="loading"><span class="loading-dot"></span><span cl
 function parseData(val) {
   if (!val) return null;
   if (typeof val === "number") return new Date((val - 25569) * 86400 * 1000);
-  const d = new Date(val);
+  const s = String(val).trim();
+  const br = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (br) return new Date(+br[3], +br[2] - 1, +br[1]);
+  const d = new Date(s);
   return isNaN(d) ? null : d;
 }
 function fmtData(val) { const d = parseData(val); return d ? d.toLocaleDateString("pt-BR") : "—"; }
@@ -510,18 +513,16 @@ function renderHistorico() {
   let lucroGlobal = 0;
 
   viveirosValidos.forEach(v => {
-    // Filtra: remove apenas linhas claramente inválidas
     const linhas = (v.historico || []).filter(h => {
       // Rejeita se não tiver data ou data inválida
       const d = parseData(h.data);
       if (!d) return false;
-      if (d.getFullYear() < 2000) return false;   // epoch zero (1969/1970)
-      // Rejeita linha de totais pelo nome do cultivo
+      if (d.getFullYear() < 2000) return false;  // epoch zero (1969/1970)
+      // Rejeita linha de totais pelo nome
       const cultNome = String(h.cultivo || "").trim().toUpperCase();
       if (cultNome.includes("TOTAL") || cultNome.includes("SOMA")) return false;
-      // Rejeita dias absurdos (linha de totais acumulados)
-      const diasNum = parseFloat(h.dias || 0);
-      if (isNaN(diasNum) || diasNum <= 0 || diasNum > 730) return false;
+      // Rejeita se não tiver receita nem kg (linha realmente vazia)
+      if (!h.receita && !h.kg) return false;
       return true;
     });
 
