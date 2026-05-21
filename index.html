@@ -221,33 +221,28 @@ setInterval(tickClock, 1000); tickClock();
 // ════════════════════════════════════════════════════════
 async function carregarDados() {
 
-  DADOS = {
-    viveiros: [
-      {
-        nome: "Viveiro 01",
-        biomassa: 1200,
-        pesoMedio: 14,
-        racaoTotal: 850,
-        custoCiclo: 5400,
-        povoado: 50000,
-        dataInicio: "2026-04-01",
-        biometria: [],
-        historico: []
-      }
-    ],
-    estoque: [
-      {
-        produto: "Ração 35%",
-        qtd: 120,
-        unidade: "kg",
-        custo: 6.5,
-        total: 780,
-        situacao: "OK"
-      }
-    ]
-  };
+  try {
 
-  renderTudo();
+    const url = API_URL + "?cliente=CLEUDO";
+
+    console.log("Conectando:", url);
+
+    const response = await fetch(url);
+
+    const data = await response.json();
+
+    console.log("Resposta API:", data);
+
+    DADOS = data;
+
+    renderTudo();
+
+  } catch (erro) {
+
+    console.error("ERRO API:", erro);
+
+  }
+
 }
 // ════════════════════════════════════════════════════════
 // ▶ RENDER PAINEL — KPIs
