@@ -178,14 +178,18 @@ footer{position:relative;z-index:5;text-align:center;padding:18px;font-size:.68r
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 // ════════════════════════════════════════════════════════
-// ▶ CONFIGURAÇÃO — COLE SUAS URLs AQUI
-//   Após criar o Apps Script de leitura em cada planilha,
-//   cole a URL gerada no campo correspondente abaixo.
+// ▶ CONFIGURAÇÃO DE URLs
+//   - URL_VIVEIRO: endpoint do Apps Script do Viveiro 01
+//   - URL_ESTOQUE: endpoint do Apps Script do Estoque
 // ════════════════════════════════════════════════════════
-  const API_URL =
-    "https://script.google.com/macros/s/AKfycbwFPRQ1Sruj_pgqB2B8DZEH8fGQv8jIfj1NqYyJpfDym4J30IXG6z3ivu0B1GkQS3R24Q/exec";
+const URL_VIVEIRO =
+  "https://script.google.com/macros/s/AKfycbzLcX8x5CSvV-HlttTHmhKBoycD31eypwH1RkmSDu5fqRA7SJTGt9QpYE_0086IBrMyJA/exec";
+
+const URL_ESTOQUE =
+  "https://script.google.com/macros/s/AKfycbxaZpPI2_5f4M7ojpxvliklpwBCkHALYIV6jmoZewS7Bd01ET4rgzFhveRZvtvI433s/exec";
+
 // ════════════════════════════════════════════════════════
-// ▶ DADOS — carregados via fetch das planilhas reais
+// ▶ DADOS GLOBAIS
 // ════════════════════════════════════════════════════════
 let DADOS = { viveiros: [], estoque: [] };
 
@@ -197,8 +201,7 @@ function diasDesde(dataStr) {
   if (!dataStr) return null;
   const inicio = new Date(dataStr);
   if (isNaN(inicio)) return null;
-  const hoje = new Date();
-  return Math.floor((hoje - inicio) / 86400000);
+  return Math.floor((new Date() - inicio) / 86400000);
 }
 
 function switchTab(name, btn) {
@@ -217,16 +220,55 @@ function tickClock() {
 setInterval(tickClock, 1000); tickClock();
 
 // ════════════════════════════════════════════════════════
-// ▶ FETCH DADOS
+// ▶ FETCH DADOS — busca viveiro e estoque em paralelo
+//   O Viveiro usa ?tipo=dashboard
+//   O Estoque usa ?tipo=listagem (novo endpoint)
 // ════════════════════════════════════════════════════════
 async function carregarDados() {
+  // Reinicia UI com loading
+  document.getElementById("kpi-geral").innerHTML =
+    `<div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>`;
+  document.getElementById("viveiros-grid").innerHTML =
+    `<div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>`;
 
-  const response = await fetch(API_URL);
+  // Busca simultânea
+  const [resViveiro, resEstoque] = await Promise.allSettled([
+    fetch(URL_VIVEIRO + "?tipo=dashboard").then(r => r.json()),
+    fetch(URL_ESTOQUE + "?tipo=listagem").then(r => r.json()),
+  ]);
 
-  DADOS = await response.json();
+  // ── Viveiro ──────────────────────────────────────────
+  if (resViveiro.status === "fulfilled" && resViveiro.value.viveiros) {
+    DADOS.viveiros = resViveiro.value.viveiros;
+  } else {
+    // Tenta sem parâmetro (compatibilidade com script legado)
+    try {
+      const fallback = await fetch(URL_VIVEIRO).then(r => r.json());
+      DADOS.viveiros = fallback.viveiros || [];
+    } catch(_) {
+      DADOS.viveiros = [{ nome: "Viveiro 01", _erro: true }];
+    }
+    if (resViveiro.status === "rejected") {
+      DADOS.viveiros = [{ nome: "Viveiro 01", _erro: true }];
+    }
+  }
+
+  // ── Estoque ──────────────────────────────────────────
+  if (resEstoque.status === "fulfilled") {
+    const d = resEstoque.value;
+    // Aceita tanto {estoque:[...]} quanto [...] direto
+    DADOS.estoque = Array.isArray(d) ? d : (d.estoque || []);
+  } else {
+    DADOS.estoque = [];
+    console.warn("Estoque não carregado:", resEstoque.reason);
+  }
 
   renderTudo();
+
+  // Auto-refresh a cada 5 minutos
+  setTimeout(carregarDados, 5 * 60 * 1000);
 }
+
 // ════════════════════════════════════════════════════════
 // ▶ RENDER PAINEL — KPIs
 // ════════════════════════════════════════════════════════
@@ -236,7 +278,6 @@ function renderKpiGeral() {
   const totalCusto    = v.reduce((s,x) => s + (x.custoCiclo||0), 0);
   const totalRacao    = v.reduce((s,x) => s + (x.racaoTotal||0), 0);
 
-  // Lucro acumulado do último histórico disponível
   let lucroAcum = 0;
   v.forEach(x => {
     if (x.historico && x.historico.length > 0) {
@@ -245,13 +286,14 @@ function renderKpiGeral() {
   });
 
   const kpis = [
-  { label:"Biomassa Total",    value: Nf(totalBiomassa)+" kg", cls:"accent", sub: v.length+" viveiro(s) ativo(s)" },
-  { label:"Custo Total Ciclos", value: R(totalCusto),          cls:"warn",   sub:"Ciclos em andamento" },
-  { label:"Ração Acumulada",   value: Nf(totalRacao)+" kg",   cls:"",       sub:"Ciclo atual" },
-  { label:"Lucro Acumulado",   value: R(lucroAcum),           cls:"green",  sub:"Histórico de cultivos" },
-  { label:"Viveiros", value: DADOS.viveiros.length, cls:"accent", sub:"Configurados" },
-  { label:"Erros de Conexão",  value: DADOS.viveiros.filter(x=>x._erro).length, cls: DADOS.viveiros.some(x=>x._erro)?"danger":"green", sub:"Planilhas offline" },
-];
+    { label:"Biomassa Total",     value: Nf(totalBiomassa)+" kg", cls:"accent", sub: v.length+" viveiro(s) ativo(s)" },
+    { label:"Custo Total Ciclos", value: R(totalCusto),           cls:"warn",   sub:"Ciclos em andamento" },
+    { label:"Ração Acumulada",    value: Nf(totalRacao)+" kg",    cls:"",       sub:"Ciclo atual" },
+    { label:"Lucro Acumulado",    value: R(lucroAcum),            cls:"green",  sub:"Histórico de cultivos" },
+    { label:"Viveiros",           value: DADOS.viveiros.length,   cls:"accent", sub:"Configurados" },
+    { label:"Erros de Conexão",   value: DADOS.viveiros.filter(x=>x._erro).length, cls: DADOS.viveiros.some(x=>x._erro)?"danger":"green", sub:"Planilhas offline" },
+  ];
+
   document.getElementById("kpi-geral").innerHTML = kpis.map(k => `
     <div class="kpi-card ${k.cls}">
       <div class="kpi-label">${k.label}</div>
@@ -267,7 +309,7 @@ function renderViveiros() {
   const grid = document.getElementById("viveiros-grid");
 
   if (DADOS.viveiros.length === 0) {
-    grid.innerHTML = `<div class="error-msg">Nenhum viveiro configurado. Adicione as URLs no bloco CONFIG acima.</div>`;
+    grid.innerHTML = `<div class="error-msg">Nenhum viveiro configurado. Verifique URL_VIVEIRO no código.</div>`;
     return;
   }
 
@@ -278,11 +320,11 @@ function renderViveiros() {
           <div class="viveiro-name">${v.nome}</div>
           <span class="viveiro-status status-alerta">⚠ Offline</span>
         </div>
-        <div class="error-msg">Não foi possível conectar à planilha.<br>Verifique a URL no CONFIG.</div>
+        <div class="error-msg">Não foi possível conectar à planilha.</div>
       </div>`;
 
     const dias = diasDesde(v.dataInicio);
-    const biomassaMax = 3000; // meta — ajuste conforme necessário
+    const biomassaMax = 3000;
     const pct = Math.min(100, Math.round((v.biomassa||0) / biomassaMax * 100));
 
     return `
@@ -335,16 +377,13 @@ function renderViveiros() {
 let bioChartInstance = null;
 
 function renderBiometria() {
-  // Tabela
   const thead = document.getElementById("bio-thead");
   const tbody = document.getElementById("bio-tbody");
   thead.innerHTML = `<tr>${["Viveiro","Semana","Data","Peso (g)","Ganho (g)","Cresc.%","Biomassa (kg)"].map(h=>`<th>${h}</th>`).join("")}</tr>`;
 
   let rows = [];
   DADOS.viveiros.filter(x=>!x._erro).forEach(v => {
-    (v.biometria||[]).forEach(b => {
-      rows.push({ viveiro: v.nome, ...b });
-    });
+    (v.biometria||[]).forEach(b => rows.push({ viveiro: v.nome, ...b }));
   });
 
   if (rows.length === 0) {
@@ -362,25 +401,13 @@ function renderBiometria() {
       </tr>`).join("");
   }
 
-  // Gráfico
   const COLORS = ["#00e5ff","#00ffa3","#ffb300","#ff6b6b","#a78bfa","#fb7185","#34d399","#60a5fa"];
-  const datasets = DADOS.viveiros.filter(x=>!x._erro && x.biometria?.length > 0).map((v,i) => ({
-    label: v.nome,
-    data: (v.biometria||[]).map(b => ({ x: new Date(b.data).toLocaleDateString("pt-BR"), y: b.peso })),
-    borderColor: COLORS[i % COLORS.length],
-    backgroundColor: COLORS[i % COLORS.length] + "22",
-    borderWidth: 2.5,
-    pointRadius: 4,
-    tension: 0.35,
-    spanGaps: true,
-  }));
-
   const labels = [...new Set(rows.map(r => new Date(r.data).toLocaleDateString("pt-BR")))].sort();
 
   if (bioChartInstance) bioChartInstance.destroy();
   const ctx = document.getElementById("bioChart").getContext("2d");
 
-  if (datasets.length === 0) {
+  if (labels.length === 0) {
     ctx.canvas.parentElement.innerHTML += `<p style="text-align:center;color:var(--muted);font-family:'DM Mono',monospace;padding:20px">Sem dados de biometria para exibir</p>`;
     return;
   }
@@ -438,7 +465,7 @@ function renderHistorico() {
   }
 
   document.getElementById("hist-tbody").innerHTML = todasLinhas.map(r => {
-    const isLucro = String(r.resultado).includes("Lucro") || String(r.resultado).includes("LUCRO");
+    const isLucro = String(r.resultado).toLowerCase().includes("lucro");
     return `<tr>
       <td>${r.cultivo}</td>
       <td>${r.data}</td>
@@ -460,8 +487,8 @@ function renderHistorico() {
 function renderEstoque() {
   const e = DADOS.estoque.filter(x => x.produto);
   const totalValor = e.reduce((s,x)=>s+(x.total||0),0);
-  const criticos   = e.filter(x=>x.situacao&&x.situacao.includes("CRITICO")||x.situacao&&x.situacao.includes("SEM")).length;
-  const baixos     = e.filter(x=>x.situacao&&x.situacao.includes("BAIXO")||x.situacao&&x.situacao.includes("Mínimo")||x.situacao&&x.situacao.includes("minimo")).length;
+  const criticos   = e.filter(x=>{const s=String(x.situacao||"").toUpperCase(); return s.includes("CRITICO")||s.includes("SEM ESTOQUE");}).length;
+  const baixos     = e.filter(x=>{const s=String(x.situacao||"").toUpperCase(); return s.includes("BAIXO")||s.includes("MÍNIMO")||s.includes("MINIMO");}).length;
 
   document.getElementById("kpi-estoque").innerHTML = [
     { label:"Valor em Estoque", value:R(totalValor),   cls:"accent" },
@@ -476,19 +503,19 @@ function renderEstoque() {
 
   if (e.length === 0) {
     document.getElementById("estoque-grid").innerHTML =
-      `<div class="error-msg">Sem dados de estoque. Verifique a URL do Apps Script do Estoque.</div>`;
+      `<div class="error-msg">Sem dados de estoque. Verifique se o Apps Script do Estoque tem o endpoint <strong>?tipo=listagem</strong> ativo (veja o arquivo ESTOQUE_GAS_listagem.js entregue).</div>`;
     return;
   }
 
-  const maxQtd = Math.max(...e.map(x=>x.qtd||0));
+  const maxQtd = Math.max(...e.map(x=>x.qtd||0), 1);
 
   document.getElementById("estoque-grid").innerHTML = e.map(x => {
     const raw = String(x.situacao||"").toLowerCase();
     const sit = raw.includes("critico")||raw.includes("sem estoque") ? "critico"
-              : raw.includes("baixo")||raw.includes("mínimo") ? "baixo" : "ok";
+              : raw.includes("baixo")||raw.includes("mínimo")||raw.includes("minimo") ? "baixo" : "ok";
     const sitLabel = sit==="ok" ? "✅ OK" : sit==="baixo" ? "⚠ Baixo" : "🔴 Crítico";
     const sitCls   = sit==="ok" ? "pill-green" : sit==="baixo" ? "pill-warn" : "pill-red";
-    const pct = maxQtd > 0 ? Math.round((x.qtd||0)/maxQtd*100) : 0;
+    const pct = Math.round((x.qtd||0)/maxQtd*100);
     return `
     <div class="est-card ${sit}">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -506,7 +533,7 @@ function renderEstoque() {
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ RENDERIZA TUDO + MODO DEMO QUANDO URLs NÃO CONFIGURADAS
+// ▶ RENDERIZA TUDO
 // ════════════════════════════════════════════════════════
 function renderTudo() {
   renderKpiGeral();
@@ -516,9 +543,7 @@ function renderTudo() {
   renderEstoque();
 }
 
-
 carregarDados();
-
 </script>
 </body>
 </html>
