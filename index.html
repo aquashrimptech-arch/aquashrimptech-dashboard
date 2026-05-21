@@ -270,12 +270,13 @@ const CLIENTES_CONFIG = [
       {
         nome: "Viveiro 01",
         url:  "https://script.google.com/macros/s/AKfycbzLcX8x5CSvV-HlttTHmhKBoycD31eypwH1RkmSDu5fqRA7SJTGt9QpYE_0086IBrMyJA/exec"
+      },
+      {
+        nome: "Viveiro 02",
+        url:  "https://script.google.com/macros/s/AKfycbxkMQIPMvhfErRX59GYUONjpGYh52QLNotLBu9tfJOcTcSDzB9ZnUJsoYfL_t6u2GVKQA/exec"
       }
-      // ▼ Viveiro 02 — descomente e cole a URL quando criar
-      // ,{
-      //   nome: "Viveiro 02",
-      //   url:  "URL_DO_APPS_SCRIPT_VIVEIRO_02"
-      // }
+      // ▼ Viveiro 03 — adicione aqui quando criar
+      // ,{ nome: "Viveiro 03", url: "URL_VIVEIRO_03" }
     ],
     estoque: {
       url: "https://script.google.com/macros/s/AKfycbxaZpPI2_5f4M7ojpxvliklpwBCkHALYIV6jmoZewS7Bd01ET4rgzFhveRZvtvI433s/exec"
@@ -509,20 +510,18 @@ function renderHistorico() {
   let lucroGlobal = 0;
 
   viveirosValidos.forEach(v => {
-    // Filtra: remove linhas inválidas (totais da planilha, epoch 1969/1970, sem receita real)
+    // Filtra: remove apenas linhas claramente inválidas
     const linhas = (v.historico || []).filter(h => {
       // Rejeita se não tiver data ou data inválida
       const d = parseData(h.data);
       if (!d) return false;
-      if (d.getFullYear() < 2000) return false;   // epoch zero (1969/1970) e datas antigas
-      // Rejeita linha de totais da planilha
+      if (d.getFullYear() < 2000) return false;   // epoch zero (1969/1970)
+      // Rejeita linha de totais pelo nome do cultivo
       const cultNome = String(h.cultivo || "").trim().toUpperCase();
-      if (!cultNome) return false;                 // cultivo vazio = linha de total
       if (cultNome.includes("TOTAL") || cultNome.includes("SOMA")) return false;
-      // Rejeita se for um número puro (ex: "2 cultivos" viram como número no Sheets)
-      if (/^\d/.test(cultNome) && !cultNome.startsWith("CULTIVO")) return false;
-      // Rejeita se receita e kg forem ambos suspeitos de acumulado (receita > 200.000 com dias > 200)
-      if ((!h.dias || h.dias > 500)) return false; // dias absurdos = linha de totais
+      // Rejeita dias absurdos (linha de totais acumulados)
+      const diasNum = parseFloat(h.dias || 0);
+      if (isNaN(diasNum) || diasNum <= 0 || diasNum > 730) return false;
       return true;
     });
 
