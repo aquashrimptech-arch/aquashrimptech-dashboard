@@ -235,10 +235,16 @@ async function carregarDados() {
 
     console.log("Resposta API:", texto);
 
-    const dados = JSON.parse(texto);
+    const dados = await res.json();
 
-    DADOS = dados;
-
+    console.log(dados);
+    
+    // Garante estrutura mínima
+    DADOS = {
+      viveiros: dados.viveiros || [],
+      estoque: dados.estoque || []
+    };
+    
     renderTudo();
 
   } catch(e) {
@@ -285,7 +291,7 @@ function renderKpiGeral() {
   { label:"Custo Total Ciclos", value: R(totalCusto),          cls:"warn",   sub:"Ciclos em andamento" },
   { label:"Ração Acumulada",   value: Nf(totalRacao)+" kg",   cls:"",       sub:"Ciclo atual" },
   { label:"Lucro Acumulado",   value: R(lucroAcum),           cls:"green",  sub:"Histórico de cultivos" },
-  { label:"Viveiros",          value: DADOS.viveiros.length, cls:"accent", sub:"Configurados" },
+  { label:"Viveiros", value: DADOS.viveiros.length, cls:"accent", sub:"Configurados" },
   { label:"Erros de Conexão",  value: DADOS.viveiros.filter(x=>x._erro).length, cls: DADOS.viveiros.some(x=>x._erro)?"danger":"green", sub:"Planilhas offline" },
 ];
   document.getElementById("kpi-geral").innerHTML = kpis.map(k => `
