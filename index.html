@@ -221,28 +221,11 @@ setInterval(tickClock, 1000); tickClock();
 // ════════════════════════════════════════════════════════
 async function carregarDados() {
 
-  try {
+  const response = await fetch(API_URL);
 
-    const url = API_URL + "?cliente=CLEUDO";
+  DADOS = await response.json();
 
-    console.log("Conectando:", url);
-
-    const response = await fetch(url);
-
-    const data = await response.json();
-
-    console.log("Resposta API:", data);
-
-    DADOS = data;
-
-    renderTudo();
-
-  } catch (erro) {
-
-    console.error("ERRO API:", erro);
-
-  }
-
+  renderTudo();
 }
 // ════════════════════════════════════════════════════════
 // ▶ RENDER PAINEL — KPIs
