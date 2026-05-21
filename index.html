@@ -3,38 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Fazenda Aquática — Painel do Dono</title>
+<title>AquaShrimpTech — Painel</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080f1a;--surface:#0d1a2e;--card:#101f35;--border:#1a3050;--accent:#00e5ff;--accent2:#00ffa3;--warn:#ffb300;--danger:#ff4f4f;--text:#e8f4f8;--muted:#5a7a95;--glow:0 0 24px rgba(0,229,255,.18)}
+:root{
+  --bg:#080f1a;--surface:#0d1a2e;--card:#101f35;--border:#1a3050;
+  --accent:#00e5ff;--accent2:#00ffa3;--warn:#ffb300;--danger:#ff4f4f;
+  --text:#e8f4f8;--muted:#5a7a95;--glow:0 0 24px rgba(0,229,255,.18)
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 
-/* ── HEADER ── */
-header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,229,255,.06) 0%,transparent 60%)}
-.logo{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;letter-spacing:.04em;color:var(--accent);text-shadow:0 0 20px rgba(0,229,255,.5);display:flex;align-items:center;gap:8px}
-.header-right{display:flex;align-items:center;gap:14px}
-#clock{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);letter-spacing:.06em}
-.badge-live{display:flex;align-items:center;gap:6px;font-size:.68rem;font-weight:600;color:var(--accent2);letter-spacing:.1em;text-transform:uppercase}
+/* ════════ LOGIN ════════ */
+#login-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 0 60px rgba(0,229,255,.08);animation:fadeUp .4s ease}
+.login-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:32px;gap:12px}
+.login-logo img{width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(0,229,255,.4))}
+.login-brand{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:.06em;text-align:center;text-shadow:0 0 20px rgba(0,229,255,.3)}
+.login-sub{font-size:.72rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;text-align:center}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:.68rem;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.login-field input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:.88rem;outline:none;transition:border-color .2s}
+.login-field input:focus{border-color:var(--accent)}
+.login-btn{width:100%;margin-top:8px;padding:13px;background:linear-gradient(135deg,var(--accent),#0090a8);border:none;border-radius:10px;color:#080f1a;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;letter-spacing:.06em;cursor:pointer;transition:opacity .2s,transform .15s}
+.login-btn:hover{opacity:.9;transform:translateY(-1px)}
+.login-btn:active{transform:translateY(0)}
+.login-error{background:rgba(255,79,79,.1);border:1px solid rgba(255,79,79,.3);border-radius:8px;padding:10px 14px;color:var(--danger);font-size:.78rem;margin-top:12px;display:none;text-align:center}
+
+/* ════════ APP ════════ */
+#app{display:none}
+header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,229,255,.06) 0%,transparent 60%)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo img{width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(0,229,255,.4))}
+.logo-text{font-family:'Syne',sans-serif;font-size:.92rem;font-weight:800;letter-spacing:.04em;color:var(--accent);text-shadow:0 0 16px rgba(0,229,255,.4)}
+.header-right{display:flex;align-items:center;gap:12px}
+#clock{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.06em}
+.badge-live{display:flex;align-items:center;gap:5px;font-size:.66rem;font-weight:600;color:var(--accent2);letter-spacing:.1em;text-transform:uppercase}
 .dot-live{width:7px;height:7px;border-radius:50%;background:var(--accent2);animation:pulse-live 1.6s ease-in-out infinite;box-shadow:0 0 8px var(--accent2);flex-shrink:0}
 @keyframes pulse-live{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.btn-logout{font-size:.66rem;font-weight:700;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:color .2s,border-color .2s}
+.btn-logout:hover{color:var(--danger);border-color:var(--danger)}
 
-/* ── NAV ── */
+#cliente-nome{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;color:var(--accent2);padding:0 4px}
+
 nav{position:relative;z-index:10;display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
-.tab-btn{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:12px 16px;background:transparent;border:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;white-space:nowrap;flex-shrink:0}
+.tab-btn{font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:11px 14px;background:transparent;border:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;white-space:nowrap;flex-shrink:0}
 .tab-btn:hover{color:var(--text)}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);text-shadow:0 0 12px rgba(0,229,255,.4)}
 
-/* ── MAIN ── */
-main{position:relative;z-index:5;padding:20px 20px;max-width:1500px;margin:0 auto}
+main{position:relative;z-index:5;padding:18px 18px;max-width:1500px;margin:0 auto}
 .tab-panel{display:none}.tab-panel.active{display:block}
-.section-title{font-family:'Syne',sans-serif;font-size:.64rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.section-title{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:10px}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* ── KPI GRID ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
 .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .kpi-card:hover{transform:translateY(-2px);box-shadow:var(--glow)}
 .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);border-radius:14px 14px 0 0}
@@ -42,16 +66,14 @@ main{position:relative;z-index:5;padding:20px 20px;max-width:1500px;margin:0 aut
 .kpi-card.warn::before{background:linear-gradient(90deg,var(--warn),transparent)}
 .kpi-card.danger::before{background:linear-gradient(90deg,var(--danger),transparent)}
 .kpi-label{font-size:.62rem;font-weight:500;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
-.kpi-value{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;line-height:1;color:var(--text)}
+.kpi-value{font-family:'Syne',sans-serif;font-size:1.45rem;font-weight:800;line-height:1;color:var(--text)}
 .kpi-value.accent{color:var(--accent);text-shadow:0 0 18px rgba(0,229,255,.3)}
 .kpi-value.green{color:var(--accent2);text-shadow:0 0 18px rgba(0,255,163,.3)}
-.kpi-value.warn{color:var(--warn)}
-.kpi-value.danger{color:var(--danger)}
-.kpi-sub{font-size:.62rem;color:var(--muted);margin-top:4px}
+.kpi-value.warn{color:var(--warn)}.kpi-value.danger{color:var(--danger)}
+.kpi-sub{font-size:.6rem;color:var(--muted);margin-top:4px}
 
-/* ── VIVEIRO CARD ── */
-.viveiros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:20px}
-.viveiro-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;animation:fadeUp .4s ease both}
+.viveiros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-bottom:18px}
+.viveiro-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;animation:fadeUp .4s ease both}
 .viveiro-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 0 30px rgba(0,229,255,.12)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .viveiro-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -60,83 +82,70 @@ main{position:relative;z-index:5;padding:20px 20px;max-width:1500px;margin:0 aut
 .status-ativo{background:rgba(0,255,163,.12);color:var(--accent2);border:1px solid rgba(0,255,163,.3)}
 .status-alerta{background:rgba(255,179,0,.12);color:var(--warn);border:1px solid rgba(255,179,0,.3)}
 .viveiro-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.v-metric-label{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
-.v-metric-value{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500;color:var(--text)}
-.v-metric-value.accent{color:var(--accent)}
-.v-metric-value.warn{color:var(--warn)}
+.v-metric-label{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.v-metric-value{font-family:'DM Mono',monospace;font-size:.98rem;font-weight:500;color:var(--text)}
+.v-metric-value.accent{color:var(--accent)}.v-metric-value.warn{color:var(--warn)}
 .viveiro-bar-wrap{margin-top:12px;background:var(--border);border-radius:4px;height:4px;overflow:hidden}
 .viveiro-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 1.2s ease}
-.viveiro-bar-label{display:flex;justify-content:space-between;margin-top:4px;font-size:.58rem;color:var(--muted)}
-.dias-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:5px 10px;font-size:.68rem;color:var(--accent);font-family:'DM Mono',monospace}
+.viveiro-bar-label{display:flex;justify-content:space-between;margin-top:4px;font-size:.57rem;color:var(--muted)}
+.dias-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:5px 10px;font-size:.66rem;color:var(--accent);font-family:'DM Mono',monospace}
 
-/* ── TABELAS ── */
-.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px}
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:18px}
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.table-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
-.table-title{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.05em}
-table{width:100%;border-collapse:collapse;min-width:500px}
-thead th{font-family:'DM Mono',monospace;font-size:.6rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);white-space:nowrap}
+.table-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.table-title{font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.05em}
+table{width:100%;border-collapse:collapse;min-width:480px}
+thead th{font-family:'DM Mono',monospace;font-size:.58rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);white-space:nowrap}
 tbody tr{border-bottom:1px solid rgba(26,48,80,.5);transition:background .15s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:rgba(0,229,255,.04)}
-tbody td{padding:10px 14px;font-size:.78rem;font-family:'DM Mono',monospace;white-space:nowrap}
-.tag-lucro{color:var(--accent2);font-weight:600}
-.tag-prejuizo{color:var(--danger);font-weight:600}
-.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.62rem;font-weight:700;letter-spacing:.06em}
+tbody td{padding:9px 13px;font-size:.76rem;font-family:'DM Mono',monospace;white-space:nowrap}
+.tag-lucro{color:var(--accent2);font-weight:600}.tag-prejuizo{color:var(--danger);font-weight:600}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.6rem;font-weight:700;letter-spacing:.06em}
 .pill-green{background:rgba(0,255,163,.12);color:var(--accent2)}
 .pill-red{background:rgba(255,79,79,.12);color:var(--danger)}
 .pill-warn{background:rgba(255,179,0,.12);color:var(--warn)}
 .pill-blue{background:rgba(0,229,255,.12);color:var(--accent)}
 
-/* ── ESTOQUE ── */
-.estoque-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px}
-.est-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px 18px;transition:transform .2s}
+.estoque-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px;margin-bottom:18px}
+.est-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:15px 17px;transition:transform .2s}
 .est-card:hover{transform:translateY(-2px)}
-.est-card.critico{border-color:rgba(255,79,79,.4)}
-.est-card.baixo{border-color:rgba(255,179,0,.4)}
-.est-card.ok{border-color:rgba(0,255,163,.15)}
-.est-name{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;margin-bottom:6px}
-.est-row{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:4px}
+.est-card.critico{border-color:rgba(255,79,79,.4)}.est-card.baixo{border-color:rgba(255,179,0,.4)}.est-card.ok{border-color:rgba(0,255,163,.15)}
+.est-name{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;margin-bottom:5px}
+.est-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-top:4px}
 .est-row span:last-child{color:var(--text);font-family:'DM Mono',monospace}
-.est-bar-wrap{margin-top:10px;background:var(--border);border-radius:3px;height:3px}
+.est-bar-wrap{margin-top:9px;background:var(--border);border-radius:3px;height:3px}
 .est-bar{height:100%;border-radius:3px;transition:width 1s ease}
-.est-bar.ok{background:var(--accent2)}
-.est-bar.baixo{background:var(--warn)}
-.est-bar.critico{background:var(--danger)}
+.est-bar.ok{background:var(--accent2)}.est-bar.baixo{background:var(--warn)}.est-bar.critico{background:var(--danger)}
 
-/* ── BIOMETRIA ── */
-.bio-chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px}
-
-/* ── LOADING / ERROR ── */
-.loading{text-align:center;padding:50px 20px;color:var(--muted);font-family:'DM Mono',monospace;font-size:.82rem}
+.bio-chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:18px}
+.loading{text-align:center;padding:50px 20px;color:var(--muted);font-family:'DM Mono',monospace;font-size:.8rem}
 .loading-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin:0 3px;animation:bounce .8s ease-in-out infinite}
-.loading-dot:nth-child(2){animation-delay:.15s}
-.loading-dot:nth-child(3){animation-delay:.3s}
+.loading-dot:nth-child(2){animation-delay:.15s}.loading-dot:nth-child(3){animation-delay:.3s}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.error-msg{background:rgba(255,79,79,.08);border:1px solid rgba(255,79,79,.3);border-radius:10px;padding:14px 18px;color:var(--danger);font-size:.78rem;margin-bottom:14px}
+.error-msg{background:rgba(255,79,79,.08);border:1px solid rgba(255,79,79,.3);border-radius:10px;padding:13px 17px;color:var(--danger);font-size:.76rem;margin-bottom:13px}
 
-footer{position:relative;z-index:5;text-align:center;padding:14px;font-size:.64rem;color:var(--muted);border-top:1px solid var(--border);font-family:'DM Mono',monospace;letter-spacing:.06em}
+footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62rem;color:var(--muted);border-top:1px solid var(--border);font-family:'DM Mono',monospace;letter-spacing:.06em}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
-/* ════════════════ MOBILE ════════════════ */
+/* ════════ MOBILE ════════ */
 @media(max-width:600px){
-  header{padding:12px 16px}
-  .logo{font-size:.88rem}
+  .login-box{padding:28px 22px}
+  header{padding:10px 14px}
+  .logo-text{font-size:.8rem}
   #clock{display:none}
-  nav{padding:0 4px}
-  .tab-btn{padding:10px 12px;font-size:.68rem;letter-spacing:.04em}
-  main{padding:14px 12px}
+  #cliente-nome{display:none}
+  nav{padding:0 2px}
+  .tab-btn{padding:10px 11px;font-size:.65rem}
+  main{padding:12px 10px}
   .kpi-grid{grid-template-columns:1fr 1fr;gap:8px}
-  .kpi-value{font-size:1.25rem}
+  .kpi-value{font-size:1.2rem}
   .viveiros-grid{grid-template-columns:1fr}
-  .viveiro-card{padding:16px}
-  .estoque-grid{grid-template-columns:1fr 1fr;gap:10px}
-  .est-card{padding:12px 14px}
-  .bio-chart-wrap{padding:14px}
-  table{min-width:420px}
-  thead th,tbody td{padding:8px 10px;font-size:.7rem}
+  .estoque-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .est-card{padding:11px 13px}
+  .bio-chart-wrap{padding:12px}
 }
 @media(max-width:380px){
   .kpi-grid{grid-template-columns:1fr}
@@ -146,11 +155,49 @@ footer{position:relative;z-index:5;text-align:center;padding:14px;font-size:.64r
 </head>
 <body>
 
+<!-- ════════════════════════════════════════
+     TELA DE LOGIN
+════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <!-- Logo carregado do GitHub -->
+      <img id="login-logo-img"
+           src="https://raw.githubusercontent.com/aquashrimptech/aquashrimptech/main/logo.PNG"
+           alt="AquaShrimpTech"
+           onerror="this.style.display='none'">
+      <div class="login-brand">AquaShrimpTech</div>
+      <div class="login-sub">Painel de Controle</div>
+    </div>
+    <div class="login-field">
+      <label>Usuário</label>
+      <input type="text" id="inp-usuario" placeholder="seu usuário" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="login-btn" onclick="fazerLogin()">Entrar</button>
+    <div class="login-error" id="login-error">Usuário ou senha incorretos.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     APP PRINCIPAL (oculto até login)
+════════════════════════════════════════ -->
+<div id="app">
+
 <header>
-  <div class="logo">🦐 CLEUDO DIAS</div>
+  <div class="logo">
+    <img src="https://raw.githubusercontent.com/aquashrimptech/aquashrimptech/main/logo.PNG"
+         alt="logo" onerror="this.style.display='none'">
+    <span class="logo-text">AquaShrimpTech</span>
+  </div>
   <div class="header-right">
+    <span id="cliente-nome"></span>
     <span id="clock">--:--:--</span>
     <div class="badge-live"><div class="dot-live"></div>AO VIVO</div>
+    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
   </div>
 </header>
 
@@ -163,7 +210,6 @@ footer{position:relative;z-index:5;text-align:center;padding:14px;font-size:.64r
 
 <main>
 
-  <!-- PAINEL -->
   <div id="tab-painel" class="tab-panel active">
     <div class="section-title">Resumo Geral</div>
     <div class="kpi-grid" id="kpi-geral">
@@ -175,10 +221,9 @@ footer{position:relative;z-index:5;text-align:center;padding:14px;font-size:.64r
     </div>
   </div>
 
-  <!-- BIOMETRIA -->
   <div id="tab-biometria" class="tab-panel">
     <div class="section-title">Evolução de Crescimento</div>
-    <div class="bio-chart-wrap"><canvas id="bioChart" height="260"></canvas></div>
+    <div class="bio-chart-wrap"><canvas id="bioChart" height="250"></canvas></div>
     <div class="table-wrap">
       <div class="table-head"><span class="table-title">Registros de Biometria</span></div>
       <div class="table-scroll">
@@ -187,12 +232,11 @@ footer{position:relative;z-index:5;text-align:center;padding:14px;font-size:.64r
     </div>
   </div>
 
-  <!-- HISTÓRICO -->
   <div id="tab-historico" class="tab-panel">
     <div class="section-title">Cultivos Finalizados</div>
     <div class="table-wrap">
       <div class="table-head">
-        <span class="table-title">Histórico — Viveiro 01</span>
+        <span class="table-title" id="hist-titulo">Histórico</span>
         <span id="lucro-acum" class="pill pill-green"></span>
       </div>
       <div class="table-scroll">
@@ -208,7 +252,6 @@ footer{position:relative;z-index:5;text-align:center;padding:14px;font-size:.64r
     </div>
   </div>
 
-  <!-- ESTOQUE -->
   <div id="tab-estoque" class="tab-panel">
     <div class="section-title">Situação dos Insumos</div>
     <div class="kpi-grid" id="kpi-estoque">
@@ -219,41 +262,44 @@ footer{position:relative;z-index:5;text-align:center;padding:14px;font-size:.64r
 
 </main>
 
-<footer>FAZENDA AQUÁTICA · PAINEL EXECUTIVO · ATUALIZADO VIA ESP32 + TELEGRAM</footer>
+<footer>AQUASHRIMPTECH · PAINEL EXECUTIVO · ATUALIZADO VIA ESP32 + TELEGRAM</footer>
+</div><!-- /app -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 // ════════════════════════════════════════════════════════
-// ▶ URLs
+// ▶ CONFIG — URL do arquivo JSON de clientes no Drive
+//   (compartilhe o arquivo CLIENTES_CONFIG como "qualquer
+//    pessoa com o link pode visualizar" e cole o ID aqui)
 // ════════════════════════════════════════════════════════
-const URL_VIVEIRO =
-  "https://script.google.com/macros/s/AKfycbzLcX8x5CSvV-HlttTHmhKBoycD31eypwH1RkmSDu5fqRA7SJTGt9QpYE_0086IBrMyJA/exec";
-const URL_ESTOQUE =
-  "https://script.google.com/macros/s/AKfycbxaZpPI2_5f4M7ojpxvliklpwBCkHALYIV6jmoZewS7Bd01ET4rgzFhveRZvtvI433s/exec";
+const CONFIG_FILE_ID = "1TCNtY5LZDnq6gtRaZPiaGnX2wMpgHHLb";
+const CONFIG_URL = `https://drive.google.com/uc?export=download&id=${CONFIG_FILE_ID}`;
 
-let DADOS = { viveiros: [], estoque: [] };
+// ════════════════════════════════════════════════════════
+// ▶ ESTADO GLOBAL
+// ════════════════════════════════════════════════════════
+let CLIENTES   = [];
+let CLIENTE    = null;   // cliente logado
+let DADOS      = { viveiros: [], estoque: [] };
+let refreshTimer = null;
 
-// ── Utilitários ─────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+// ▶ UTILITÁRIOS
+// ════════════════════════════════════════════════════════
 const R  = n => (isNaN(n)||n===null) ? "—" : "R$ "+Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
 const Nf = n => (isNaN(n)||n===null) ? "—" : Number(n).toLocaleString("pt-BR");
+const LD = () => `<div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>`;
 
-// Converte qualquer valor de data vindo do Apps Script para objeto Date válido
 function parseData(val) {
   if (!val) return null;
-  // Se já for número (serial do Google Sheets)
-  if (typeof val === "number") {
-    // Serial do Sheets: dias desde 30/12/1899
-    return new Date((val - 25569) * 86400 * 1000);
-  }
+  if (typeof val === "number") return new Date((val - 25569) * 86400 * 1000);
   const d = new Date(val);
   return isNaN(d) ? null : d;
 }
-
 function fmtData(val) {
   const d = parseData(val);
   return d ? d.toLocaleDateString("pt-BR") : "—";
 }
-
 function diasDesde(val) {
   const d = parseData(val);
   if (!d) return null;
@@ -267,71 +313,153 @@ function switchTab(name, btn) {
   btn.classList.add("active");
 }
 
-// Clock
 function tickClock() {
   document.getElementById("clock").textContent =
-    new Date().toLocaleDateString("pt-BR") + " " +
-    new Date().toLocaleTimeString("pt-BR");
+    new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR");
 }
 setInterval(tickClock, 1000); tickClock();
 
 // ════════════════════════════════════════════════════════
-// ▶ FETCH — viveiro e estoque em paralelo
+// ▶ CARREGA LISTA DE CLIENTES DO DRIVE
 // ════════════════════════════════════════════════════════
-async function carregarDados() {
-  document.getElementById("kpi-geral").innerHTML =
-    `<div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>`;
-  document.getElementById("viveiros-grid").innerHTML =
-    `<div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>`;
-
-  const [resViveiro, resEstoque] = await Promise.allSettled([
-    fetch(URL_VIVEIRO + "?tipo=dashboard").then(r => r.json()),
-    fetch(URL_ESTOQUE + "?tipo=listagem").then(r => r.json()),
-  ]);
-
-  // Viveiro
-  if (resViveiro.status === "fulfilled" && resViveiro.value?.viveiros) {
-    DADOS.viveiros = resViveiro.value.viveiros;
-  } else {
-    try {
-      const fb = await fetch(URL_VIVEIRO).then(r => r.json());
-      DADOS.viveiros = fb.viveiros || [];
-    } catch(_) {
-      DADOS.viveiros = [{ nome: "Viveiro 01", _erro: true }];
-    }
+async function carregarConfig() {
+  try {
+    // O arquivo JSON tem comentários // — remove antes de parsear
+    const txt = await fetch(CONFIG_URL).then(r => r.text());
+    const limpo = txt.replace(/\/\/[^\n]*/g, "");
+    const cfg   = JSON.parse(limpo);
+    CLIENTES    = cfg.clientes || [];
+  } catch(e) {
+    console.error("Erro ao carregar config:", e);
+    CLIENTES = [];
   }
-
-  // Estoque
-  if (resEstoque.status === "fulfilled") {
-    const d = resEstoque.value;
-    DADOS.estoque = Array.isArray(d) ? d : (d.estoque || []);
-  } else {
-    DADOS.estoque = [];
-  }
-
-  renderTudo();
-  setTimeout(carregarDados, 5 * 60 * 1000);
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ RENDER KPIs
+// ▶ LOGIN
+// ════════════════════════════════════════════════════════
+async function fazerLogin() {
+  const usuario = document.getElementById("inp-usuario").value.trim().toLowerCase();
+  const senha   = document.getElementById("inp-senha").value.trim();
+  const erro    = document.getElementById("login-error");
+  erro.style.display = "none";
+
+  if (!CLIENTES.length) await carregarConfig();
+
+  const cliente = CLIENTES.find(c =>
+    c.usuario.toLowerCase() === usuario && c.senha === senha
+  );
+
+  if (!cliente) {
+    erro.style.display = "block";
+    return;
+  }
+
+  CLIENTE = cliente;
+  sessionStorage.setItem("ast_usuario", usuario);
+  sessionStorage.setItem("ast_senha",   senha);
+
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  document.getElementById("cliente-nome").textContent = "👤 " + cliente.nome;
+  document.title = "AquaShrimpTech — " + cliente.nome;
+
+  await carregarDados();
+}
+
+document.getElementById("inp-senha").addEventListener("keydown", e => {
+  if (e.key === "Enter") fazerLogin();
+});
+document.getElementById("inp-usuario").addEventListener("keydown", e => {
+  if (e.key === "Enter") document.getElementById("inp-senha").focus();
+});
+
+function fazerLogout() {
+  sessionStorage.removeItem("ast_usuario");
+  sessionStorage.removeItem("ast_senha");
+  CLIENTE = null;
+  DADOS   = { viveiros: [], estoque: [] };
+  if (refreshTimer) clearTimeout(refreshTimer);
+  document.getElementById("app").style.display = "none";
+  document.getElementById("login-screen").style.display = "flex";
+  document.getElementById("inp-usuario").value = "";
+  document.getElementById("inp-senha").value   = "";
+}
+
+// Recupera sessão ao recarregar
+window.addEventListener("load", async () => {
+  await carregarConfig();
+  const u = sessionStorage.getItem("ast_usuario");
+  const s = sessionStorage.getItem("ast_senha");
+  if (u && s) {
+    document.getElementById("inp-usuario").value = u;
+    document.getElementById("inp-senha").value   = s;
+    fazerLogin();
+  }
+});
+
+// ════════════════════════════════════════════════════════
+// ▶ CARREGA DADOS DO CLIENTE LOGADO
+//   Busca TODOS os viveiros do cliente em paralelo + estoque
+// ════════════════════════════════════════════════════════
+async function carregarDados() {
+  if (!CLIENTE) return;
+  document.getElementById("kpi-geral").innerHTML = LD();
+  document.getElementById("viveiros-grid").innerHTML = LD();
+
+  // Viveiros — um fetch por viveiro, todos em paralelo
+  const fetchViveiros = CLIENTE.viveiros.map(v =>
+    fetch(v.url + "?tipo=dashboard")
+      .then(r => r.json())
+      .then(data => {
+        // Pega o primeiro viveiro do array retornado e renomeia
+        const vv = data.viveiros?.[0] || {};
+        vv.nome = v.nome; // usa o nome configurado no JSON
+        return vv;
+      })
+      .catch(() => ({ nome: v.nome, _erro: true }))
+  );
+
+  // Estoque
+  const fetchEstoque = fetch(CLIENTE.estoque.url + "?tipo=listagem")
+    .then(r => r.json())
+    .then(d => Array.isArray(d) ? d : (d.estoque || []))
+    .catch(() => []);
+
+  const [viveirosResult, estoqueResult] = await Promise.all([
+    Promise.all(fetchViveiros),
+    fetchEstoque,
+  ]);
+
+  DADOS.viveiros = viveirosResult;
+  DADOS.estoque  = estoqueResult;
+
+  renderTudo();
+
+  // Auto-refresh a cada 5 min
+  if (refreshTimer) clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(carregarDados, 5 * 60 * 1000);
+}
+
+// ════════════════════════════════════════════════════════
+// ▶ KPIs GERAIS
 // ════════════════════════════════════════════════════════
 function renderKpiGeral() {
   const v = DADOS.viveiros.filter(x => !x._erro);
-  const totalBiomassa = v.reduce((s,x) => s + (x.biomassa||0), 0);
-  const totalCusto    = v.reduce((s,x) => s + (x.custoCiclo||0), 0);
-  const totalRacao    = v.reduce((s,x) => s + (x.racaoTotal||0), 0);
+  const totalBiomassa = v.reduce((s,x)=>s+(x.biomassa||0),0);
+  const totalCusto    = v.reduce((s,x)=>s+(x.custoCiclo||0),0);
+  const totalRacao    = v.reduce((s,x)=>s+(x.racaoTotal||0),0);
   let lucroAcum = 0;
-  v.forEach(x => { if (x.historico?.length) lucroAcum += x.historico[x.historico.length-1].l_acum||0; });
+  v.forEach(x=>{ if(x.historico?.length) lucroAcum+=x.historico[x.historico.length-1].l_acum||0; });
 
   document.getElementById("kpi-geral").innerHTML = [
-    { label:"Biomassa Total",     value: Nf(totalBiomassa)+" kg", cls:"accent", sub: v.length+" viveiro(s) ativo(s)" },
-    { label:"Custo Total Ciclos", value: R(totalCusto),           cls:"warn",   sub:"Ciclos em andamento" },
-    { label:"Ração Acumulada",    value: Nf(totalRacao)+" kg",    cls:"",       sub:"Ciclo atual" },
-    { label:"Lucro Acumulado",    value: R(lucroAcum),            cls:"green",  sub:"Histórico de cultivos" },
-    { label:"Viveiros",           value: DADOS.viveiros.length,   cls:"accent", sub:"Configurados" },
-    { label:"Erros de Conexão",   value: DADOS.viveiros.filter(x=>x._erro).length,
-      cls: DADOS.viveiros.some(x=>x._erro)?"danger":"green", sub:"Planilhas offline" },
+    { label:"Biomassa Total",     value:Nf(totalBiomassa)+" kg", cls:"accent", sub:v.length+" viveiro(s) ativo(s)" },
+    { label:"Custo Total Ciclos", value:R(totalCusto),           cls:"warn",   sub:"Ciclos em andamento" },
+    { label:"Ração Acumulada",    value:Nf(totalRacao)+" kg",    cls:"",       sub:"Ciclo atual" },
+    { label:"Lucro Acumulado",    value:R(lucroAcum),            cls:"green",  sub:"Histórico de cultivos" },
+    { label:"Viveiros",           value:DADOS.viveiros.length,   cls:"accent", sub:"Ativos" },
+    { label:"Erros",              value:DADOS.viveiros.filter(x=>x._erro).length,
+      cls:DADOS.viveiros.some(x=>x._erro)?"danger":"green", sub:"Planilhas offline" },
   ].map(k=>`
     <div class="kpi-card ${k.cls}">
       <div class="kpi-label">${k.label}</div>
@@ -341,7 +469,7 @@ function renderKpiGeral() {
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ RENDER VIVEIROS
+// ▶ VIVEIROS
 // ════════════════════════════════════════════════════════
 function renderViveiros() {
   const grid = document.getElementById("viveiros-grid");
@@ -349,7 +477,7 @@ function renderViveiros() {
     grid.innerHTML = `<div class="error-msg">Nenhum viveiro configurado.</div>`;
     return;
   }
-  grid.innerHTML = DADOS.viveiros.map((v, i) => {
+  grid.innerHTML = DADOS.viveiros.map((v,i) => {
     if (v._erro) return `
       <div class="viveiro-card">
         <div class="viveiro-header">
@@ -359,8 +487,7 @@ function renderViveiros() {
         <div class="error-msg">Não foi possível conectar à planilha.</div>
       </div>`;
     const dias = diasDesde(v.dataInicio);
-    const biomassaMax = 3000;
-    const pct = Math.min(100, Math.round((v.biomassa||0)/biomassaMax*100));
+    const pct  = Math.min(100, Math.round((v.biomassa||0)/3000*100));
     return `
     <div class="viveiro-card" style="animation-delay:${i*.08}s">
       <div class="viveiro-header">
@@ -373,195 +500,147 @@ function renderViveiros() {
         <div><div class="v-metric-label">Ração Total</div><div class="v-metric-value">${Nf(v.racaoTotal)} kg</div></div>
         <div><div class="v-metric-label">Custo Ciclo</div><div class="v-metric-value warn">${R(v.custoCiclo)}</div></div>
         <div><div class="v-metric-label">Povoado</div><div class="v-metric-value">${Nf(v.povoado)} un</div></div>
-        <div><div class="v-metric-label">Início Ciclo</div><div class="v-metric-value" style="font-size:.82rem">${fmtData(v.dataInicio)}</div></div>
+        <div><div class="v-metric-label">Início Ciclo</div><div class="v-metric-value" style="font-size:.8rem">${fmtData(v.dataInicio)}</div></div>
       </div>
       ${dias!==null?`<div class="dias-badge">🗓 ${dias} dia${dias!==1?"s":""} de ciclo</div>`:""}
       <div class="viveiro-bar-wrap"><div class="viveiro-bar" style="width:${pct}%"></div></div>
-      <div class="viveiro-bar-label"><span>Biomassa: ${pct}% da meta</span><span>Meta: ${Nf(biomassaMax)} kg</span></div>
+      <div class="viveiro-bar-label"><span>Biomassa: ${pct}% da meta (3.000 kg)</span></div>
     </div>`;
   }).join("");
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ RENDER BIOMETRIA
-//   CORREÇÃO: datas ordenadas por timestamp real (não string)
+// ▶ BIOMETRIA — datas ordenadas por timestamp real
 // ════════════════════════════════════════════════════════
 let bioChartInstance = null;
-
 function renderBiometria() {
   const thead = document.getElementById("bio-thead");
   const tbody = document.getElementById("bio-tbody");
-  thead.innerHTML = `<tr>${["Viveiro","Semana","Data","Peso (g)","Ganho (g)","Cresc.%","Biomassa (kg)"].map(h=>`<th>${h}</th>`).join("")}</tr>`;
+  thead.innerHTML = `<tr>${["Viveiro","Sem.","Data","Peso (g)","Ganho (g)","Cresc.%","Biomassa (kg)"].map(h=>`<th>${h}</th>`).join("")}</tr>`;
 
   let rows = [];
-  DADOS.viveiros.filter(x=>!x._erro).forEach(v => {
-    (v.biometria||[]).forEach(b => rows.push({ viveiro: v.nome, ...b }));
+  DADOS.viveiros.filter(x=>!x._erro).forEach(v=>{
+    (v.biometria||[]).forEach(b=>rows.push({ viveiro:v.nome, ...b }));
   });
 
-  // ── ORDENAÇÃO CORRETA: por timestamp, não por string DD/MM/YYYY ──
-  rows.sort((a, b) => {
-    const da = parseData(a.data);
-    const db = parseData(b.data);
-    if (!da && !db) return 0;
-    if (!da) return 1;
-    if (!db) return -1;
-    return da - db;
+  rows.sort((a,b)=>{
+    const da=parseData(a.data), db=parseData(b.data);
+    if(!da&&!db)return 0; if(!da)return 1; if(!db)return -1;
+    return da-db;
   });
 
-  // Recalcula ganho de peso entre semanas consecutivas por viveiro
-  const porViveiro = {};
-  rows.forEach(r => {
-    if (!porViveiro[r.viveiro]) porViveiro[r.viveiro] = [];
-    porViveiro[r.viveiro].push(r);
-  });
-  rows.forEach(r => {
-    const lista = porViveiro[r.viveiro];
-    const idx   = lista.indexOf(r);
-    r.ganhoCalc = idx > 0 ? +(r.peso - lista[idx-1].peso).toFixed(2) : null;
-    r.crescCalc = idx > 0 && lista[idx-1].peso > 0
-      ? +((r.peso - lista[idx-1].peso) / lista[idx-1].peso * 100).toFixed(1)
-      : null;
+  // Ganho de peso por viveiro
+  const porV = {};
+  rows.forEach(r=>{ if(!porV[r.viveiro]) porV[r.viveiro]=[]; porV[r.viveiro].push(r); });
+  rows.forEach(r=>{
+    const lista=porV[r.viveiro], idx=lista.indexOf(r);
+    r.ganhoCalc = idx>0 ? +(r.peso-lista[idx-1].peso).toFixed(2) : null;
+    r.crescCalc = idx>0&&lista[idx-1].peso>0 ? +((r.peso-lista[idx-1].peso)/lista[idx-1].peso*100).toFixed(1) : null;
   });
 
-  if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">Sem dados de biometria ainda</td></tr>`;
-  } else {
-    tbody.innerHTML = rows.map(r => `
-      <tr>
-        <td>${r.viveiro}</td>
-        <td>${r.semana}</td>
+  tbody.innerHTML = !rows.length
+    ? `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">Sem dados ainda</td></tr>`
+    : rows.map(r=>`<tr>
+        <td>${r.viveiro}</td><td>${r.semana}</td>
         <td>${fmtData(r.data)}</td>
         <td style="color:var(--accent)">${r.peso??'—'}g</td>
         <td>${r.ganhoCalc!==null?(r.ganhoCalc>0?"+":"")+r.ganhoCalc+"g":"—"}</td>
         <td style="color:var(--accent2)">${r.crescCalc!==null?(r.crescCalc>0?"+":"")+r.crescCalc+"%":"—"}</td>
         <td>${Nf(r.biomassa)} kg</td>
       </tr>`).join("");
-  }
 
-  // Gráfico — labels ordenados por data real
-  const COLORS = ["#00e5ff","#00ffa3","#ffb300","#ff6b6b","#a78bfa","#fb7185","#34d399","#60a5fa"];
-
-  // Coleta todos os timestamps únicos, ordena, converte para label
+  const COLORS = ["#00e5ff","#00ffa3","#ffb300","#ff6b6b","#a78bfa"];
   const tsSet = new Map();
-  rows.forEach(r => {
-    const d = parseData(r.data);
-    if (d) tsSet.set(d.getTime(), fmtData(r.data));
-  });
-  const labelsSorted = [...tsSet.entries()]
-    .sort((a,b) => a[0]-b[0])
-    .map(e => e[1]);
+  rows.forEach(r=>{ const d=parseData(r.data); if(d) tsSet.set(d.getTime(), fmtData(r.data)); });
+  const labels = [...tsSet.entries()].sort((a,b)=>a[0]-b[0]).map(e=>e[1]);
 
   if (bioChartInstance) bioChartInstance.destroy();
   const ctx = document.getElementById("bioChart").getContext("2d");
-
-  if (!labelsSorted.length) {
-    ctx.canvas.parentElement.innerHTML += `<p style="text-align:center;color:var(--muted);font-family:'DM Mono',monospace;padding:20px">Sem dados de biometria para exibir</p>`;
-    return;
-  }
+  if (!labels.length) { ctx.canvas.parentElement.innerHTML += `<p style="text-align:center;color:var(--muted);font-family:'DM Mono';padding:20px">Sem dados de biometria</p>`; return; }
 
   bioChartInstance = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: labelsSorted,
-      datasets: DADOS.viveiros.filter(x=>!x._erro && x.biometria?.length>0).map((v,i) => ({
-        label: v.nome,
-        data: labelsSorted.map(lbl => {
-          const b = (v.biometria||[]).find(x => fmtData(x.data) === lbl);
-          return b ? b.peso : null;
-        }),
-        borderColor: COLORS[i%COLORS.length],
-        backgroundColor: COLORS[i%COLORS.length]+"22",
-        borderWidth: 2.5, pointRadius: 4, tension: 0.35, spanGaps: true,
+    type:"line",
+    data:{
+      labels,
+      datasets: DADOS.viveiros.filter(x=>!x._erro&&x.biometria?.length>0).map((v,i)=>({
+        label:v.nome,
+        data:labels.map(lbl=>{ const b=(v.biometria||[]).find(x=>fmtData(x.data)===lbl); return b?b.peso:null; }),
+        borderColor:COLORS[i%COLORS.length],backgroundColor:COLORS[i%COLORS.length]+"22",
+        borderWidth:2.5,pointRadius:4,tension:0.35,spanGaps:true,
       }))
     },
-    options: {
-      responsive: true,
-      interaction: { mode:"index", intersect:false },
-      plugins: {
-        legend: { labels:{ color:"#5a7a95", font:{family:"'DM Mono'",size:11} } },
-        tooltip: {
-          backgroundColor:"#0d1a2e", borderColor:"#1a3050", borderWidth:1,
-          titleColor:"#e8f4f8", bodyColor:"#5a7a95",
-          callbacks:{ label: c => ` ${c.dataset.label}: ${c.parsed.y?.toFixed(2)??"—"}g` }
-        }
+    options:{
+      responsive:true,interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{labels:{color:"#5a7a95",font:{family:"'DM Mono'",size:11}}},
+        tooltip:{backgroundColor:"#0d1a2e",borderColor:"#1a3050",borderWidth:1,titleColor:"#e8f4f8",bodyColor:"#5a7a95",
+          callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y?.toFixed(2)??"—"}g`}}
       },
-      scales: {
-        x: { grid:{color:"#1a3050"}, ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10}} },
-        y: { grid:{color:"#1a3050"}, ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10},callback:v=>v+"g"} }
+      scales:{
+        x:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10}}},
+        y:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10},callback:v=>v+"g"}}
       }
     }
   });
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ RENDER HISTÓRICO
+// ▶ HISTÓRICO
 // ════════════════════════════════════════════════════════
 function renderHistorico() {
   let linhas = [];
-  DADOS.viveiros.filter(x=>!x._erro).forEach(v => {
-    (v.historico||[]).forEach(h => linhas.push({ viveiro: v.nome, ...h }));
+  DADOS.viveiros.filter(x=>!x._erro).forEach(v=>{
+    (v.historico||[]).forEach(h=>linhas.push({ viveiro:v.nome, ...h }));
   });
-
+  document.getElementById("hist-titulo").textContent =
+    "Histórico — " + (CLIENTE?.nome || "");
   const ultimo = linhas[linhas.length-1];
-  if (ultimo) document.getElementById("lucro-acum").textContent = "Lucro Acumulado: " + R(ultimo.l_acum);
+  if (ultimo) document.getElementById("lucro-acum").textContent = "Acumulado: " + R(ultimo.l_acum);
 
-  if (!linhas.length) {
-    document.getElementById("hist-tbody").innerHTML =
-      `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:30px">Nenhum cultivo finalizado ainda</td></tr>`;
-    return;
-  }
-
-  document.getElementById("hist-tbody").innerHTML = linhas.map(r => {
-    const isLucro = String(r.resultado||"").toLowerCase().includes("lucro");
-    return `<tr>
-      <td>${r.cultivo}</td><td>${r.data}</td><td>${r.dias}d</td><td>${Nf(r.kg)}</td>
-      <td>${R(r.receita)}</td><td>${R(r.c_racao)}</td><td>${R(r.c_insumos)}</td>
-      <td>${R(r.c_total)}</td>
-      <td class="${isLucro?"tag-lucro":"tag-prejuizo"}">${R(r.lucro)}</td>
-      <td><span class="pill ${isLucro?"pill-green":"pill-red"}">${r.resultado}</span></td>
-    </tr>`;
-  }).join("");
+  document.getElementById("hist-tbody").innerHTML = !linhas.length
+    ? `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:30px">Nenhum cultivo finalizado</td></tr>`
+    : linhas.map(r=>{
+        const isL=String(r.resultado||"").toLowerCase().includes("lucro");
+        return `<tr>
+          <td>${r.cultivo}</td><td>${r.data}</td><td>${r.dias}d</td><td>${Nf(r.kg)}</td>
+          <td>${R(r.receita)}</td><td>${R(r.c_racao)}</td><td>${R(r.c_insumos)}</td>
+          <td>${R(r.c_total)}</td>
+          <td class="${isL?"tag-lucro":"tag-prejuizo"}">${R(r.lucro)}</td>
+          <td><span class="pill ${isL?"pill-green":"pill-red"}">${r.resultado}</span></td>
+        </tr>`;
+      }).join("");
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ RENDER ESTOQUE
+// ▶ ESTOQUE
 // ════════════════════════════════════════════════════════
 function renderEstoque() {
-  const e = DADOS.estoque.filter(x => x.produto);
+  const e = DADOS.estoque.filter(x=>x.produto);
   const totalValor = e.reduce((s,x)=>s+(x.total||0),0);
   const criticos = e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("CRITICO")||s.includes("SEM ESTOQUE");}).length;
   const baixos   = e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("BAIXO")||s.includes("MÍNIMO")||s.includes("MINIMO");}).length;
 
   document.getElementById("kpi-estoque").innerHTML = [
-    { label:"Valor em Estoque", value:R(totalValor),  cls:"accent" },
-    { label:"Itens Críticos",   value:criticos,       cls:criticos>0?"danger":"green" },
-    { label:"Estoque Baixo",    value:baixos,         cls:baixos>0?"warn":"green" },
-    { label:"Total de Insumos", value:e.length,       cls:"" },
-  ].map(k=>`
-    <div class="kpi-card ${k.cls}">
-      <div class="kpi-label">${k.label}</div>
-      <div class="kpi-value ${k.cls}">${k.value}</div>
-    </div>`).join("");
+    {label:"Valor em Estoque",value:R(totalValor),   cls:"accent"},
+    {label:"Itens Críticos",  value:criticos,        cls:criticos>0?"danger":"green"},
+    {label:"Estoque Baixo",   value:baixos,          cls:baixos>0?"warn":"green"},
+    {label:"Total Insumos",   value:e.length,        cls:""},
+  ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div></div>`).join("");
 
   if (!e.length) {
-    document.getElementById("estoque-grid").innerHTML =
-      `<div class="error-msg">Sem dados de estoque. Verifique o endpoint <strong>?tipo=listagem</strong> do Apps Script do Estoque.</div>`;
+    document.getElementById("estoque-grid").innerHTML = `<div class="error-msg">Sem dados de estoque.</div>`;
     return;
   }
-
   const maxQtd = Math.max(...e.map(x=>x.qtd||0), 1);
-  document.getElementById("estoque-grid").innerHTML = e.map(x => {
-    const raw = String(x.situacao||"").toLowerCase();
-    const sit = raw.includes("critico")||raw.includes("sem estoque") ? "critico"
-              : raw.includes("baixo")||raw.includes("mínimo")||raw.includes("minimo") ? "baixo" : "ok";
-    const sitLabel = sit==="ok"?"✅ OK":sit==="baixo"?"⚠ Baixo":"🔴 Crítico";
-    const sitCls   = sit==="ok"?"pill-green":sit==="baixo"?"pill-warn":"pill-red";
-    const pct = Math.round((x.qtd||0)/maxQtd*100);
-    return `
-    <div class="est-card ${sit}">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <div class="est-name">${x.produto}</div>
-        <span class="pill ${sitCls}">${sitLabel}</span>
+  document.getElementById("estoque-grid").innerHTML = e.map(x=>{
+    const raw=String(x.situacao||"").toLowerCase();
+    const sit=raw.includes("critico")||raw.includes("sem estoque")?"critico":raw.includes("baixo")||raw.includes("mínimo")||raw.includes("minimo")?"baixo":"ok";
+    const sitLabel=sit==="ok"?"✅ OK":sit==="baixo"?"⚠ Baixo":"🔴 Crítico";
+    const sitCls=sit==="ok"?"pill-green":sit==="baixo"?"pill-warn":"pill-red";
+    const pct=Math.round((x.qtd||0)/maxQtd*100);
+    return `<div class="est-card ${sit}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div class="est-name">${x.produto}</div><span class="pill ${sitCls}">${sitLabel}</span>
       </div>
       <div class="est-row"><span>Quantidade</span><span>${Nf(x.qtd)} ${x.unidade||""}</span></div>
       <div class="est-row"><span>Custo Unit.</span><span>${R(x.custo)}</span></div>
@@ -571,18 +650,9 @@ function renderEstoque() {
   }).join("");
 }
 
-// ════════════════════════════════════════════════════════
-// ▶ RENDERIZA TUDO
-// ════════════════════════════════════════════════════════
 function renderTudo() {
-  renderKpiGeral();
-  renderViveiros();
-  renderBiometria();
-  renderHistorico();
-  renderEstoque();
+  renderKpiGeral(); renderViveiros(); renderBiometria(); renderHistorico(); renderEstoque();
 }
-
-carregarDados();
 </script>
 </body>
 </html>
