@@ -497,76 +497,181 @@ function renderHistorico() {
   const viveirosValidos = DADOS.viveiros.filter(x => !x._erro);
   const tabHist = document.getElementById("tab-historico");
 
-  // Remove tabelas antigas (exceto section-title)
   tabHist.querySelectorAll(".table-wrap").forEach(el => el.remove());
   tabHist.querySelectorAll(".hist-lucro-acum-wrap").forEach(el => el.remove());
-
   document.getElementById("hist-titulo").textContent = "Cultivos Finalizados — " + (CLIENTE?.nome || "");
   document.getElementById("lucro-acum").textContent = "";
 
   if (!viveirosValidos.length) {
-    tabHist.insertAdjacentHTML("beforeend",
-      `<div class="error-msg">Nenhum viveiro disponível.</div>`);
+    tabHist.insertAdjacentHTML("beforeend", `<div class="error-msg">Nenhum viveiro disponível.</div>`);
     return;
   }
 
   let lucroGlobal = 0;
 
   viveirosValidos.forEach(v => {
+    // Filtra linhas inválidas
     const linhas = (v.historico || []).filter(h => {
-      // Rejeita se não tiver data ou data inválida
       const d = parseData(h.data);
-      if (!d) return false;
-      if (d.getFullYear() < 2000) return false;  // epoch zero (1969/1970)
-      // Rejeita linha de totais pelo nome
+      if (!d || d.getFullYear() < 2000) return false;
       const cultNome = String(h.cultivo || "").trim().toUpperCase();
       if (cultNome.includes("TOTAL") || cultNome.includes("SOMA")) return false;
-      // Rejeita se não tiver receita nem kg (linha realmente vazia)
       if (!h.receita && !h.kg) return false;
       return true;
     });
 
-    const lucroV = linhas.reduce((s, h) => s + (h.lucro || 0), 0);
+    // ── Agrupa por ciclo_id ──────────────────────────────────
+    // Desbastes sem ciclo_id ficam numa lista pendente e são
+    // vinculados à próxima despesca pelo índice de ordem.
+    const ciclos = [];          // [ { despesca, desbastes[] } ]
+    const desbastesSemCiclo = [];
+
+    linhas.forEach(h => {
+      const tipo = String(h.tipo || "DESPESCA").toUpperCase();
+      if (tipo === "DESBASTE") {
+        if (h.ciclo_id) {
+          // Procura ciclo existente com esse id
+          let ciclo = ciclos.find(c => c.id === h.ciclo_id);
+          if (!ciclo) { ciclo = { id: h.ciclo_id, despesca: null, desbastes: [] }; ciclos.push(ciclo); }
+          ciclo.desbastes.push(h);
+        } else {
+          desbastesSemCiclo.push(h);
+        }
+      } else {
+        // DESPESCA
+        const cicloId = h.ciclo_id || ("_auto_" + ciclos.length);
+        let ciclo = ciclos.find(c => c.id === cicloId);
+        if (!ciclo) { ciclo = { id: cicloId, despesca: null, desbastes: [] }; ciclos.push(ciclo); }
+        ciclo.despesca = h;
+        // Associa desbastes sem ciclo pendentes
+        if (!h.ciclo_id && desbastesSemCiclo.length) {
+          ciclo.desbastes.push(...desbastesSemCiclo.splice(0));
+        }
+      }
+    });
+
+    // Desbastes que sobraram sem despesca (ciclo ainda em andamento)
+    if (desbastesSemCiclo.length) {
+      ciclos.push({ id: "_aberto_", despesca: null, desbastes: desbastesSemCiclo });
+    }
+
+    if (!ciclos.length) {
+      tabHist.insertAdjacentHTML("beforeend", `
+        <div class="table-wrap" style="margin-bottom:18px">
+          <div class="table-head"><span class="table-title">📋 ${v.nome}</span></div>
+          <div style="text-align:center;color:var(--muted);padding:24px;font-family:'DM Mono',monospace;font-size:.78rem">
+            Nenhum cultivo finalizado ainda
+          </div>
+        </div>`);
+      return;
+    }
+
+    // ── Monta HTML por ciclo ─────────────────────────────────
+    let lucroV = 0;
+    let ciclosHtml = "";
+    let cicloNum   = 0;
+
+    ciclos.forEach(ciclo => {
+      cicloNum++;
+      const despesca  = ciclo.despesca;
+      const desbastes = ciclo.desbastes;
+      const aberto    = !despesca;
+
+      // Receita total = despesca (já inclui desbastes somados no Apps Script)
+      // Lucro = da despesca (calculado com custo total do ciclo)
+      const lucroCiclo = despesca ? (despesca.lucro || 0) : 0;
+      lucroV += lucroCiclo;
+
+      const isLucro = lucroCiclo >= 0;
+      const tituloCiclo = despesca
+        ? `Cultivo #${cicloNum}`
+        : `Cultivo #${cicloNum} — Em andamento`;
+
+      // Linhas dos desbastes (recuadas visualmente)
+      const rowsDesbastes = desbastes.map(d => `
+        <tr style="background:rgba(0,229,255,.03)">
+          <td style="padding-left:28px;color:var(--muted)">↳ ${d.cultivo}</td>
+          <td>${d.data}</td>
+          <td>${d.dias}d</td>
+          <td>${Nf(d.kg)}</td>
+          <td style="color:var(--warn)">${R(d.receita)}</td>
+          <td colspan="3" style="color:var(--muted);font-size:.7rem">— custo calculado na despesca —</td>
+          <td>—</td>
+          <td><span class="pill pill-warn">Parcial</span></td>
+        </tr>`).join("");
+
+      // Linha da despesca (resultado final)
+      const rowDespesca = despesca ? (() => {
+        const receitaDesbastes = desbastes.reduce((s,d) => s + (d.receita||0), 0);
+        const receitaSoDespesca = (despesca.receita||0) - receitaDesbastes;
+        return `<tr style="border-top:1px solid var(--border);font-weight:600">
+          <td>🎣 Despesca</td>
+          <td>${despesca.data}</td>
+          <td>${despesca.dias}d</td>
+          <td>${Nf(despesca.kg)}</td>
+          <td>${R(receitaSoDespesca)}</td>
+          <td>${R(despesca.c_racao)}</td>
+          <td>${R(despesca.c_insumos)}</td>
+          <td>${R(despesca.c_total)}</td>
+          <td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}">${R(lucroCiclo)}</td>
+          <td><span class="pill ${isLucro ? "pill-green" : "pill-red"}">${despesca.resultado}</span></td>
+        </tr>
+        <tr style="background:rgba(0,229,255,.06);font-weight:700;font-size:.8rem">
+          <td colspan="4" style="color:var(--muted);font-size:.68rem;padding-left:14px">
+            📊 Total do Ciclo (despesca + ${desbastes.length} desbaste${desbastes.length!==1?"s":""})
+          </td>
+          <td style="color:var(--accent)">${R(despesca.receita)}</td>
+          <td>${R(despesca.c_racao)}</td>
+          <td>${R(despesca.c_insumos)}</td>
+          <td>${R(despesca.c_total)}</td>
+          <td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}">${R(lucroCiclo)}</td>
+          <td><span class="pill ${isLucro ? "pill-green" : "pill-red"} " style="font-size:.7rem">LUCRO FINAL</span></td>
+        </tr>`;
+      })() : `<tr><td colspan="10" style="text-align:center;color:var(--warn);padding:14px;font-size:.76rem">
+        ⏳ Aguardando despesca final
+      </td></tr>`;
+
+      ciclosHtml += `
+        <div style="margin-bottom:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;
+               padding:8px 14px;background:rgba(0,229,255,.05);border-radius:8px 8px 0 0;
+               border:1px solid var(--border);border-bottom:none">
+            <span style="font-family:'Syne',sans-serif;font-size:.8rem;font-weight:800;color:var(--accent)">
+              ${tituloCiclo}
+            </span>
+            ${!aberto ? `<span class="pill ${isLucro ? "pill-green" : "pill-red"}">
+              ${R(lucroCiclo)}
+            </span>` : `<span class="pill pill-warn">Em andamento</span>`}
+          </div>
+          <div class="table-scroll" style="border:1px solid var(--border);border-radius:0 0 8px 8px;overflow:hidden">
+            <table style="min-width:480px">
+              <thead><tr>
+                <th>Evento</th><th>Data</th><th>Dias</th><th>Kg</th>
+                <th>Receita</th><th>C.Ração</th><th>C.Insumos</th>
+                <th>C.Total</th><th>Lucro</th><th>Resultado</th>
+              </tr></thead>
+              <tbody>${rowsDesbastes}${rowDespesca}</tbody>
+            </table>
+          </div>
+        </div>`;
+    });
+
     lucroGlobal += lucroV;
-
-    const rows = !linhas.length
-      ? `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px">Nenhum cultivo finalizado ainda</td></tr>`
-      : linhas.map(r => {
-          const isL = String(r.resultado || "").toLowerCase().includes("lucro");
-          return `<tr>
-            <td>${r.cultivo}</td><td>${r.data}</td><td>${r.dias}d</td><td>${Nf(r.kg)}</td>
-            <td>${R(r.receita)}</td><td>${R(r.c_racao)}</td><td>${R(r.c_insumos)}</td>
-            <td>${R(r.c_total)}</td>
-            <td class="${isL ? "tag-lucro" : "tag-prejuizo"}">${R(r.lucro)}</td>
-            <td><span class="pill ${isL ? "pill-green" : "pill-red"}">${r.resultado}</span></td>
-          </tr>`;
-        }).join("");
-
     const isLucroV = lucroV >= 0;
+
     tabHist.insertAdjacentHTML("beforeend", `
-      <div class="table-wrap" style="margin-bottom:18px">
-        <div class="table-head">
+      <div class="table-wrap" style="margin-bottom:18px;background:transparent;border:none">
+        <div class="table-head" style="background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;margin-bottom:10px">
           <span class="table-title">📋 ${v.nome}</span>
           <span class="pill ${isLucroV ? "pill-green" : "pill-red"}">
-            ${linhas.length} cultivo(s) · Lucro total: ${R(lucroV)}
+            ${cicloNum} cultivo(s) · Lucro total: ${R(lucroV)}
           </span>
         </div>
-        <div class="table-scroll">
-          <table>
-            <thead><tr>
-              <th>Cultivo</th><th>Data</th><th>Dias</th><th>Kg</th>
-              <th>Receita</th><th>C.Ração</th><th>C.Insumos</th>
-              <th>C.Total</th><th>Lucro</th><th>Resultado</th>
-            </tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
+        ${ciclosHtml}
       </div>`);
   });
 
-  // Lucro acumulado global no topo
-  document.getElementById("lucro-acum").textContent =
-    "Acumulado total: " + R(lucroGlobal);
+  document.getElementById("lucro-acum").textContent = "Acumulado total: " + R(lucroGlobal);
 }
 
 // ════════════════════════════════════════════════════════
