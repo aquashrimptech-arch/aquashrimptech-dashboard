@@ -257,50 +257,22 @@ loginImg.onload  = () => {
 };
 
 // ════════════════════════════════════════════════════════
-// ▶ CONFIG DE CLIENTES — embutido diretamente (sem fetch do Drive)
-//   CORS do Google Drive impede fetch de outros domínios.
-//   Para adicionar clientes: edite o array abaixo.
-//
-//   NOVO VIVEIRO (cliente existente):
-//     adicione { nome: "Viveiro 02", url: "URL_DO_SCRIPT" }
-//     no array "viveiros" do cliente.
-//
-//   NOVO CLIENTE:
-//     copie um bloco inteiro e preencha os campos.
+// ▶ URL DO APPS SCRIPT ADM — só mude aqui!
+//   É a mesma URL que está no adm.html → ADM_SCRIPT_URL
+//   Com isso, todos os clientes cadastrados no ADM
+//   aparecem automaticamente aqui, sem mexer no código.
 // ════════════════════════════════════════════════════════
-const CLIENTES_CONFIG = [
-  {
-    id:       "cleudo",
-    nome:     "Cleudo Dias",
-    telefone: "(85) 99999-0001",
-    usuario:  "cleudo",
-    senha:    "cleudo123",
-    viveiros: [
-      {
-        nome: "Viveiro 01",
-        url:  "https://script.google.com/macros/s/AKfycbwsFbZzid-xT-6sZGJ7DxDijJm5sZVmpUWXi_5RcDymebFjsvx_FE8lSeWLh0tos4b-/exec"
-      },
+const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
 
-      // ▼ Viveiro 03 — adicione aqui quando criar
-      // ,{ nome: "Viveiro 03", url: "URL_VIVEIRO_03" }
-    ],
-    estoque: {
-      url: "https://script.google.com/macros/s/AKfycbxaZpPI2_5f4M7ojpxvliklpwBCkHALYIV6jmoZewS7Bd01ET4rgzFhveRZvtvI433s/exec"
-    }
-  }
-  // ▼ Novo cliente — copie este bloco e preencha:
-  // ,{
-  //   id:       "joao",
-  //   nome:     "João Silva",
-  //   telefone: "(85) 99999-0002",
-  //   usuario:  "joao",
-  //   senha:    "joao123",
-  //   viveiros: [
-  //     { nome: "Viveiro 01", url: "URL_VIVEIRO_01_JOAO" }
-  //   ],
-  //   estoque: { url: "URL_ESTOQUE_JOAO" }
-  // }
-];
+// ════════════════════════════════════════════════════════
+// ▶ CONFIG LOCAL — fallback enquanto carrega do ADM
+//   (deixe vazio [] para não ter fallback)
+//   Formato: { usuario, senha, nome, viveiros:[], estoque:{url} }
+// ════════════════════════════════════════════════════════
+const CLIENTES_FALLBACK = [];  // ← vazio: só usa o ADM
+
+// CLIENTES_CONFIG é preenchido dinamicamente via loadClientesDoAdm()
+let CLIENTES_CONFIG = [];
 
 // ════════════════════════════════════════════════════════
 // ▶ ESTADO GLOBAL
@@ -308,6 +280,7 @@ const CLIENTES_CONFIG = [
 let CLIENTE      = null;
 let DADOS        = { viveiros: [], estoque: [] };
 let refreshTimer = null;
+let _clientesCarregados = false;
 
 // ════════════════════════════════════════════════════════
 // ▶ UTILITÁRIOS
@@ -341,13 +314,64 @@ function tickClock() {
 setInterval(tickClock, 1000); tickClock();
 
 // ════════════════════════════════════════════════════════
-// ▶ LOGIN — busca direto no array local (sem fetch)
+// ▶ CARREGA CLIENTES DO ADM SCRIPT
+//   Converte o formato da planilha para o formato do painel
 // ════════════════════════════════════════════════════════
-function fazerLogin() {
+async function loadClientesDoAdm() {
+  if (_clientesCarregados) return;
+  try {
+    const resp = await fetch(ADM_SCRIPT_URL + "?acao=dashboard");
+    const data = await resp.json();
+    if (data.status === "ok" && Array.isArray(data.clientes)) {
+      CLIENTES_CONFIG = data.clientes
+        .filter(c => c.Status === "ativo" || c.Status === "pendente")
+        .map(c => {
+          // Converte as URLs dos viveiros (campo UrlsViveiros = "url1|url2|url3")
+          const urls = String(c.UrlsViveiros || "").split("|").filter(u => u.trim().startsWith("http"));
+          const qtd  = parseInt(c.QtdViveiros) || urls.length || 1;
+          const viveiros = Array.from({ length: Math.max(qtd, urls.length) }, (_, i) => ({
+            nome: `Viveiro ${String(i + 1).padStart(2, "0")}`,
+            url:  urls[i] || ""
+          })).filter(v => v.url); // só inclui viveiros com URL preenchida
+
+          return {
+            id:       String(c.ID),
+            nome:     c.Nome    || "",
+            telefone: c.Telefone || "",
+            usuario:  (c.Usuario || "").toLowerCase(),
+            senha:    c.Senha   || "",
+            viveiros,
+            estoque: { url: c.UrlEstoque || "" }
+          };
+        })
+        .filter(c => c.usuario && c.senha && c.viveiros.length > 0);
+      _clientesCarregados = true;
+    }
+  } catch (e) {
+    // Se o ADM Script não respondeu, usa o fallback local
+    if (CLIENTES_FALLBACK.length > 0) CLIENTES_CONFIG = CLIENTES_FALLBACK;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// ▶ LOGIN — busca clientes do ADM dinamicamente
+// ════════════════════════════════════════════════════════
+async function fazerLogin() {
   const usuario = document.getElementById("inp-usuario").value.trim().toLowerCase();
   const senha   = document.getElementById("inp-senha").value.trim();
   const erro    = document.getElementById("login-error");
+  const btn     = document.querySelector(".login-btn");
   erro.style.display = "none";
+
+  // Mostra loading no botão
+  btn.textContent = "Carregando...";
+  btn.disabled = true;
+
+  // Garante que os clientes estão carregados
+  await loadClientesDoAdm();
+
+  btn.textContent = "Entrar";
+  btn.disabled = false;
 
   const cliente = CLIENTES_CONFIG.find(c =>
     c.usuario.toLowerCase() === usuario && c.senha === senha
@@ -360,7 +384,7 @@ function fazerLogin() {
   sessionStorage.setItem("ast_senha",   senha);
 
   document.getElementById("login-screen").style.display = "none";
-  document.getElementById("btn-adm").style.display = "none"; // esconde ADM quando logado
+  document.getElementById("btn-adm").style.display = "none";
   document.getElementById("app").style.display = "block";
   document.getElementById("cliente-nome").textContent = "👤 " + cliente.nome;
   document.title = "AquaShrimpTech — " + cliente.nome;
@@ -384,15 +408,16 @@ function fazerLogout() {
 }
 
 // Recupera sessão ao recarregar
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   const u = sessionStorage.getItem("ast_usuario");
   const s = sessionStorage.getItem("ast_senha");
+  // Pré-carrega clientes do ADM em background
+  loadClientesDoAdm();
   if (u && s) {
     document.getElementById("inp-usuario").value = u;
     document.getElementById("inp-senha").value   = s;
     fazerLogin();
   } else {
-    // Mostra botão ADM apenas na tela de login
     document.getElementById("btn-adm").style.display = "block";
   }
 });
