@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AquaShrimpTech — ADM</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#05080f;--bg2:#080d18;--card:#0b1221;--card2:#0f1929;--border:#152038;--border2:#1e2f4a;--accent:#00e5ff;--accent2:#00ffa3;--accent3:#ff6b35;--warn:#ffb300;--danger:#ff4060;--purple:#9b5de5;--text:#e2eaf5;--text2:#8ba4c0;--text3:#4a6080;--r:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,229,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.025) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* LOGIN */
+#ls{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.lw{display:flex;flex-direction:column;align-items:center;gap:24px;width:100%;max-width:400px;padding:20px}
+.lb{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.12em;background:linear-gradient(135deg,var(--accent3),var(--warn));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 16px rgba(255,107,53,.4))}
+.lcard{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:18px;padding:28px;box-shadow:0 0 60px rgba(255,107,53,.06)}
+.ltitle{font-size:.95rem;font-weight:600;margin-bottom:4px}
+.ldesc{font-size:.72rem;color:var(--text3);margin-bottom:22px}
+.lf{margin-bottom:13px}
+.lf label{display:block;font-size:.63rem;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+.lf input{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.85rem;outline:none;transition:border-color .2s}
+.lf input:focus{border-color:var(--accent3)}
+.lbtn{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent3),var(--warn));border:none;border-radius:8px;color:#05080f;font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;margin-top:4px}
+.lbtn:hover{opacity:.92;transform:translateY(-1px)}
+.lerr{background:rgba(255,64,96,.1);border:1px solid rgba(255,64,96,.3);border-radius:7px;padding:9px 13px;color:var(--danger);font-size:.74rem;margin-top:9px;display:none;text-align:center}
+
+/* APP */
+#app{display:none;min-height:100vh}
+.sb{position:fixed;left:0;top:0;bottom:0;width:228px;z-index:100;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:transform .3s}
+.sb-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sb-brand{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.08em;color:var(--accent3)}
+.sb-tag{background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.35);color:var(--accent3);font-size:.55rem;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:.06em}
+.sb-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-sec{padding:7px 15px 3px;font-size:.54rem;color:var(--text3);letter-spacing:.15em;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 15px;cursor:pointer;color:var(--text2);font-size:.78rem;font-weight:500;border-left:3px solid transparent;transition:all .15s}
+.ni:hover{color:var(--text);background:rgba(255,107,53,.04)}
+.ni.act{color:var(--accent3);border-left-color:var(--accent3);background:rgba(255,107,53,.06)}
+.ni-ic{width:17px;text-align:center;font-size:.9rem;flex-shrink:0}
+.ni-bdg{margin-left:auto;background:var(--danger);color:#fff;font-size:.56rem;font-weight:700;padding:2px 6px;border-radius:10px}
+.sb-ft{padding:12px 15px;border-top:1px solid var(--border)}
+.sb-user{display:flex;align-items:center;gap:8px}
+.sb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--warn));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#05080f;flex-shrink:0}
+.sb-nm{font-size:.74rem;font-weight:600}
+.sb-rl{font-size:.58rem;color:var(--text3)}
+.lo-btn{margin-left:auto;background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:.85rem;padding:4px;border-radius:5px;transition:color .2s}
+.lo-btn:hover{color:var(--danger)}
+.main{margin-left:228px;min-height:100vh;position:relative;z-index:1}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:12px 22px;background:rgba(5,8,15,.88);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+.tb-title{font-size:.9rem;font-weight:700}
+.tb-r{display:flex;align-items:center;gap:10px}
+.tb-clk{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3)}
+.pg{padding:22px;display:none}
+.pg.act{display:block;animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* KPI */
+.kr{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:relative;overflow:hidden;transition:transform .2s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--kc,var(--accent)),transparent)}
+.kpi.g{--kc:var(--accent2)}.kpi.o{--kc:var(--accent3)}.kpi.w{--kc:var(--warn)}.kpi.d{--kc:var(--danger)}.kpi.p{--kc:var(--purple)}
+.kpi-ic{font-size:1.1rem;margin-bottom:7px}
+.kpi-lb{font-size:.58rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.kpi-vl{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;line-height:1}
+.ca{color:var(--accent)}.cg{color:var(--accent2)}.co{color:var(--accent3)}.cw{color:var(--warn)}.cd{color:var(--danger)}.cp{color:var(--purple)}
+.kpi-tr{font-size:.62rem;color:var(--text3);margin-top:4px}
+.kpi-tr.up{color:var(--accent2)}.kpi-tr.dn{color:var(--danger)}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.card-title{font-size:.84rem;font-weight:700}
+.card-body{padding:16px}
+
+/* BOTÕES */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.74rem;font-family:'Space Grotesk',sans-serif;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-sm{padding:4px 10px;font-size:.68rem}
+.btn-xs{padding:3px 8px;font-size:.63rem}
+.bac{background:var(--accent);color:#05080f}.bac:hover{opacity:.9;box-shadow:0 4px 14px rgba(0,229,255,.3)}
+.bor{background:var(--accent3);color:#fff}.bor:hover{opacity:.9;box-shadow:0 4px 14px rgba(255,107,53,.3)}
+.bgr{background:var(--accent2);color:#05080f}.bgr:hover{opacity:.9}
+.bol{background:transparent;border:1px solid var(--border2);color:var(--text2)}.bol:hover{border-color:var(--accent);color:var(--accent)}
+.bdn{background:var(--danger);color:#fff}.bdn:hover{opacity:.9}
+.bwn{background:var(--warn);color:#05080f}
+.bwa{background:#25D366;color:#fff}.bwa:hover{background:#1ebe5d}
+.bpp{background:var(--purple);color:#fff}
+
+/* BADGE */
+.bdg{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:.58rem;font-weight:700;letter-spacing:.05em}
+.bg{background:rgba(0,255,163,.12);color:var(--accent2);border:1px solid rgba(0,255,163,.25)}
+.br{background:rgba(255,64,96,.12);color:var(--danger);border:1px solid rgba(255,64,96,.25)}
+.bw{background:rgba(255,179,0,.12);color:var(--warn);border:1px solid rgba(255,179,0,.25)}
+.bb{background:rgba(0,229,255,.1);color:var(--accent);border:1px solid rgba(0,229,255,.2)}
+.bo{background:rgba(255,107,53,.12);color:var(--accent3);border:1px solid rgba(255,107,53,.25)}
+
+/* TABELA */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{font-size:.56rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);white-space:nowrap}
+tbody tr{border-bottom:1px solid rgba(21,32,56,.5);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(0,229,255,.03)}
+tbody td{padding:10px 12px;font-size:.76rem;vertical-align:middle}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* MODAL */
+.ov{position:fixed;inset:0;z-index:500;background:rgba(5,8,15,.9);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+.ov.open{display:flex;animation:fi .2s ease}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 0 60px rgba(0,0,0,.7)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);z-index:1}
+.modal-title{font-size:.9rem;font-weight:700}
+.modal-x{background:none;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:5px;transition:all .2s}
+.modal-x:hover{color:var(--danger);background:rgba(255,64,96,.1)}
+.modal-body{padding:20px}
+.modal-ft{padding:13px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fg label{font-size:.62rem;font-weight:600;color:var(--text3);letter-spacing:.09em;text-transform:uppercase}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:.8rem;outline:none;transition:border-color .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent3)}
+.fg select option{background:var(--card)}
+.fr{display:grid;gap:12px;margin-bottom:12px}
+.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:1fr 1fr 1fr}
+.fsec{font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin:14px 0 9px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.inp-pre{display:flex;align-items:center;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;overflow:hidden}
+.inp-pre span{padding:9px 10px;background:rgba(255,107,53,.05);border-right:1px solid var(--border2);color:var(--text3);font-size:.76rem;white-space:nowrap}
+.inp-pre input{border:none;border-radius:0;flex:1;background:transparent}
+.viv-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:6px}
+.viv-n{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--accent);font-weight:700;width:20px;flex-shrink:0}
+.viv-row input{flex:1;background:transparent;border:none;color:var(--text);font-size:.78rem;outline:none}
+
+/* ALERT LIST */
+.al-list{display:flex;flex-direction:column;gap:8px}
+.al-item{display:flex;align-items:center;gap:11px;background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;transition:border-color .2s}
+.al-item:hover{border-color:var(--accent)}
+.al-item.d{border-left:3px solid var(--danger)}.al-item.w{border-left:3px solid var(--warn)}.al-item.g{border-left:3px solid var(--accent2)}
+.al-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;flex-shrink:0}
+.al-inf{flex:1}
+.al-nm{font-size:.79rem;font-weight:600}
+.al-ds{font-size:.66rem;color:var(--text3);margin-top:2px}
+.al-act{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap}
+
+/* SWITCH */
+.sw-w{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.sw{position:relative;width:36px;height:20px}
+.sw input{opacity:0;width:0;height:0}
+.sl{position:absolute;inset:0;background:var(--border2);border-radius:10px;cursor:pointer;transition:.3s}
+.sl::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--text3);border-radius:50%;transition:.3s}
+input:checked+.sl{background:var(--accent3)}
+input:checked+.sl::before{transform:translateX(16px);background:#05080f}
+
+/* WA PREVIEW */
+.wa-prv{background:#0b1521;border:1px solid var(--border);border-radius:11px;overflow:hidden;max-width:320px}
+.wa-hd{background:#1a2f3a;padding:10px 13px;display:flex;align-items:center;gap:8px}
+.wa-av{width:34px;height:34px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.wa-cn{font-size:.8rem;font-weight:600;color:#e9edef}.wa-cs{font-size:.62rem;color:#8696a0}
+.wa-body{padding:13px;background:#0a1623}
+.wa-bub{background:#1f2c34;border-radius:8px 8px 8px 0;padding:8px 12px;max-width:92%}
+.wa-txt{font-size:.76rem;color:#e9edef;line-height:1.5}
+.wa-time{font-size:.58rem;color:#8696a0;text-align:right;margin-top:3px}.wa-tick{color:#53bdeb}
+
+/* TOAST */
+.tc{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:7px}
+.toast{background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:12px 15px;font-size:.77rem;min-width:250px;box-shadow:0 8px 32px rgba(0,0,0,.5);display:flex;align-items:center;gap:8px;animation:sli .3s ease}
+@keyframes sli{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.s{border-left:3px solid var(--accent2)}.toast.e{border-left:3px solid var(--danger)}.toast.i{border-left:3px solid var(--accent)}
+
+/* PIX MODAL */
+.pix-box{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:16px;text-align:center;margin-bottom:13px}
+.pix-valor{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--accent2);margin-bottom:4px}
+.pix-link{font-size:.72rem;color:var(--accent);word-break:break-all;margin-top:6px}
+
+/* LOADING */
+.loading-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,229,255,.3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* MOBILE */
+.hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer}
+.sb-ov{display:none;position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.5)}
+.sb-ov.open{display:block}
+@media(max-width:860px){
+  .sb{position:fixed;top:0;bottom:0;left:0;z-index:100;transform:translateX(-100%)}
+  .sb.open{transform:translateX(0)}
+  .hamburger{display:block}
+  .main{margin-left:0}
+  .fr.c2,.fr.c3{grid-template-columns:1fr}
+  .kr{grid-template-columns:1fr 1fr}
+  .pg{padding:14px}
+}
+@media(max-width:480px){.kr{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN ADM -->
+<div id="ls">
+  <div class="lw">
+    <div style="text-align:center">
+      <div class="lb">ADM PANEL</div>
+      <div style="font-size:.62rem;color:var(--text3);letter-spacing:.18em;text-transform:uppercase;margin-top:-16px">AquaShrimpTech · Gestão Empresarial</div>
+    </div>
+    <div class="lcard">
+      <div class="ltitle">🔐 Acesso Administrativo</div>
+      <div class="ldesc">Área restrita — somente gestores autorizados</div>
+      <div class="lf"><label>Usuário ADM</label><input id="au" type="text" placeholder="admin" autocomplete="off"></div>
+      <div class="lf"><label>Senha</label><input id="ap" type="password" placeholder="••••••••" autocomplete="off"></div>
+      <button class="lbtn" onclick="admLogin()">Entrar no Painel ADM</button>
+      <div class="lerr" id="lerr">Credenciais inválidas.</div>
+      <a href="index.html" style="display:block;text-align:center;margin-top:12px;font-size:.72rem;color:var(--text3);text-decoration:none">← Voltar ao painel cliente</a>
+    </div>
+  </div>
+</div>
+
+<!-- APP ADM -->
+<div id="app">
+  <div class="sb-ov" id="sb-ov" onclick="toggleSB()"></div>
+  <aside class="sb" id="sb">
+    <div class="sb-logo">
+      <div><div class="sb-brand">AQUASHRIMP</div><div style="font-size:.5rem;color:var(--text3);letter-spacing:.12em;text-transform:uppercase">ADM · Gestão</div></div>
+      <div class="sb-tag">ADM</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="nav-sec">Principal</div>
+      <div class="ni act" onclick="go('dash',this)"><span class="ni-ic">📊</span>Dashboard</div>
+      <div class="ni" onclick="go('clientes',this)"><span class="ni-ic">👥</span>Clientes<span class="ni-bdg" id="bdg-inad">0</span></div>
+      <div class="ni" onclick="go('financeiro',this)"><span class="ni-ic">💰</span>Financeiro</div>
+      <div class="ni" onclick="go('cobrancas',this)"><span class="ni-ic">📄</span>Cobranças<span class="ni-bdg" id="bdg-cob">0</span></div>
+      <div class="nav-sec" style="margin-top:10px">Operacional</div>
+      <div class="ni" onclick="go('alertas',this)"><span class="ni-ic">🔔</span>Alertas<span class="ni-bdg" id="bdg-al">0</span></div>
+      <div class="ni" onclick="go('mensagens',this)"><span class="ni-ic">💬</span>Mensagens</div>
+      <div class="nav-sec" style="margin-top:10px">Sistema</div>
+      <div class="ni" onclick="go('config',this)"><span class="ni-ic">⚙️</span>Configurações</div>
+    </nav>
+    <div class="sb-ft">
+      <div class="sb-user">
+        <div class="sb-av">A</div>
+        <div><div class="sb-nm">Admin</div><div class="sb-rl">Proprietário</div></div>
+        <button class="lo-btn" onclick="logout()" title="Sair">⏻</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="hamburger" onclick="toggleSB()">☰</button>
+        <div class="tb-title" id="pg-title">Dashboard</div>
+      </div>
+      <div class="tb-r">
+        <div class="tb-clk" id="clk"></div>
+        <div id="sync-status" style="font-size:.65rem;color:var(--text3)"></div>
+        <button class="btn btn-sm bor" onclick="openM('m-cli')">+ Novo Cliente</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="pg act" id="pg-dash">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+        <div><div style="font-size:1.05rem;font-weight:700">Visão Geral</div><div style="font-size:.7rem;color:var(--text3)" id="dash-updated">Carregando...</div></div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-sm bol" onclick="carregarDados()">🔄 Atualizar</button>
+          <button class="btn btn-sm bgr" onclick="openM('m-cli')">+ Cliente</button>
+        </div>
+      </div>
+      <div class="kr" id="kpi-dash">
+        <div class="kpi"><div class="kpi-ic">⏳</div><div class="kpi-lb">Carregando</div><div class="kpi-vl ca">...</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px">
+        <div class="card"><div class="card-hd"><div class="card-title">📈 MRR por cliente</div></div><div class="card-body"><canvas id="ch-mrr" height="200"></canvas></div></div>
+        <div class="card"><div class="card-hd"><div class="card-title">📊 Status</div></div><div class="card-body"><canvas id="ch-status" height="200"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div class="pg" id="pg-clientes">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div><div style="font-size:1.05rem;font-weight:700">Gestão de Clientes</div><div style="font-size:.7rem;color:var(--text3)">Modelo: R$50/viveiro · valor negociável</div></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <input id="busca-cli" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 11px;color:var(--text);font-size:.74rem;outline:none;width:180px" placeholder="🔍 Buscar..." oninput="filtrarTabela()">
+          <button class="btn btn-sm bor" onclick="openM('m-cli')">+ Novo Cliente</button>
+        </div>
+      </div>
+      <div class="card"><div class="tw"><table><thead><tr>
+        <th>Cliente</th><th>Viveiros</th><th>Val./Viv.</th><th>Total</th>
+        <th>Vencimento</th><th>Status</th><th>Último Pag.</th><th>Asaas</th><th>Ações</th>
+      </tr></thead><tbody id="tbl-cli"></tbody></table></div></div>
+    </div>
+
+    <!-- FINANCEIRO -->
+    <div class="pg" id="pg-financeiro">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div><div style="font-size:1.05rem;font-weight:700">Financeiro</div><div style="font-size:.7rem;color:var(--text3)">Asaas · PIX recorrente</div></div>
+      </div>
+      <div class="kr" id="kpi-fin"></div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">💳 Histórico de Pagamentos</div><div style="display:flex;gap:5px"><span class="bdg bg">✓ Recebido</span><span class="bdg br">✗ Vencido</span><span class="bdg bw">⏳ Pendente</span></div></div>
+        <div class="tw"><table><thead><tr><th>Data</th><th>Cliente</th><th>Viveiros</th><th>Valor</th><th>Status</th><th>ID Asaas</th><th>Ações</th></tr></thead><tbody id="tbl-pag"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- COBRANÇAS -->
+    <div class="pg" id="pg-cobrancas">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div><div style="font-size:1.05rem;font-weight:700">Cobranças</div><div style="font-size:.7rem;color:var(--text3)">Gera PIX via Asaas · WhatsApp automático</div></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn btn-sm bwa" onclick="wppMassa()">🟢 WhatsApp em Massa</button>
+          <button class="btn btn-sm bor" onclick="gerarTodasAsaas()">⚡ Gerar Todas (Asaas)</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.15);border-radius:9px;padding:13px 15px;margin-bottom:14px;font-size:.74rem">
+        <b style="color:var(--accent)">ℹ️ Fluxo Asaas:</b>
+        <span style="color:var(--text3)"> 1. Cadastra cliente → cria no Asaas · 2. Gera cobrança PIX · 3. Cliente paga → webhook confirma automaticamente · 4. Status atualiza aqui + alerta Telegram para você</span>
+      </div>
+      <div class="al-list" id="cob-list"></div>
+    </div>
+
+    <!-- ALERTAS -->
+    <div class="pg" id="pg-alertas">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div><div style="font-size:1.05rem;font-weight:700">Central de Alertas</div></div>
+        <button class="btn btn-sm bol">✓ Marcar todos lidos</button>
+      </div>
+      <div class="al-list" id="al-list"></div>
+    </div>
+
+    <!-- MENSAGENS -->
+    <div class="pg" id="pg-mensagens">
+      <div style="margin-bottom:16px"><div style="font-size:1.05rem;font-weight:700">Mensagens</div><div style="font-size:.7rem;color:var(--text3)">WhatsApp Business · Templates prontos</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">📝 Compor</div></div>
+          <div class="card-body">
+            <div class="fg"><label>Destinatário</label><select id="msg-dest"><option value="todos">Todos os clientes</option><option value="inad">Inadimplentes</option><option value="pend">Pendentes</option></select></div>
+            <div class="fg"><label>Template</label><select id="msg-tpl" onchange="fillTpl()">
+              <option value="">Selecionar...</option>
+              <option value="cobranca">💰 Cobrança — Próximo vencimento</option>
+              <option value="inadimplente">⚠️ Cobrança — Em atraso</option>
+              <option value="boas_vindas">🎉 Boas-vindas — Novo cliente</option>
+              <option value="novo_viveiro">🦐 Novo viveiro adicionado</option>
+              <option value="atualizacao">📱 Atualização do sistema</option>
+            </select></div>
+            <div class="fg"><label>Mensagem</label><textarea id="msg-txt" rows="9" style="resize:vertical;line-height:1.5"></textarea></div>
+            <div style="display:flex;gap:7px">
+              <button class="btn bwa" style="flex:1" onclick="prvWpp()">👁 Prévia</button>
+              <button class="btn bac" style="flex:1" onclick="toast('Mensagem enviada!','s')">📤 Enviar</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">📱 Prévia WhatsApp</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:13px">
+            <div class="wa-prv">
+              <div class="wa-hd"><div class="wa-av">🦐</div><div><div class="wa-cn">AquaShrimpTech</div><div class="wa-cs">online</div></div></div>
+              <div class="wa-body"><div class="wa-bub"><div class="wa-txt" id="wa-txt">Selecione um template...</div><div class="wa-time">agora <span class="wa-tick">✓✓</span></div></div></div>
+            </div>
+            <div style="font-size:.68rem;color:var(--text3);text-align:center">💡 Link PIX do Asaas incluído automaticamente</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIG -->
+    <div class="pg" id="pg-config">
+      <div style="margin-bottom:16px"><div style="font-size:1.05rem;font-weight:700">Configurações</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">🔌 Integrações</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">🏦</span><div><div style="font-size:.78rem;font-weight:600">Asaas</div><div style="font-size:.63rem;color:var(--text3)">PIX recorrente · R$1,99/cobrança</div></div></div><span class="bdg" id="asaas-status-badge">Verificando...</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">🟢</span><div><div style="font-size:.78rem;font-weight:600">WhatsApp Business</div><div style="font-size:.63rem;color:var(--text3)">Cobranças e alertas</div></div></div><span class="bdg bg">✓ Ativo</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">📊</span><div><div style="font-size:.78rem;font-weight:600">Google Sheets (ADM)</div><div style="font-size:.63rem;color:var(--text3)" id="sheets-id-display">Conectado</div></div></div><span class="bdg bg">✓ Conectado</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">⚙️ Regras de Cobrança</div></div>
+          <div class="card-body">
+            <div class="fg"><label>Valor padrão por viveiro (R$)</label><input id="cfg-val" type="number" value="50" min="1"></div>
+            <div class="fg"><label>Dias antes do vencimento para alertar</label><input type="number" value="3"></div>
+            <div class="fg"><label>Dias após vencimento para 2° alerta</label><input type="number" value="3"></div>
+            <div class="fg"><label>Dias para bloquear acesso</label><input type="number" value="10"></div>
+            <div class="sw-w"><label class="sw"><input type="checkbox" checked><span class="sl"></span></label><span style="font-size:.78rem">Lembrete WhatsApp automático</span></div>
+            <div class="sw-w"><label class="sw"><input type="checkbox" checked><span class="sl"></span></label><span style="font-size:.78rem">Alerta Telegram ao receber pagamento</span></div>
+            <button class="btn bac" style="width:100%;margin-top:8px" onclick="toast('Configurações salvas!','s')">💾 Salvar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL NOVO/EDITAR CLIENTE -->
+<div class="ov" id="m-cli">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title" id="m-cli-title">➕ Novo Cliente</div><button class="modal-x" onclick="closeM('m-cli')">✕</button></div>
+    <div class="modal-body">
+      <div class="fsec" style="margin-top:0">👤 Dados do Cliente</div>
+      <div class="fr c2">
+        <div class="fg"><label>Nome Completo</label><input id="c-nome" type="text" placeholder="João Silva"></div>
+        <div class="fg"><label>Telefone (WhatsApp)</label><input id="c-tel" type="text" placeholder="(85) 99999-0001"></div>
+      </div>
+      <div class="fr c3">
+        <div class="fg"><label>Usuário (login)</label><input id="c-usr" type="text" placeholder="joaosilva"></div>
+        <div class="fg"><label>Senha</label><input id="c-pwd" type="password" placeholder="••••••••"></div>
+        <div class="fg"><label>Email</label><input id="c-email" type="email" placeholder="joao@email.com"></div>
+      </div>
+      <div class="fsec">💰 Cobrança — R$50/viveiro (editável)</div>
+      <div class="fr c3">
+        <div class="fg"><label>Qtd. Viveiros</label><input id="c-vivs" type="number" value="1" min="1" max="20" oninput="calcTotal()"></div>
+        <div class="fg"><label>Valor/Viveiro (R$) 💬</label><div class="inp-pre"><span>R$</span><input id="c-valviv" type="number" value="50" min="1" step="5" oninput="calcTotal()"></div></div>
+        <div class="fg"><label>Total Mensal</label><div id="total-disp" style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent2)">R$ 50,00</div></div>
+      </div>
+      <div class="fr c2">
+        <div class="fg"><label>Dia de Vencimento</label><select id="c-venc"><option value="5">Dia 05</option><option value="10" selected>Dia 10</option><option value="15">Dia 15</option><option value="20">Dia 20</option><option value="25">Dia 25</option></select></div>
+        <div class="fg"><label>Forma de Cobrança</label><select id="c-cob"><option>PIX automático (Asaas)</option><option>Boleto bancário</option><option>Manual</option></select></div>
+      </div>
+      <div style="background:rgba(255,107,53,.05);border:1px solid rgba(255,107,53,.2);border-radius:8px;padding:11px 13px;margin-bottom:12px;font-size:.72rem;color:var(--text3)">
+        🏦 <b style="color:var(--accent3)">Asaas:</b> Ao salvar, o cliente é criado no Asaas e a cobrança PIX recorrente é configurada automaticamente para o dia do vencimento.
+      </div>
+      <div class="fsec">🦐 URLs dos Apps Scripts (por viveiro)</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:.74rem;color:var(--text3)">Uma URL por viveiro</span><button class="btn btn-sm bol" onclick="addViv()">+ Viveiro</button></div>
+      <div id="viv-ct"><div class="viv-row"><div class="viv-n">V1</div><input type="text" placeholder="https://script.google.com/macros/s/.../exec"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button></div></div>
+      <div class="fsec">🏭 Estoque</div>
+      <div class="fg"><label>URL Apps Script — Estoque</label><input id="c-est" type="text" placeholder="https://script.google.com/macros/s/.../exec"></div>
+      <div class="fsec">📝 Observações</div>
+      <div class="fg"><textarea id="c-obs" rows="3" placeholder="Negociação especial, condições acordadas..."></textarea></div>
+      <input type="hidden" id="c-id">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="closeM('m-cli')">Cancelar</button>
+      <button class="btn bwa" onclick="wppBoasVindas()">🟢 Boas-vindas WPP</button>
+      <button class="btn bor" id="btn-asaas-criar" onclick="criarNoAsaas()">🏦 Criar no Asaas</button>
+      <button class="btn bac" onclick="salvarCliente()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PIX -->
+<div class="ov" id="m-pix">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hd"><div class="modal-title">⚡ Cobrança PIX Gerada</div><button class="modal-x" onclick="closeM('m-pix')">✕</button></div>
+    <div class="modal-body" id="m-pix-body"></div>
+    <div class="modal-ft"><button class="btn bol" onclick="closeM('m-pix')">Fechar</button><button class="btn bwa" id="btn-pix-wpp">🟢 Enviar no WhatsApp</button></div>
+  </div>
+</div>
+
+<!-- MODAL DETALHE CLIENTE -->
+<div class="ov" id="m-det">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title" id="m-det-title">👤 Detalhe</div><button class="modal-x" onclick="closeM('m-det')">✕</button></div>
+    <div class="modal-body" id="m-det-body"></div>
+    <div class="modal-ft" id="m-det-ft"></div>
+  </div>
+</div>
+
+<div class="tc" id="tc"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONFIG — ALTERE AQUI
+// ══════════════════════════════════════════════════════
+const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
+// Cole a URL do Apps Script ADM após publicar (ADM_GAS.js)
+// Ex: https://script.google.com/macros/s/AKfycb.../exec
+
+const ADM_USER = "admin";
+const ADM_PASS = "ahffkdy"; // ← mude para uma senha forte
+
+// ══════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ══════════════════════════════════════════════════════
+let CLIENTES = [];
+let PAGAMENTOS = [];
+let mrr_chart = null;
+let status_chart = null;
+
+// ══════════════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════════════
+function admLogin() {
+  const u = document.getElementById("au").value.trim();
+  const p = document.getElementById("ap").value.trim();
+  if (u === ADM_USER && p === ADM_PASS) {
+    document.getElementById("ls").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    init();
+  } else {
+    document.getElementById("lerr").style.display = "block";
+  }
+}
+function logout() {
+  document.getElementById("app").style.display = "none";
+  document.getElementById("ls").style.display = "flex";
+  document.getElementById("au").value = "";
+  document.getElementById("ap").value = "";
+}
+document.getElementById("ap").onkeydown = e => { if (e.key==="Enter") admLogin(); };
+document.getElementById("au").onkeydown = e => { if (e.key==="Enter") document.getElementById("ap").focus(); };
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+function init() {
+  setInterval(tick, 1000); tick();
+  carregarDados();
+}
+
+function tick() {
+  const d = new Date();
+  document.getElementById("clk").textContent = d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR");
+}
+
+// ══════════════════════════════════════════════════════
+// CARREGAR DADOS DA PLANILHA (via Apps Script)
+// ══════════════════════════════════════════════════════
+async function api(params) {
+  const url = ADM_SCRIPT_URL + "?" + new URLSearchParams(params).toString();
+  const resp = await fetch(url);
+  return resp.json();
+}
+
+async function carregarDados() {
+  document.getElementById("sync-status").innerHTML = '<span class="loading-spinner"></span>';
+  try {
+    const data = await api({ acao: "dashboard" });
+    if (data.status === "ok") {
+      CLIENTES = data.clientes || [];
+      document.getElementById("sync-status").textContent = "✓ Sincronizado";
+      document.getElementById("dash-updated").textContent = "Atualizado: " + new Date().toLocaleTimeString("pt-BR");
+      renderDash();
+      renderTabela();
+      renderAlertas();
+      renderCobrancas();
+      renderFinanceiro();
+      renderCharts();
+    } else {
+      toast("Erro ao carregar: " + data.msg, "e");
+      document.getElementById("sync-status").textContent = "⚠ Erro";
+    }
+  } catch(err) {
+    // Fallback: usa dados locais simulados se script não configurado
+    CLIENTES = CLIENTES_DEMO;
+    renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
+    document.getElementById("sync-status").textContent = "⚠ Modo demo";
+    document.getElementById("dash-updated").textContent = "Configure ADM_SCRIPT_URL para dados reais";
+  }
+  setTimeout(() => document.getElementById("sync-status").textContent = "", 3000);
+}
+
+// ══════════════════════════════════════════════════════
+// DADOS DEMO (quando script não configurado)
+// ══════════════════════════════════════════════════════
+const CLIENTES_DEMO = [
+  {ID:1,Nome:"Cleudo Dias",Telefone:"(85) 98888-0001",Usuario:"cleudo",QtdViveiros:2,ValorPorViveiro:50,TotalMensal:100,DiaVencimento:10,Status:"ativo",UltimoPagamento:"18/05/2026",ProxVencimento:"18/06/2026",AsaasCustomerId:"cus_demo1",Observacoes:"Cliente fundador"},
+  {ID:2,Nome:"João Silva",Telefone:"(85) 98888-0002",Usuario:"joao",QtdViveiros:3,ValorPorViveiro:50,TotalMensal:150,DiaVencimento:22,Status:"ativo",UltimoPagamento:"22/05/2026",ProxVencimento:"22/06/2026",AsaasCustomerId:"cus_demo2",Observacoes:""},
+  {ID:3,Nome:"Carlos Mendes",Telefone:"(85) 98888-0003",Usuario:"carlos",QtdViveiros:4,ValorPorViveiro:50,TotalMensal:200,DiaVencimento:20,Status:"inadimplente",UltimoPagamento:"20/04/2026",ProxVencimento:"20/05/2026",AsaasCustomerId:"",Observacoes:"Atraso recorrente"},
+  {ID:4,Nome:"Ana Barros",Telefone:"(85) 98888-0004",Usuario:"ana",QtdViveiros:2,ValorPorViveiro:50,TotalMensal:100,DiaVencimento:23,Status:"pendente",UltimoPagamento:"23/04/2026",ProxVencimento:"23/05/2026",AsaasCustomerId:"cus_demo4",Observacoes:""},
+  {ID:5,Nome:"Pedro Alves",Telefone:"(85) 98888-0005",Usuario:"pedro",QtdViveiros:5,ValorPorViveiro:60,TotalMensal:300,DiaVencimento:17,Status:"ativo",UltimoPagamento:"17/05/2026",ProxVencimento:"17/06/2026",AsaasCustomerId:"cus_demo5",Observacoes:"Negociação especial R$60/viv"},
+];
+
+// ══════════════════════════════════════════════════════
+// RENDERS
+// ══════════════════════════════════════════════════════
+const CORES = ["#00e5ff","#00ffa3","#ff6b35","#ffb300","#9b5de5","#ff4060","#60efff","#f72585"];
+const SB = {
+  ativo:        '<span class="bdg bg">● Ativo</span>',
+  inadimplente: '<span class="bdg br">⚠ Inadimplente</span>',
+  pendente:     '<span class="bdg bw">⏳ Pendente</span>',
+  inativo:      '<span class="bdg" style="background:rgba(138,164,192,.1);color:var(--text3);border:1px solid rgba(138,164,192,.2)">○ Inativo</span>',
+};
+const R = n => isNaN(n)||n===null ? "—" : "R$ " + Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2});
+
+function renderDash() {
+  const ativos       = CLIENTES.filter(c=>c.Status==="ativo");
+  const inad         = CLIENTES.filter(c=>c.Status==="inadimplente");
+  const pend         = CLIENTES.filter(c=>c.Status==="pendente");
+  const mrr          = ativos.reduce((s,c)=>s+(parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50),0);
+  const emAberto     = [...inad,...pend].reduce((s,c)=>s+(parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50),0);
+  const totalVivs    = CLIENTES.reduce((s,c)=>s+(parseInt(c.QtdViveiros)||0),0);
+  const ticket       = ativos.length > 0 ? mrr/ativos.length : 0;
+
+  document.getElementById("bdg-inad").textContent = inad.length;
+  document.getElementById("bdg-cob").textContent  = inad.length + pend.length;
+  document.getElementById("bdg-al").textContent   = inad.length + pend.length + 2;
+
+  document.getElementById("kpi-dash").innerHTML = [
+    {ic:"💰",lb:"MRR",vl:R(mrr),cls:"g",tr:"Clientes ativos"},
+    {ic:"👥",lb:"Clientes Ativos",vl:ativos.length,cls:"",tr:CLIENTES.length+" total"},
+    {ic:"🦐",lb:"Viveiros",vl:totalVivs,cls:"o",tr:"R$50/viv. padrão"},
+    {ic:"⚠️",lb:"Inadimplentes",vl:inad.length,cls:"d",tr:R(emAberto)+" em aberto"},
+    {ic:"⏳",lb:"Pendentes",vl:pend.length,cls:"w",tr:"A vencer"},
+    {ic:"📈",lb:"Ticket Médio",vl:R(ticket),cls:"p",tr:"Por cliente ativo"},
+  ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-ic">${k.ic}</div><div class="kpi-lb">${k.lb}</div><div class="kpi-vl ${k.cls==='g'?'cg':k.cls==='o'?'co':k.cls==='d'?'cd':k.cls==='w'?'cw':k.cls==='p'?'cp':'ca'}">${k.vl}</div><div class="kpi-tr">${k.tr}</div></div>`).join("");
+
+  const kpi_fin = [
+    {ic:"✅",lb:"Recebido no Mês",vl:R(mrr),cls:"g",tr:ativos.length+" clientes"},
+    {ic:"❌",lb:"Em Aberto",vl:R(emAberto),cls:"d",tr:inad.length+" inadimplentes"},
+    {ic:"📈",lb:"Ticket Médio",vl:R(ticket),cls:"p",tr:"Por cliente ativo"},
+    {ic:"🦐",lb:"Total Viveiros",vl:totalVivs,cls:"o",tr:"Todos clientes"},
+  ];
+  document.getElementById("kpi-fin").innerHTML = kpi_fin.map(k=>`<div class="kpi ${k.cls}"><div class="kpi-ic">${k.ic}</div><div class="kpi-lb">${k.lb}</div><div class="kpi-vl ${k.cls==='g'?'cg':k.cls==='o'?'co':k.cls==='d'?'cd':k.cls==='w'?'cw':k.cls==='p'?'cp':'ca'}">${k.vl}</div><div class="kpi-tr">${k.tr}</div></div>`).join("");
+}
+
+function renderTabela(filtro="") {
+  const lista = filtro
+    ? CLIENTES.filter(c => c.Nome.toLowerCase().includes(filtro.toLowerCase()) || (c.Telefone||"").includes(filtro))
+    : CLIENTES;
+
+  document.getElementById("tbl-cli").innerHTML = lista.map((c,i) => {
+    const total = (parseInt(c.QtdViveiros)||0) * (parseFloat(c.ValorPorViveiro)||50);
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div style="width:28px;height:28px;border-radius:50%;background:${CORES[i%CORES.length]};display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:#05080f;flex-shrink:0">${(c.Nome||"?")[0]}</div>
+        <div><div style="font-weight:600;font-size:.78rem">${c.Nome}</div><div class="mono" style="font-size:.62rem;color:var(--text3)">${c.Telefone||""}</div></div>
+      </div></td>
+      <td><div style="display:flex;align-items:center;gap:5px">
+        <span class="mono" style="font-weight:700;color:var(--accent)">${c.QtdViveiros||0}</span>
+        <button onclick="editarViveiros(${c.ID})" style="background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:4px;color:var(--accent);font-size:.58rem;padding:2px 5px;cursor:pointer" title="Editar viveiros">✏️</button>
+      </div></td>
+      <td class="mono" style="color:var(--text3)">R$${parseFloat(c.ValorPorViveiro)||50}/viv.</td>
+      <td class="mono" style="color:var(--accent2);font-weight:700">${R(total)}</td>
+      <td class="mono">Dia ${c.DiaVencimento||10}</td>
+      <td>${SB[c.Status]||SB.inativo}</td>
+      <td class="mono" style="font-size:.68rem;color:var(--text3)">${c.UltimoPagamento||"—"}</td>
+      <td>${c.AsaasCustomerId ? `<span class="bdg bg" style="font-size:.55rem">✓ Asaas</span>` : `<button class="btn btn-xs bor" onclick="criarAsaas(${c.ID})">+ Criar</button>`}</td>
+      <td><div style="display:flex;gap:3px;flex-wrap:wrap">
+        <button class="btn btn-xs bol" onclick="verDetalhe(${c.ID})" title="Ver detalhes">👁</button>
+        <button class="btn btn-xs bol" onclick="editarCliente(${c.ID})" title="Editar">✏️</button>
+        <button class="btn btn-xs bwa" onclick="wpp(${c.ID})" title="WhatsApp">🟢</button>
+        ${c.Status!=="ativo" ? `<button class="btn btn-xs bdn" onclick="gerarPix(${c.ID})" title="Gerar PIX Asaas">⚡</button>` : ""}
+      </div></td>
+    </tr>`;
+  }).join("");
+}
+
+function filtrarTabela() {
+  renderTabela(document.getElementById("busca-cli").value);
+}
+
+function renderAlertas() {
+  const inad = CLIENTES.filter(c=>c.Status==="inadimplente");
+  const pend = CLIENTES.filter(c=>c.Status==="pendente");
+  const html = [
+    ...inad.map(c => alertItem(c, "d", "❌", "Inadimplente")),
+    ...pend.map(c => alertItem(c, "w", "⏳", "Vence em breve")),
+    `<div class="al-item g"><div class="al-av" style="background:rgba(0,255,163,.15);color:var(--accent2)">📊</div><div class="al-inf"><div class="al-nm">✅ Relatório mensal disponível</div><div class="al-ds">MRR calculado · ${CLIENTES.filter(c=>c.Status==="ativo").length} clientes ativos</div></div><div class="al-act"><button class="btn btn-xs bol">Ver</button></div></div>`,
+  ].join("");
+  document.getElementById("al-list").innerHTML = html || "<div style='color:var(--text3);font-size:.8rem;padding:20px;text-align:center'>✅ Nenhum alerta pendente</div>";
+}
+
+function alertItem(c, cls, ic, label) {
+  const total = (parseInt(c.QtdViveiros)||0) * (parseFloat(c.ValorPorViveiro)||50);
+  return `<div class="al-item ${cls}">
+    <div class="al-av" style="background:${cls==='d'?'rgba(255,64,96,.15)':'rgba(255,179,0,.15)'};color:${cls==='d'?'var(--danger)':'var(--warn)'}">${(c.Nome||"?")[0]}</div>
+    <div class="al-inf">
+      <div class="al-nm">${ic} ${c.Nome} — ${label}</div>
+      <div class="al-ds">Vencimento: ${c.ProxVencimento||"—"} · ${R(total)} (${c.QtdViveiros} viveiros) · ${c.Telefone}</div>
+    </div>
+    <div class="al-act">
+      <button class="btn btn-xs bwa" onclick="wpp(${c.ID})">🟢 WPP</button>
+      <button class="btn btn-xs bdn" onclick="gerarPix(${c.ID})">⚡ PIX</button>
+    </div>
+  </div>`;
+}
+
+function renderCobrancas() {
+  const lista = CLIENTES.filter(c=>c.Status!=="ativo");
+  document.getElementById("cob-list").innerHTML = lista.length ? lista.map(c => alertItem(c, c.Status==="inadimplente"?"d":"w", c.Status==="inadimplente"?"❌":"⏳", c.Status==="inadimplente"?"Inadimplente":"Pendente")).join("") :
+    "<div style='color:var(--text3);font-size:.8rem;padding:20px;text-align:center'>✅ Nenhuma cobrança pendente</div>";
+}
+
+function renderFinanceiro() {
+  document.getElementById("tbl-pag").innerHTML = CLIENTES.filter(c=>c.UltimoPagamento).slice(0,10).map(c => {
+    const total = (parseInt(c.QtdViveiros)||0) * (parseFloat(c.ValorPorViveiro)||50);
+    const isPago = c.Status === "ativo";
+    return `<tr>
+      <td class="mono" style="font-size:.7rem">${c.UltimoPagamento||"—"}</td>
+      <td><b>${c.Nome}</b></td>
+      <td style="color:var(--accent)">${c.QtdViveiros||0}</td>
+      <td class="mono" style="color:${isPago?'var(--accent2)':'var(--danger)'}">${R(total)}</td>
+      <td><span class="bdg ${isPago?'bg':'br'}">${isPago?'✓ Recebido':'✗ Vencido'}</span></td>
+      <td class="mono" style="font-size:.62rem;color:var(--text3)">${c.AsaasCustomerId||"—"}</td>
+      <td style="display:flex;gap:3px">
+        ${!isPago?`<button class="btn btn-xs bwa" onclick="wpp(${c.ID})">🟢</button><button class="btn btn-xs bdn" onclick="gerarPix(${c.ID})">⚡</button>`:'<button class="btn btn-xs bol">🧾</button>'}
+      </td>
+    </tr>`;
+  }).join("") || "<tr><td colspan='7' style='text-align:center;color:var(--text3);padding:20px'>Nenhum pagamento registrado</td></tr>";
+}
+
+function renderCharts() {
+  // MRR por cliente
+  const ativos = CLIENTES.filter(c=>c.Status==="ativo").slice(0,8);
+  if (mrr_chart) mrr_chart.destroy();
+  const ctx1 = document.getElementById("ch-mrr");
+  if (ctx1 && ativos.length) {
+    mrr_chart = new Chart(ctx1, {
+      type: "bar",
+      data: {
+        labels: ativos.map(c=>c.Nome.split(" ")[0]),
+        datasets: [{
+          label: "MRR (R$)",
+          data: ativos.map(c=>(parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50)),
+          backgroundColor: CORES.slice(0,ativos.length).map(c=>c+"99"),
+          borderColor: CORES.slice(0,ativos.length),
+          borderWidth: 2, borderRadius: 5,
+        }]
+      },
+      options: { responsive:true, plugins:{legend:{display:false},tooltip:{backgroundColor:"#0b1221",borderColor:"#152038",borderWidth:1,callbacks:{label:c=>"R$"+c.parsed.y}}}, scales:{x:{grid:{color:"rgba(21,32,56,.6)"},ticks:{color:"#4a6080",font:{family:"'JetBrains Mono'",size:10}}},y:{grid:{color:"rgba(21,32,56,.6)"},ticks:{color:"#4a6080",font:{family:"'JetBrains Mono'",size:10},callback:v=>"R$"+v}}}}
+    });
+  }
+
+  // Status donut
+  if (status_chart) status_chart.destroy();
+  const ctx2 = document.getElementById("ch-status");
+  const ativ = CLIENTES.filter(c=>c.Status==="ativo").length;
+  const inad = CLIENTES.filter(c=>c.Status==="inadimplente").length;
+  const pend = CLIENTES.filter(c=>c.Status==="pendente").length;
+  if (ctx2) {
+    status_chart = new Chart(ctx2, {
+      type: "doughnut",
+      data: { labels:["Ativo","Inadimplente","Pendente"], datasets:[{data:[ativ,inad,pend], backgroundColor:["rgba(0,255,163,.7)","rgba(255,64,96,.7)","rgba(255,179,0,.7)"], borderColor:"#0b1221", borderWidth:3}] },
+      options: { responsive:true, cutout:"65%", plugins:{legend:{position:"bottom",labels:{color:"#8ba4c0",font:{family:"'JetBrains Mono'",size:10},padding:12}},tooltip:{backgroundColor:"#0b1221",borderColor:"#152038",borderWidth:1}} }
+    });
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// ASAAS
+// ══════════════════════════════════════════════════════
+async function criarAsaas(id) {
+  const c = CLIENTES.find(x=>x.ID==id);
+  if (!c) return;
+  toast(`Criando ${c.Nome} no Asaas...`, "i");
+  try {
+    const data = await api({ acao:"asaas_criar", id });
+    if (data.status === "ok") {
+      toast(`✅ ${c.Nome} criado no Asaas!`, "s");
+      c.AsaasCustomerId = data.asaas_id;
+      renderTabela();
+    } else toast("Erro Asaas: " + data.msg, "e");
+  } catch { toast("Erro de conexão", "e"); }
+}
+
+async function gerarPix(id) {
+  const c = CLIENTES.find(x=>x.ID==id);
+  if (!c) return;
+  if (!c.AsaasCustomerId) {
+    toast("Crie o cliente no Asaas primeiro", "e"); return;
+  }
+  toast(`Gerando PIX para ${c.Nome}...`, "i");
+  try {
+    const data = await api({ acao:"asaas_cobrar", id });
+    if (data.status === "ok") {
+      const total = (parseInt(c.QtdViveiros)||0) * (parseFloat(c.ValorPorViveiro)||50);
+      document.getElementById("m-pix-body").innerHTML = `
+        <div class="pix-box">
+          <div style="font-size:.68rem;color:var(--text3);margin-bottom:4px">PIX gerado para</div>
+          <div style="font-size:.9rem;font-weight:700;margin-bottom:8px">${c.Nome}</div>
+          <div class="pix-valor">${R(total)}</div>
+          <div style="font-size:.72rem;color:var(--text3)">Vencimento: ${data.vencimento}</div>
+          ${data.link_pix ? `<a href="${data.link_pix}" target="_blank" class="pix-link">🔗 ${data.link_pix}</a>` : ""}
+          <div style="margin-top:12px;padding:9px;background:rgba(0,255,163,.06);border:1px solid rgba(0,255,163,.2);border-radius:7px;font-size:.72rem;color:var(--accent2)">✅ Cobrança criada no Asaas · ID: ${data.payment_id}</div>
+        </div>
+        <div style="font-size:.72rem;color:var(--text3)">O status será atualizado automaticamente quando o cliente pagar via webhook do Asaas.</div>`;
+      document.getElementById("btn-pix-wpp").onclick = () => wppComLink(id, data.link_pix, total, data.vencimento);
+      openM("m-pix");
+      toast(`✅ PIX gerado para ${c.Nome}!`, "s");
+    } else toast("Erro Asaas: " + data.msg, "e");
+  } catch { toast("Erro de conexão com Apps Script", "e"); }
+}
+
+async function gerarTodasAsaas() {
+  const pendentes = CLIENTES.filter(c=>c.Status!=="ativo"&&c.AsaasCustomerId);
+  if (!pendentes.length) { toast("Nenhum cliente com Asaas pendente", "i"); return; }
+  toast(`Gerando ${pendentes.length} cobranças...`, "i");
+  for (const c of pendentes) await gerarPix(c.ID);
+  toast("✅ Todas as cobranças geradas!", "s");
+}
+
+// Cria no Asaas a partir do modal de novo cliente
+async function criarNoAsaas() {
+  const id = document.getElementById("c-id").value;
+  if (!id) { toast("Salve o cliente antes de criar no Asaas", "e"); return; }
+  await criarAsaas(id);
+}
+
+// ══════════════════════════════════════════════════════
+// WHATSAPP
+// ══════════════════════════════════════════════════════
+function wpp(id) {
+  const c = CLIENTES.find(x=>x.ID==id);
+  if (!c) return;
+  const total = (parseInt(c.QtdViveiros)||0) * (parseFloat(c.ValorPorViveiro)||50);
+  const msg = `Olá *${c.Nome}*! 👋\n\n🦐 *AquaShrimpTech* — Lembrete de Pagamento\n\nSua mensalidade referente a *${c.QtdViveiros} viveiro${c.QtdViveiros!=1?"s":""}* no valor de *${R(total)}* vence em *${c.ProxVencimento||"breve"}*.\n\n💳 Pague agora via PIX:\n👉 Aguardando link Asaas\n\nApós o pagamento seu acesso continua normalmente! 😊\n_AquaShrimpTech — Tecnologia que cultiva resultados_`;
+  const tel = (c.Telefone||"").replace(/\D/g,"");
+  window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, "_blank");
+  toast(`WhatsApp aberto para ${c.Nome}`, "s");
+}
+
+function wppComLink(id, link, valor, vencimento) {
+  const c = CLIENTES.find(x=>x.ID==id);
+  if (!c) return;
+  const msg = `Olá *${c.Nome}*! 👋\n\n🦐 *AquaShrimpTech* — Cobrança Gerada\n\nSua mensalidade de *${R(valor)}* (${c.QtdViveiros} viveiros) vence em *${vencimento}*.\n\n💳 *Pague agora via PIX:*\n👉 ${link||"Link em processamento"}\n\n_AquaShrimpTech — Tecnologia que cultiva resultados_ 🦐`;
+  const tel = (c.Telefone||"").replace(/\D/g,"");
+  window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, "_blank");
+}
+
+function wppBoasVindas() {
+  const n    = document.getElementById("c-nome").value || "Cliente";
+  const u    = document.getElementById("c-usr").value  || "usuario";
+  const vivs = document.getElementById("c-vivs").value || 1;
+  const val  = document.getElementById("c-valviv").value || 50;
+  const msg = `Olá *${n}*! 🎉\n\nSeja bem-vindo(a) à *AquaShrimpTech*! 🦐\n\n📋 Seu contrato:\n🦐 *${vivs} viveiro${vivs!=1?"s":""}* monitorados\n💰 *${R(vivs*val)}/mês*\n\n🔐 Acesso ao painel:\n👤 Usuário: *${u}*\n🌐 https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/\n\n📱 Bot Telegram configurado!\n_AquaShrimpTech — Tecnologia que cultiva resultados_ 🚀`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+  toast("Mensagem de boas-vindas aberta!", "s");
+}
+
+function wppMassa() {
+  toast("Enviando WhatsApp para inadimplentes...", "i");
+  CLIENTES.filter(c=>c.Status!=="ativo").forEach((c,i) => setTimeout(()=>wpp(c.ID), i*1500));
+}
+
+// ══════════════════════════════════════════════════════
+// CRUD CLIENTES
+// ══════════════════════════════════════════════════════
+function calcTotal() {
+  const v = parseInt(document.getElementById("c-vivs").value)||0;
+  const p = parseFloat(document.getElementById("c-valviv").value)||0;
+  document.getElementById("total-disp").textContent = R(v*p);
+}
+
+function addViv() {
+  const ct = document.getElementById("viv-ct");
+  const n = ct.children.length+1;
+  const d = document.createElement("div"); d.className="viv-row";
+  d.innerHTML=`<div class="viv-n">V${n}</div><input type="text" placeholder="URL Apps Script — Viveiro ${n}"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>`;
+  ct.appendChild(d);
+}
+
+function editarViveiros(id) {
+  editarCliente(id);
+}
+
+function editarCliente(id) {
+  const c = CLIENTES.find(x=>x.ID==id);
+  if (!c) return;
+  document.getElementById("m-cli-title").textContent = `✏️ Editar — ${c.Nome}`;
+  document.getElementById("c-id").value       = c.ID;
+  document.getElementById("c-nome").value     = c.Nome||"";
+  document.getElementById("c-tel").value      = c.Telefone||"";
+  document.getElementById("c-usr").value      = c.Usuario||"";
+  document.getElementById("c-email").value    = c.Email||"";
+  document.getElementById("c-vivs").value     = c.QtdViveiros||1;
+  document.getElementById("c-valviv").value   = c.ValorPorViveiro||50;
+  document.getElementById("c-obs").value      = c.Observacoes||"";
+  document.getElementById("viv-ct").innerHTML = Array.from({length:parseInt(c.QtdViveiros)||1},(_,n)=>`<div class="viv-row"><div class="viv-n">V${n+1}</div><input type="text" placeholder="URL Viveiro ${n+1}"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button></div>`).join("");
+  calcTotal();
+  openM("m-cli");
+}
+
+async function salvarCliente() {
+  const nome = document.getElementById("c-nome").value.trim();
+  if (!nome) { toast("Preencha o nome do cliente", "e"); return; }
+
+  const params = {
+    acao:           "salvar",
+    id:             document.getElementById("c-id").value,
+    nome,
+    tel:            document.getElementById("c-tel").value,
+    usuario:        document.getElementById("c-usr").value,
+    senha:          document.getElementById("c-pwd").value,
+    email:          document.getElementById("c-email").value,
+    qtd_viveiros:   document.getElementById("c-vivs").value,
+    valor_viveiro:  document.getElementById("c-valviv").value,
+    dia_vencimento: document.getElementById("c-venc").value,
+    forma_pagamento:document.getElementById("c-cob").value,
+    observacoes:    document.getElementById("c-obs").value,
+    urls_viveiros:  [...document.querySelectorAll("#viv-ct input")].map(i=>i.value).join("|"),
+    url_estoque:    document.getElementById("c-est").value,
+  };
+
+  toast("Salvando...", "i");
+  try {
+    const data = await api(params);
+    if (data.status === "ok") {
+      toast(`✅ ${nome} salvo com sucesso!`, "s");
+      // Atualiza ID do cliente recém criado para o botão Asaas
+      if (data.id && !document.getElementById("c-id").value) {
+        document.getElementById("c-id").value = data.id;
+      }
+      closeM("m-cli");
+      await carregarDados();
+    } else toast("Erro: " + data.msg, "e");
+  } catch {
+    // Fallback local
+    const vivs = parseInt(params.qtd_viveiros)||1;
+    const val  = parseFloat(params.valor_viveiro)||50;
+    const novoId = Date.now();
+    if (!params.id) {
+      CLIENTES.push({ID:novoId, Nome:nome, Telefone:params.tel, Usuario:params.usuario, QtdViveiros:vivs, ValorPorViveiro:val, TotalMensal:vivs*val, DiaVencimento:parseInt(params.dia_vencimento)||10, Status:"ativo", UltimoPagamento:"", ProxVencimento:"", AsaasCustomerId:"", Observacoes:params.observacoes});
+    }
+    toast(`✅ ${nome} salvo (modo local)`, "s");
+    closeM("m-cli");
+    renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
+  }
+}
+
+function verDetalhe(id) {
+  const c = CLIENTES.find(x=>x.ID==id);
+  const i = CLIENTES.indexOf(c);
+  if (!c) return;
+  const total = (parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50);
+  document.getElementById("m-det-title").textContent = `👤 ${c.Nome}`;
+  document.getElementById("m-det-body").innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <div class="fsec" style="margin-top:0">Dados</div>
+        ${[["Nome",c.Nome],["Telefone",`<span class="mono">${c.Telefone||"—"}</span>`],["Usuário",`<span class="mono">${c.Usuario||"—"}</span>`],["Status",SB[c.Status]||SB.inativo]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;align-items:center"><span style="color:var(--text3);font-size:.74rem">${l}</span><span style="font-size:.78rem;font-weight:600">${v}</span></div>`).join("")}
+        <div class="fsec" style="margin-top:14px">Financeiro</div>
+        ${[["Viveiros",`<span style="color:var(--accent);font-weight:700;font-family:'JetBrains Mono',monospace">${c.QtdViveiros||0}</span>`],["Valor/Viveiro",`<span class="mono">R$${c.ValorPorViveiro||50}/mês</span>`],["Total Mensal",`<span class="mono" style="color:var(--accent2);font-weight:700;font-size:.9rem">${R(total)}</span>`],["Vencimento",`Dia ${c.DiaVencimento||10}`],["Último Pag.",`<span class="mono" style="font-size:.74rem">${c.UltimoPagamento||"—"}</span>`],["Próx. Vencimento",`<span class="mono" style="font-size:.74rem">${c.ProxVencimento||"—"}</span>`],["Asaas",c.AsaasCustomerId?`<span class="bdg bg">✓ ${c.AsaasCustomerId}</span>`:`<span class="bdg br">Não criado</span>`]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;align-items:center"><span style="color:var(--text3);font-size:.74rem">${l}</span><span>${v}</span></div>`).join("")}
+      </div>
+      <div>
+        <div class="fsec" style="margin-top:0">Viveiros (${c.QtdViveiros||0})</div>
+        ${Array.from({length:parseInt(c.QtdViveiros)||1},(_,n)=>`<div style="display:flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:8px 11px;margin-bottom:6px"><span style="color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700">V${n+1}</span><span style="font-size:.72rem;color:var(--text3);flex:1">Apps Script configurado</span><span class="bdg bg" style="font-size:.55rem">✓</span></div>`).join("")}
+        <div class="fsec" style="margin-top:14px">Observações</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.75rem;color:var(--text3)">${c.Observacoes||"Nenhuma observação."}</div>
+      </div>
+    </div>`;
+  document.getElementById("m-det-ft").innerHTML = `
+    <button class="btn bol" onclick="closeM('m-det')">Fechar</button>
+    <button class="btn bwa" onclick="wpp(${c.ID});closeM('m-det')">🟢 WhatsApp</button>
+    ${!c.AsaasCustomerId ? `<button class="btn bor" onclick="criarAsaas(${c.ID})">🏦 Criar Asaas</button>` : `<button class="btn bdn" onclick="gerarPix(${c.ID})">⚡ Gerar PIX</button>`}
+    <button class="btn bac" onclick="editarCliente(${c.ID});closeM('m-det')">✏️ Editar</button>`;
+  openM("m-det");
+}
+
+// ══════════════════════════════════════════════════════
+// MENSAGENS / TEMPLATES
+// ══════════════════════════════════════════════════════
+const TMPLS = {
+  cobranca:"Olá *{NOME}*! 👋\n\n🦐 *AquaShrimpTech* — Lembrete de Pagamento\n\nSua mensalidade de *{VIVEIROS} viveiro{S}* no valor de *R$ {VALOR}* vence em *{DATA}*.\n\n💳 Pague agora via PIX:\n👉 {LINK}\n\nApós o pagamento, seu acesso continua normalmente. 😊\n_AquaShrimpTech — Tecnologia que cultiva resultados_",
+  inadimplente:"⚠️ Olá *{NOME}*,\n\nSua mensalidade da *AquaShrimpTech* (R$ {VALOR}) está em atraso desde {DATA}.\n\nPara evitar suspensão do acesso aos seus {VIVEIROS} viveiro{S}, efetue o pagamento:\n👉 {LINK}\n\n_AquaShrimpTech_",
+  boas_vindas:"Olá *{NOME}*! 🎉\n\nSeja bem-vindo(a) à *AquaShrimpTech*! 🦐\n\n📋 Seu contrato:\n🦐 *{VIVEIROS} viveiro{S}* monitorados\n💰 *R${VALOR}/mês*\n\n🔐 Login: *{USUARIO}*\n🌐 https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/\n\n📱 Bot Telegram configurado!\n_AquaShrimpTech — Tecnologia que cultiva resultados_ 🚀",
+  novo_viveiro:"Olá *{NOME}*! 🦐\n\nSeu novo viveiro foi adicionado!\n\n✅ Configurado e ativo\n📱 Bot Telegram atualizado\n💰 Mensalidade atualizada: *R${VALOR}/mês* ({VIVEIROS} viveiro{S})\n\n_AquaShrimpTech_",
+  atualizacao:"🚀 *AquaShrimpTech* — Atualização do Sistema\n\nOlá *{NOME}*!\n\n✅ Biomassa real pela alimentação\n✅ FCA calculado automaticamente\n✅ Densidade (cam/m²) no dashboard\n✅ Relatório técnico completo\n\nAcesse: https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/\n\n_AquaShrimpTech — Sempre evoluindo!_ 🦐",
+};
+function fillTpl() {
+  const t = document.getElementById("msg-tpl").value;
+  if (!t) { document.getElementById("msg-txt").value=""; document.getElementById("wa-txt").textContent="Selecione um template..."; return; }
+  const c = CLIENTES[0] || {Nome:"João Silva",QtdViveiros:2,ValorPorViveiro:50,ProxVencimento:"10/06/2026",Usuario:"joao"};
+  const total = (parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50);
+  const txt = TMPLS[t]
+    .replace(/{NOME}/g,c.Nome).replace(/{VALOR}/g,total.toFixed(2).replace(".",","))
+    .replace(/{DATA}/g,c.ProxVencimento||"—").replace(/{VIVEIROS}/g,c.QtdViveiros||1)
+    .replace(/{S}/g,(c.QtdViveiros||1)!=1?"s":"").replace(/{USUARIO}/g,c.Usuario||"usuario")
+    .replace(/{LINK}/g,"https://pix.asaas.com/link-gerado");
+  document.getElementById("msg-txt").value = txt;
+  prvWpp();
+}
+function prvWpp() {
+  const txt = document.getElementById("msg-txt").value;
+  document.getElementById("wa-txt").innerHTML = txt.replace(/\*(.*?)\*/g,"<b>$1</b>").replace(/_(.*?)_/g,"<i>$1</i>").replace(/\n/g,"<br>") || "Escreva sua mensagem...";
+}
+
+// ══════════════════════════════════════════════════════
+// NAV / MODAIS / UTILS
+// ══════════════════════════════════════════════════════
+const PG_TITLES = {dash:"Dashboard",clientes:"Clientes",financeiro:"Financeiro",cobrancas:"Cobranças",alertas:"Alertas",mensagens:"Mensagens",config:"Configurações"};
+function go(nm,el) {
+  document.querySelectorAll(".pg").forEach(p=>p.classList.remove("act"));
+  document.querySelectorAll(".ni").forEach(n=>n.classList.remove("act"));
+  document.getElementById("pg-"+nm).classList.add("act");
+  if(el) el.classList.add("act");
+  else document.querySelectorAll(".ni").forEach(n=>{if(n.getAttribute("onclick")?.includes("'"+nm+"'"))n.classList.add("act");});
+  document.getElementById("pg-title").textContent = PG_TITLES[nm]||nm;
+  if(window.innerWidth<860) closeSB();
+}
+function toggleSB(){document.getElementById("sb").classList.toggle("open");document.getElementById("sb-ov").classList.toggle("open");}
+function closeSB(){document.getElementById("sb").classList.remove("open");document.getElementById("sb-ov").classList.remove("open");}
+function openM(id){document.getElementById(id).classList.add("open");}
+function closeM(id){document.getElementById(id).classList.remove("open");}
+document.querySelectorAll(".ov").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)o.classList.remove("open");}));
+function toast(msg,tipo="i"){const ic={s:"✅",e:"❌",i:"ℹ️"}[tipo];const el=document.createElement("div");el.className=`toast ${tipo}`;el.innerHTML=`<span>${ic}</span><span>${msg}</span>`;document.getElementById("tc").appendChild(el);setTimeout(()=>el.remove(),4500);}
+</script>
+</body>
+</html>
