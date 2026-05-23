@@ -131,6 +131,15 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 </head>
 <body>
 
+<!-- Botão ADM discreto — canto superior esquerdo da tela de login -->
+<a id="btn-adm" href="adm.html" target="_blank"
+   style="position:fixed;top:14px;left:14px;z-index:1001;
+          background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.22);
+          border-radius:7px;padding:5px 10px;font-size:.62rem;font-weight:700;
+          color:rgba(255,107,53,.55);letter-spacing:.08em;cursor:pointer;
+          transition:all .25s;text-decoration:none;font-family:'DM Sans',sans-serif;
+          display:none">⚙️ ADM</a>
+
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
@@ -269,12 +278,9 @@ const CLIENTES_CONFIG = [
     viveiros: [
       {
         nome: "Viveiro 01",
-        url:  "https://script.google.com/macros/s/AKfycbzLcX8x5CSvV-HlttTHmhKBoycD31eypwH1RkmSDu5fqRA7SJTGt9QpYE_0086IBrMyJA/exec"
+        url:  "https://script.google.com/macros/s/AKfycbwsFbZzid-xT-6sZGJ7DxDijJm5sZVmpUWXi_5RcDymebFjsvx_FE8lSeWLh0tos4b-/exec"
       },
-      {
-        nome: "Viveiro 02",
-        url:  "https://script.google.com/macros/s/AKfycbxkMQIPMvhfErRX59GYUONjpGYh52QLNotLBu9tfJOcTcSDzB9ZnUJsoYfL_t6u2GVKQA/exec"
-      }
+      
       // ▼ Viveiro 03 — adicione aqui quando criar
       // ,{ nome: "Viveiro 03", url: "URL_VIVEIRO_03" }
     ],
@@ -354,6 +360,7 @@ function fazerLogin() {
   sessionStorage.setItem("ast_senha",   senha);
 
   document.getElementById("login-screen").style.display = "none";
+  document.getElementById("btn-adm").style.display = "none"; // esconde ADM quando logado
   document.getElementById("app").style.display = "block";
   document.getElementById("cliente-nome").textContent = "👤 " + cliente.nome;
   document.title = "AquaShrimpTech — " + cliente.nome;
@@ -371,6 +378,7 @@ function fazerLogout() {
   if (refreshTimer) clearTimeout(refreshTimer);
   document.getElementById("app").style.display = "none";
   document.getElementById("login-screen").style.display = "flex";
+  document.getElementById("btn-adm").style.display = "block"; // mostra ADM na tela de login
   document.getElementById("inp-usuario").value = "";
   document.getElementById("inp-senha").value   = "";
 }
@@ -383,6 +391,10 @@ window.addEventListener("load", () => {
     document.getElementById("inp-usuario").value = u;
     document.getElementById("inp-senha").value   = s;
     fazerLogin();
+  } else {
+    // Mostra botão ADM apenas na tela de login
+    document.getElementById("btn-adm").style.display = "block";
+  }
   }
 });
 
@@ -418,19 +430,21 @@ async function carregarDados() {
 // ════════════════════════════════════════════════════════
 function renderKpiGeral() {
   const v = DADOS.viveiros.filter(x=>!x._erro);
-  const totBio  = v.reduce((s,x)=>s+(x.biomassa||0),0);
-  const totCust = v.reduce((s,x)=>s+(x.custoCiclo||0),0);
-  const totRac  = v.reduce((s,x)=>s+(x.racaoTotal||0),0);
+  const totBioReal  = v.reduce((s,x)=>s+(x.biomassaReal||x.biomassa||0),0);
+  const totBio100   = v.reduce((s,x)=>s+(x.biomassa100||0),0);
+  const totCust     = v.reduce((s,x)=>s+(x.custoCiclo||0),0);
+  const totRac      = v.reduce((s,x)=>s+(x.racaoTotal||0),0);
   let lucro = 0;
   v.forEach(x=>{ if(x.historico?.length) lucro+=x.historico[x.historico.length-1].l_acum||0; });
+  // FCA médio ponderado
+  const fcaMedio = v.length ? v.reduce((s,x)=>s+(x.fca||0),0)/v.filter(x=>x.fca>0).length : 0;
   document.getElementById("kpi-geral").innerHTML = [
-    {label:"Biomassa Total",     value:Nf(totBio)+" kg",  cls:"accent", sub:v.length+" viveiro(s) ativo(s)"},
-    {label:"Custo Total Ciclos", value:R(totCust),         cls:"warn",   sub:"Ciclos em andamento"},
-    {label:"Ração Acumulada",    value:Nf(totRac)+" kg",  cls:"",       sub:"Ciclo atual"},
-    {label:"Lucro Acumulado",    value:R(lucro),           cls:"green",  sub:"Histórico"},
-    {label:"Viveiros",           value:DADOS.viveiros.length, cls:"accent", sub:"Ativos"},
-    {label:"Erros",              value:DADOS.viveiros.filter(x=>x._erro).length,
-      cls:DADOS.viveiros.some(x=>x._erro)?"danger":"green", sub:"Planilhas offline"},
+    {label:"Biomassa Real",      value:Nf(totBioReal)+" kg", cls:"accent", sub:"Baseada na alimentação"},
+    {label:"Biomassa (100% Sob)",value:Nf(totBio100)+" kg",  cls:"green",  sub:"Pressupondo 100% sobrev."},
+    {label:"Custo Total Ciclos", value:R(totCust),            cls:"warn",   sub:"Ciclos em andamento"},
+    {label:"Ração Acumulada",    value:Nf(totRac)+" kg",     cls:"",       sub:"Ciclo atual"},
+    {label:"FCA Médio",          value:isNaN(fcaMedio)?'—':fcaMedio.toFixed(2), cls:"", sub:"Ração / Biomassa real"},
+    {label:"Lucro Acumulado",    value:R(lucro),              cls:"green",  sub:"Histórico"},
   ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div><div class="kpi-sub">${k.sub}</div></div>`).join("");
 }
 
@@ -442,21 +456,102 @@ function renderViveiros() {
   if (!DADOS.viveiros.length) { grid.innerHTML = `<div class="error-msg">Nenhum viveiro configurado.</div>`; return; }
   grid.innerHTML = DADOS.viveiros.map((v,i) => {
     if (v._erro) return `<div class="viveiro-card"><div class="viveiro-header"><div class="viveiro-name">${v.nome}</div><span class="viveiro-status status-alerta">⚠ Offline</span></div><div class="error-msg">Não foi possível conectar.</div></div>`;
-    const dias = diasDesde(v.dataInicio);
-    const pct  = Math.min(100, Math.round((v.biomassa||0)/3000*100));
+
+    const diasCiclo  = v.diasCiclo ?? diasDesde(v.dataInicio) ?? 0;
+    const bioReal    = v.biomassaReal ?? v.biomassa ?? 0;
+    const bio100     = v.biomassa100 ?? 0;
+    const surv       = v.sobrevivencia ?? 0;
+    const fca        = v.fca ?? 0;
+    const dens       = v.densidade ?? 0;
+    const lab        = v.laboratorio || '';
+    const racaoAt    = v.racaoAtual ?? 0;
+    const racaoId    = v.racaoIdeal ?? 0;
+
+    // Barra de sobrevivência (0–100%)
+    const pctSurv = Math.min(100, Math.round(surv));
+    const corSurv = surv >= 70 ? 'var(--accent2)' : surv >= 50 ? 'var(--warn)' : 'var(--danger)';
+
     return `<div class="viveiro-card" style="animation-delay:${i*.08}s">
-      <div class="viveiro-header"><div class="viveiro-name">${v.nome||"Viveiro"}</div><span class="viveiro-status status-ativo">● Ativo</span></div>
-      <div class="viveiro-metrics">
-        <div><div class="v-metric-label">Biomassa</div><div class="v-metric-value accent">${Nf(v.biomassa)} kg</div></div>
-        <div><div class="v-metric-label">Peso Médio</div><div class="v-metric-value">${v.pesoMedio??'—'}g</div></div>
-        <div><div class="v-metric-label">Ração Total</div><div class="v-metric-value">${Nf(v.racaoTotal)} kg</div></div>
-        <div><div class="v-metric-label">Custo Ciclo</div><div class="v-metric-value warn">${R(v.custoCiclo)}</div></div>
-        <div><div class="v-metric-label">Povoado</div><div class="v-metric-value">${Nf(v.povoado)} un</div></div>
-        <div><div class="v-metric-label">Início Ciclo</div><div class="v-metric-value" style="font-size:.8rem">${fmtData(v.dataInicio)}</div></div>
+      <div class="viveiro-header">
+        <div class="viveiro-name">${v.nome||"Viveiro"}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${lab ? `<span style="font-size:.58rem;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:5px;padding:2px 7px;color:var(--accent)">🧪 ${lab}</span>` : ''}
+          <span class="viveiro-status status-ativo">● Ativo</span>
+        </div>
       </div>
-      ${dias!==null?`<div class="dias-badge">🗓 ${dias} dia${dias!==1?"s":""} de ciclo</div>`:""}
-      <div class="viveiro-bar-wrap"><div class="viveiro-bar" style="width:${pct}%"></div></div>
-      <div class="viveiro-bar-label"><span>Biomassa: ${pct}% da meta (3.000 kg)</span></div>
+
+      <!-- LINHA 1: Biomassas -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:9px 11px">
+          <div class="v-metric-label">🌊 Biomassa Real</div>
+          <div class="v-metric-value accent">${Nf(bioReal)} kg</div>
+          <div style="font-size:.58rem;color:var(--muted)">Baseada na alimentação</div>
+        </div>
+        <div style="background:rgba(0,255,163,.06);border:1px solid rgba(0,255,163,.15);border-radius:8px;padding:9px 11px">
+          <div class="v-metric-label">🎯 Biomassa 100%</div>
+          <div class="v-metric-value green">${Nf(bio100)} kg</div>
+          <div style="font-size:.58rem;color:var(--muted)">Pressupondo 100% sobrev.</div>
+        </div>
+      </div>
+
+      <!-- LINHA 2: Métricas técnicas -->
+      <div class="viveiro-metrics">
+        <div>
+          <div class="v-metric-label">Sobrevivência</div>
+          <div class="v-metric-value" style="color:${corSurv}">${surv > 0 ? surv.toFixed(1)+'%' : '—'}</div>
+        </div>
+        <div>
+          <div class="v-metric-label">FCA</div>
+          <div class="v-metric-value">${fca > 0 ? fca.toFixed(2) : '—'}</div>
+        </div>
+        <div>
+          <div class="v-metric-label">Peso Médio</div>
+          <div class="v-metric-value">${v.pesoMedio ?? '—'}g</div>
+        </div>
+        <div>
+          <div class="v-metric-label">CCMT (ganho/sem.)</div>
+          <div class="v-metric-value accent">${v.ccmt != null && v.ccmt > 0 ? '+'+v.ccmt.toFixed(1)+'g' : '—'}</div>
+        </div>
+        <div>
+          <div class="v-metric-label">Densidade</div>
+          <div class="v-metric-value">${dens > 0 ? dens.toFixed(1)+' cam/m²' : '—'}</div>
+        </div>
+        <div>
+          <div class="v-metric-label">Área</div>
+          <div class="v-metric-value">${v.areaHa ? v.areaHa.toFixed(2)+' ha' : '—'}</div>
+        </div>
+        <div>
+          <div class="v-metric-label">Ração Hoje</div>
+          <div class="v-metric-value">${racaoAt > 0 ? racaoAt.toFixed(1)+' kg' : '—'}</div>
+        </div>
+        <div>
+          <div class="v-metric-label">Ração p/ 100%</div>
+          <div class="v-metric-value warn">${racaoId > 0 ? racaoId.toFixed(1)+' kg' : '—'}</div>
+        </div>
+        <div>
+          <div class="v-metric-label">Povoado</div>
+          <div class="v-metric-value">${Nf(v.povoado)} un</div>
+        </div>
+        <div>
+          <div class="v-metric-label">Custo Ciclo</div>
+          <div class="v-metric-value warn">${R(v.custoCiclo)}</div>
+        </div>
+      </div>
+
+      <!-- Dias de ciclo e data início -->
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap">
+        ${diasCiclo > 0 ? `<div class="dias-badge">🗓 ${diasCiclo} dia${diasCiclo!==1?"s":""} de ciclo</div>` : ''}
+        ${v.dataInicio ? `<div class="dias-badge" style="background:rgba(0,255,163,.06);border-color:rgba(0,255,163,.2);color:var(--accent2)">📅 Início: ${fmtData(v.dataInicio)}</div>` : ''}
+      </div>
+
+      <!-- Barra de sobrevivência -->
+      <div class="viveiro-bar-wrap" style="margin-top:10px">
+        <div class="viveiro-bar" style="width:${pctSurv}%;background:linear-gradient(90deg,${corSurv},${corSurv}88)"></div>
+      </div>
+      <div class="viveiro-bar-label">
+        <span>Sobrevivência: ${surv > 0 ? surv.toFixed(1)+'%' : '—'}</span>
+        <span>Ração total: ${Nf(v.racaoTotal)} kg</span>
+      </div>
     </div>`;
   }).join("");
 }
@@ -588,13 +683,14 @@ function renderHistorico() {
       // Linhas dos desbastes (recuadas visualmente)
       const rowsDesbastes = desbastes.map(d => `
         <tr style="background:rgba(0,229,255,.03)">
-          <td style="padding-left:28px;color:var(--muted)">↳ ${d.cultivo}</td>
+          <td style="padding-left:28px;color:var(--muted)">↳ ${d.cultivo||'Desbaste'}</td>
           <td>${d.data}</td>
           <td>${d.dias}d</td>
           <td>${Nf(d.kg)}</td>
           <td style="color:var(--warn)">${R(d.receita)}</td>
           <td colspan="3" style="color:var(--muted);font-size:.7rem">— custo calculado na despesca —</td>
           <td>—</td>
+          <td>${d.laboratorio ? `<span class="pill pill-blue">${d.laboratorio}</span>` : '—'}</td>
           <td><span class="pill pill-warn">Parcial</span></td>
         </tr>`).join("");
 
@@ -602,6 +698,7 @@ function renderHistorico() {
       const rowDespesca = despesca ? (() => {
         const receitaDesbastes = desbastes.reduce((s,d) => s + (d.receita||0), 0);
         const receitaSoDespesca = (despesca.receita||0) - receitaDesbastes;
+        const lab = despesca.laboratorio || '';
         return `<tr style="border-top:1px solid var(--border);font-weight:600">
           <td>🎣 Despesca</td>
           <td>${despesca.data}</td>
@@ -612,6 +709,7 @@ function renderHistorico() {
           <td>${R(despesca.c_insumos)}</td>
           <td>${R(despesca.c_total)}</td>
           <td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}">${R(lucroCiclo)}</td>
+          <td>${lab ? `<span class="pill pill-blue">${lab}</span>` : '—'}</td>
           <td><span class="pill ${isLucro ? "pill-green" : "pill-red"}">${despesca.resultado}</span></td>
         </tr>
         <tr style="background:rgba(0,229,255,.06);font-weight:700;font-size:.8rem">
@@ -623,6 +721,7 @@ function renderHistorico() {
           <td>${R(despesca.c_insumos)}</td>
           <td>${R(despesca.c_total)}</td>
           <td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}">${R(lucroCiclo)}</td>
+          <td>${lab ? `<span class="pill pill-blue">${lab}</span>` : '—'}</td>
           <td><span class="pill ${isLucro ? "pill-green" : "pill-red"} " style="font-size:.7rem">LUCRO FINAL</span></td>
         </tr>`;
       })() : `<tr><td colspan="10" style="text-align:center;color:var(--warn);padding:14px;font-size:.76rem">
@@ -646,7 +745,7 @@ function renderHistorico() {
               <thead><tr>
                 <th>Evento</th><th>Data</th><th>Dias</th><th>Kg</th>
                 <th>Receita</th><th>C.Ração</th><th>C.Insumos</th>
-                <th>C.Total</th><th>Lucro</th><th>Resultado</th>
+                <th>C.Total</th><th>Lucro</th><th>Laboratório</th><th>Resultado</th>
               </tr></thead>
               <tbody>${rowsDesbastes}${rowDespesca}</tbody>
             </table>
