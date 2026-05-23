@@ -192,9 +192,10 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     <div class="section-title">Viveiros em Produção</div>
     <div class="viveiros-grid" id="viveiros-grid"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
   </div>
-  <div id="tab-biometria" class="tab-panel">
-    <div class="section-title">Evolução de Crescimento</div>
-    <div class="bio-chart-wrap"><canvas id="bioChart" height="250"></canvas></div>
+    <div id="tab-biometria" class="tab-panel">
+      <div class="section-title">Evolução de Crescimento</div>
+      <div class="bio-chart-wrap" style="max-width: 900px; margin: 0 auto 18px auto; position: relative;">
+        <canvas id="bioChart" height="250"></canvas></div>
     <div class="table-wrap">
       <div class="table-head"><span class="table-title">Registros de Biometria</span></div>
       <div class="table-scroll"><table><thead id="bio-thead"></thead><tbody id="bio-tbody"></tbody></table></div>
@@ -604,7 +605,7 @@ function renderBiometria() {
   if(bioChartInstance) bioChartInstance.destroy();
   const ctx=document.getElementById("bioChart").getContext("2d");
   if(!labels.length){ ctx.canvas.parentElement.innerHTML+=`<p style="text-align:center;color:var(--muted);font-family:'DM Mono';padding:20px">Sem dados de biometria</p>`; return; }
-  bioChartInstance=new Chart(ctx,{type:"line",data:{labels,datasets:DADOS.viveiros.filter(x=>!x._erro&&x.biometria?.length>0).map((v,i)=>({label:v.nome,data:labels.map(lbl=>{ const b=(v.biometria||[]).find(x=>fmtData(x.data)===lbl); return b?b.peso:null; }),borderColor:COLORS[i%COLORS.length],backgroundColor:COLORS[i%COLORS.length]+"22",borderWidth:2.5,pointRadius:4,tension:0.35,spanGaps:true}))},options:{responsive:true,interaction:{mode:"index",intersect:false},plugins:{legend:{labels:{color:"#5a7a95",font:{family:"'DM Mono'",size:11}}},tooltip:{backgroundColor:"#0d1a2e",borderColor:"#1a3050",borderWidth:1,titleColor:"#e8f4f8",bodyColor:"#5a7a95",callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y?.toFixed(2)??"—"}g`}}},scales:{x:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10}}},y:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10},callback:v=>v+"g"}}}}});
+  bioChartInstance=new Chart(ctx,{type:"line",data:{labels,datasets:DADOS.viveiros.filter(x=>!x._erro&&x.biometria?.length>0).map((v,i)=>({label:v.nome,data:labels.map(lbl=>{ const b=(v.biometria||[]).find(x=>fmtData(x.data)===lbl); return b?b.peso:null; }),borderColor:COLORS[i%COLORS.length],backgroundColor:COLORS[i%COLORS.length]+"22",borderWidth:2.5,pointRadius:4,tension:0.35,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{labels:{color:"#5a7a95",font:{family:"'DM Mono'",size:11}}},tooltip:{backgroundColor:"#0d1a2e",borderColor:"#1a3050",borderWidth:1,titleColor:"#e8f4f8",bodyColor:"#5a7a95",callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y?.toFixed(2)??"—"}g`}}},scales:{x:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10}}},y:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10},callback:v=>v+"g"}}}}});
 }
 
 // ════════════════════════════════════════════════════════
