@@ -87,6 +87,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .bdn{background:var(--danger);color:#fff}.bdn:hover{opacity:.9}
 .bwn{background:var(--warn);color:#05080f}
 .bwa{background:#25D366;color:#fff}.bwa:hover{background:#1ebe5d}
+.bwa:focus{outline:none}
 .bpp{background:var(--purple);color:#fff}
 
 /* BADGE */
@@ -197,7 +198,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
 </head>
 <body>
 
-<!-- LOGIN ADM -->
 <div id="ls">
   <div class="lw">
     <div style="text-align:center">
@@ -216,7 +216,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
-<!-- APP ADM -->
 <div id="app">
   <div class="sb-ov" id="sb-ov" onclick="toggleSB()"></div>
   <aside class="sb" id="sb">
@@ -254,17 +253,16 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div class="tb-r">
         <div class="tb-clk" id="clk"></div>
         <div id="sync-status" style="font-size:.65rem;color:var(--text3)"></div>
-        <button class="btn btn-sm bor" onclick="openM('m-cli')">+ Novo Cliente</button>
+        <button class="btn btn-sm bor" onclick="novoCliente()">+ Novo Cliente</button>
       </div>
     </div>
 
-    <!-- DASHBOARD -->
     <div class="pg act" id="pg-dash">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Visão Geral</div><div style="font-size:.7rem;color:var(--text3)" id="dash-updated">Carregando...</div></div>
         <div style="display:flex;gap:7px">
           <button class="btn btn-sm bol" onclick="carregarDados()">🔄 Atualizar</button>
-          <button class="btn btn-sm bgr" onclick="openM('m-cli')">+ Cliente</button>
+          <button class="btn btn-sm bgr" onclick="novoCliente()">+ Cliente</button>
         </div>
       </div>
       <div class="kr" id="kpi-dash">
@@ -276,13 +274,12 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
-    <!-- CLIENTES -->
     <div class="pg" id="pg-clientes">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Gestão de Clientes</div><div style="font-size:.7rem;color:var(--text3)">Modelo: R$50/viveiro · valor negociável</div></div>
         <div style="display:flex;gap:7px;flex-wrap:wrap">
           <input id="busca-cli" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 11px;color:var(--text);font-size:.74rem;outline:none;width:180px" placeholder="🔍 Buscar..." oninput="filtrarTabela()">
-          <button class="btn btn-sm bor" onclick="openM('m-cli')">+ Novo Cliente</button>
+          <button class="btn btn-sm bor" onclick="novoCliente()">+ Novo Cliente</button>
         </div>
       </div>
       <div class="card"><div class="tw"><table><thead><tr>
@@ -291,7 +288,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </tr></thead><tbody id="tbl-cli"></tbody></table></div></div>
     </div>
 
-    <!-- FINANCEIRO -->
     <div class="pg" id="pg-financeiro">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Financeiro</div><div style="font-size:.7rem;color:var(--text3)">Asaas · PIX recorrente</div></div>
@@ -303,7 +299,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
-    <!-- COBRANÇAS -->
     <div class="pg" id="pg-cobrancas">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Cobranças</div><div style="font-size:.7rem;color:var(--text3)">Gera PIX via Asaas · WhatsApp automático</div></div>
@@ -314,12 +309,11 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
       <div style="background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.15);border-radius:9px;padding:13px 15px;margin-bottom:14px;font-size:.74rem">
         <b style="color:var(--accent)">ℹ️ Fluxo Asaas:</b>
-        <span style="color:var(--text3)"> 1. Cadastra cliente → cria no Asaas · 2. Gera cobrança PIX · 3. Cliente paga → webhook confirma automaticamente · 4. Status atualiza aqui + alerta Telegram para você</span>
+        <span style="color:var(--text3)"> 1. Cadastra cliente → cria no Asaas · 2. Gera cobrança PIX · 3. Cliente paga → webhook confirma automaticamente · 4. Status atualiza aqui + alerta Telegram para vocêSpan>
       </div>
       <div class="al-list" id="cob-list"></div>
     </div>
 
-    <!-- ALERTAS -->
     <div class="pg" id="pg-alertas">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Central de Alertas</div></div>
@@ -328,7 +322,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div class="al-list" id="al-list"></div>
     </div>
 
-    <!-- MENSAGENS -->
     <div class="pg" id="pg-mensagens">
       <div style="margin-bottom:16px"><div style="font-size:1.05rem;font-weight:700">Mensagens</div><div style="font-size:.7rem;color:var(--text3)">WhatsApp Business · Templates prontos</div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
@@ -364,7 +357,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
-    <!-- CONFIG -->
     <div class="pg" id="pg-config">
       <div style="margin-bottom:16px"><div style="font-size:1.05rem;font-weight:700">Configurações</div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
@@ -391,11 +383,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
-  </div><!-- /main -->
-</div><!-- /app -->
-
-<!-- MODAL NOVO/EDITAR CLIENTE -->
-<div class="ov" id="m-cli">
+  </div></div><div class="ov" id="m-cli">
   <div class="modal">
     <div class="modal-hd"><div class="modal-title" id="m-cli-title">➕ Novo Cliente</div><button class="modal-x" onclick="closeM('m-cli')">✕</button></div>
     <div class="modal-body">
@@ -428,7 +416,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div class="fsec">🏭 Estoque</div>
       <div class="fg"><label>URL Apps Script — Estoque</label><input id="c-est" type="text" placeholder="https://script.google.com/macros/s/.../exec"></div>
       <div class="fsec">📝 Observações</div>
-      <div class="fg"><textarea id="c-obs" rows="3" placeholder="Negociação especial, condições acordadas..."></textarea></div>
+      <div class="fg"><textarea id="c-obs" rows="3" placeholder="Negociação especial, conditions acordadas..."></textarea></div>
       <input type="hidden" id="c-id">
     </div>
     <div class="modal-ft">
@@ -440,7 +428,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
-<!-- MODAL PIX -->
 <div class="ov" id="m-pix">
   <div class="modal" style="max-width:440px">
     <div class="modal-hd"><div class="modal-title">⚡ Cobrança PIX Gerada</div><button class="modal-x" onclick="closeM('m-pix')">✕</button></div>
@@ -449,7 +436,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
-<!-- MODAL DETALHE CLIENTE -->
 <div class="ov" id="m-det">
   <div class="modal">
     <div class="modal-hd"><div class="modal-title" id="m-det-title">👤 Detalhe</div><button class="modal-x" onclick="closeM('m-det')">✕</button></div>
@@ -465,11 +451,9 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
 // CONFIG — ALTERE AQUI
 // ══════════════════════════════════════════════════════
 const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
-// Cole a URL do Apps Script ADM após publicar (ADM_GAS.js)
-// Ex: https://script.google.com/macros/s/AKfycb.../exec
 
 const ADM_USER = "admin";
-const ADM_PASS = "ahffkdy"; // ← mude para uma senha forte
+const ADM_PASS = "ahffkdy"; 
 
 // ══════════════════════════════════════════════════════
 // ESTADO GLOBAL
@@ -543,7 +527,6 @@ async function carregarDados() {
       document.getElementById("sync-status").textContent = "⚠ Erro";
     }
   } catch(err) {
-    // Fallback: usa dados locais simulados se script não configurado
     CLIENTES = CLIENTES_DEMO;
     renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
     document.getElementById("sync-status").textContent = "⚠ Modo demo";
@@ -553,7 +536,7 @@ async function carregarDados() {
 }
 
 // ══════════════════════════════════════════════════════
-// DADOS DEMO (quando script não configurado)
+// DADOS DEMO
 // ══════════════════════════════════════════════════════
 const CLIENTES_DEMO = [
   {ID:1,Nome:"Cleudo Dias",Telefone:"(85) 98888-0001",Usuario:"cleudo",QtdViveiros:2,ValorPorViveiro:50,TotalMensal:100,DiaVencimento:10,Status:"ativo",UltimoPagamento:"18/05/2026",ProxVencimento:"18/06/2026",AsaasCustomerId:"cus_demo1",Observacoes:"Cliente fundador"},
@@ -693,7 +676,6 @@ function renderFinanceiro() {
 }
 
 function renderCharts() {
-  // MRR por cliente
   const ativos = CLIENTES.filter(c=>c.Status==="ativo").slice(0,8);
   if (mrr_chart) mrr_chart.destroy();
   const ctx1 = document.getElementById("ch-mrr");
@@ -714,7 +696,6 @@ function renderCharts() {
     });
   }
 
-  // Status donut
   if (status_chart) status_chart.destroy();
   const ctx2 = document.getElementById("ch-status");
   const ativ = CLIENTES.filter(c=>c.Status==="ativo").length;
@@ -782,7 +763,6 @@ async function gerarTodasAsaas() {
   toast("✅ Todas as cobranças geradas!", "s");
 }
 
-// Cria no Asaas a partir do modal de novo cliente
 async function criarNoAsaas() {
   const id = document.getElementById("c-id").value;
   if (!id) { toast("Salve o cliente antes de criar no Asaas", "e"); return; }
@@ -826,7 +806,7 @@ function wppMassa() {
 }
 
 // ══════════════════════════════════════════════════════
-// CRUD CLIENTES
+// CRUD CLIENTES (CORRIGIDO)
 // ══════════════════════════════════════════════════════
 function calcTotal() {
   const v = parseInt(document.getElementById("c-vivs").value)||0;
@@ -840,6 +820,30 @@ function addViv() {
   const d = document.createElement("div"); d.className="viv-row";
   d.innerHTML=`<div class="viv-n">V${n}</div><input type="text" placeholder="URL Apps Script — Viveiro ${n}"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>`;
   ct.appendChild(d);
+}
+
+// NOVA FUNÇÃO: Reseta o modal limpando o c-id e todos os campos para não sobrescrever clientes
+function novoCliente() {
+  document.getElementById("m-cli-title").textContent = "➕ Novo Cliente";
+  document.getElementById("c-id").value = ""; 
+  document.getElementById("c-nome").value = "";
+  document.getElementById("c-tel").value = "";
+  document.getElementById("c-usr").value = "";
+  document.getElementById("c-pwd").value = "";
+  document.getElementById("c-email").value = "";
+  document.getElementById("c-vivs").value = 1;
+  document.getElementById("c-valviv").value = 50;
+  document.getElementById("c-obs").value = "";
+  
+  document.getElementById("viv-ct").innerHTML = `
+    <div class="viv-row">
+      <div class="viv-n">V1</div>
+      <input type="text" placeholder="https://script.google.com/macros/s/.../exec">
+      <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>
+    </div>`;
+    
+  calcTotal();
+  openM("m-cli");
 }
 
 function editarViveiros(id) {
@@ -889,7 +893,6 @@ async function salvarCliente() {
     const data = await api(params);
     if (data.status === "ok") {
       toast(`✅ ${nome} salvo com sucesso!`, "s");
-      // Atualiza ID do cliente recém criado para o botão Asaas
       if (data.id && !document.getElementById("c-id").value) {
         document.getElementById("c-id").value = data.id;
       }
@@ -897,7 +900,6 @@ async function salvarCliente() {
       await carregarDados();
     } else toast("Erro: " + data.msg, "e");
   } catch {
-    // Fallback local
     const vivs = parseInt(params.qtd_viveiros)||1;
     const val  = parseFloat(params.valor_viveiro)||50;
     const novoId = Date.now();
@@ -912,7 +914,6 @@ async function salvarCliente() {
 
 function verDetalhe(id) {
   const c = CLIENTES.find(x=>x.ID==id);
-  const i = CLIENTES.indexOf(c);
   if (!c) return;
   const total = (parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50);
   document.getElementById("m-det-title").textContent = `👤 ${c.Nome}`;
