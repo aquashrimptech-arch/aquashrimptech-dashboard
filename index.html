@@ -19,8 +19,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .login-sub{font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;text-align:center}
 .login-field{margin-bottom:14px}
 .login-field label{display:block;font-size:.66rem;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
-.login-field input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:.88rem;outline:none;transition:border-color .2s}
-.login-field input:focus{border-color:var(--accent)}
+.login-field input,.login-field select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:.88rem;outline:none;transition:border-color .2s}
+.login-field input:focus,.login-field select:focus{border-color:var(--accent)}
 .login-btn{width:100%;margin-top:8px;padding:13px;background:linear-gradient(135deg,var(--accent),#0090a8);border:none;border-radius:10px;color:#080f1a;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;letter-spacing:.06em;cursor:pointer;transition:opacity .2s,transform .15s}
 .login-btn:hover{opacity:.9;transform:translateY(-1px)}
 .login-btn:active{transform:translateY(0)}
@@ -44,7 +44,6 @@ nav::-webkit-scrollbar{display:none}
 .tab-btn:hover{color:var(--text)}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);text-shadow:0 0 12px rgba(0,229,255,.4)}
 main{position:relative;z-index:5;padding:18px;max-width:1500px;margin:0 auto}
-.tab-panel{display:none}.tab-panel.active{display:block}
 .section-title{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:10px}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
@@ -109,6 +108,29 @@ tbody td{padding:9px 13px;font-size:.76rem;font-family:'DM Mono',monospace;white
 .error-msg{background:rgba(255,79,79,.08);border:1px solid rgba(255,79,79,.3);border-radius:10px;padding:13px 17px;color:var(--danger);font-size:.76rem;margin-bottom:13px}
 footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62rem;color:var(--muted);border-top:1px solid var(--border);font-family:'DM Mono',monospace;letter-spacing:.06em}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* Estilos de Botões Operacionais HTML */
+.v-actions-panel{display:flex;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap}
+.btn-action-html{flex:1;min-width:75px;padding:7px 5px;font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;gap:3px}
+.btn-action-html:hover{border-color:var(--accent);box-shadow:0 0 10px rgba(0,229,255,.2);transform:translateY(-1px)}
+.btn-action-html.danger-action:hover{border-color:var(--danger);box-shadow:0 0 10px rgba(255,79,79,.2);color:var(--danger)}
+
+.est-btn-add{width:100%;margin-top:10px;padding:6px;font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);color:var(--accent);border-radius:6px;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.est-btn-add:hover{background:var(--accent);color:#080f1a}
+
+.top-bar-est{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.btn-top-est{padding:8px 14px;font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;background:linear-gradient(135deg,var(--accent2),#00b072);border:none;color:#080f1a;border-radius:8px;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.05em}
+.btn-top-est:hover{opacity:.9;transform:translateY(-1px)}
+
+/* Modais Popups */
+.modal-overlay{position:fixed;inset:0;background:rgba(4,8,15,.85);backdrop-filter:blur(4px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:20px;width:100%;max-width:400px;padding:24px;box-shadow:0 0 40px rgba(0,229,255,.1);animation:fadeUp .3s ease}
+.modal-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:var(--accent);margin-bottom:16px;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:6px}
+.modal-buttons{display:flex;gap:10px;margin-top:20px}
+.btn-modal{flex:1;padding:11px;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;border-radius:8px;border:none;cursor:pointer;text-transform:uppercase;transition:all .2s}
+.btn-modal.confirm{background:var(--accent);color:#080f1a}.btn-modal.confirm:hover{opacity:.9}
+.btn-modal.cancel{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-modal.cancel:hover{color:var(--text);border-color:var(--muted)}
+
 @media(max-width:600px){
   .login-box{padding:28px 22px}
   header{padding:10px 14px}
@@ -202,7 +224,10 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     </div>
   </div>
   <div id="tab-estoque" class="tab-panel">
-    <div class="section-title">Situação dos Insumos</div>
+    <div class="top-bar-est">
+      <div class="section-title" style="margin-bottom:0; flex:1">Situação dos Insumos</div>
+      <button class="btn-top-est" onclick="abrirModalNovoInsumo()">➕ Novo Item</button>
+    </div>
     <div class="kpi-grid" id="kpi-estoque"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
     <div class="estoque-grid" id="estoque-grid"></div>
   </div>
@@ -210,10 +235,99 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 <footer>AQUASHRIMPTECH · PAINEL EXECUTIVO · ATUALIZADO VIA ESP32 + TELEGRAM</footer>
 </div>
 
+<div id="modal-desbaste" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🔱 Registrar Desbaste (<span class="modal-viv-nome"></span>)</div>
+    <div class="login-field"><label>Quantidade Desbastada (Kg)</label><input type="number" id="obs-desb-kg" step="0.01" placeholder="Ex: 150.50"></div>
+    <div class="login-field"><label>Valor Recebido (R$)</label><input type="number" id="obs-desb-valor" step="0.01" placeholder="Ex: 3200.00"></div>
+    <div class="login-field"><label>Dias de Ciclo Faltantes</label><input type="number" id="obs-desb-dias" placeholder="Ex: 12"></div>
+    <div class="login-field"><label>Senha de Confirmação</label><input type="password" id="obs-desb-senha" placeholder="Sua senha de login"></div>
+    <div class="modal-buttons">
+      <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal confirm" onclick="executarDesbaste()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-despesca" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🎣 Despesca Final (<span class="modal-viv-nome"></span>)</div>
+    <div class="login-field"><label>Total Vendido (Kg)</label><input type="number" id="obs-desp-kg" step="0.01" placeholder="Ex: 1200.00"></div>
+    <div class="login-field"><label>Valor Total Recebido (R$)</label><input type="number" id="obs-desp-valor" step="0.01" placeholder="Ex: 28000.00"></div>
+    <div class="login-field"><label>Custo Estimado da Ração (R$)</label><input type="number" id="obs-desp-cracao" step="0.01" placeholder="Puxe da planilha ou digite"></div>
+    <div class="login-field"><label>Custo Adicional Lançado (R$)</label><input type="number" id="obs-desp-cadic" step="0.01" placeholder="Puxe da planilha ou digite"></div>
+    <div class="login-field"><label>Dias Totais de Ciclo</label><input type="number" id="obs-desp-dias" placeholder="Ex: 85"></div>
+    <div class="login-field"><label>Senha de Confirmação</label><input type="password" id="obs-desp-senha" placeholder="Sua senha de login"></div>
+    <div class="modal-buttons">
+      <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal confirm" onclick="executarDespesca()">Finalizar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-limpar" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🗑️ Limpar Ciclo (<span class="modal-viv-nome"></span>)</div>
+    <p style="font-size:0.8rem; color:var(--danger); margin-bottom:15px; font-weight:600;">⚠️ Atenção: Esta ação apagará os dados do ciclo ativo atual do viveiro na planilha e na memória do dispositivo!</p>
+    <div class="login-field"><label>Senha de Confirmação</label><input type="password" id="obs-limpar-senha" placeholder="Sua senha de login"></div>
+    <div class="modal-buttons">
+      <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal confirm" style="background:var(--danger); color:white" onclick="executarLimparCiclo()">Zerar Ciclo</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-est-entrada" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">📦 Entrada de Insumo</div>
+    <div class="login-field"><label>Produto</label><input type="text" id="obs-est-nome" readonly style="opacity:0.7"></div>
+    <div class="login-field"><label>Quantidade de Entrada (<span id="obs-est-un-label"></span>)</label><input type="number" id="obs-est-qtd" step="0.001" placeholder="Ex: 50.000"></div>
+    <div class="login-field"><label>Valor TOTAL Pago (R$)</label><input type="number" id="obs-est-valor" step="0.01" placeholder="Ex: 250.00"></div>
+    <div class="modal-buttons">
+      <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal confirm" onclick="executarEntradaEstoque()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-est-novo" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">✨ Cadastrar Novo Item</div>
+    <div class="login-field"><label>Nome do Insumo</label><input type="text" id="obs-novo-nome" placeholder="Ex: Ração Inicial 38%"></div>
+    <div class="login-field">
+      <label>Categoria</label>
+      <select id="obs-novo-cat">
+        <option value="Ração">Ração</option>
+        <option value="Insumo">Insumo</option>
+        <option value="Produtos">Produtos</option>
+        <option value="Outros">Outros</option>
+      </select>
+    </div>
+    <div class="login-field">
+      <label>Unidade de Medida</label>
+      <select id="obs-novo-un">
+        <option value="kg">kg</option>
+        <option value="g">g</option>
+        <option value="L">L</option>
+        <option value="mL">mL</option>
+        <option value="un">un</option>
+        <option value="saco">saco</option>
+      </select>
+    </div>
+    <div class="login-field"><label>Estoque Mínimo Alerta (0=sem alerta)</label><input type="number" id="obs-novo-min" step="0.01" value="0"></div>
+    <div class="login-field"><label>Qtd Inicial de Entrada</label><input type="number" id="obs-novo-qtd" step="0.001" value="0"></div>
+    <div class="login-field"><label>Valor Total Pago (R$)</label><input type="number" id="obs-novo-valor" step="0.01" value="0"></div>
+    <div class="modal-buttons">
+      <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal confirm" onclick="executarCriarNovoInsumo()">Cadastrar</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 // ════════════════════════════════════════════════════════
-// ▶ LOGO
+// ▶ LOGO e CONFIGURAÇÕES TÉCNICAS
 // ════════════════════════════════════════════════════════
 const LOGO_URLS = [
   "https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png",
@@ -237,6 +351,7 @@ let CLIENTE = null;
 let DADOS = { viveiros: [], estoque: [] };
 let refreshTimer = null;
 let _clientesCarregados = false;
+let viveiroSelecionadoContexto = null;
 
 const R  = n => (isNaN(n)||n===null) ? "—" : "R$ "+Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
 const Nf = n => (isNaN(n)||n===null) ? "—" : Number(n).toLocaleString("pt-BR");
@@ -260,10 +375,7 @@ function switchTab(name, btn) {
   document.getElementById("tab-" + name).classList.add("active");
   btn.classList.add("active");
 }
-function tickClock() {
-  document.getElementById("clock").textContent =
-    new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR");
-}
+function tickClock() { document.getElementById("clock").textContent = new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR"); }
 setInterval(tickClock, 1000); tickClock();
 
 async function loadClientesDoAdm() {
@@ -290,9 +402,7 @@ async function loadClientesDoAdm() {
         .filter(c => c.usuario && c.senha && c.viveiros.length > 0);
       _clientesCarregados = true;
     }
-  } catch (e) {
-    if (CLIENTES_FALLBACK.length > 0) CLIENTES_CONFIG = CLIENTES_FALLBACK;
-  }
+  } catch (e) { if (CLIENTES_FALLBACK.length > 0) CLIENTES_CONFIG = CLIENTES_FALLBACK; }
 }
 
 async function fazerLogin() {
@@ -339,9 +449,7 @@ window.addEventListener("load", async () => {
     document.getElementById("inp-usuario").value = u;
     document.getElementById("inp-senha").value   = s;
     fazerLogin();
-  } else {
-    document.getElementById("btn-adm").style.display = "block";
-  }
+  } else { document.getElementById("btn-adm").style.display = "block"; }
 });
 
 async function carregarDados() {
@@ -349,7 +457,7 @@ async function carregarDados() {
   const fetchViveiros = CLIENTE.viveiros.map(v =>
     fetch(v.url + "?tipo=dashboard")
       .then(r => r.json())
-      .then(data => { const vv = data.viveiros?.[0] || {}; vv.nome = v.nome; return vv; })
+      .then(data => { const vv = data.viveiros?.[0] || {}; vv.nome = v.nome; vv.scriptUrlBase = v.url; return vv; })
       .catch(() => ({ nome: v.nome, _erro: true }))
   );
   const fetchEstoque = fetch(CLIENTE.estoque.url + "?tipo=listagem")
@@ -364,7 +472,7 @@ async function carregarDados() {
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ KPIs
+// ▶ KPIs DE EXIBIÇÃO
 // ════════════════════════════════════════════════════════
 function renderKpiGeral() {
   const v = DADOS.viveiros.filter(x=>!x._erro);
@@ -386,7 +494,7 @@ function renderKpiGeral() {
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ VIVEIROS
+// ▶ RENDER VIVEIROS + INJEÇÃO DOS BOTÕES OPERACIONAIS HTML
 // ════════════════════════════════════════════════════════
 function renderViveiros() {
   const grid = document.getElementById("viveiros-grid");
@@ -404,6 +512,7 @@ function renderViveiros() {
     const racaoId   = v.racaoIdeal ?? 0;
     const pctSurv   = Math.min(100, Math.round(surv));
     const corSurv   = surv >= 70 ? 'var(--accent2)' : surv >= 50 ? 'var(--warn)' : 'var(--danger)';
+    
     return `<div class="viveiro-card" style="animation-delay:${i*.08}s">
       <div class="viveiro-header">
         <div class="viveiro-name">${v.nome||"Viveiro"}</div>
@@ -447,12 +556,172 @@ function renderViveiros() {
         <span>Sobrevivência: ${surv > 0 ? surv.toFixed(1)+'%' : '—'}</span>
         <span>Ração total: ${Nf(v.racaoTotal)} kg</span>
       </div>
+      
+      <div class="v-actions-panel">
+        <button class="btn-action-html" onclick="abrirModalOperacao('desbaste', '${v.nome}', '${v.scriptUrlBase}', ${diasCiclo})">🔱 Desbaste</button>
+        <button class="btn-action-html" onclick="abrirModalOperacao('despesca', '${v.nome}', '${v.scriptUrlBase}', ${diasCiclo}, ${v.custoCiclo||0})">🎣 Despesca</button>
+        <button class="btn-action-html danger-action" onclick="abrirModalOperacao('limpar', '${v.nome}', '${v.scriptUrlBase}')">🗑️ Limpar</button>
+      </div>
     </div>`;
   }).join("");
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ BIOMETRIA
+// ▶ CONTROLADORES DE MODAIS E OPERAÇÕES REMOTAS (VIVEIRO)
+// ════════════════════════════════════════════════════════
+function fecharModais() {
+  document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none');
+  viveiroSelecionadoContexto = null;
+}
+
+function abrirModalOperacao(tipo, nome, url, dias = 0, custo = 0) {
+  viveiroSelecionadoContexto = { tipo, nome, url };
+  document.querySelectorAll('.modal-viv-nome').forEach(el => el.textContent = nome);
+  
+  if (tipo === 'desbaste') {
+    document.getElementById('obs-desb-kg').value = '';
+    document.getElementById('obs-desb-valor').value = '';
+    document.getElementById('obs-desb-dias').value = dias;
+    document.getElementById('obs-desb-senha').value = '';
+    document.getElementById('modal-desbaste').style.display = 'flex';
+  } else if (tipo === 'despesca') {
+    document.getElementById('obs-desp-kg').value = '';
+    document.getElementById('obs-desp-valor').value = '';
+    document.getElementById('obs-desp-cracao').value = (custo * 0.7).toFixed(2); // estimativa inicial de ração
+    document.getElementById('obs-desp-cadic').value = (custo * 0.3).toFixed(2); // estimativa de adicionais
+    document.getElementById('obs-desp-dias').value = dias;
+    document.getElementById('obs-desp-senha').value = '';
+    document.getElementById('modal-despesca').style.display = 'flex';
+  } else if (tipo === 'limpar') {
+    document.getElementById('obs-limpar-senha').value = '';
+    document.getElementById('modal-limpar').style.display = 'flex';
+  }
+}
+
+function validarSenhaLogin(senhaDigitada) {
+  const senhaMestraValida = sessionStorage.getItem("ast_senha");
+  return senhaDigitada === senhaMestraValida;
+}
+
+async function executarDesbaste() {
+  const kg = document.getElementById('obs-desb-kg').value;
+  const valor = document.getElementById('obs-desb-valor').value;
+  const dias = document.getElementById('obs-desb-dias').value;
+  const senha = document.getElementById('obs-desb-senha').value;
+  
+  if(!kg || !valor || !dias) { alert('Preencha todos os campos corretamente.'); return; }
+  if(!validarSenhaLogin(senha)) { alert('Senha de confirmação incorreta.'); return; }
+  
+  const endpoint = `${viveiroSelecionadoContexto.url}?tipo=desbaste&kg=${parseFloat(kg)}&valor=${parseFloat(valor)}&dias=${parseInt(dias)}`;
+  fecharModais();
+  try {
+    const r = await fetch(endpoint).then(res => res.json());
+    alert(r.status === 'ok' ? '🔱 Desbaste registrado com sucesso!' : 'Erro: ' + r.msg);
+    carregarDados();
+  } catch(e) { alert('Falha ao processar requisição com a planilha.'); }
+}
+
+async function executarDespesca() {
+  const kg = document.getElementById('obs-desp-kg').value;
+  const valor = document.getElementById('obs-desp-valor').value;
+  const cRacao = document.getElementById('obs-desp-cracao').value;
+  const cAdic = document.getElementById('obs-desp-cadic').value;
+  const dias = document.getElementById('obs-desp-dias').value;
+  const senha = document.getElementById('obs-desp-senha').value;
+  
+  if(!kg || !valor || !cRacao || !cAdic || !dias) { alert('Preencha todos os campos.'); return; }
+  if(!validarSenhaLogin(senha)) { alert('Senha de confirmação incorreta.'); return; }
+  
+  const endpoint = `${viveiroSelecionadoContexto.url}?tipo=despesca&kg=${parseFloat(kg)}&valor=${parseFloat(valor)}&custoracao=${parseFloat(cRacao)}&custoadicional=${parseFloat(cAdic)}&dias=${parseInt(dias)}`;
+  fecharModais();
+  try {
+    const r = await fetch(endpoint).then(res => res.json());
+    alert(r.status === 'ok' ? '🎣 Despesca finalizada com sucesso!' : 'Erro: ' + r.msg);
+    carregarDados();
+  } catch(e) { alert('Falha ao processar a despesca.'); }
+}
+
+async function ejecutarLimparCiclo() {
+  const senha = document.getElementById('obs-limpar-senha').value;
+  if(!validarSenhaLogin(senha)) { alert('Senha de confirmação incorreta.'); return; }
+  
+  const endpoint = `${viveiroSelecionadoContexto.url}?tipo=limpar_ciclo`;
+  fecharModais();
+  try {
+    const r = await fetch(endpoint).then(res => res.json());
+    alert(r.status === 'ok' ? '🗑️ Ciclo de cultivo zerado com sucesso.' : 'Erro: ' + r.msg);
+    carregarDados();
+  } catch(e) { alert('Falha ao zerar ciclo.'); }
+}
+
+// ════════════════════════════════════════════════════════
+// ▶ GESTÃO DE ESTOQUE VIA HTML
+// ════════════════════════════════════════════════════════
+function abrirModalEntradaEstoque(produto, unidade) {
+  document.getElementById('obs-est-nome').value = produto;
+  document.getElementById('obs-est-un-label').textContent = unidade;
+  document.getElementById('obs-est-qtd').value = '';
+  document.getElementById('obs-est-valor').value = '';
+  document.getElementById('modal-est-entrada').style.display = 'flex';
+}
+
+function abrirModalNovoInsumo() {
+  document.getElementById('obs-novo-nome').value = '';
+  document.getElementById('obs-novo-min').value = '0';
+  document.getElementById('obs-novo-qtd').value = '0';
+  document.getElementById('obs-novo-valor').value = '0';
+  document.getElementById('modal-est-novo').style.display = 'flex';
+}
+
+async function executarEntradaEstoque() {
+  const produto = document.getElementById('obs-est-nome').value;
+  const qtd = document.getElementById('obs-est-qtd').value;
+  const valor = document.getElementById('obs-est-valor').value;
+  const usuarioLogado = sessionStorage.getItem("ast_usuario") || "Desconhecido";
+  
+  if(!qtd || !valor || parseFloat(qtd) <= 0) { alert('Informe valores válidos.'); return; }
+  
+  const custoUnit = parseFloat(valor) / parseFloat(qtd);
+  const obsString = `Efetuado via HTML | Usuario: ${usuarioLogado}`;
+  const endpoint = `${CLIENTE.estoque.url}?acao=entrada&produto=${encodeURIComponent(produto)}&qtd=${parseFloat(qtd)}&custo=${custoUnit.toFixed(4)}&obs=${encodeURIComponent(obsString)}`;
+  
+  fecharModais();
+  try {
+    const r = await fetch(endpoint).then(res => res.json());
+    alert(r.status === 'ok' ? '📦 Entrada registrada e custo médio atualizado!' : 'Erro: ' + r.msg);
+    carregarDados();
+  } catch(e) { alert('Falha de comunicação com a planilha de estoque.'); }
+}
+
+async function executarCriarNovoInsumo() {
+  const produto = document.getElementById('obs-novo-nome').value.trim();
+  const categoria = document.getElementById('obs-novo-cat').value;
+  const unidade = document.getElementById('obs-novo-un').value;
+  const estoqueMin = document.getElementById('obs-novo-min').value;
+  const qtd = document.getElementById('obs-novo-qtd').value;
+  const valor = document.getElementById('obs-novo-valor').value;
+  const usuarioLogado = sessionStorage.getItem("ast_usuario") || "Desconhecido";
+  
+  if(!produto) { alert('O nome do insumo é obrigatório.'); return; }
+  
+  let custoUnit = 0;
+  if (parseFloat(qtd) > 0 && parseFloat(valor) > 0) {
+    custoUnit = parseFloat(valor) / parseFloat(qtd);
+  }
+  
+  const obsString = `Cadastro via HTML | Usuario: ${usuarioLogado}|unidade=${unidade}|min=${estoqueMin}`;
+  const endpoint = `${CLIENTE.estoque.url}?acao=entrada&produto=${encodeURIComponent(produto)}&qtd=${parseFloat(qtd)}&custo=${custoUnit.toFixed(4)}&categoria=${encodeURIComponent(categoria)}&obs=${encodeURIComponent(obsString)}`;
+  
+  fecharModais();
+  try {
+    const r = await fetch(endpoint).then(res => res.json());
+    alert(r.status === 'ok' ? '✨ Novo insumo cadastrado com sucesso!' : 'Erro: ' + r.msg);
+    carregarDados();
+  } catch(e) { alert('Falha ao cadastrar item.'); }
+}
+
+// ════════════════════════════════════════════════════════
+// ▶ RENDERIZADORES DE TABELAS / GRÁFICOS (MANTIDOS ORIGINAIS)
 // ════════════════════════════════════════════════════════
 let bioChartInstance = null;
 function renderBiometria() {
@@ -474,13 +743,10 @@ function renderBiometria() {
   const labels=[...tsSet.entries()].sort((a,b)=>a[0]-b[0]).map(e=>e[1]);
   if(bioChartInstance) bioChartInstance.destroy();
   const ctx=document.getElementById("bioChart").getContext("2d");
-  if(!labels.length){ ctx.canvas.parentElement.innerHTML+=`<p style="text-align:center;color:var(--muted);font-family:'DM Mono';padding:20px">Sem dados de biometria</p>`; return; }
+  if(!labels.length){ return; }
   bioChartInstance=new Chart(ctx,{type:"line",data:{labels,datasets:DADOS.viveiros.filter(x=>!x._erro&&x.biometria?.length>0).map((v,i)=>({label:v.nome,data:labels.map(lbl=>{ const b=(v.biometria||[]).find(x=>fmtData(x.data)===lbl); return b?b.peso:null; }),borderColor:COLORS[i%COLORS.length],backgroundColor:COLORS[i%COLORS.length]+"22",borderWidth:2.5,pointRadius:4,tension:0.35,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{labels:{color:"#5a7a95",font:{family:"'DM Mono'",size:11}}},tooltip:{backgroundColor:"#0d1a2e",borderColor:"#1a3050",borderWidth:1,titleColor:"#e8f4f8",bodyColor:"#5a7a95",callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y?.toFixed(2)??"—"}g`}}},scales:{x:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10}}},y:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10},callback:v=>v+"g"}}}}});
 }
 
-// ════════════════════════════════════════════════════════
-// ▶ HISTÓRICO — visual accordion por viveiro (v2 — mesmo estilo da demo)
-// ════════════════════════════════════════════════════════
 function toggleCiclo(id) {
   const body = document.getElementById("ciclo-body-" + id);
   const icon = document.getElementById("ciclo-icon-" + id);
@@ -492,43 +758,24 @@ function toggleCiclo(id) {
 function renderHistorico() {
   const viveirosValidos = DADOS.viveiros.filter(x => !x._erro);
   const tabHist = document.getElementById("tab-historico");
-
-  // Limpa conteúdo gerado dinamicamente (preserva section-title e lucro-acum)
   tabHist.querySelectorAll(".hist-bloco-viveiro").forEach(el => el.remove());
   document.getElementById("hist-titulo").textContent = "Cultivos Finalizados — " + (CLIENTE?.nome || "");
   document.getElementById("lucro-acum").textContent = "";
-
-  if (!viveirosValidos.length) {
-    tabHist.insertAdjacentHTML("beforeend", `<div class="error-msg hist-bloco-viveiro">Nenhum viveiro disponível.</div>`);
-    return;
-  }
-
-  // Cores de acento por viveiro — barra lateral colorida
-  const VIVEIRO_CORES = [
-    "#00e5ff","#00ffa3","#ffb300","#a78bfa",
-    "#f97316","#38bdf8","#4ade80","#f472b6",
-    "#facc15","#34d399","#818cf8","#ff4f4f"
-  ];
-
+  if (!viveirosValidos.length) { tabHist.insertAdjacentHTML("beforeend", `<div class="error-msg hist-bloco-viveiro">Nenhum viveiro disponível.</div>`); return; }
+  const VIVEIRO_CORES = ["#00e5ff","#00ffa3","#ffb300","#a78bfa","#f97316","#38bdf8","#4ade80","#f472b6","#facc15","#34d399","#818cf8","#ff4f4f"];
   let lucroGlobal = 0;
 
   viveirosValidos.forEach((v, vi) => {
     const corViveiro = VIVEIRO_CORES[vi % VIVEIRO_CORES.length];
-
-    // Filtra linhas inválidas (igual ao original)
     const linhas = (v.historico || []).filter(h => {
-      const d = parseData(h.data);
-      if (!d || d.getFullYear() < 2000) return false;
+      const d = parseData(h.data); if (!d || d.getFullYear() < 2000) return false;
       const cultNome = String(h.cultivo || "").trim().toUpperCase();
       if (cultNome.includes("TOTAL") || cultNome.includes("SOMA")) return false;
       if (!h.receita && !h.kg) return false;
       return true;
     });
 
-    // Agrupa por ciclo_id (igual ao original)
-    const ciclos = [];
-    const desbastesSemCiclo = [];
-
+    const ciclos = []; const desbastesSemCiclo = [];
     linhas.forEach(h => {
       const tipo = String(h.tipo || "DESPESCA").toUpperCase();
       if (tipo === "DESBASTE") {
@@ -536,232 +783,93 @@ function renderHistorico() {
           let ciclo = ciclos.find(c => c.id === h.ciclo_id);
           if (!ciclo) { ciclo = { id: h.ciclo_id, despesca: null, desbastes: [] }; ciclos.push(ciclo); }
           ciclo.desbastes.push(h);
-        } else {
-          desbastesSemCiclo.push(h);
-        }
+        } else { desbastesSemCiclo.push(h); }
       } else {
         const cicloId = h.ciclo_id || ("_auto_" + ciclos.length);
         let ciclo = ciclos.find(c => c.id === cicloId);
         if (!ciclo) { ciclo = { id: cicloId, despesca: null, desbastes: [] }; ciclos.push(ciclo); }
         ciclo.despesca = h;
-        if (!h.ciclo_id && desbastesSemCiclo.length) {
-          ciclo.desbastes.push(...desbastesSemCiclo.splice(0));
-        }
+        if (!h.ciclo_id && desbastesSemCiclo.length) { ciclo.desbastes.push(...desbastesSemCiclo.splice(0)); }
       }
     });
+    if (desbastesSemCiclo.length) { ciclos.push({ id: "_aberto_", despesca: null, desbastes: desbastesSemCiclo }); }
 
-    if (desbastesSemCiclo.length) {
-      ciclos.push({ id: "_aberto_", despesca: null, desbastes: desbastesSemCiclo });
-    }
-
-    // Totais do viveiro para o header
     let lucroV = 0;
     ciclos.forEach(c => { if (c.despesca) lucroV += c.despesca.lucro || 0; });
-    const isLucroV = lucroV >= 0;
-    lucroGlobal += lucroV;
-
+    const isLucroV = lucroV >= 0; lucroGlobal += lucroV;
     const totalKg  = ciclos.reduce((s,c) => s + (c.despesca?.kg || 0), 0);
     const totalCust = ciclos.reduce((s,c) => s + (c.despesca?.c_total || 0), 0);
     const totalRec  = ciclos.reduce((s,c) => s + (c.despesca?.receita || 0), 0);
     const nCiclos   = ciclos.filter(c => c.despesca).length;
-
+    
     if (!ciclos.length) {
-      tabHist.insertAdjacentHTML("beforeend", `
-        <div class="hist-bloco-viveiro" style="margin-bottom:28px;border-radius:14px;overflow:hidden;border:1px solid ${corViveiro}44">
-          <div style="padding:16px 20px;background:linear-gradient(90deg,${corViveiro}12 0%,rgba(16,31,53,.95) 60%);border-left:5px solid ${corViveiro}">
-            <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:${corViveiro}">🦐 ${v.nome}</div>
-            <div style="font-size:.65rem;color:var(--muted);margin-top:4px">Nenhum cultivo finalizado ainda</div>
-          </div>
-        </div>`);
+      tabHist.insertAdjacentHTML("beforeend", `<div class="hist-bloco-viveiro" style="margin-bottom:28px;border-radius:14px;overflow:hidden;border:1px solid ${corViveiro}44"><div style="padding:16px 20px;background:linear-gradient(90deg,${corViveiro}12 0%,rgba(16,31,53,.95) 60%);border-left:5px solid ${corViveiro}"><div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:${corViveiro}">🦐 ${v.nome}</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px">Nenhum cultivo finalizado ainda</div></div></div>`);
       return;
     }
 
-    // Monta ciclos
-    let ciclosHtml = "";
-    let cicloNum = 0;
-
+    let ciclosHtml = ""; let cicloNum = 0;
     ciclos.forEach(ciclo => {
-      cicloNum++;
-      const despesca  = ciclo.despesca;
-      const desbastes = ciclo.desbastes;
-      const aberto    = !despesca;
-      const lucroCiclo = despesca ? (despesca.lucro || 0) : 0;
-      const isLucro   = lucroCiclo >= 0;
-      const cicloId   = `v${vi}_c${cicloNum}`;
-
-      // Cor e label por número de ciclo
-      const corCiclo   = cicloNum === 1 ? "#ffb300" : cicloNum === 2 ? "#38bdf8" : "#00ffa3";
+      cicloNum++; const despesca = ciclo.despesca; const desbastes = ciclo.desbastes; const aberto = !despesca;
+      const lucroCiclo = despesca ? (despesca.lucro || 0) : 0; const isLucro = lucroCiclo >= 0; const cicloId = `v${vi}_c${cicloNum}`;
+      const corCiclo = cicloNum === 1 ? "#ffb300" : cicloNum === 2 ? "#38bdf8" : "#00ffa3";
       const labelCiclo = cicloNum === 1 ? "Implantação" : cicloNum === 2 ? "Operacional" : "Consolidado";
       const tituloCiclo = aberto ? `Cultivo #${cicloNum} — Em andamento` : `Cultivo #${cicloNum}`;
 
-      // Todos os ciclos começam RECOLHIDOS — expandir ao clicar
-      const iniciaAberto = false;
-
-      const rowsDesbastes = desbastes.map(d => `
-        <tr style="background:rgba(0,229,255,.025)">
-          <td style="padding-left:24px;color:var(--muted);border-left:2px solid rgba(0,229,255,.15)">↳ ${d.cultivo || 'Desbaste'}</td>
-          <td>${d.data}</td><td>${d.dias}d</td><td>${Nf(d.kg)}</td>
-          <td style="color:var(--warn)">${R(d.receita)}</td>
-          <td colspan="3" style="color:var(--muted);font-size:.68rem;font-style:italic">incluído na despesca</td>
-          <td>—</td>
-          <td>${d.laboratorio ? `<span class="pill pill-blue">${d.laboratorio}</span>` : '—'}</td>
-          <td><span class="pill pill-warn">Parcial</span></td>
-        </tr>`).join("");
-
+      const rowsDesbastes = desbastes.map(d => `<tr style="background:rgba(0,229,255,.025)"><td style="padding-left:24px;color:var(--muted);border-left:2px solid rgba(0,229,255,.15)">↳ ${d.cultivo || 'Desbaste'}</td><td>${d.data}</td><td>${d.dias}d</td><td>${Nf(d.kg)}</td><td style="color:var(--warn)">${R(d.receita)}</td><td colspan="3" style="color:var(--muted);font-size:.68rem;font-style:italic">incluído na despesca</td><td>—</td><td>${d.laboratorio ? `<span class="pill pill-blue">${d.laboratorio}</span>` : '—'}</td><td><span class="pill pill-warn">Parcial</span></td></tr>`).join("");
       const rowDespesca = despesca ? (() => {
-        const recDesb       = desbastes.reduce((s, d) => s + (d.receita || 0), 0);
-        const recSoDesp     = (despesca.receita || 0) - recDesb;
-        const lab           = despesca.laboratorio || '';
-        return `
-        <tr style="background:rgba(0,0,0,.15);border-top:1px solid var(--border)">
-          <td style="font-weight:600">🎣 Despesca</td>
-          <td>${despesca.data}</td><td>${despesca.dias}d</td>
-          <td style="font-weight:600">${Nf(despesca.kg)}</td>
-          <td>${R(recSoDesp)}</td>
-          <td>${R(despesca.c_racao)}</td>
-          <td>${R(despesca.c_insumos)}</td>
-          <td>${R(despesca.c_total)}</td>
-          <td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}" style="font-weight:700">${R(lucroCiclo)}</td>
-          <td>${lab ? `<span class="pill pill-blue">${lab}</span>` : '—'}</td>
-          <td><span class="pill ${isLucro ? "pill-green" : "pill-red"}">${despesca.resultado}</span></td>
-        </tr>
-        <tr style="background:rgba(0,229,255,.05);border-top:1px solid rgba(0,229,255,.12)">
-          <td colspan="4" style="color:var(--muted);font-size:.66rem;padding-left:14px;font-style:italic">
-            📊 Totais do ciclo · ${desbastes.length} desbaste${desbastes.length !== 1 ? "s" : ""}
-          </td>
-          <td style="color:var(--accent);font-weight:700">${R(despesca.receita)}</td>
-          <td>${R(despesca.c_racao)}</td>
-          <td>${R(despesca.c_insumos)}</td>
-          <td style="font-weight:700">${R(despesca.c_total)}</td>
-          <td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}" style="font-weight:800;font-size:.85rem">${R(lucroCiclo)}</td>
-          <td colspan="2"><span class="pill ${isLucro ? "pill-green" : "pill-red"}">RESULTADO FINAL</span></td>
-        </tr>`;
+        const recDesb = desbastes.reduce((s, d) => s + (d.receita || 0), 0); const recSoDesp = (despesca.receita || 0) - recDesb; const lab = despesca.laboratorio || '';
+        return `<tr style="background:rgba(0,0,0,.15);border-top:1px solid var(--border)"><td style="font-weight:600">🎣 Despesca</td><td>${despesca.data}</td><td>${despesca.dias}d</td><td style="font-weight:600">${Nf(despesca.kg)}</td><td>${R(recSoDesp)}</td><td>${R(despesca.c_racao)}</td><td>${R(despesca.c_insumos)}</td><td>${R(despesca.c_total)}</td><td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}" style="font-weight:700">${R(lucroCiclo)}</td><td>${lab ? `<span class="pill pill-blue">${lab}</span>` : '—'}</td><td><span class="pill ${isLucro ? "pill-green" : "pill-red"}">${despesca.resultado}</span></td></tr><tr style="background:rgba(0,229,255,.05);border-top:1px solid rgba(0,229,255,.12)"><td colspan="4" style="color:var(--muted);font-size:.66rem;padding-left:14px;font-style:italic">📊 Totais do ciclo · ${desbastes.length} desbaste${desbastes.length !== 1 ? "s" : ""}</td><td style="color:var(--accent);font-weight:700">${R(despesca.receita)}</td><td>${R(despesca.c_racao)}</td><td>${R(despesca.c_insumos)}</td><td style="font-weight:700">${R(despesca.c_total)}</td><td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}" style="font-weight:800;font-size:.85rem">${R(lucroCiclo)}</td><td colspan="2"><span class="pill ${isLucro ? "pill-green" : "pill-red"}">RESULTADO FINAL</span></td></tr>`;
       })() : `<tr><td colspan="11" style="text-align:center;color:var(--warn);padding:16px;font-size:.76rem">⏳ Aguardando despesca final</td></tr>`;
 
-      ciclosHtml += `
-        <div style="margin-bottom:8px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.06)">
-          <div onclick="toggleCiclo('${cicloId}')" style="
-            display:flex;align-items:center;justify-content:space-between;
-            padding:10px 16px;cursor:pointer;user-select:none;
-            background:rgba(255,255,255,.03);
-            border-left:3px solid ${corCiclo};
-            transition:background .15s">
-            <div style="display:flex;align-items:center;gap:12px">
-              <span id="ciclo-icon-${cicloId}" style="color:${corCiclo};font-size:1rem">${iniciaAberto ? "▾" : "▸"}</span>
-              <div>
-                <div style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;color:${corCiclo}">${tituloCiclo}</div>
-                <div style="font-size:.62rem;color:var(--muted);margin-top:1px;letter-spacing:.06em;text-transform:uppercase">
-                  ${labelCiclo} · ${despesca ? despesca.dias + "d · " + Nf(despesca.kg) + " kg" : "em andamento"}
-                </div>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              ${despesca ? `<span style="font-family:'DM Mono',monospace;font-size:.78rem;font-weight:700;color:${isLucro ? "var(--accent2)" : "var(--danger)"}">${R(lucroCiclo)}</span>` : ""}
-              <span class="pill ${aberto ? "pill-warn" : isLucro ? "pill-green" : "pill-red"}">${aberto ? "aberto" : isLucro ? "✅ Lucro" : "❌ Prejuízo"}</span>
-            </div>
-          </div>
-          <div id="ciclo-body-${cicloId}" style="display:${iniciaAberto ? "block" : "none"}">
-            <div class="table-scroll">
-              <table style="min-width:480px">
-                <thead><tr>
-                  <th>Evento</th><th>Data</th><th>Dias</th><th>Kg</th>
-                  <th>Receita</th><th>C.Ração</th><th>C.Insumos</th>
-                  <th>C.Total</th><th>Lucro</th><th>Laboratório</th><th>Resultado</th>
-                </tr></thead>
-                <tbody>${rowsDesbastes}${rowDespesca}</tbody>
-              </table>
-            </div>
-          </div>
-        </div>`;
+      ciclosHtml += `<div style="margin-bottom:8px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.06)"><div onclick="toggleCiclo('${cicloId}')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;cursor:pointer;user-select:none;background:rgba(255,255,255,.03);border-left:3px solid ${corCiclo};transition:background .15s"><div style="display:flex;align-items:center;gap:12px"><span id="ciclo-icon-${cicloId}" style="color:${corCiclo};font-size:1rem">▸</span><div><div style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;color:${corCiclo}">${tituloCiclo}</div><div style="font-size:.62rem;color:var(--muted);margin-top:1px;letter-spacing:.06em;text-transform:uppercase">${labelCiclo} · ${despesca ? despesca.dias + "d · " + Nf(despesca.kg) + " kg" : "em andamento"}</div></div></div><div style="display:flex;align-items:center;gap:8px">${despesca ? `<span style="font-family:'DM Mono',monospace;font-size:.78rem;font-weight:700;color:${isLucro ? "var(--accent2)" : "var(--danger)"}">${R(lucroCiclo)}</span>` : ""}<span class="pill ${aberto ? "pill-warn" : isLucro ? "pill-green" : "pill-red"}">${aberto ? "aberto" : isLucro ? "✅ Lucro" : "❌ Prejuízo"}</span></div></div><div id="ciclo-body-${cicloId}" style="display:none"><div class="table-scroll"><table style="min-width:480px"><thead><tr><th>Evento</th><th>Data</th><th>Dias</th><th>Kg</th><th>Receita</th><th>C.Ração</th><th>C.Insumos</th><th>C.Total</th><th>Lucro</th><th>Laboratório</th><th>Resultado</th></tr></thead><tbody>${rowsDesbastes}${rowDespesca}</tbody></table></div></div></div>`;
     });
 
-    tabHist.insertAdjacentHTML("beforeend", `
-      <div class="hist-bloco-viveiro" style="margin-bottom:28px">
-
-        <!-- Header do viveiro -->
-        <div style="
-          display:flex;align-items:stretch;
-          border-radius:14px 14px 0 0;overflow:hidden;
-          border:1px solid ${corViveiro}44;border-bottom:none">
-          <div style="width:5px;background:${corViveiro};flex-shrink:0"></div>
-          <div style="
-            flex:1;padding:16px 20px;
-            background:linear-gradient(90deg,${corViveiro}12 0%,rgba(16,31,53,.95) 60%);
-            display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-            <div style="display:flex;align-items:center;gap:14px">
-              <div style="
-                width:40px;height:40px;border-radius:10px;
-                background:${corViveiro}22;border:1px solid ${corViveiro}44;
-                display:flex;align-items:center;justify-content:center;font-size:1.2rem">🦐</div>
-              <div>
-                <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:${corViveiro};letter-spacing:.03em">${v.nome}</div>
-                <div style="font-size:.65rem;color:var(--muted);margin-top:2px;letter-spacing:.08em;text-transform:uppercase">
-                  ${nCiclos} cultivo${nCiclos !== 1 ? "s" : ""} finalizado${nCiclos !== 1 ? "s" : ""}
-                </div>
-              </div>
-            </div>
-            <!-- Mini KPIs -->
-            <div style="display:flex;gap:16px;flex-wrap:wrap">
-              <div style="text-align:right">
-                <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Produção</div>
-                <div style="font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--text)">${Nf(Math.round(totalKg))} kg</div>
-              </div>
-              <div style="text-align:right">
-                <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Receita</div>
-                <div style="font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--accent)">${R(totalRec)}</div>
-              </div>
-              <div style="text-align:right">
-                <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Custo</div>
-                <div style="font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--warn)">${R(totalCust)}</div>
-              </div>
-              <div style="text-align:right">
-                <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Lucro acum.</div>
-                <div style="font-family:'DM Mono',monospace;font-size:.9rem;font-weight:800;color:${isLucroV ? "var(--accent2)" : "var(--danger)"}">${R(lucroV)}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Ciclos do viveiro -->
-        <div style="
-          border:1px solid ${corViveiro}33;border-top:none;
-          border-radius:0 0 14px 14px;padding:12px;
-          background:rgba(8,15,26,.6)">
-          ${ciclosHtml}
-        </div>
-
-      </div>`);
+    tabHist.insertAdjacentHTML("beforeend", `<div class="hist-bloco-viveiro" style="margin-bottom:28px"><div style="display:flex;align-items:stretch;border-radius:14px 14px 0 0;overflow:hidden;border:1px solid ${corViveiro}44;border-bottom:none"><div style="width:5px;background:${corViveiro};flex-shrink:0"></div><div style="flex:1;padding:16px 20px;background:linear-gradient(90deg,${corViveiro}12 0%,rgba(16,31,53,.95) 60%);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><div style="display:flex;align-items:center;gap:14px"><div style="width:40px;height:40px;border-radius:10px;background:${corViveiro}22;border:1px solid ${corViveiro}44;display:flex;align-items:center;justify-content:center;font-size:1.2rem">🦐</div><div><div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:${corViveiro};letter-spacing:.03em">${v.nome}</div><div style="font-size:.65rem;color:var(--muted);margin-top:2px;letter-spacing:.08em;text-transform:uppercase">${nCiclos} cultivo${nCiclos !== 1 ? "s" : ""} finalizado${nCiclos !== 1 ? "s" : ""}</div></div></div><div style="display:flex;gap:16px;flex-wrap:wrap"><div style="text-align:right"><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Produção</div><div style="font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--text)">${Nf(Math.round(totalKg))} kg</div></div><div style="text-align:right"><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Receita</div><div style="font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--accent)">${R(totalRec)}</div></div><div style="text-align:right"><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Custo</div><div style="font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--warn)">${R(totalCust)}</div></div><div style="text-align:right"><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Lucro acum.</div><div style="font-family:'DM Mono',monospace;font-size:.9rem;font-weight:800;color:${isLucroV ? "var(--accent2)" : "var(--danger)"}">${R(lucroV)}</div></div></div></div></div><div style="border:1px solid ${corViveiro}33;border-top:none;border-radius:0 0 14px 14px;padding:12px;background:rgba(8,15,26,.6)">${ciclosHtml}</div></div>`);
   });
-
   document.getElementById("lucro-acum").textContent = "Acumulado total: " + R(lucroGlobal);
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ ESTOQUE
+// ▶ RENDER ESTOQUE + BOTÕES DINÂMICOS DE ENTRADA
 // ════════════════════════════════════════════════════════
 function renderEstoque() {
-  const e=DADOS.estoque.filter(x=>x.produto);
-  const totVal=e.reduce((s,x)=>s+(x.total||0),0);
-  const crit=e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("CRITICO")||s.includes("SEM ESTOQUE");}).length;
-  const baix=e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("BAIXO")||s.includes("MÍNIMO")||s.includes("MINIMO");}).length;
+  const e = DADOS.estoque.filter(x=>x.produto);
+  const totVal = e.reduce((s,x)=>s+(x.total||0),0);
+  const crit = e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("CRITICO")||s.includes("SEM ESTOQUE");}).length;
+  const baix = e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("BAIXO")||s.includes("MÍNIMO")||s.includes("MINIMO");}).length;
+  
   document.getElementById("kpi-estoque").innerHTML=[
     {label:"Valor em Estoque",value:R(totVal),  cls:"accent"},
     {label:"Itens Críticos",  value:crit,       cls:crit>0?"danger":"green"},
     {label:"Estoque Baixo",   value:baix,       cls:baix>0?"warn":"green"},
     {label:"Total Insumos",   value:e.length,   cls:""},
   ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div></div>`).join("");
+  
   if(!e.length){ document.getElementById("estoque-grid").innerHTML=`<div class="error-msg">Sem dados de estoque.</div>`; return; }
-  const maxQ=Math.max(...e.map(x=>x.qtd||0),1);
-  document.getElementById("estoque-grid").innerHTML=e.map(x=>{
-    const raw=String(x.situacao||"").toLowerCase();
-    const sit=raw.includes("critico")||raw.includes("sem estoque")?"critico":raw.includes("baixo")||raw.includes("mínimo")||raw.includes("minimo")?"baixo":"ok";
-    const sl=sit==="ok"?"✅ OK":sit==="baixo"?"⚠ Baixo":"🔴 Crítico";
-    const sc=sit==="ok"?"pill-green":sit==="baixo"?"pill-warn":"pill-red";
-    return `<div class="est-card ${sit}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div class="est-name">${x.produto}</div><span class="pill ${sc}">${sl}</span></div><div class="est-row"><span>Quantidade</span><span>${Nf(x.qtd)} ${x.unidade||""}</span></div><div class="est-row"><span>Custo Unit.</span><span>${R(x.custo)}</span></div><div class="est-row"><span>Valor Total</span><span>${R(x.total)}</span></div><div class="est-bar-wrap"><div class="est-bar ${sit}" style="width:${Math.round((x.qtd||0)/maxQ*100)}%"></div></div></div>`;
+  const maxQ = Math.max(...e.map(x=>x.qtd||0),1);
+  
+  document.getElementById("estoque-grid").innerHTML = e.map(x=>{
+    const raw = String(x.situacao||"").toLowerCase();
+    const sit = raw.includes("critico")||raw.includes("sem estoque")?"critico":raw.includes("baixo")||raw.includes("mínimo")||raw.includes("minimo")?"baixo":"ok";
+    const sl = sit==="ok"?"✅ OK":sit==="baixo"?"⚠ Baixo":"🔴 Crítico";
+    const sc = sit==="ok"?"pill-green":sit==="baixo"?"pill-warn":"pill-red";
+    
+    return `<div class="est-card ${sit}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div class="est-name">${x.produto}</div>
+        <span class="pill ${sc}">${sl}</span>
+      </div>
+      <div class="est-row"><span>Quantidade</span><span>${Nf(x.qtd)} ${x.unidade||""}</span></div>
+      <div class="est-row"><span>Custo Unit.</span><span>${R(x.custo)}</span></div>
+      <div class="est-row"><span>Valor Total</span><span>${R(x.total)}</span></div>
+      <div class="est-bar-wrap"><div class="est-bar ${sit}" style="width:${Math.round((x.qtd||0)/maxQ*100)}%"></div></div>
+      
+      <button class="est-grid-btn est-btn-add" onclick="abrirModalEntradaEstoque('${x.produto}', '${x.unidade||"un"}')">+ Entrada</button>
+    </div>`;
   }).join("");
 }
 
-function renderTudo(){ renderKpiGeral();renderViveiros();renderBiometria();renderHistorico();renderEstoque(); }
+function renderTudo(){ renderKpiGeral(); renderViveiros(); renderBiometria(); renderHistorico(); renderEstoque(); }
 </script>
 </body>
 </html>
