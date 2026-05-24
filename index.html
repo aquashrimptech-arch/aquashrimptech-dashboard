@@ -44,6 +44,11 @@ nav::-webkit-scrollbar{display:none}
 .tab-btn:hover{color:var(--text)}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);text-shadow:0 0 12px rgba(0,229,255,.4)}
 main{position:relative;z-index:5;padding:18px;max-width:1500px;margin:0 auto}
+
+/* CORREÇÃO DO COMPORTAMENTO DAS ABAS (MANTENDO APENAS A ATIVA VISÍVEL) */
+.tab-panel{display:none !important}
+.tab-panel.active{display:block !important}
+
 .section-title{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:10px}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
@@ -109,7 +114,7 @@ tbody td{padding:9px 13px;font-size:.76rem;font-family:'DM Mono',monospace;white
 footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62rem;color:var(--muted);border-top:1px solid var(--border);font-family:'DM Mono',monospace;letter-spacing:.06em}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
-/* Estilos de Botões Operacionais HTML */
+/* Estilos Operacionais do HTML */
 .v-actions-panel{display:flex;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap}
 .btn-action-html{flex:1;min-width:75px;padding:7px 5px;font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;gap:3px}
 .btn-action-html:hover{border-color:var(--accent);box-shadow:0 0 10px rgba(0,229,255,.2);transform:translateY(-1px)}
@@ -326,9 +331,6 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-// ════════════════════════════════════════════════════════
-// ▶ LOGO e CONFIGURAÇÕES TÉCNICAS
-// ════════════════════════════════════════════════════════
 const LOGO_URLS = [
   "https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png",
   "https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.PNG",
@@ -375,6 +377,10 @@ function switchTab(name, btn) {
   document.getElementById("tab-" + name).classList.add("active");
   btn.classList.add("active");
 }
+document.addEventListener("DOMContentLoaded", () => {
+  window.switchTab = switchTab;
+});
+
 function tickClock() { document.getElementById("clock").textContent = new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR"); }
 setInterval(tickClock, 1000); tickClock();
 
@@ -471,9 +477,6 @@ async function carregarDados() {
   refreshTimer = setTimeout(carregarDados, 30 * 1000);
 }
 
-// ════════════════════════════════════════════════════════
-// ▶ KPIs DE EXIBIÇÃO
-// ════════════════════════════════════════════════════════
 function renderKpiGeral() {
   const v = DADOS.viveiros.filter(x=>!x._erro);
   const totBioReal = v.reduce((s,x)=>s+(x.biomassaReal||x.biomassa||0),0);
@@ -493,9 +496,6 @@ function renderKpiGeral() {
   ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div><div class="kpi-sub">${k.sub}</div></div>`).join("");
 }
 
-// ════════════════════════════════════════════════════════
-// ▶ RENDER VIVEIROS + INJEÇÃO DOS BOTÕES OPERACIONAIS HTML
-// ════════════════════════════════════════════════════════
 function renderViveiros() {
   const grid = document.getElementById("viveiros-grid");
   if (!DADOS.viveiros.length) { grid.innerHTML = `<div class="error-msg">Nenhum viveiro configurado.</div>`; return; }
@@ -566,9 +566,6 @@ function renderViveiros() {
   }).join("");
 }
 
-// ════════════════════════════════════════════════════════
-// ▶ CONTROLADORES DE MODAIS E OPERAÇÕES REMOTAS (VIVEIRO)
-// ════════════════════════════════════════════════════════
 function fecharModais() {
   document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none');
   viveiroSelecionadoContexto = null;
@@ -587,8 +584,8 @@ function abrirModalOperacao(tipo, nome, url, dias = 0, custo = 0) {
   } else if (tipo === 'despesca') {
     document.getElementById('obs-desp-kg').value = '';
     document.getElementById('obs-desp-valor').value = '';
-    document.getElementById('obs-desp-cracao').value = (custo * 0.7).toFixed(2); // estimativa inicial de ração
-    document.getElementById('obs-desp-cadic').value = (custo * 0.3).toFixed(2); // estimativa de adicionais
+    document.getElementById('obs-desp-cracao').value = (custo * 0.7).toFixed(2);
+    document.getElementById('obs-desp-cadic').value = (custo * 0.3).toFixed(2);
     document.getElementById('obs-desp-dias').value = dias;
     document.getElementById('obs-desp-senha').value = '';
     document.getElementById('modal-despesca').style.display = 'flex';
@@ -641,7 +638,7 @@ async function executarDespesca() {
   } catch(e) { alert('Falha ao processar a despesca.'); }
 }
 
-async function ejecutarLimparCiclo() {
+async function executarLimparCiclo() {
   const senha = document.getElementById('obs-limpar-senha').value;
   if(!validarSenhaLogin(senha)) { alert('Senha de confirmação incorreta.'); return; }
   
@@ -654,9 +651,6 @@ async function ejecutarLimparCiclo() {
   } catch(e) { alert('Falha ao zerar ciclo.'); }
 }
 
-// ════════════════════════════════════════════════════════
-// ▶ GESTÃO DE ESTOQUE VIA HTML
-// ════════════════════════════════════════════════════════
 function abrirModalEntradaEstoque(produto, unidade) {
   document.getElementById('obs-est-nome').value = produto;
   document.getElementById('obs-est-un-label').textContent = unidade;
@@ -720,9 +714,6 @@ async function executarCriarNovoInsumo() {
   } catch(e) { alert('Falha ao cadastrar item.'); }
 }
 
-// ════════════════════════════════════════════════════════
-// ▶ RENDERIZADORES DE TABELAS / GRÁFICOS (MANTIDOS ORIGINAIS)
-// ════════════════════════════════════════════════════════
 let bioChartInstance = null;
 function renderBiometria() {
   const thead = document.getElementById("bio-thead");
@@ -803,7 +794,13 @@ function renderHistorico() {
     const nCiclos   = ciclos.filter(c => c.despesca).length;
     
     if (!ciclos.length) {
-      tabHist.insertAdjacentHTML("beforeend", `<div class="hist-bloco-viveiro" style="margin-bottom:28px;border-radius:14px;overflow:hidden;border:1px solid ${corViveiro}44"><div style="padding:16px 20px;background:linear-gradient(90deg,${corViveiro}12 0%,rgba(16,31,53,.95) 60%);border-left:5px solid ${corViveiro}"><div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:${corViveiro}">🦐 ${v.nome}</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px">Nenhum cultivo finalizado ainda</div></div></div>`);
+      tabHist.insertAdjacentHTML("beforeend", `
+        <div class="hist-bloco-viveiro" style="margin-bottom:28px;border-radius:14px;overflow:hidden;border:1px solid ${corViveiro}44">
+          <div style="padding:16px 20px;background:linear-gradient(90deg,${corViveiro}12 0%,rgba(16,31,53,.95) 60%);border-left:5px solid ${corViveiro}">
+            <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:${corViveiro}">🦐 ${v.nome}</div>
+            <div style="font-size:.65rem;color:var(--muted);margin-top:4px">Nenhum cultivo finalizado ainda</div>
+          </div>
+        </div>`);
       return;
     }
 
@@ -829,9 +826,6 @@ function renderHistorico() {
   document.getElementById("lucro-acum").textContent = "Acumulado total: " + R(lucroGlobal);
 }
 
-// ════════════════════════════════════════════════════════
-// ▶ RENDER ESTOQUE + BOTÕES DINÂMICOS DE ENTRADA
-// ════════════════════════════════════════════════════════
 function renderEstoque() {
   const e = DADOS.estoque.filter(x=>x.produto);
   const totVal = e.reduce((s,x)=>s+(x.total||0),0);
@@ -863,7 +857,6 @@ function renderEstoque() {
       <div class="est-row"><span>Custo Unit.</span><span>${R(x.custo)}</span></div>
       <div class="est-row"><span>Valor Total</span><span>${R(x.total)}</span></div>
       <div class="est-bar-wrap"><div class="est-bar ${sit}" style="width:${Math.round((x.qtd||0)/maxQ*100)}%"></div></div>
-      
       <button class="est-grid-btn est-btn-add" onclick="abrirModalEntradaEstoque('${x.produto}', '${x.unidade||"un"}')">+ Entrada</button>
     </div>`;
   }).join("");
