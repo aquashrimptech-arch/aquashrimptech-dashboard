@@ -10,7 +10,6 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-/* ════ LOGIN ════ */
 #login-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
 .login-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 0 60px rgba(0,229,255,.08);animation:fadeUp .4s ease}
 .login-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:32px;gap:12px}
@@ -26,7 +25,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .login-btn:hover{opacity:.9;transform:translateY(-1px)}
 .login-btn:active{transform:translateY(0)}
 .login-error{background:rgba(255,79,79,.1);border:1px solid rgba(255,79,79,.3);border-radius:8px;padding:10px 14px;color:var(--danger);font-size:.78rem;margin-top:12px;display:none;text-align:center}
-/* ════ APP ════ */
 #app{display:none}
 header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,229,255,.06) 0%,transparent 60%)}
 .logo{display:flex;align-items:center;gap:10px}
@@ -111,7 +109,6 @@ tbody td{padding:9px 13px;font-size:.76rem;font-family:'DM Mono',monospace;white
 .error-msg{background:rgba(255,79,79,.08);border:1px solid rgba(255,79,79,.3);border-radius:10px;padding:13px 17px;color:var(--danger);font-size:.76rem;margin-bottom:13px}
 footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62rem;color:var(--muted);border-top:1px solid var(--border);font-family:'DM Mono',monospace;letter-spacing:.06em}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-/* ════ MOBILE ════ */
 @media(max-width:600px){
   .login-box{padding:28px 22px}
   header{padding:10px 14px}
@@ -131,7 +128,6 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 </head>
 <body>
 
-<!-- Botão ADM discreto — canto superior esquerdo da tela de login -->
 <a id="btn-adm" href="adm.html" target="_blank"
    style="position:fixed;top:14px;left:14px;z-index:1001;
           background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.22);
@@ -140,11 +136,9 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
           transition:all .25s;text-decoration:none;font-family:'DM Sans',sans-serif;
           display:none">⚙️ ADM</a>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <!-- ▼ LOGO: tenta repo aquashrimptech-arch, depois aquashrimptech, depois emoji -->
       <img id="login-logo-img" alt="AquaShrimpTech Logo"
            src="https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png">
       <span class="logo-fallback" id="logo-fallback">🦐</span>
@@ -164,7 +158,6 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
 <header>
   <div class="logo">
@@ -192,10 +185,10 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     <div class="section-title">Viveiros em Produção</div>
     <div class="viveiros-grid" id="viveiros-grid"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
   </div>
-    <div id="tab-biometria" class="tab-panel">
-      <div class="section-title">Evolução de Crescimento</div>
-      <div class="bio-chart-wrap" style="max-width: 900px; margin: 0 auto 18px auto; position: relative;">
-        <canvas id="bioChart" height="250"></canvas></div>
+  <div id="tab-biometria" class="tab-panel">
+    <div class="section-title">Evolução de Crescimento</div>
+    <div class="bio-chart-wrap" style="max-width: 900px; margin: 0 auto 18px auto; position: relative;">
+      <canvas id="bioChart" height="250"></canvas></div>
     <div class="table-wrap">
       <div class="table-head"><span class="table-title">Registros de Biometria</span></div>
       <div class="table-scroll"><table><thead id="bio-thead"></thead><tbody id="bio-tbody"></tbody></table></div>
@@ -207,7 +200,6 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
       <span id="hist-titulo" style="font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700"></span>
       <span id="lucro-acum" class="pill pill-green"></span>
     </div>
-    <!-- tabelas geradas dinamicamente por renderHistorico() -->
   </div>
   <div id="tab-estoque" class="tab-panel">
     <div class="section-title">Situação dos Insumos</div>
@@ -221,7 +213,7 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 // ════════════════════════════════════════════════════════
-// ▶ LOGO — tenta caminhos em cascata (case-insensitive GitHub)
+// ▶ LOGO
 // ════════════════════════════════════════════════════════
 const LOGO_URLS = [
   "https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png",
@@ -229,63 +221,23 @@ const LOGO_URLS = [
   "https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/logo.png",
   "https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/logo.PNG",
 ];
-
 function tryLogo(imgs, idx) {
-  if (idx >= LOGO_URLS.length) {
-    imgs.forEach(img => img.style.display = "none");
-    document.getElementById("logo-fallback").style.display = "block";
-    return;
-  }
-  imgs.forEach(img => {
-    img.src = LOGO_URLS[idx];
-    img.onerror = () => tryLogo(imgs, idx + 1);
-    img.onload  = () => {
-      img.style.display = "block";
-      img.onerror = null;
-      img.onload  = null;
-    };
-  });
+  if (idx >= LOGO_URLS.length) { imgs.forEach(img => img.style.display = "none"); document.getElementById("logo-fallback").style.display = "block"; return; }
+  imgs.forEach(img => { img.src = LOGO_URLS[idx]; img.onerror = () => tryLogo(imgs, idx + 1); img.onload = () => { img.style.display = "block"; img.onerror = null; img.onload = null; }; });
 }
-
 const loginImg  = document.getElementById("login-logo-img");
 const headerImg = document.getElementById("header-logo");
-// Começa tentando o primeiro URL; os dois imgs avançam juntos
 loginImg.onerror = () => tryLogo([loginImg, headerImg], 1);
-loginImg.onload  = () => {
-  loginImg.style.display = "block";
-  headerImg.src = loginImg.src;
-  headerImg.style.display = "block";
-};
+loginImg.onload  = () => { loginImg.style.display = "block"; headerImg.src = loginImg.src; headerImg.style.display = "block"; };
 
-// ════════════════════════════════════════════════════════
-// ▶ URL DO APPS SCRIPT ADM — só mude aqui!
-//   É a mesma URL que está no adm.html → ADM_SCRIPT_URL
-//   Com isso, todos os clientes cadastrados no ADM
-//   aparecem automaticamente aqui, sem mexer no código.
-// ════════════════════════════════════════════════════════
 const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
-
-// ════════════════════════════════════════════════════════
-// ▶ CONFIG LOCAL — fallback enquanto carrega do ADM
-//   (deixe vazio [] para não ter fallback)
-//   Formato: { usuario, senha, nome, viveiros:[], estoque:{url} }
-// ════════════════════════════════════════════════════════
-const CLIENTES_FALLBACK = [];  // ← vazio: só usa o ADM
-
-// CLIENTES_CONFIG é preenchido dinamicamente via loadClientesDoAdm()
+const CLIENTES_FALLBACK = [];
 let CLIENTES_CONFIG = [];
-
-// ════════════════════════════════════════════════════════
-// ▶ ESTADO GLOBAL
-// ════════════════════════════════════════════════════════
-let CLIENTE      = null;
-let DADOS        = { viveiros: [], estoque: [] };
+let CLIENTE = null;
+let DADOS = { viveiros: [], estoque: [] };
 let refreshTimer = null;
 let _clientesCarregados = false;
 
-// ════════════════════════════════════════════════════════
-// ▶ UTILITÁRIOS
-// ════════════════════════════════════════════════════════
 const R  = n => (isNaN(n)||n===null) ? "—" : "R$ "+Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
 const Nf = n => (isNaN(n)||n===null) ? "—" : Number(n).toLocaleString("pt-BR");
 const LD = () => `<div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>`;
@@ -314,10 +266,6 @@ function tickClock() {
 }
 setInterval(tickClock, 1000); tickClock();
 
-// ════════════════════════════════════════════════════════
-// ▶ CARREGA CLIENTES DO ADM SCRIPT
-//   Converte o formato da planilha para o formato do painel
-// ════════════════════════════════════════════════════════
 async function loadClientesDoAdm() {
   if (_clientesCarregados) return;
   try {
@@ -327,69 +275,45 @@ async function loadClientesDoAdm() {
       CLIENTES_CONFIG = data.clientes
         .filter(c => c.Status === "ativo" || c.Status === "pendente")
         .map(c => {
-          // Converte as URLs dos viveiros (campo UrlsViveiros = "url1|url2|url3")
           const urls = String(c.UrlsViveiros || "").split("|").filter(u => u.trim().startsWith("http"));
           const qtd  = parseInt(c.QtdViveiros) || urls.length || 1;
           const viveiros = Array.from({ length: Math.max(qtd, urls.length) }, (_, i) => ({
             nome: `Viveiro ${String(i + 1).padStart(2, "0")}`,
             url:  urls[i] || ""
-          })).filter(v => v.url); // só inclui viveiros com URL preenchida
-
+          })).filter(v => v.url);
           return {
-            id:       String(c.ID),
-            nome:     c.Nome    || "",
-            telefone: c.Telefone || "",
-            usuario:  (c.Usuario || "").toLowerCase(),
-            senha:    c.Senha   || "",
-            viveiros,
-            estoque: { url: c.UrlEstoque || "" }
+            id: String(c.ID), nome: c.Nome || "", telefone: c.Telefone || "",
+            usuario: (c.Usuario || "").toLowerCase(), senha: c.Senha || "",
+            viveiros, estoque: { url: c.UrlEstoque || "" }
           };
         })
         .filter(c => c.usuario && c.senha && c.viveiros.length > 0);
       _clientesCarregados = true;
     }
   } catch (e) {
-    // Se o ADM Script não respondeu, usa o fallback local
     if (CLIENTES_FALLBACK.length > 0) CLIENTES_CONFIG = CLIENTES_FALLBACK;
   }
 }
 
-// ════════════════════════════════════════════════════════
-// ▶ LOGIN — busca clientes do ADM dinamicamente
-// ════════════════════════════════════════════════════════
 async function fazerLogin() {
   const usuario = document.getElementById("inp-usuario").value.trim().toLowerCase();
   const senha   = document.getElementById("inp-senha").value.trim();
   const erro    = document.getElementById("login-error");
   const btn     = document.querySelector(".login-btn");
   erro.style.display = "none";
-
-  // Mostra loading no botão
-  btn.textContent = "Carregando...";
-  btn.disabled = true;
-
-  // Garante que os clientes estão carregados
+  btn.textContent = "Carregando..."; btn.disabled = true;
   await loadClientesDoAdm();
-
-  btn.textContent = "Entrar";
-  btn.disabled = false;
-
-  const cliente = CLIENTES_CONFIG.find(c =>
-    c.usuario.toLowerCase() === usuario && c.senha === senha
-  );
-
+  btn.textContent = "Entrar"; btn.disabled = false;
+  const cliente = CLIENTES_CONFIG.find(c => c.usuario.toLowerCase() === usuario && c.senha === senha);
   if (!cliente) { erro.style.display = "block"; return; }
-
   CLIENTE = cliente;
   sessionStorage.setItem("ast_usuario", usuario);
-  sessionStorage.setItem("ast_senha",   senha);
-
+  sessionStorage.setItem("ast_senha", senha);
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("btn-adm").style.display = "none";
   document.getElementById("app").style.display = "block";
   document.getElementById("cliente-nome").textContent = "👤 " + cliente.nome;
   document.title = "AquaShrimpTech — " + cliente.nome;
-
   carregarDados();
 }
 
@@ -397,22 +321,19 @@ document.getElementById("inp-senha").addEventListener("keydown",   e => { if (e.
 document.getElementById("inp-usuario").addEventListener("keydown", e => { if (e.key==="Enter") document.getElementById("inp-senha").focus(); });
 
 function fazerLogout() {
-  sessionStorage.removeItem("ast_usuario");
-  sessionStorage.removeItem("ast_senha");
+  sessionStorage.removeItem("ast_usuario"); sessionStorage.removeItem("ast_senha");
   CLIENTE = null; DADOS = { viveiros: [], estoque: [] };
   if (refreshTimer) clearTimeout(refreshTimer);
   document.getElementById("app").style.display = "none";
   document.getElementById("login-screen").style.display = "flex";
-  document.getElementById("btn-adm").style.display = "block"; // mostra ADM na tela de login
+  document.getElementById("btn-adm").style.display = "block";
   document.getElementById("inp-usuario").value = "";
   document.getElementById("inp-senha").value   = "";
 }
 
-// Recupera sessão ao recarregar
 window.addEventListener("load", async () => {
   const u = sessionStorage.getItem("ast_usuario");
   const s = sessionStorage.getItem("ast_senha");
-  // Pré-carrega clientes do ADM em background
   loadClientesDoAdm();
   if (u && s) {
     document.getElementById("inp-usuario").value = u;
@@ -423,29 +344,21 @@ window.addEventListener("load", async () => {
   }
 });
 
-// ════════════════════════════════════════════════════════
-// ▶ CARREGA DADOS — todos os viveiros + estoque em paralelo
-// ════════════════════════════════════════════════════════
 async function carregarDados() {
   if (!CLIENTE) return;
-
   const fetchViveiros = CLIENTE.viveiros.map(v =>
     fetch(v.url + "?tipo=dashboard")
       .then(r => r.json())
       .then(data => { const vv = data.viveiros?.[0] || {}; vv.nome = v.nome; return vv; })
       .catch(() => ({ nome: v.nome, _erro: true }))
   );
-
   const fetchEstoque = fetch(CLIENTE.estoque.url + "?tipo=listagem")
     .then(r => r.json())
     .then(d => Array.isArray(d) ? d : (d.estoque || []))
     .catch(() => []);
-
   const [vivs, est] = await Promise.all([Promise.all(fetchViveiros), fetchEstoque]);
-  DADOS.viveiros = vivs;
-  DADOS.estoque  = est;
+  DADOS.viveiros = vivs; DADOS.estoque = est;
   renderTudo();
-
   if (refreshTimer) clearTimeout(refreshTimer);
   refreshTimer = setTimeout(carregarDados, 30 * 1000);
 }
@@ -455,13 +368,12 @@ async function carregarDados() {
 // ════════════════════════════════════════════════════════
 function renderKpiGeral() {
   const v = DADOS.viveiros.filter(x=>!x._erro);
-  const totBioReal  = v.reduce((s,x)=>s+(x.biomassaReal||x.biomassa||0),0);
-  const totBio100   = v.reduce((s,x)=>s+(x.biomassa100||0),0);
-  const totCust     = v.reduce((s,x)=>s+(x.custoCiclo||0),0);
-  const totRac      = v.reduce((s,x)=>s+(x.racaoTotal||0),0);
+  const totBioReal = v.reduce((s,x)=>s+(x.biomassaReal||x.biomassa||0),0);
+  const totBio100  = v.reduce((s,x)=>s+(x.biomassa100||0),0);
+  const totCust    = v.reduce((s,x)=>s+(x.custoCiclo||0),0);
+  const totRac     = v.reduce((s,x)=>s+(x.racaoTotal||0),0);
   let lucro = 0;
   v.forEach(x=>{ if(x.historico?.length) lucro+=x.historico[x.historico.length-1].l_acum||0; });
-  // FCA médio ponderado
   const fcaMedio = v.length ? v.reduce((s,x)=>s+(x.fca||0),0)/v.filter(x=>x.fca>0).length : 0;
   document.getElementById("kpi-geral").innerHTML = [
     {label:"Biomassa Real",      value:Nf(totBioReal)+" kg", cls:"accent", sub:"Baseada na alimentação"},
@@ -481,21 +393,17 @@ function renderViveiros() {
   if (!DADOS.viveiros.length) { grid.innerHTML = `<div class="error-msg">Nenhum viveiro configurado.</div>`; return; }
   grid.innerHTML = DADOS.viveiros.map((v,i) => {
     if (v._erro) return `<div class="viveiro-card"><div class="viveiro-header"><div class="viveiro-name">${v.nome}</div><span class="viveiro-status status-alerta">⚠ Offline</span></div><div class="error-msg">Não foi possível conectar.</div></div>`;
-
-    const diasCiclo  = v.diasCiclo ?? diasDesde(v.dataInicio) ?? 0;
-    const bioReal    = v.biomassaReal ?? v.biomassa ?? 0;
-    const bio100     = v.biomassa100 ?? 0;
-    const surv       = v.sobrevivencia ?? 0;
-    const fca        = v.fca ?? 0;
-    const dens       = v.densidade ?? 0;
-    const lab        = v.laboratorio || '';
-    const racaoAt    = v.racaoAtual ?? 0;
-    const racaoId    = v.racaoIdeal ?? 0;
-
-    // Barra de sobrevivência (0–100%)
-    const pctSurv = Math.min(100, Math.round(surv));
-    const corSurv = surv >= 70 ? 'var(--accent2)' : surv >= 50 ? 'var(--warn)' : 'var(--danger)';
-
+    const diasCiclo = v.diasCiclo ?? diasDesde(v.dataInicio) ?? 0;
+    const bioReal   = v.biomassaReal ?? v.biomassa ?? 0;
+    const bio100    = v.biomassa100 ?? 0;
+    const surv      = v.sobrevivencia ?? 0;
+    const fca       = v.fca ?? 0;
+    const dens      = v.densidade ?? 0;
+    const lab       = v.laboratorio || '';
+    const racaoAt   = v.racaoAtual ?? 0;
+    const racaoId   = v.racaoIdeal ?? 0;
+    const pctSurv   = Math.min(100, Math.round(surv));
+    const corSurv   = surv >= 70 ? 'var(--accent2)' : surv >= 50 ? 'var(--warn)' : 'var(--danger)';
     return `<div class="viveiro-card" style="animation-delay:${i*.08}s">
       <div class="viveiro-header">
         <div class="viveiro-name">${v.nome||"Viveiro"}</div>
@@ -504,8 +412,6 @@ function renderViveiros() {
           <span class="viveiro-status status-ativo">● Ativo</span>
         </div>
       </div>
-
-      <!-- LINHA 1: Biomassas -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
         <div style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:9px 11px">
           <div class="v-metric-label">🌊 Biomassa Real</div>
@@ -518,58 +424,22 @@ function renderViveiros() {
           <div style="font-size:.58rem;color:var(--muted)">Pressupondo 100% sobrev.</div>
         </div>
       </div>
-
-      <!-- LINHA 2: Métricas técnicas -->
       <div class="viveiro-metrics">
-        <div>
-          <div class="v-metric-label">Sobrevivência</div>
-          <div class="v-metric-value" style="color:${corSurv}">${surv > 0 ? surv.toFixed(1)+'%' : '—'}</div>
-        </div>
-        <div>
-          <div class="v-metric-label">FCA</div>
-          <div class="v-metric-value">${fca > 0 ? fca.toFixed(2) : '—'}</div>
-        </div>
-        <div>
-          <div class="v-metric-label">Peso Médio</div>
-          <div class="v-metric-value">${v.pesoMedio ?? '—'}g</div>
-        </div>
-        <div>
-          <div class="v-metric-label">CCMT (ganho/sem.)</div>
-          <div class="v-metric-value accent">${v.ccmt != null && v.ccmt > 0 ? '+'+v.ccmt.toFixed(1)+'g' : '—'}</div>
-        </div>
-        <div>
-          <div class="v-metric-label">Densidade</div>
-          <div class="v-metric-value">${dens > 0 ? dens.toFixed(1)+' cam/m²' : '—'}</div>
-        </div>
-        <div>
-          <div class="v-metric-label">Área</div>
-          <div class="v-metric-value">${v.areaHa ? v.areaHa.toFixed(2)+' ha' : '—'}</div>
-        </div>
-        <div>
-          <div class="v-metric-label">Ração Hoje</div>
-          <div class="v-metric-value">${racaoAt > 0 ? racaoAt.toFixed(1)+' kg' : '—'}</div>
-        </div>
-        <div>
-          <div class="v-metric-label">Ração p/ 100%</div>
-          <div class="v-metric-value warn">${racaoId > 0 ? racaoId.toFixed(1)+' kg' : '—'}</div>
-        </div>
-        <div>
-          <div class="v-metric-label">Povoado</div>
-          <div class="v-metric-value">${Nf(v.povoado)} un</div>
-        </div>
-        <div>
-          <div class="v-metric-label">Custo Ciclo</div>
-          <div class="v-metric-value warn">${R(v.custoCiclo)}</div>
-        </div>
+        <div><div class="v-metric-label">Sobrevivência</div><div class="v-metric-value" style="color:${corSurv}">${surv > 0 ? surv.toFixed(1)+'%' : '—'}</div></div>
+        <div><div class="v-metric-label">FCA</div><div class="v-metric-value">${fca > 0 ? fca.toFixed(2) : '—'}</div></div>
+        <div><div class="v-metric-label">Peso Médio</div><div class="v-metric-value">${v.pesoMedio ?? '—'}g</div></div>
+        <div><div class="v-metric-label">CCMT (ganho/sem.)</div><div class="v-metric-value accent">${v.ccmt != null && v.ccmt > 0 ? '+'+v.ccmt.toFixed(1)+'g' : '—'}</div></div>
+        <div><div class="v-metric-label">Densidade</div><div class="v-metric-value">${dens > 0 ? dens.toFixed(1)+' cam/m²' : '—'}</div></div>
+        <div><div class="v-metric-label">Área</div><div class="v-metric-value">${v.areaHa ? v.areaHa.toFixed(2)+' ha' : '—'}</div></div>
+        <div><div class="v-metric-label">Ração Hoje</div><div class="v-metric-value">${racaoAt > 0 ? racaoAt.toFixed(1)+' kg' : '—'}</div></div>
+        <div><div class="v-metric-label">Ração p/ 100%</div><div class="v-metric-value warn">${racaoId > 0 ? racaoId.toFixed(1)+' kg' : '—'}</div></div>
+        <div><div class="v-metric-label">Povoado</div><div class="v-metric-value">${Nf(v.povoado)} un</div></div>
+        <div><div class="v-metric-label">Custo Ciclo</div><div class="v-metric-value warn">${R(v.custoCiclo)}</div></div>
       </div>
-
-      <!-- Dias de ciclo e data início -->
       <div style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap">
         ${diasCiclo > 0 ? `<div class="dias-badge">🗓 ${diasCiclo} dia${diasCiclo!==1?"s":""} de ciclo</div>` : ''}
         ${v.dataInicio ? `<div class="dias-badge" style="background:rgba(0,255,163,.06);border-color:rgba(0,255,163,.2);color:var(--accent2)">📅 Início: ${fmtData(v.dataInicio)}</div>` : ''}
       </div>
-
-      <!-- Barra de sobrevivência -->
       <div class="viveiro-bar-wrap" style="margin-top:10px">
         <div class="viveiro-bar" style="width:${pctSurv}%;background:linear-gradient(90deg,${corSurv},${corSurv}88)"></div>
       </div>
@@ -582,7 +452,7 @@ function renderViveiros() {
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ BIOMETRIA — datas por timestamp real
+// ▶ BIOMETRIA
 // ════════════════════════════════════════════════════════
 let bioChartInstance = null;
 function renderBiometria() {
@@ -609,26 +479,43 @@ function renderBiometria() {
 }
 
 // ════════════════════════════════════════════════════════
-// ▶ HISTÓRICO — separado por viveiro, filtra datas inválidas
+// ▶ HISTÓRICO — visual accordion por viveiro (v2 — mesmo estilo da demo)
 // ════════════════════════════════════════════════════════
+function toggleCiclo(id) {
+  const body = document.getElementById("ciclo-body-" + id);
+  const icon = document.getElementById("ciclo-icon-" + id);
+  const open = body.style.display !== "none";
+  body.style.display = open ? "none" : "block";
+  icon.textContent = open ? "▸" : "▾";
+}
+
 function renderHistorico() {
   const viveirosValidos = DADOS.viveiros.filter(x => !x._erro);
   const tabHist = document.getElementById("tab-historico");
 
-  tabHist.querySelectorAll(".table-wrap").forEach(el => el.remove());
-  tabHist.querySelectorAll(".hist-lucro-acum-wrap").forEach(el => el.remove());
+  // Limpa conteúdo gerado dinamicamente (preserva section-title e lucro-acum)
+  tabHist.querySelectorAll(".hist-bloco-viveiro").forEach(el => el.remove());
   document.getElementById("hist-titulo").textContent = "Cultivos Finalizados — " + (CLIENTE?.nome || "");
   document.getElementById("lucro-acum").textContent = "";
 
   if (!viveirosValidos.length) {
-    tabHist.insertAdjacentHTML("beforeend", `<div class="error-msg">Nenhum viveiro disponível.</div>`);
+    tabHist.insertAdjacentHTML("beforeend", `<div class="error-msg hist-bloco-viveiro">Nenhum viveiro disponível.</div>`);
     return;
   }
 
+  // Cores de acento por viveiro — barra lateral colorida
+  const VIVEIRO_CORES = [
+    "#00e5ff","#00ffa3","#ffb300","#a78bfa",
+    "#f97316","#38bdf8","#4ade80","#f472b6",
+    "#facc15","#34d399","#818cf8","#ff4f4f"
+  ];
+
   let lucroGlobal = 0;
 
-  viveirosValidos.forEach(v => {
-    // Filtra linhas inválidas
+  viveirosValidos.forEach((v, vi) => {
+    const corViveiro = VIVEIRO_CORES[vi % VIVEIRO_CORES.length];
+
+    // Filtra linhas inválidas (igual ao original)
     const linhas = (v.historico || []).filter(h => {
       const d = parseData(h.data);
       if (!d || d.getFullYear() < 2000) return false;
@@ -638,17 +525,14 @@ function renderHistorico() {
       return true;
     });
 
-    // ── Agrupa por ciclo_id ──────────────────────────────────
-    // Desbastes sem ciclo_id ficam numa lista pendente e são
-    // vinculados à próxima despesca pelo índice de ordem.
-    const ciclos = [];          // [ { despesca, desbastes[] } ]
+    // Agrupa por ciclo_id (igual ao original)
+    const ciclos = [];
     const desbastesSemCiclo = [];
 
     linhas.forEach(h => {
       const tipo = String(h.tipo || "DESPESCA").toUpperCase();
       if (tipo === "DESBASTE") {
         if (h.ciclo_id) {
-          // Procura ciclo existente com esse id
           let ciclo = ciclos.find(c => c.id === h.ciclo_id);
           if (!ciclo) { ciclo = { id: h.ciclo_id, despesca: null, desbastes: [] }; ciclos.push(ciclo); }
           ciclo.desbastes.push(h);
@@ -656,140 +540,196 @@ function renderHistorico() {
           desbastesSemCiclo.push(h);
         }
       } else {
-        // DESPESCA
         const cicloId = h.ciclo_id || ("_auto_" + ciclos.length);
         let ciclo = ciclos.find(c => c.id === cicloId);
         if (!ciclo) { ciclo = { id: cicloId, despesca: null, desbastes: [] }; ciclos.push(ciclo); }
         ciclo.despesca = h;
-        // Associa desbastes sem ciclo pendentes
         if (!h.ciclo_id && desbastesSemCiclo.length) {
           ciclo.desbastes.push(...desbastesSemCiclo.splice(0));
         }
       }
     });
 
-    // Desbastes que sobraram sem despesca (ciclo ainda em andamento)
     if (desbastesSemCiclo.length) {
       ciclos.push({ id: "_aberto_", despesca: null, desbastes: desbastesSemCiclo });
     }
 
+    // Totais do viveiro para o header
+    let lucroV = 0;
+    ciclos.forEach(c => { if (c.despesca) lucroV += c.despesca.lucro || 0; });
+    const isLucroV = lucroV >= 0;
+    lucroGlobal += lucroV;
+
+    const totalKg  = ciclos.reduce((s,c) => s + (c.despesca?.kg || 0), 0);
+    const totalCust = ciclos.reduce((s,c) => s + (c.despesca?.c_total || 0), 0);
+    const totalRec  = ciclos.reduce((s,c) => s + (c.despesca?.receita || 0), 0);
+    const nCiclos   = ciclos.filter(c => c.despesca).length;
+
     if (!ciclos.length) {
       tabHist.insertAdjacentHTML("beforeend", `
-        <div class="table-wrap" style="margin-bottom:18px">
-          <div class="table-head"><span class="table-title">📋 ${v.nome}</span></div>
-          <div style="text-align:center;color:var(--muted);padding:24px;font-family:'DM Mono',monospace;font-size:.78rem">
-            Nenhum cultivo finalizado ainda
+        <div class="hist-bloco-viveiro" style="margin-bottom:28px;border-radius:14px;overflow:hidden;border:1px solid ${corViveiro}44">
+          <div style="padding:16px 20px;background:linear-gradient(90deg,${corViveiro}12 0%,rgba(16,31,53,.95) 60%);border-left:5px solid ${corViveiro}">
+            <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:${corViveiro}">🦐 ${v.nome}</div>
+            <div style="font-size:.65rem;color:var(--muted);margin-top:4px">Nenhum cultivo finalizado ainda</div>
           </div>
         </div>`);
       return;
     }
 
-    // ── Monta HTML por ciclo ─────────────────────────────────
-    let lucroV = 0;
+    // Monta ciclos
     let ciclosHtml = "";
-    let cicloNum   = 0;
+    let cicloNum = 0;
 
     ciclos.forEach(ciclo => {
       cicloNum++;
       const despesca  = ciclo.despesca;
       const desbastes = ciclo.desbastes;
       const aberto    = !despesca;
-
-      // Receita total = despesca (já inclui desbastes somados no Apps Script)
-      // Lucro = da despesca (calculado com custo total do ciclo)
       const lucroCiclo = despesca ? (despesca.lucro || 0) : 0;
-      lucroV += lucroCiclo;
+      const isLucro   = lucroCiclo >= 0;
+      const cicloId   = `v${vi}_c${cicloNum}`;
 
-      const isLucro = lucroCiclo >= 0;
-      const tituloCiclo = despesca
-        ? `Cultivo #${cicloNum}`
-        : `Cultivo #${cicloNum} — Em andamento`;
+      // Cor e label por número de ciclo
+      const corCiclo   = cicloNum === 1 ? "#ffb300" : cicloNum === 2 ? "#38bdf8" : "#00ffa3";
+      const labelCiclo = cicloNum === 1 ? "Implantação" : cicloNum === 2 ? "Operacional" : "Consolidado";
+      const tituloCiclo = aberto ? `Cultivo #${cicloNum} — Em andamento` : `Cultivo #${cicloNum}`;
 
-      // Linhas dos desbastes (recuadas visualmente)
+      // Todos os ciclos começam RECOLHIDOS — expandir ao clicar
+      const iniciaAberto = false;
+
       const rowsDesbastes = desbastes.map(d => `
-        <tr style="background:rgba(0,229,255,.03)">
-          <td style="padding-left:28px;color:var(--muted)">↳ ${d.cultivo||'Desbaste'}</td>
-          <td>${d.data}</td>
-          <td>${d.dias}d</td>
-          <td>${Nf(d.kg)}</td>
+        <tr style="background:rgba(0,229,255,.025)">
+          <td style="padding-left:24px;color:var(--muted);border-left:2px solid rgba(0,229,255,.15)">↳ ${d.cultivo || 'Desbaste'}</td>
+          <td>${d.data}</td><td>${d.dias}d</td><td>${Nf(d.kg)}</td>
           <td style="color:var(--warn)">${R(d.receita)}</td>
-          <td colspan="3" style="color:var(--muted);font-size:.7rem">— custo calculado na despesca —</td>
+          <td colspan="3" style="color:var(--muted);font-size:.68rem;font-style:italic">incluído na despesca</td>
           <td>—</td>
           <td>${d.laboratorio ? `<span class="pill pill-blue">${d.laboratorio}</span>` : '—'}</td>
           <td><span class="pill pill-warn">Parcial</span></td>
         </tr>`).join("");
 
-      // Linha da despesca (resultado final)
       const rowDespesca = despesca ? (() => {
-        const receitaDesbastes = desbastes.reduce((s,d) => s + (d.receita||0), 0);
-        const receitaSoDespesca = (despesca.receita||0) - receitaDesbastes;
-        const lab = despesca.laboratorio || '';
-        return `<tr style="border-top:1px solid var(--border);font-weight:600">
-          <td>🎣 Despesca</td>
-          <td>${despesca.data}</td>
-          <td>${despesca.dias}d</td>
-          <td>${Nf(despesca.kg)}</td>
-          <td>${R(receitaSoDespesca)}</td>
+        const recDesb       = desbastes.reduce((s, d) => s + (d.receita || 0), 0);
+        const recSoDesp     = (despesca.receita || 0) - recDesb;
+        const lab           = despesca.laboratorio || '';
+        return `
+        <tr style="background:rgba(0,0,0,.15);border-top:1px solid var(--border)">
+          <td style="font-weight:600">🎣 Despesca</td>
+          <td>${despesca.data}</td><td>${despesca.dias}d</td>
+          <td style="font-weight:600">${Nf(despesca.kg)}</td>
+          <td>${R(recSoDesp)}</td>
           <td>${R(despesca.c_racao)}</td>
           <td>${R(despesca.c_insumos)}</td>
           <td>${R(despesca.c_total)}</td>
-          <td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}">${R(lucroCiclo)}</td>
+          <td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}" style="font-weight:700">${R(lucroCiclo)}</td>
           <td>${lab ? `<span class="pill pill-blue">${lab}</span>` : '—'}</td>
           <td><span class="pill ${isLucro ? "pill-green" : "pill-red"}">${despesca.resultado}</span></td>
         </tr>
-        <tr style="background:rgba(0,229,255,.06);font-weight:700;font-size:.8rem">
-          <td colspan="4" style="color:var(--muted);font-size:.68rem;padding-left:14px">
-            📊 Total do Ciclo (despesca + ${desbastes.length} desbaste${desbastes.length!==1?"s":""})
+        <tr style="background:rgba(0,229,255,.05);border-top:1px solid rgba(0,229,255,.12)">
+          <td colspan="4" style="color:var(--muted);font-size:.66rem;padding-left:14px;font-style:italic">
+            📊 Totais do ciclo · ${desbastes.length} desbaste${desbastes.length !== 1 ? "s" : ""}
           </td>
-          <td style="color:var(--accent)">${R(despesca.receita)}</td>
+          <td style="color:var(--accent);font-weight:700">${R(despesca.receita)}</td>
           <td>${R(despesca.c_racao)}</td>
           <td>${R(despesca.c_insumos)}</td>
-          <td>${R(despesca.c_total)}</td>
-          <td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}">${R(lucroCiclo)}</td>
-          <td>${lab ? `<span class="pill pill-blue">${lab}</span>` : '—'}</td>
-          <td><span class="pill ${isLucro ? "pill-green" : "pill-red"} " style="font-size:.7rem">LUCRO FINAL</span></td>
+          <td style="font-weight:700">${R(despesca.c_total)}</td>
+          <td class="${isLucro ? "tag-lucro" : "tag-prejuizo"}" style="font-weight:800;font-size:.85rem">${R(lucroCiclo)}</td>
+          <td colspan="2"><span class="pill ${isLucro ? "pill-green" : "pill-red"}">RESULTADO FINAL</span></td>
         </tr>`;
-      })() : `<tr><td colspan="10" style="text-align:center;color:var(--warn);padding:14px;font-size:.76rem">
-        ⏳ Aguardando despesca final
-      </td></tr>`;
+      })() : `<tr><td colspan="11" style="text-align:center;color:var(--warn);padding:16px;font-size:.76rem">⏳ Aguardando despesca final</td></tr>`;
 
       ciclosHtml += `
-        <div style="margin-bottom:10px">
-          <div style="display:flex;align-items:center;justify-content:space-between;
-               padding:8px 14px;background:rgba(0,229,255,.05);border-radius:8px 8px 0 0;
-               border:1px solid var(--border);border-bottom:none">
-            <span style="font-family:'Syne',sans-serif;font-size:.8rem;font-weight:800;color:var(--accent)">
-              ${tituloCiclo}
-            </span>
-            ${!aberto ? `<span class="pill ${isLucro ? "pill-green" : "pill-red"}">
-              ${R(lucroCiclo)}
-            </span>` : `<span class="pill pill-warn">Em andamento</span>`}
+        <div style="margin-bottom:8px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.06)">
+          <div onclick="toggleCiclo('${cicloId}')" style="
+            display:flex;align-items:center;justify-content:space-between;
+            padding:10px 16px;cursor:pointer;user-select:none;
+            background:rgba(255,255,255,.03);
+            border-left:3px solid ${corCiclo};
+            transition:background .15s">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span id="ciclo-icon-${cicloId}" style="color:${corCiclo};font-size:1rem">${iniciaAberto ? "▾" : "▸"}</span>
+              <div>
+                <div style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;color:${corCiclo}">${tituloCiclo}</div>
+                <div style="font-size:.62rem;color:var(--muted);margin-top:1px;letter-spacing:.06em;text-transform:uppercase">
+                  ${labelCiclo} · ${despesca ? despesca.dias + "d · " + Nf(despesca.kg) + " kg" : "em andamento"}
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              ${despesca ? `<span style="font-family:'DM Mono',monospace;font-size:.78rem;font-weight:700;color:${isLucro ? "var(--accent2)" : "var(--danger)"}">${R(lucroCiclo)}</span>` : ""}
+              <span class="pill ${aberto ? "pill-warn" : isLucro ? "pill-green" : "pill-red"}">${aberto ? "aberto" : isLucro ? "✅ Lucro" : "❌ Prejuízo"}</span>
+            </div>
           </div>
-          <div class="table-scroll" style="border:1px solid var(--border);border-radius:0 0 8px 8px;overflow:hidden">
-            <table style="min-width:480px">
-              <thead><tr>
-                <th>Evento</th><th>Data</th><th>Dias</th><th>Kg</th>
-                <th>Receita</th><th>C.Ração</th><th>C.Insumos</th>
-                <th>C.Total</th><th>Lucro</th><th>Laboratório</th><th>Resultado</th>
-              </tr></thead>
-              <tbody>${rowsDesbastes}${rowDespesca}</tbody>
-            </table>
+          <div id="ciclo-body-${cicloId}" style="display:${iniciaAberto ? "block" : "none"}">
+            <div class="table-scroll">
+              <table style="min-width:480px">
+                <thead><tr>
+                  <th>Evento</th><th>Data</th><th>Dias</th><th>Kg</th>
+                  <th>Receita</th><th>C.Ração</th><th>C.Insumos</th>
+                  <th>C.Total</th><th>Lucro</th><th>Laboratório</th><th>Resultado</th>
+                </tr></thead>
+                <tbody>${rowsDesbastes}${rowDespesca}</tbody>
+              </table>
+            </div>
           </div>
         </div>`;
     });
 
-    lucroGlobal += lucroV;
-    const isLucroV = lucroV >= 0;
-
     tabHist.insertAdjacentHTML("beforeend", `
-      <div class="table-wrap" style="margin-bottom:18px;background:transparent;border:none">
-        <div class="table-head" style="background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;margin-bottom:10px">
-          <span class="table-title">📋 ${v.nome}</span>
-          <span class="pill ${isLucroV ? "pill-green" : "pill-red"}">
-            ${cicloNum} cultivo(s) · Lucro total: ${R(lucroV)}
-          </span>
+      <div class="hist-bloco-viveiro" style="margin-bottom:28px">
+
+        <!-- Header do viveiro -->
+        <div style="
+          display:flex;align-items:stretch;
+          border-radius:14px 14px 0 0;overflow:hidden;
+          border:1px solid ${corViveiro}44;border-bottom:none">
+          <div style="width:5px;background:${corViveiro};flex-shrink:0"></div>
+          <div style="
+            flex:1;padding:16px 20px;
+            background:linear-gradient(90deg,${corViveiro}12 0%,rgba(16,31,53,.95) 60%);
+            display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+            <div style="display:flex;align-items:center;gap:14px">
+              <div style="
+                width:40px;height:40px;border-radius:10px;
+                background:${corViveiro}22;border:1px solid ${corViveiro}44;
+                display:flex;align-items:center;justify-content:center;font-size:1.2rem">🦐</div>
+              <div>
+                <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:${corViveiro};letter-spacing:.03em">${v.nome}</div>
+                <div style="font-size:.65rem;color:var(--muted);margin-top:2px;letter-spacing:.08em;text-transform:uppercase">
+                  ${nCiclos} cultivo${nCiclos !== 1 ? "s" : ""} finalizado${nCiclos !== 1 ? "s" : ""}
+                </div>
+              </div>
+            </div>
+            <!-- Mini KPIs -->
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <div style="text-align:right">
+                <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Produção</div>
+                <div style="font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--text)">${Nf(Math.round(totalKg))} kg</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Receita</div>
+                <div style="font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--accent)">${R(totalRec)}</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Custo</div>
+                <div style="font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--warn)">${R(totalCust)}</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Lucro acum.</div>
+                <div style="font-family:'DM Mono',monospace;font-size:.9rem;font-weight:800;color:${isLucroV ? "var(--accent2)" : "var(--danger)"}">${R(lucroV)}</div>
+              </div>
+            </div>
+          </div>
         </div>
-        ${ciclosHtml}
+
+        <!-- Ciclos do viveiro -->
+        <div style="
+          border:1px solid ${corViveiro}33;border-top:none;
+          border-radius:0 0 14px 14px;padding:12px;
+          background:rgba(8,15,26,.6)">
+          ${ciclosHtml}
+        </div>
+
       </div>`);
   });
 
