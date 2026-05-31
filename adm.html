@@ -2,991 +2,1570 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AquaShrimpTech — ADM</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AquaShrimpTech — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#05080f;--bg2:#080d18;--card:#0b1221;--card2:#0f1929;--border:#152038;--border2:#1e2f4a;--accent:#00e5ff;--accent2:#00ffa3;--accent3:#ff6b35;--warn:#ffb300;--danger:#ff4060;--purple:#9b5de5;--text:#e2eaf5;--text2:#8ba4c0;--text3:#4a6080;--r:12px}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,229,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.025) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
-::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-
-/* LOGIN */
-#ls{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
-.lw{display:flex;flex-direction:column;align-items:center;gap:24px;width:100%;max-width:400px;padding:20px}
-.lb{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.12em;background:linear-gradient(135deg,var(--accent3),var(--warn));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 16px rgba(255,107,53,.4))}
-.lcard{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:18px;padding:28px;box-shadow:0 0 60px rgba(255,107,53,.06)}
-.ltitle{font-size:.95rem;font-weight:600;margin-bottom:4px}
-.ldesc{font-size:.72rem;color:var(--text3);margin-bottom:22px}
-.lf{margin-bottom:13px}
-.lf label{display:block;font-size:.63rem;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
-.lf input{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.85rem;outline:none;transition:border-color .2s}
-.lf input:focus{border-color:var(--accent3)}
-.lbtn{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent3),var(--warn));border:none;border-radius:8px;color:#05080f;font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;margin-top:4px}
-.lbtn:hover{opacity:.92;transform:translateY(-1px)}
-.lerr{background:rgba(255,64,96,.1);border:1px solid rgba(255,64,96,.3);border-radius:7px;padding:9px 13px;color:var(--danger);font-size:.74rem;margin-top:9px;display:none;text-align:center}
-
-/* APP */
-#app{display:none;min-height:100vh}
-.sb{position:fixed;left:0;top:0;bottom:0;width:228px;z-index:100;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:transform .3s}
-.sb-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.sb-brand{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.08em;color:var(--accent3)}
-.sb-tag{background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.35);color:var(--accent3);font-size:.55rem;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:.06em}
-.sb-nav{flex:1;padding:12px 0;overflow-y:auto}
-.nav-sec{padding:7px 15px 3px;font-size:.54rem;color:var(--text3);letter-spacing:.15em;text-transform:uppercase}
-.ni{display:flex;align-items:center;gap:9px;padding:9px 15px;cursor:pointer;color:var(--text2);font-size:.78rem;font-weight:500;border-left:3px solid transparent;transition:all .15s}
-.ni:hover{color:var(--text);background:rgba(255,107,53,.04)}
-.ni.act{color:var(--accent3);border-left-color:var(--accent3);background:rgba(255,107,53,.06)}
-.ni-ic{width:17px;text-align:center;font-size:.9rem;flex-shrink:0}
-.ni-bdg{margin-left:auto;background:var(--danger);color:#fff;font-size:.56rem;font-weight:700;padding:2px 6px;border-radius:10px}
-.sb-ft{padding:12px 15px;border-top:1px solid var(--border)}
-.sb-user{display:flex;align-items:center;gap:8px}
-.sb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--warn));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#05080f;flex-shrink:0}
-.sb-nm{font-size:.74rem;font-weight:600}
-.sb-rl{font-size:.58rem;color:var(--text3)}
-.lo-btn{margin-left:auto;background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:.85rem;padding:4px;border-radius:5px;transition:color .2s}
-.lo-btn:hover{color:var(--danger)}
-.main{margin-left:228px;min-height:100vh;position:relative;z-index:1}
-.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:12px 22px;background:rgba(5,8,15,.88);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
-.tb-title{font-size:.9rem;font-weight:700}
-.tb-r{display:flex;align-items:center;gap:10px}
-.tb-clk{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3)}
-.pg{padding:22px;display:none}
-.pg.act{display:block;animation:fi .25s ease}
-@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-/* KPI */
-.kr{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:18px}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:relative;overflow:hidden;transition:transform .2s}
-.kpi:hover{transform:translateY(-2px)}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--kc,var(--accent)),transparent)}
-.kpi.g{--kc:var(--accent2)}.kpi.o{--kc:var(--accent3)}.kpi.w{--kc:var(--warn)}.kpi.d{--kc:var(--danger)}.kpi.p{--kc:var(--purple)}
-.kpi-ic{font-size:1.1rem;margin-bottom:7px}
-.kpi-lb{font-size:.58rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
-.kpi-vl{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;line-height:1}
-.ca{color:var(--accent)}.cg{color:var(--accent2)}.co{color:var(--accent3)}.cw{color:var(--warn)}.cd{color:var(--danger)}.cp{color:var(--purple)}
-.kpi-tr{font-size:.62rem;color:var(--text3);margin-top:4px}
-.kpi-tr.up{color:var(--accent2)}.kpi-tr.dn{color:var(--danger)}
-
-/* CARD */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
-.card-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
-.card-title{font-size:.84rem;font-weight:700}
-.card-body{padding:16px}
-
-/* BOTÕES */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.74rem;font-family:'Space Grotesk',sans-serif;font-weight:600;cursor:pointer;border:none;transition:all .2s}
-.btn-sm{padding:4px 10px;font-size:.68rem}
-.btn-xs{padding:3px 8px;font-size:.63rem}
-.bac{background:var(--accent);color:#05080f}.bac:hover{opacity:.9;box-shadow:0 4px 14px rgba(0,229,255,.3)}
-.bor{background:var(--accent3);color:#fff}.bor:hover{opacity:.9;box-shadow:0 4px 14px rgba(255,107,53,.3)}
-.bgr{background:var(--accent2);color:#05080f}.bgr:hover{opacity:.9}
-.bol{background:transparent;border:1px solid var(--border2);color:var(--text2)}.bol:hover{border-color:var(--accent);color:var(--accent)}
-.bdn{background:var(--danger);color:#fff}.bdn:hover{opacity:.9}
-.bwn{background:var(--warn);color:#05080f}
-.bwa{background:#25D366;color:#fff}.bwa:hover{background:#1ebe5d}
-.bwa:focus{outline:none}
-.bpp{background:var(--purple);color:#fff}
-
-/* BADGE */
-.bdg{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:.58rem;font-weight:700;letter-spacing:.05em}
-.bg{background:rgba(0,255,163,.12);color:var(--accent2);border:1px solid rgba(0,255,163,.25)}
-.br{background:rgba(255,64,96,.12);color:var(--danger);border:1px solid rgba(255,64,96,.25)}
-.bw{background:rgba(255,179,0,.12);color:var(--warn);border:1px solid rgba(255,179,0,.25)}
-.bb{background:rgba(0,229,255,.1);color:var(--accent);border:1px solid rgba(0,229,255,.2)}
-.bo{background:rgba(255,107,53,.12);color:var(--accent3);border:1px solid rgba(255,107,53,.25)}
-
-/* TABELA */
-.tw{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-thead th{font-size:.56rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);white-space:nowrap}
-tbody tr{border-bottom:1px solid rgba(21,32,56,.5);transition:background .12s}
-tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:rgba(0,229,255,.03)}
-tbody td{padding:10px 12px;font-size:.76rem;vertical-align:middle}
-.mono{font-family:'JetBrains Mono',monospace}
-
-/* MODAL */
-.ov{position:fixed;inset:0;z-index:500;background:rgba(5,8,15,.9);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
-.ov.open{display:flex;animation:fi .2s ease}
-.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 0 60px rgba(0,0,0,.7)}
-.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);z-index:1}
-.modal-title{font-size:.9rem;font-weight:700}
-.modal-x{background:none;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:5px;transition:all .2s}
-.modal-x:hover{color:var(--danger);background:rgba(255,64,96,.1)}
-.modal-body{padding:20px}
-.modal-ft{padding:13px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
-
-/* FORM */
-.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
-.fg label{font-size:.62rem;font-weight:600;color:var(--text3);letter-spacing:.09em;text-transform:uppercase}
-.fg input,.fg select,.fg textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:.8rem;outline:none;transition:border-color .2s}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent3)}
-.fg select option{background:var(--card)}
-.fr{display:grid;gap:12px;margin-bottom:12px}
-.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:1fr 1fr 1fr}
-.fsec{font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin:14px 0 9px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.inp-pre{display:flex;align-items:center;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;overflow:hidden}
-.inp-pre span{padding:9px 10px;background:rgba(255,107,53,.05);border-right:1px solid var(--border2);color:var(--text3);font-size:.76rem;white-space:nowrap}
-.inp-pre input{border:none;border-radius:0;flex:1;background:transparent}
-.viv-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:6px}
-.viv-n{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--accent);font-weight:700;width:20px;flex-shrink:0}
-.viv-row input{flex:1;background:transparent;border:none;color:var(--text);font-size:.78rem;outline:none}
-
-/* ALERT LIST */
-.al-list{display:flex;flex-direction:column;gap:8px}
-.al-item{display:flex;align-items:center;gap:11px;background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;transition:border-color .2s}
-.al-item:hover{border-color:var(--accent)}
-.al-item.d{border-left:3px solid var(--danger)}.al-item.w{border-left:3px solid var(--warn)}.al-item.g{border-left:3px solid var(--accent2)}
-.al-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;flex-shrink:0}
-.al-inf{flex:1}
-.al-nm{font-size:.79rem;font-weight:600}
-.al-ds{font-size:.66rem;color:var(--text3);margin-top:2px}
-.al-act{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap}
-
-/* SWITCH */
-.sw-w{display:flex;align-items:center;gap:9px;margin-bottom:12px}
-.sw{position:relative;width:36px;height:20px}
-.sw input{opacity:0;width:0;height:0}
-.sl{position:absolute;inset:0;background:var(--border2);border-radius:10px;cursor:pointer;transition:.3s}
-.sl::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--text3);border-radius:50%;transition:.3s}
-input:checked+.sl{background:var(--accent3)}
-input:checked+.sl::before{transform:translateX(16px);background:#05080f}
-
-/* WA PREVIEW */
-.wa-prv{background:#0b1521;border:1px solid var(--border);border-radius:11px;overflow:hidden;max-width:320px}
-.wa-hd{background:#1a2f3a;padding:10px 13px;display:flex;align-items:center;gap:8px}
-.wa-av{width:34px;height:34px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:.95rem}
-.wa-cn{font-size:.8rem;font-weight:600;color:#e9edef}.wa-cs{font-size:.62rem;color:#8696a0}
-.wa-body{padding:13px;background:#0a1623}
-.wa-bub{background:#1f2c34;border-radius:8px 8px 8px 0;padding:8px 12px;max-width:92%}
-.wa-txt{font-size:.76rem;color:#e9edef;line-height:1.5}
-.wa-time{font-size:.58rem;color:#8696a0;text-align:right;margin-top:3px}.wa-tick{color:#53bdeb}
-
-/* TOAST */
-.tc{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:7px}
-.toast{background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:12px 15px;font-size:.77rem;min-width:250px;box-shadow:0 8px 32px rgba(0,0,0,.5);display:flex;align-items:center;gap:8px;animation:sli .3s ease}
-@keyframes sli{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
-.toast.s{border-left:3px solid var(--accent2)}.toast.e{border-left:3px solid var(--danger)}.toast.i{border-left:3px solid var(--accent)}
-
-/* PIX MODAL */
-.pix-box{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:16px;text-align:center;margin-bottom:13px}
-.pix-valor{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--accent2);margin-bottom:4px}
-.pix-link{font-size:.72rem;color:var(--accent);word-break:break-all;margin-top:6px}
-
-/* LOADING */
-.loading-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,229,255,.3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* MOBILE */
-.hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer}
-.sb-ov{display:none;position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.5)}
-.sb-ov.open{display:block}
-@media(max-width:860px){
-  .sb{position:fixed;top:0;bottom:0;left:0;z-index:100;transform:translateX(-100%)}
-  .sb.open{transform:translateX(0)}
-  .hamburger{display:block}
-  .main{margin-left:0}
-  .fr.c2,.fr.c3{grid-template-columns:1fr}
-  .kr{grid-template-columns:1fr 1fr}
-  .pg{padding:14px}
+/* ════════════════════════════════════════════════
+   VARIÁVEIS E RESET
+════════════════════════════════════════════════ */
+:root{
+  --bg:#080f1a;--surface:#0d1a2e;--card:#101f35;--border:#1a3050;
+  --accent:#00e5ff;--accent2:#00ffa3;--warn:#ffb300;--danger:#ff4f4f;
+  --purple:#a78bfa;--text:#e8f4f8;--muted:#5a7a95;
+  --glow:0 0 24px rgba(0,229,255,.18)
 }
-@media(max-width:480px){.kr{grid-template-columns:1fr}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+/* ════════════════════════════════════════════════
+   LOGIN
+════════════════════════════════════════════════ */
+#login-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 0 60px rgba(0,229,255,.08);animation:fadeUp .4s ease}
+.login-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:32px;gap:12px}
+.login-logo .logo-emoji{font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(0,229,255,.5))}
+.login-brand{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:600;color:var(--accent);letter-spacing:.04em;text-align:center;font-style:italic}
+.login-sub{font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;text-align:center}
+.demo-badge{background:rgba(0,255,163,.1);border:1px solid rgba(0,255,163,.3);border-radius:8px;padding:7px 14px;font-size:.68rem;color:var(--accent2);text-align:center;margin-bottom:16px;font-family:'DM Mono',monospace}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:.66rem;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.login-field input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:.88rem;outline:none;transition:border-color .2s}
+.login-field input:focus{border-color:var(--accent)}
+.login-btn{width:100%;margin-top:8px;padding:13px;background:linear-gradient(135deg,var(--accent),#0090a8);border:none;border-radius:10px;color:#080f1a;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;letter-spacing:.06em;cursor:pointer;transition:opacity .2s,transform .15s}
+.login-btn:hover{opacity:.9;transform:translateY(-1px)}
+
+/* ════════════════════════════════════════════════
+   APP / HEADER / NAV
+════════════════════════════════════════════════ */
+#app{display:none}
+header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,229,255,.06) 0%,transparent 60%)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-emoji-sm{font-size:1.4rem}
+.logo-text{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;letter-spacing:.04em;color:var(--accent);text-shadow:0 0 16px rgba(0,229,255,.4)}
+.header-right{display:flex;align-items:center;gap:10px}
+#clock{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.06em}
+.badge-live{display:flex;align-items:center;gap:5px;font-size:.64rem;font-weight:600;color:var(--accent2);letter-spacing:.1em;text-transform:uppercase}
+.dot-live{width:7px;height:7px;border-radius:50%;background:var(--accent2);animation:pulse-live 1.6s ease-in-out infinite;box-shadow:0 0 8px var(--accent2)}
+@keyframes pulse-live{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.badge-demo{font-size:.62rem;font-weight:700;padding:3px 10px;border-radius:6px;background:rgba(0,255,163,.12);color:var(--accent2);border:1px solid rgba(0,255,163,.3)}
+.btn-logout{font-size:.64rem;font-weight:700;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;transition:color .2s,border-color .2s}
+.btn-logout:hover{color:var(--danger);border-color:var(--danger)}
+nav{position:relative;z-index:10;display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+.tab-btn{font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:11px 14px;background:transparent;border:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;white-space:nowrap}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+main{position:relative;z-index:5;padding:18px;max-width:1500px;margin:0 auto}
+.tab-panel{display:none}.tab-panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ════════════════════════════════════════════════
+   COMPONENTES COMUNS
+════════════════════════════════════════════════ */
+.section-title{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--glow)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.kpi-card.green::before{background:linear-gradient(90deg,var(--accent2),transparent)}
+.kpi-card.warn::before{background:linear-gradient(90deg,var(--warn),transparent)}
+.kpi-card.danger::before{background:linear-gradient(90deg,var(--danger),transparent)}
+.kpi-label{font-size:.62rem;font-weight:500;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.kpi-value{font-family:'Syne',sans-serif;font-size:1.45rem;font-weight:800;line-height:1}
+.kpi-value.accent{color:var(--accent)}.kpi-value.green{color:var(--accent2)}.kpi-value.warn{color:var(--warn)}.kpi-value.danger{color:var(--danger)}
+.kpi-sub{font-size:.6rem;color:var(--muted);margin-top:4px}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.6rem;font-weight:700;letter-spacing:.06em}
+.pill-green{background:rgba(0,255,163,.12);color:var(--accent2)}.pill-red{background:rgba(255,79,79,.12);color:var(--danger)}
+.pill-warn{background:rgba(255,179,0,.12);color:var(--warn)}.pill-blue{background:rgba(0,229,255,.12);color:var(--accent)}
+.tag-lucro{color:var(--accent2);font-weight:600}.tag-prejuizo{color:var(--danger);font-weight:600}
+
+/* ════════════════════════════════════════════════
+   VIVEIROS
+════════════════════════════════════════════════ */
+.viveiros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-bottom:18px}
+.viveiro-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;transition:transform .25s,border-color .25s,box-shadow .25s;animation:fadeUp .4s ease both}
+.viveiro-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 0 30px rgba(0,229,255,.12)}
+.viveiro-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.viveiro-name{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800}
+.viveiro-status{font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase}
+.status-ativo{background:rgba(0,255,163,.12);color:var(--accent2);border:1px solid rgba(0,255,163,.3)}
+.viveiro-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.v-metric-label{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.v-metric-value{font-family:'DM Mono',monospace;font-size:.98rem;font-weight:500}
+.v-metric-value.accent{color:var(--accent)}.v-metric-value.warn{color:var(--warn)}
+.viveiro-bar-wrap{margin-top:12px;background:var(--border);border-radius:4px;height:4px;overflow:hidden}
+.viveiro-bar{height:100%;border-radius:4px;transition:width 1.2s ease}
+.viveiro-bar-label{display:flex;justify-content:space-between;margin-top:4px;font-size:.57rem;color:var(--muted)}
+.dias-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:5px 10px;font-size:.66rem;color:var(--accent);font-family:'DM Mono',monospace}
+.v-actions-panel{display:flex;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap}
+.btn-action-html{flex:1;min-width:75px;padding:7px 5px;font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer;transition:all .2s;text-transform:uppercase}
+.btn-action-html:hover{border-color:var(--accent);box-shadow:0 0 10px rgba(0,229,255,.2);transform:translateY(-1px)}
+.btn-action-html.danger-action:hover{border-color:var(--danger);color:var(--danger)}
+
+/* ════════════════════════════════════════════════
+   TABELAS
+════════════════════════════════════════════════ */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:18px}
+.table-scroll{overflow-x:auto}
+.table-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.table-title{font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700}
+table{width:100%;border-collapse:collapse;min-width:480px}
+thead th{font-family:'DM Mono',monospace;font-size:.58rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);white-space:nowrap}
+tbody tr{border-bottom:1px solid rgba(26,48,80,.5);transition:background .15s}
+tbody tr:hover{background:rgba(0,229,255,.04)}
+tbody td{padding:9px 13px;font-size:.76rem;font-family:'DM Mono',monospace;white-space:nowrap}
+
+/* ════════════════════════════════════════════════
+   ESTOQUE
+════════════════════════════════════════════════ */
+.estoque-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px;margin-bottom:18px}
+.est-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:15px 17px;transition:transform .2s}
+.est-card:hover{transform:translateY(-2px)}
+.est-card.critico{border-color:rgba(255,79,79,.4)}.est-card.baixo{border-color:rgba(255,179,0,.4)}.est-card.ok{border-color:rgba(0,255,163,.15)}
+.est-name{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;margin-bottom:5px}
+.est-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-top:4px}
+.est-row span:last-child{color:var(--text);font-family:'DM Mono',monospace}
+.est-bar-wrap{margin-top:9px;background:var(--border);border-radius:3px;height:3px}
+.est-bar{height:100%;border-radius:3px}
+.est-bar.ok{background:var(--accent2)}.est-bar.baixo{background:var(--warn)}.est-bar.critico{background:var(--danger)}
+.est-btn-add{width:100%;margin-top:10px;padding:6px;font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);color:var(--accent);border-radius:6px;cursor:pointer;transition:all .2s}
+.est-btn-add:hover{background:var(--accent);color:#080f1a}
+.top-bar-est{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.btn-top-est{padding:8px 14px;font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;background:linear-gradient(135deg,var(--accent2),#00b072);border:none;color:#080f1a;border-radius:8px;cursor:pointer;transition:all .2s}
+.btn-top-est:hover{opacity:.9;transform:translateY(-1px)}
+
+/* ════════════════════════════════════════════════
+   BIOMETRIA
+════════════════════════════════════════════════ */
+.bio-chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:18px}
+
+/* ════════════════════════════════════════════════
+   ★★★ AGENTES IA — ESTILOS NOVOS ★★★
+════════════════════════════════════════════════ */
+
+/* Configuração API key */
+.ia-config-bar{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:16px 20px;margin-bottom:18px;
+  display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end
+}
+.ia-config-group{display:flex;flex-direction:column;gap:5px;flex:1;min-width:200px}
+.ia-config-label{font-size:.6rem;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.ia-config-input{
+  background:var(--bg);border:1px solid var(--border);border-radius:9px;
+  padding:9px 13px;color:var(--text);font-family:'DM Mono',monospace;
+  font-size:.8rem;outline:none;transition:border-color .2s;width:100%
+}
+.ia-config-input:focus{border-color:var(--accent)}
+
+/* Seletor de viveiro */
+.ia-viv-selector{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:14px 18px;margin-bottom:18px
+}
+.ia-viv-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.ia-viv-tab{
+  padding:7px 14px;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;color:var(--muted);font-family:'DM Mono',monospace;
+  font-size:.7rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px
+}
+.ia-viv-tab:hover{border-color:rgba(0,229,255,.3);color:var(--text)}
+.ia-viv-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,.06)}
+.ia-viv-tab.consolidado{color:var(--accent2)}
+.ia-viv-tab.consolidado.active{border-color:var(--accent2);background:rgba(0,255,163,.06)}
+.ia-dot{width:7px;height:7px;border-radius:50%}
+.ia-dot-ok{background:var(--accent2)}.ia-dot-warn{background:var(--warn)}.ia-dot-crit{background:var(--danger)}
+
+/* Botão Analisar */
+.btn-analisar{
+  padding:11px 24px;background:linear-gradient(135deg,var(--accent),#0090a8);
+  border:none;border-radius:9px;color:#080f1a;
+  font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;white-space:nowrap
+}
+.btn-analisar:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,229,255,.2)}
+.btn-analisar:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* Abas internas da IA */
+.ia-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.ia-tabs::-webkit-scrollbar{display:none}
+.ia-tab-btn{
+  font-family:'Syne',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:9px 14px;background:transparent;border:none;
+  color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
+  margin-bottom:-1px;white-space:nowrap;transition:color .2s,border-color .2s
+}
+.ia-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.ia-tab-panel{display:none}.ia-tab-panel.active{display:block}
+
+/* Grid de agentes */
+.agents-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:1100px){.agents-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.agents-grid{grid-template-columns:1fr}}
+
+/* Card de agente */
+.agent-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;display:flex;flex-direction:column;
+  animation:fadeUp .4s ease both
+}
+.agent-header{padding:13px 15px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.agent-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.agent-meta{flex:1;min-width:0}
+.agent-name{font-family:'Syne',sans-serif;font-size:.76rem;font-weight:800}
+.agent-spec{font-size:.59rem;color:var(--muted);margin-top:1px}
+.agent-status{font-size:.57rem;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.07em;text-transform:uppercase;flex-shrink:0}
+.st-idle{background:rgba(74,106,133,.15);color:var(--muted);border:1px solid rgba(74,106,133,.3)}
+.st-run{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);animation:blink .8s ease infinite}
+.st-ok{background:rgba(0,255,163,.1);color:var(--accent2);border:1px solid rgba(0,255,163,.3)}
+.st-warn{background:rgba(255,179,0,.1);color:var(--warn);border:1px solid rgba(255,179,0,.3)}
+.st-crit{background:rgba(255,79,79,.1);color:var(--danger);border:1px solid rgba(255,79,79,.3)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.agent-body{padding:13px 15px;flex:1}
+.agent-output{font-size:.75rem;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.agent-score{margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:7px;display:flex;align-items:center;justify-content:space-between}
+.score-label{font-size:.59rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.score-val{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800}
+.agent-placeholder{text-align:center;padding:20px 10px;color:var(--muted);font-size:.7rem;font-family:'DM Mono',monospace;border:1px dashed var(--border);border-radius:9px}
+
+/* Card master */
+.master-card{background:var(--card);border:1px solid var(--accent);border-radius:18px;overflow:hidden;margin-bottom:18px;box-shadow:0 0 40px rgba(0,229,255,.07)}
+.master-header{padding:17px 22px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,229,255,.05),transparent);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.master-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:var(--accent)}
+.master-meta{font-size:.63rem;color:var(--muted);margin-top:2px}
+.master-body{padding:20px}
+.master-output{font-size:.79rem;line-height:1.75;white-space:pre-wrap;word-break:break-word}
+
+/* Índice geral */
+.index-block{display:flex;align-items:center;gap:16px;background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.14);border-radius:11px;padding:14px 16px;margin-bottom:16px}
+.index-circle{width:66px;height:66px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--accent);background:rgba(0,229,255,.05)}
+.index-num{font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:800;line-height:1}
+.index-total{font-size:.57rem;color:var(--muted)}
+.index-status{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;margin-bottom:3px}
+.index-desc{font-size:.7rem;color:var(--muted);line-height:1.5}
+
+/* Financeiro */
+.fin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(144px,1fr));gap:8px;margin:10px 0}
+.fin-card{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:8px;padding:11px 13px}
+.fin-label{font-size:.57rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.fin-val{font-family:'DM Mono',monospace;font-size:.88rem;font-weight:500}
+.fv-green{color:var(--accent2)}.fv-warn{color:var(--warn)}.fv-accent{color:var(--accent)}.fv-danger{color:var(--danger)}
+
+/* Shimmer loading */
+.shimmer{background:linear-gradient(90deg,var(--border) 25%,rgba(26,48,80,.8) 50%,var(--border) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:5px;height:11px;margin-bottom:7px}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Consolidado */
+.fazenda-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:9px;margin-bottom:16px}
+.fkpi{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 15px;position:relative;overflow:hidden}
+.fkpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.fkpi.accent::before{background:linear-gradient(90deg,var(--accent),transparent)}
+.fkpi.green::before{background:linear-gradient(90deg,var(--accent2),transparent)}
+.fkpi.warn::before{background:linear-gradient(90deg,var(--warn),transparent)}
+.fkpi.danger::before{background:linear-gradient(90deg,var(--danger),transparent)}
+.fkpi-label{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.fkpi-val{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;line-height:1}
+.fkpi-val.accent{color:var(--accent)}.fkpi-val.green{color:var(--accent2)}.fkpi-val.warn{color:var(--warn)}.fkpi-val.danger{color:var(--danger)}
+.fkpi-sub{font-size:.57rem;color:var(--muted);margin-top:3px}
+
+/* Cards de sumário por viveiro */
+.viv-sum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:11px;margin-bottom:18px}
+.viv-sum-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:border-color .2s}
+.viv-sum-card:hover{border-color:rgba(0,229,255,.3)}
+.viv-sum-rows{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.vsr{background:rgba(0,0,0,.15);border-radius:6px;padding:7px 9px}
+.vsr-lbl{font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.vsr-val{font-family:'DM Mono',monospace;font-size:.78rem;margin-top:2px}
+
+/* Ações lista */
+.acoes-list{list-style:none}
+.acoes-list li{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border-bottom:1px solid rgba(22,45,74,.5);font-size:.74rem}
+.acoes-list li:last-child{border-bottom:none}
+.acao-num{width:20px;height:20px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.62rem;font-weight:700;background:rgba(0,229,255,.1);color:var(--accent);margin-top:1px}
+
+/* ════════════════════════════════════════════════
+   MODAIS
+════════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(4,8,15,.85);backdrop-filter:blur(4px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:20px;width:100%;max-width:400px;padding:24px;box-shadow:0 0 40px rgba(0,229,255,.1);animation:fadeUp .3s ease}
+.modal-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:var(--accent);margin-bottom:16px;text-transform:uppercase;letter-spacing:.05em}
+.modal-buttons{display:flex;gap:10px;margin-top:20px}
+.btn-modal{flex:1;padding:11px;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;border-radius:8px;border:none;cursor:pointer;text-transform:uppercase;transition:all .2s}
+.btn-modal.confirm{background:var(--accent);color:#080f1a}.btn-modal.confirm:hover{opacity:.9}
+.btn-modal.cancel{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-modal.cancel:hover{color:var(--text)}
+
+footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62rem;color:var(--muted);border-top:1px solid var(--border);font-family:'DM Mono',monospace}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+@media(max-width:600px){
+  .login-box{padding:28px 22px}
+  header{padding:10px 14px}.logo-text{font-size:.8rem}#clock{display:none}
+  main{padding:12px 10px}
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:8px}.kpi-value{font-size:1.2rem}
+  .viveiros-grid{grid-template-columns:1fr}
+  .estoque-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .agents-grid{grid-template-columns:1fr}
+  .ia-config-bar{flex-direction:column}
+}
+@media(max-width:380px){.kpi-grid{grid-template-columns:1fr}.estoque-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<div id="ls">
-  <div class="lw">
-    <div style="text-align:center">
-      <div class="lb">ADM PANEL</div>
-      <div style="font-size:.62rem;color:var(--text3);letter-spacing:.18em;text-transform:uppercase;margin-top:-16px">AquaShrimpTech · Gestão Empresarial</div>
+<!-- ════════════════════════════════════════════
+     LOGIN
+════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="logo-emoji">🦐</span>
+      <div class="login-brand">Tecnologia que cultiva resultados</div>
+      <div class="login-sub">Painel de Controle — Demo</div>
     </div>
-    <div class="lcard">
-      <div class="ltitle">🔐 Acesso Administrativo</div>
-      <div class="ldesc">Área restrita — somente gestores autorizados</div>
-      <div class="lf"><label>Usuário ADM</label><input id="au" type="text" placeholder="admin" autocomplete="off"></div>
-      <div class="lf"><label>Senha</label><input id="ap" type="password" placeholder="••••••••" autocomplete="off"></div>
-      <button class="lbtn" onclick="admLogin()">Entrar no Painel ADM</button>
-      <div class="lerr" id="lerr">Credenciais inválidas.</div>
-      <a href="index.html" style="display:block;text-align:center;margin-top:12px;font-size:.72rem;color:var(--text3);text-decoration:none">← Voltar ao painel cliente</a>
-    </div>
+    <div class="demo-badge">✨ MODO DEMONSTRAÇÃO — qualquer usuário e senha</div>
+    <div class="login-field"><label>Usuário</label><input type="text" id="inp-usuario" placeholder="ex: demo" autocomplete="username"></div>
+    <div class="login-field"><label>Senha</label><input type="password" id="inp-senha" placeholder="qualquer senha" autocomplete="current-password"></div>
+    <button class="login-btn" onclick="fazerLogin()">Entrar na Demo</button>
   </div>
 </div>
 
+<!-- ════════════════════════════════════════════
+     APP
+════════════════════════════════════════════ -->
 <div id="app">
-  <div class="sb-ov" id="sb-ov" onclick="toggleSB()"></div>
-  <aside class="sb" id="sb">
-    <div class="sb-logo">
-      <div><div class="sb-brand">AQUASHRIMP</div><div style="font-size:.5rem;color:var(--text3);letter-spacing:.12em;text-transform:uppercase">ADM · Gestão</div></div>
-      <div class="sb-tag">ADM</div>
-    </div>
-    <nav class="sb-nav">
-      <div class="nav-sec">Principal</div>
-      <div class="ni act" onclick="go('dash',this)"><span class="ni-ic">📊</span>Dashboard</div>
-      <div class="ni" onclick="go('clientes',this)"><span class="ni-ic">👥</span>Clientes<span class="ni-bdg" id="bdg-inad">0</span></div>
-      <div class="ni" onclick="go('financeiro',this)"><span class="ni-ic">💰</span>Financeiro</div>
-      <div class="ni" onclick="go('cobrancas',this)"><span class="ni-ic">📄</span>Cobranças<span class="ni-bdg" id="bdg-cob">0</span></div>
-      <div class="nav-sec" style="margin-top:10px">Operacional</div>
-      <div class="ni" onclick="go('alertas',this)"><span class="ni-ic">🔔</span>Alertas<span class="ni-bdg" id="bdg-al">0</span></div>
-      <div class="ni" onclick="go('mensagens',this)"><span class="ni-ic">💬</span>Mensagens</div>
-      <div class="nav-sec" style="margin-top:10px">Sistema</div>
-      <div class="ni" onclick="go('config',this)"><span class="ni-ic">⚙️</span>Configurações</div>
-    </nav>
-    <div class="sb-ft">
-      <div class="sb-user">
-        <div class="sb-av">A</div>
-        <div><div class="sb-nm">Admin</div><div class="sb-rl">Proprietário</div></div>
-        <button class="lo-btn" onclick="logout()" title="Sair">⏻</button>
-      </div>
-    </div>
-  </aside>
+<header>
+  <div class="logo">
+    <span class="logo-emoji-sm">🦐</span>
+    <span class="logo-text">AquaShrimpTech</span>
+  </div>
+  <div class="header-right">
+    <span class="badge-demo">DEMO</span>
+    <span id="clock">--:--:--</span>
+    <div class="badge-live"><div class="dot-live"></div>SIMULADO</div>
+    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+  </div>
+</header>
 
-  <div class="main">
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:10px">
-        <button class="hamburger" onclick="toggleSB()">☰</button>
-        <div class="tb-title" id="pg-title">Dashboard</div>
-      </div>
-      <div class="tb-r">
-        <div class="tb-clk" id="clk"></div>
-        <div id="sync-status" style="font-size:.65rem;color:var(--text3)"></div>
-        <button class="btn btn-sm bor" onclick="novoCliente()">+ Novo Cliente</button>
-      </div>
-    </div>
+<nav>
+  <button class="tab-btn active" onclick="switchTab('painel',this)">📊 Painel</button>
+  <button class="tab-btn" onclick="switchTab('biometria',this)">⚖️ Biometria</button>
+  <button class="tab-btn" onclick="switchTab('historico',this)">📈 Histórico</button>
+  <button class="tab-btn" onclick="switchTab('estoque',this)">🏭 Estoque</button>
+  <button class="tab-btn" onclick="switchTab('ia',this)">🤖 Agentes IA</button>
+</nav>
 
-    <div class="pg act" id="pg-dash">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
-        <div><div style="font-size:1.05rem;font-weight:700">Visão Geral</div><div style="font-size:.7rem;color:var(--text3)" id="dash-updated">Carregando...</div></div>
-        <div style="display:flex;gap:7px">
-          <button class="btn btn-sm bol" onclick="carregarDados()">🔄 Atualizar</button>
-          <button class="btn btn-sm bgr" onclick="novoCliente()">+ Cliente</button>
-        </div>
-      </div>
-      <div class="kr" id="kpi-dash">
-        <div class="kpi"><div class="kpi-ic">⏳</div><div class="kpi-lb">Carregando</div><div class="kpi-vl ca">...</div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px">
-        <div class="card"><div class="card-hd"><div class="card-title">📈 MRR por cliente</div></div><div class="card-body"><canvas id="ch-mrr" height="200"></canvas></div></div>
-        <div class="card"><div class="card-hd"><div class="card-title">📊 Status</div></div><div class="card-body"><canvas id="ch-status" height="200"></canvas></div></div>
-      </div>
-    </div>
+<main>
 
-    <div class="pg" id="pg-clientes">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-        <div><div style="font-size:1.05rem;font-weight:700">Gestão de Clientes</div><div style="font-size:.7rem;color:var(--text3)">Modelo: R$50/viveiro · valor negociável</div></div>
-        <div style="display:flex;gap:7px;flex-wrap:wrap">
-          <input id="busca-cli" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 11px;color:var(--text);font-size:.74rem;outline:none;width:180px" placeholder="🔍 Buscar..." oninput="filtrarTabela()">
-          <button class="btn btn-sm bor" onclick="novoCliente()">+ Novo Cliente</button>
-        </div>
-      </div>
-      <div class="card"><div class="tw"><table><thead><tr>
-        <th>Cliente</th><th>Viveiros</th><th>Val./Viv.</th><th>Total</th>
-        <th>Vencimento</th><th>Status</th><th>Último Pag.</th><th>Asaas</th><th>Ações</th>
-      </tr></thead><tbody id="tbl-cli"></tbody></table></div></div>
-    </div>
+  <!-- ── PAINEL ─────────────────────────────── -->
+  <div id="tab-painel" class="tab-panel active">
+    <div class="section-title">Resumo Geral</div>
+    <div class="kpi-grid" id="kpi-geral"></div>
+    <div class="section-title">Viveiros em Produção</div>
+    <div class="viveiros-grid" id="viveiros-grid"></div>
+  </div>
 
-    <div class="pg" id="pg-financeiro">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-        <div><div style="font-size:1.05rem;font-weight:700">Financeiro</div><div style="font-size:.7rem;color:var(--text3)">Asaas · PIX recorrente</div></div>
-      </div>
-      <div class="kr" id="kpi-fin"></div>
-      <div class="card">
-        <div class="card-hd"><div class="card-title">💳 Histórico de Pagamentos</div><div style="display:flex;gap:5px"><span class="bdg bg">✓ Recebido</span><span class="bdg br">✗ Vencido</span><span class="bdg bw">⏳ Pendente</span></div></div>
-        <div class="tw"><table><thead><tr><th>Data</th><th>Cliente</th><th>Viveiros</th><th>Valor</th><th>Status</th><th>ID Asaas</th><th>Ações</th></tr></thead><tbody id="tbl-pag"></tbody></table></div>
-      </div>
+  <!-- ── BIOMETRIA ──────────────────────────── -->
+  <div id="tab-biometria" class="tab-panel">
+    <div class="section-title">Evolução de Crescimento</div>
+    <div class="bio-chart-wrap" style="max-width:900px;margin:0 auto 18px auto;position:relative">
+      <canvas id="bioChart" height="250"></canvas>
     </div>
+    <div class="table-wrap">
+      <div class="table-head"><span class="table-title">Registros de Biometria</span></div>
+      <div class="table-scroll"><table><thead id="bio-thead"></thead><tbody id="bio-tbody"></tbody></table></div>
+    </div>
+  </div>
 
-    <div class="pg" id="pg-cobrancas">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-        <div><div style="font-size:1.05rem;font-weight:700">Cobranças</div><div style="font-size:.7rem;color:var(--text3)">Gera PIX via Asaas · WhatsApp automático</div></div>
-        <div style="display:flex;gap:7px;flex-wrap:wrap">
-          <button class="btn btn-sm bwa" onclick="wppMassa()">🟢 WhatsApp em Massa</button>
-          <button class="btn btn-sm bor" onclick="gerarTodasAsaas()">⚡ Gerar Todas (Asaas)</button>
-        </div>
+  <!-- ── HISTÓRICO ──────────────────────────── -->
+  <div id="tab-historico" class="tab-panel">
+    <div class="section-title">Cultivos Finalizados</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <span id="hist-titulo" style="font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700">Fazenda Modelo Nordeste — Histórico Completo</span>
+      <span id="lucro-acum" class="pill pill-green"></span>
+    </div>
+    <div id="hist-container"></div>
+  </div>
+
+  <!-- ── ESTOQUE ────────────────────────────── -->
+  <div id="tab-estoque" class="tab-panel">
+    <div class="top-bar-est">
+      <div class="section-title" style="margin-bottom:0;flex:1">Situação dos Insumos</div>
+      <button class="btn-top-est" onclick="abrirModalNovoInsumo()">➕ Novo Item</button>
+    </div>
+    <div class="kpi-grid" id="kpi-estoque"></div>
+    <div class="estoque-grid" id="estoque-grid"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       ★★★ ABA DE AGENTES IA ★★★
+       Totalmente nova, integrada ao painel
+  ════════════════════════════════════════ -->
+  <div id="tab-ia" class="tab-panel">
+
+    <!-- 1. CONFIGURAÇÃO DA API KEY -->
+    <div class="ia-config-bar">
+      <div class="ia-config-group" style="max-width:400px">
+        <div class="ia-config-label">🔑 Chave da API Anthropic (Claude)</div>
+        <input class="ia-config-input" type="password" id="ia-api-key"
+               placeholder="sk-ant-api03-... (opcional — sem chave usa análise demo)">
       </div>
-      <div style="background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.15);border-radius:9px;padding:13px 15px;margin-bottom:14px;font-size:.74rem">
-        <b style="color:var(--accent)">ℹ️ Fluxo Asaas:</b>
-        <span style="color:var(--text3)"> 1. Cadastra cliente → cria no Asaas · 2. Gera cobrança PIX · 3. Cliente paga → webhook confirma automaticamente · 4. Status atualiza aqui + alerta Telegram para vocêSpan>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div class="ia-config-label">Preço de referência (R$/kg)</div>
+        <input class="ia-config-input" type="number" id="ia-preco-kg"
+               value="28" step="0.5" style="max-width:120px">
       </div>
-      <div class="al-list" id="cob-list"></div>
+      <button class="btn-analisar" id="btn-analisar" onclick="executarAnaliseIA()">
+        <span id="btn-ia-icon">⚡</span><span id="btn-ia-txt">Analisar Fazenda</span>
+      </button>
     </div>
 
-    <div class="pg" id="pg-alertas">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-        <div><div style="font-size:1.05rem;font-weight:700">Central de Alertas</div></div>
-        <button class="btn btn-sm bol">✓ Marcar todos lidos</button>
-      </div>
-      <div class="al-list" id="al-list"></div>
+    <!-- AVISO DEMO -->
+    <div id="ia-demo-notice" style="background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.22);border-radius:11px;padding:11px 16px;margin-bottom:16px;font-size:.74rem;color:var(--purple);display:flex;align-items:center;gap:9px">
+      <span>💡</span>
+      <span>Sem chave de API: análise gerada localmente com textos realistas dos dados reais dos viveiros. Com sua chave sk-ant-..., o Claude escreve a análise ao vivo.</span>
     </div>
 
-    <div class="pg" id="pg-mensagens">
-      <div style="margin-bottom:16px"><div style="font-size:1.05rem;font-weight:700">Mensagens</div><div style="font-size:.7rem;color:var(--text3)">WhatsApp Business · Templates prontos</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-        <div class="card">
-          <div class="card-hd"><div class="card-title">📝 Compor</div></div>
-          <div class="card-body">
-            <div class="fg"><label>Destinatário</label><select id="msg-dest"><option value="todos">Todos os clientes</option><option value="inad">Inadimplentes</option><option value="pend">Pendentes</option></select></div>
-            <div class="fg"><label>Template</label><select id="msg-tpl" onchange="fillTpl()">
-              <option value="">Selecionar...</option>
-              <option value="cobranca">💰 Cobrança — Próximo vencimento</option>
-              <option value="inadimplente">⚠️ Cobrança — Em atraso</option>
-              <option value="boas_vindas">🎉 Boas-vindas — Novo cliente</option>
-              <option value="novo_viveiro">🦐 Novo viveiro adicionado</option>
-              <option value="atualizacao">📱 Atualização do sistema</option>
-            </select></div>
-            <div class="fg"><label>Mensagem</label><textarea id="msg-txt" rows="9" style="resize:vertical;line-height:1.5"></textarea></div>
-            <div style="display:flex;gap:7px">
-              <button class="btn bwa" style="flex:1" onclick="prvWpp()">👁 Prévia</button>
-              <button class="btn bac" style="flex:1" onclick="toast('Mensagem enviada!','s')">📤 Enviar</button>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><div class="card-title">📱 Prévia WhatsApp</div></div>
-          <div class="card-body" style="display:flex;flex-direction:column;gap:13px">
-            <div class="wa-prv">
-              <div class="wa-hd"><div class="wa-av">🦐</div><div><div class="wa-cn">AquaShrimpTech</div><div class="wa-cs">online</div></div></div>
-              <div class="wa-body"><div class="wa-bub"><div class="wa-txt" id="wa-txt">Selecione um template...</div><div class="wa-time">agora <span class="wa-tick">✓✓</span></div></div></div>
-            </div>
-            <div style="font-size:.68rem;color:var(--text3);text-align:center">💡 Link PIX do Asaas incluído automaticamente</div>
-          </div>
+    <!-- 2. SELETOR DE VIVEIRO -->
+    <div class="ia-viv-selector" id="ia-viv-selector" style="display:none">
+      <div class="section-title" style="margin-bottom:0">Selecione o viveiro para análise detalhada</div>
+      <div class="ia-viv-tabs" id="ia-viv-tabs"></div>
+    </div>
+
+    <!-- 3. ABAS INTERNAS DA IA -->
+    <div class="ia-tabs">
+      <button class="ia-tab-btn active" onclick="switchIATab('consolidado',this)">🏭 Consolidado</button>
+      <button class="ia-tab-btn" onclick="switchIATab('agentes',this)">🤖 Agentes</button>
+      <button class="ia-tab-btn" onclick="switchIATab('relatorio',this)">📋 Relatório</button>
+      <button class="ia-tab-btn" onclick="switchIATab('financeiro',this)">💰 Financeiro</button>
+    </div>
+
+    <!-- ABA: CONSOLIDADO -->
+    <div class="ia-tab-panel active" id="ia-tab-consolidado">
+      <div id="ia-consolidado">
+        <div class="agent-placeholder" style="padding:36px">
+          ⚡ Clique em <strong>Analisar Fazenda</strong> para ver o painel consolidado de todos os 12 viveiros
         </div>
       </div>
     </div>
 
-    <div class="pg" id="pg-config">
-      <div style="margin-bottom:16px"><div style="font-size:1.05rem;font-weight:700">Configurações</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-        <div class="card">
-          <div class="card-hd"><div class="card-title">🔌 Integrações</div></div>
-          <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">🏦</span><div><div style="font-size:.78rem;font-weight:600">Asaas</div><div style="font-size:.63rem;color:var(--text3)">PIX recorrente · R$1,99/cobrança</div></div></div><span class="bdg" id="asaas-status-badge">Verificando...</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">🟢</span><div><div style="font-size:.78rem;font-weight:600">WhatsApp Business</div><div style="font-size:.63rem;color:var(--text3)">Cobranças e alertas</div></div></div><span class="bdg bg">✓ Ativo</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">📊</span><div><div style="font-size:.78rem;font-weight:600">Google Sheets (ADM)</div><div style="font-size:.63rem;color:var(--text3)" id="sheets-id-display">Conectado</div></div></div><span class="bdg bg">✓ Conectado</span></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><div class="card-title">⚙️ Regras de Cobrança</div></div>
-          <div class="card-body">
-            <div class="fg"><label>Valor padrão por viveiro (R$)</label><input id="cfg-val" type="number" value="50" min="1"></div>
-            <div class="fg"><label>Dias antes do vencimento para alertar</label><input type="number" value="3"></div>
-            <div class="fg"><label>Dias após vencimento para 2° alerta</label><input type="number" value="3"></div>
-            <div class="fg"><label>Dias para bloquear acesso</label><input type="number" value="10"></div>
-            <div class="sw-w"><label class="sw"><input type="checkbox" checked><span class="sl"></span></label><span style="font-size:.78rem">Lembrete WhatsApp automático</span></div>
-            <div class="sw-w"><label class="sw"><input type="checkbox" checked><span class="sl"></span></label><span style="font-size:.78rem">Alerta Telegram ao receber pagamento</span></div>
-            <button class="btn bac" style="width:100%;margin-top:8px" onclick="toast('Configurações salvas!','s')">💾 Salvar</button>
-          </div>
+    <!-- ABA: AGENTES ESPECIALISTAS -->
+    <div class="ia-tab-panel" id="ia-tab-agentes">
+      <div id="ia-agentes">
+        <div class="agent-placeholder" style="padding:36px">
+          Selecione um viveiro e clique em Analisar para ver os 6 agentes especialistas em ação
         </div>
       </div>
     </div>
 
-  </div></div><div class="ov" id="m-cli">
-  <div class="modal">
-    <div class="modal-hd"><div class="modal-title" id="m-cli-title">➕ Novo Cliente</div><button class="modal-x" onclick="closeM('m-cli')">✕</button></div>
-    <div class="modal-body">
-      <div class="fsec" style="margin-top:0">👤 Dados do Cliente</div>
-      <div class="fr c2">
-        <div class="fg"><label>Nome Completo</label><input id="c-nome" type="text" placeholder="João Silva"></div>
-        <div class="fg"><label>Telefone (WhatsApp)</label><input id="c-tel" type="text" placeholder="(85) 99999-0001"></div>
+    <!-- ABA: RELATÓRIO MASTER -->
+    <div class="ia-tab-panel" id="ia-tab-relatorio">
+      <div id="ia-relatorio">
+        <div class="agent-placeholder" style="padding:36px">
+          O relatório executivo gerado pelo Agente Mestre aparece aqui após a análise
+        </div>
       </div>
-      <div class="fr c3">
-        <div class="fg"><label>Usuário (login)</label><input id="c-usr" type="text" placeholder="joaosilva"></div>
-        <div class="fg"><label>Senha</label><input id="c-pwd" type="password" placeholder="••••••••"></div>
-        <div class="fg"><label>Email</label><input id="c-email" type="email" placeholder="joao@email.com"></div>
-      </div>
-      <div class="fsec">💰 Cobrança — R$50/viveiro (editável)</div>
-      <div class="fr c3">
-        <div class="fg"><label>Qtd. Viveiros</label><input id="c-vivs" type="number" value="1" min="1" max="20" oninput="calcTotal()"></div>
-        <div class="fg"><label>Valor/Viveiro (R$) 💬</label><div class="inp-pre"><span>R$</span><input id="c-valviv" type="number" value="50" min="1" step="5" oninput="calcTotal()"></div></div>
-        <div class="fg"><label>Total Mensal</label><div id="total-disp" style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent2)">R$ 50,00</div></div>
-      </div>
-      <div class="fr c2">
-        <div class="fg"><label>Dia de Vencimento</label><select id="c-venc"><option value="5">Dia 05</option><option value="10" selected>Dia 10</option><option value="15">Dia 15</option><option value="20">Dia 20</option><option value="25">Dia 25</option></select></div>
-        <div class="fg"><label>Forma de Cobrança</label><select id="c-cob"><option>PIX automático (Asaas)</option><option>Boleto bancário</option><option>Manual</option></select></div>
-      </div>
-      <div style="background:rgba(255,107,53,.05);border:1px solid rgba(255,107,53,.2);border-radius:8px;padding:11px 13px;margin-bottom:12px;font-size:.72rem;color:var(--text3)">
-        🏦 <b style="color:var(--accent3)">Asaas:</b> Ao salvar, o cliente é criado no Asaas e a cobrança PIX recorrente é configurada automaticamente para o dia do vencimento.
-      </div>
-      <div class="fsec">🦐 URLs dos Apps Scripts (por viveiro)</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:.74rem;color:var(--text3)">Uma URL por viveiro</span><button class="btn btn-sm bol" onclick="addViv()">+ Viveiro</button></div>
-      <div id="viv-ct"><div class="viv-row"><div class="viv-n">V1</div><input type="text" placeholder="https://script.google.com/macros/s/.../exec"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button></div></div>
-      <div class="fsec">🏭 Estoque</div>
-      <div class="fg"><label>URL Apps Script — Estoque</label><input id="c-est" type="text" placeholder="https://script.google.com/macros/s/.../exec"></div>
-      <div class="fsec">📝 Observações</div>
-      <div class="fg"><textarea id="c-obs" rows="3" placeholder="Negociação especial, conditions acordadas..."></textarea></div>
-      <input type="hidden" id="c-id">
     </div>
-    <div class="modal-ft">
-      <button class="btn bol" onclick="closeM('m-cli')">Cancelar</button>
-      <button class="btn bwa" onclick="wppBoasVindas()">🟢 Boas-vindas WPP</button>
-      <button class="btn bor" id="btn-asaas-criar" onclick="criarNoAsaas()">🏦 Criar no Asaas</button>
-      <button class="btn bac" onclick="salvarCliente()">💾 Salvar</button>
+
+    <!-- ABA: FINANCEIRO -->
+    <div class="ia-tab-panel" id="ia-tab-financeiro">
+      <div id="ia-financeiro">
+        <div class="agent-placeholder" style="padding:36px">
+          Painel financeiro detalhado com projeções e oportunidades de ganho
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-ia -->
+
+</main>
+<footer>AQUASHRIMPTECH · PAINEL EXECUTIVO · DADOS DEMONSTRATIVOS</footer>
+</div><!-- /app -->
+
+<!-- ════════════════════════════════════════
+     MODAIS
+════════════════════════════════════════ -->
+<div id="modal-desbaste" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🔱 Registrar Desbaste — <span class="modal-viv-nome"></span></div>
+    <div class="login-field"><label>Quantidade Desbastada (Kg)</label><input type="number" id="obs-desb-kg" step="0.01" placeholder="Ex: 150.50"></div>
+    <div class="login-field"><label>Valor Recebido (R$)</label><input type="number" id="obs-desb-valor" step="0.01" placeholder="Ex: 3200.00"></div>
+    <div class="login-field"><label>Dias de Ciclo Faltantes</label><input type="number" id="obs-desb-dias"></div>
+    <p style="font-size:.72rem;color:var(--accent2);background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.2);border-radius:8px;padding:9px 12px;margin-top:4px">✨ MODO DEMO — operação simulada, nenhuma planilha será alterada.</p>
+    <div class="modal-buttons">
+      <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal confirm" onclick="executarDesbaste()">Salvar</button>
+    </div>
+  </div>
+</div>
+<div id="modal-despesca" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🎣 Despesca Final — <span class="modal-viv-nome"></span></div>
+    <div class="login-field"><label>Total Vendido (Kg)</label><input type="number" id="obs-desp-kg" step="0.01"></div>
+    <div class="login-field"><label>Valor Total Recebido (R$)</label><input type="number" id="obs-desp-valor" step="0.01"></div>
+    <div class="login-field"><label>Custo Estimado da Ração (R$)</label><input type="number" id="obs-desp-cracao" step="0.01"></div>
+    <div class="login-field"><label>Custo Adicional (R$)</label><input type="number" id="obs-desp-cadic" step="0.01"></div>
+    <div class="login-field"><label>Dias Totais de Ciclo</label><input type="number" id="obs-desp-dias"></div>
+    <p style="font-size:.72rem;color:var(--accent2);background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.2);border-radius:8px;padding:9px 12px;margin-top:4px">✨ MODO DEMO</p>
+    <div class="modal-buttons">
+      <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal confirm" onclick="executarDespesca()">Finalizar</button>
+    </div>
+  </div>
+</div>
+<div id="modal-limpar" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🗑️ Limpar Ciclo — <span class="modal-viv-nome"></span></div>
+    <p style="font-size:.8rem;color:var(--danger);margin-bottom:15px;font-weight:600">⚠️ No ambiente real, esta ação apagaria os dados do ciclo ativo.</p>
+    <p style="font-size:.72rem;color:var(--accent2);background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.2);border-radius:8px;padding:9px 12px">✨ MODO DEMO — nenhuma alteração real.</p>
+    <div class="modal-buttons">
+      <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal confirm" style="background:var(--danger);color:white" onclick="executarLimparCiclo()">Zerar Ciclo</button>
+    </div>
+  </div>
+</div>
+<div id="modal-est-entrada" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">📦 Entrada de Insumo</div>
+    <div class="login-field"><label>Produto</label><input type="text" id="obs-est-nome" readonly style="opacity:.7"></div>
+    <div class="login-field"><label>Quantidade (<span id="obs-est-un-label"></span>)</label><input type="number" id="obs-est-qtd" step="0.001"></div>
+    <div class="login-field"><label>Valor TOTAL Pago (R$)</label><input type="number" id="obs-est-valor" step="0.01"></div>
+    <p style="font-size:.72rem;color:var(--accent2);background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.2);border-radius:8px;padding:9px 12px;margin-top:4px">✨ MODO DEMO</p>
+    <div class="modal-buttons">
+      <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal confirm" onclick="executarEntradaEstoque()">Salvar</button>
+    </div>
+  </div>
+</div>
+<div id="modal-est-novo" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">✨ Cadastrar Novo Item</div>
+    <div class="login-field"><label>Nome do Insumo</label><input type="text" id="obs-novo-nome" placeholder="Ex: Ração Inicial 38%"></div>
+    <div class="login-field"><label>Unidade</label>
+      <select id="obs-novo-un" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:.88rem;outline:none">
+        <option>kg</option><option>g</option><option>L</option><option>mL</option><option>un</option><option>saco</option>
+      </select>
+    </div>
+    <div class="login-field"><label>Estoque Mínimo</label><input type="number" id="obs-novo-min" value="0" step="0.01"></div>
+    <div class="login-field"><label>Qtd Inicial</label><input type="number" id="obs-novo-qtd" value="0" step="0.001"></div>
+    <div class="login-field"><label>Valor Total Pago (R$)</label><input type="number" id="obs-novo-valor" value="0" step="0.01"></div>
+    <p style="font-size:.72rem;color:var(--accent2);background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.2);border-radius:8px;padding:9px 12px;margin-top:4px">✨ MODO DEMO</p>
+    <div class="modal-buttons">
+      <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal confirm" onclick="executarCriarNovoInsumo()">Cadastrar</button>
     </div>
   </div>
 </div>
 
-<div class="ov" id="m-pix">
-  <div class="modal" style="max-width:440px">
-    <div class="modal-hd"><div class="modal-title">⚡ Cobrança PIX Gerada</div><button class="modal-x" onclick="closeM('m-pix')">✕</button></div>
-    <div class="modal-body" id="m-pix-body"></div>
-    <div class="modal-ft"><button class="btn bol" onclick="closeM('m-pix')">Fechar</button><button class="btn bwa" id="btn-pix-wpp">🟢 Enviar no WhatsApp</button></div>
-  </div>
-</div>
-
-<div class="ov" id="m-det">
-  <div class="modal">
-    <div class="modal-hd"><div class="modal-title" id="m-det-title">👤 Detalhe</div><button class="modal-x" onclick="closeM('m-det')">✕</button></div>
-    <div class="modal-body" id="m-det-body"></div>
-    <div class="modal-ft" id="m-det-ft"></div>
-  </div>
-</div>
-
-<div class="tc" id="tc"></div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script>
-// ══════════════════════════════════════════════════════
-// CONFIG — ALTERE AQUI
-// ══════════════════════════════════════════════════════
-const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
+// ════════════════════════════════════════════════════════════════
+//  DADOS DEMO — 12 VIVEIROS
+// ════════════════════════════════════════════════════════════════
+const LABS = ["Guabi Acqua 38%","Guabi Acqua 45%","Nicoluzzi Premium","Aquatec 38","Potimar Iniciante"];
 
-const ADM_USER = "admin";
-const ADM_PASS = "ahffkdy"; 
-
-// ══════════════════════════════════════════════════════
-// ESTADO GLOBAL
-// ══════════════════════════════════════════════════════
-let CLIENTES = [];
-let PAGAMENTOS = [];
-let mrr_chart = null;
-let status_chart = null;
-
-// ══════════════════════════════════════════════════════
-// LOGIN
-// ══════════════════════════════════════════════════════
-function admLogin() {
-  const u = document.getElementById("au").value.trim();
-  const p = document.getElementById("ap").value.trim();
-  if (u === ADM_USER && p === ADM_PASS) {
-    document.getElementById("ls").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    init();
-  } else {
-    document.getElementById("lerr").style.display = "block";
+function gerarBio(semanas, pesoInicial, ccmtBase) {
+  const bio=[]; const hoje=new Date(); let peso=pesoInicial;
+  for(let i=0;i<semanas;i++){
+    const d=new Date(hoje); d.setDate(d.getDate()-(semanas-i)*7);
+    const ccmt=+Math.max(0.1,(ccmtBase*(0.15+Math.random()*1.75))).toFixed(2);
+    peso=+(peso+ccmt).toFixed(2);
+    bio.push({semana:i+1,data:d.toLocaleDateString("pt-BR"),ts:d.getTime(),peso,ccmt,biomassa:+(peso*350000/1000*(0.82+Math.random()*0.08)).toFixed(1)});
   }
-}
-function logout() {
-  document.getElementById("app").style.display = "none";
-  document.getElementById("ls").style.display = "flex";
-  document.getElementById("au").value = "";
-  document.getElementById("ap").value = "";
-}
-document.getElementById("ap").onkeydown = e => { if (e.key==="Enter") admLogin(); };
-document.getElementById("au").onkeydown = e => { if (e.key==="Enter") document.getElementById("ap").focus(); };
-
-// ══════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════
-function init() {
-  setInterval(tick, 1000); tick();
-  carregarDados();
+  return bio;
 }
 
-function tick() {
-  const d = new Date();
-  document.getElementById("clk").textContent = d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR");
-}
+const VIVEIROS_ATIVOS = [
+  {nome:"Viveiro 01",lab:LABS[0],pov:350000,area:0.5, peso:12.4,ccmt:1.8,dias:68, rac:2890,racHoje:38.2,fca:1.61,surv:78,bio100:4340,bioReal:3385,custo:28400,dens:7.0},
+  {nome:"Viveiro 02",lab:LABS[1],pov:420000,area:0.6, peso:9.8, ccmt:1.5,dias:52, rac:2340,racHoje:42.1,fca:1.72,surv:74,bio100:4116,bioReal:3046,custo:22100,dens:7.0},
+  {nome:"Viveiro 03",lab:LABS[0],pov:380000,area:0.55,peso:14.2,ccmt:2.1,dias:84, rac:3640,racHoje:44.8,fca:1.58,surv:81,bio100:5396,bioReal:4370,custo:33200,dens:6.9},
+  {nome:"Viveiro 04",lab:LABS[2],pov:450000,area:0.65,peso:7.6, ccmt:1.2,dias:38, rac:1120,racHoje:35.4,fca:1.84,surv:70,bio100:3420,bioReal:2394,custo:12800,dens:6.9},
+  {nome:"Viveiro 05",lab:LABS[3],pov:320000,area:0.45,peso:16.8,ccmt:2.4,dias:102,rac:5280,racHoje:52.6,fca:1.55,surv:85,bio100:5376,bioReal:4570,custo:44600,dens:7.1},
+  {nome:"Viveiro 06",lab:LABS[1],pov:400000,area:0.58,peso:11.2,ccmt:1.7,dias:61, rac:2650,racHoje:40.3,fca:1.68,surv:76,bio100:4480,bioReal:3405,custo:25300,dens:6.9},
+  {nome:"Viveiro 07",lab:LABS[4],pov:360000,area:0.52,peso:8.9, ccmt:1.4,dias:44, rac:1480,racHoje:33.8,fca:1.79,surv:72,bio100:3204,bioReal:2309,custo:15600,dens:6.9},
+  {nome:"Viveiro 08",lab:LABS[0],pov:410000,area:0.60,peso:13.5,ccmt:1.9,dias:77, rac:3180,racHoje:46.2,fca:1.62,surv:80,bio100:5535,bioReal:4425,custo:30100,dens:6.8},
+  {nome:"Viveiro 09",lab:LABS[2],pov:390000,area:0.56,peso:10.1,ccmt:1.6,dias:55, rac:2180,racHoje:38.9,fca:1.71,surv:75,bio100:3939,bioReal:2954,custo:21500,dens:7.0},
+  {nome:"Viveiro 10",lab:LABS[3],pov:430000,area:0.62,peso:15.6,ccmt:2.2,dias:92, rac:4820,racHoje:49.7,fca:1.57,surv:83,bio100:6708,bioReal:5568,custo:40800,dens:6.9},
+  {nome:"Viveiro 11",lab:LABS[0],pov:340000,area:0.48,peso:6.4, ccmt:1.1,dias:28, rac:680, racHoje:28.4,fca:1.92,surv:68,bio100:2176,bioReal:1480,custo:8200, dens:7.1},
+  {nome:"Viveiro 12",lab:LABS[1],pov:470000,area:0.68,peso:17.9,ccmt:2.5,dias:115,rac:6420,racHoje:58.3,fca:1.52,surv:88,bio100:8413,bioReal:7404,custo:54900,dens:6.9},
+];
+VIVEIROS_ATIVOS.forEach(v=>{
+  const semanas=Math.floor(v.dias/7);
+  v.biometria=gerarBio(semanas,0.8,v.ccmt);
+  v.racaoIdeal=+(v.bio100*2.5/100).toFixed(1);
+  v.racaoAtual=v.racHoje; v.racaoTotal=v.rac; v.custoCiclo=v.custo;
+  v.biomassa=v.bioReal; v.biomassa100=v.bio100; v.sobrevivencia=v.surv;
+  v.laboratorio=v.lab; v.densidade=v.dens; v.areaHa=v.area; v.pesoMedio=v.peso;
+  const hoje=new Date(),ini=new Date(hoje); ini.setDate(ini.getDate()-v.dias);
+  v.dataInicio=ini.toLocaleDateString("pt-BR"); v.diasCiclo=v.dias;
+  v.custoRacao=+(v.custo*0.72).toFixed(0);
+  v.custoInsumos=+(v.custo*0.18).toFixed(0);
+  v.custoAdicional=+(v.custo*0.10).toFixed(0);
+});
 
-// ══════════════════════════════════════════════════════
-// CARREGAR DADOS DA PLANILHA (via Apps Script)
-// ══════════════════════════════════════════════════════
-async function api(params) {
-  const url = ADM_SCRIPT_URL + "?" + new URLSearchParams(params).toString();
-  const resp = await fetch(url);
-  return resp.json();
+function gerarHistorico(vNome,lab,area){
+  function diasAtras(d){const dt=new Date();dt.setDate(dt.getDate()-d);return dt.toLocaleDateString("pt-BR");}
+  const custoObras=102000;
+  const cR1=+(area*6800).toFixed(0),cO1=+(area*3400).toFixed(0),c1=custoObras+cR1+cO1;
+  const kg1=+(area*2800).toFixed(0),d1kg=+(kg1*.18).toFixed(0),d1v=+(d1kg*16).toFixed(0);
+  const rec1=+(kg1*18.5+d1v).toFixed(0),l1=rec1-c1;
+  const cR2=+(area*7200).toFixed(0),cO2=+(area*2100).toFixed(0),c2=cR2+cO2;
+  const kg2=+(area*3200).toFixed(0),d2kg=+(kg2*.22).toFixed(0),d2v=+(d2kg*17).toFixed(0);
+  const rec2=+(kg2*19.2+d2v).toFixed(0),l2=rec2-c2;
+  const cR3=+(area*7600).toFixed(0),cO3=+(area*2200).toFixed(0),c3=cR3+cO3;
+  const kg3=+(area*3600).toFixed(0),d3kg=+(kg3*.25).toFixed(0),d3v=+(d3kg*18.5).toFixed(0);
+  const d3bkg=+(kg3*.12).toFixed(0),d3bv=+(d3bkg*17.8).toFixed(0);
+  const rec3=+(kg3*20.5+d3v+d3bv).toFixed(0),l3=rec3-c3;
+  return [
+    {cultivo:"🔱 Desbaste",tipo:"DESBASTE",data:diasAtras(520),dias:62,kg:d1kg,receita:d1v,c_racao:0,c_insumos:0,c_total:0,lucro:0,laboratorio:lab,resultado:"Parcial",ciclo_id:"C1_"+vNome},
+    {cultivo:"🎣 Despesca",tipo:"DESPESCA",data:diasAtras(480),dias:115,kg:kg1,receita:rec1,c_racao:cR1,c_insumos:custoObras+cO1,c_total:c1,lucro:l1,laboratorio:lab,resultado:l1>=0?"✅ Lucro":"❌ Prejuízo",ciclo_id:"C1_"+vNome},
+    {cultivo:"🔱 Desbaste",tipo:"DESBASTE",data:diasAtras(340),dias:55,kg:d2kg,receita:d2v,c_racao:0,c_insumos:0,c_total:0,lucro:0,laboratorio:lab,resultado:"Parcial",ciclo_id:"C2_"+vNome},
+    {cultivo:"🎣 Despesca",tipo:"DESPESCA",data:diasAtras(300),dias:108,kg:kg2,receita:rec2,c_racao:cR2,c_insumos:cO2,c_total:c2,lucro:l2,laboratorio:lab,resultado:l2>=0?"✅ Lucro":"❌ Prejuízo",ciclo_id:"C2_"+vNome},
+    {cultivo:"🔱 Desbaste A",tipo:"DESBASTE",data:diasAtras(168),dias:48,kg:d3bkg,receita:d3bv,c_racao:0,c_insumos:0,c_total:0,lucro:0,laboratorio:lab,resultado:"Parcial",ciclo_id:"C3_"+vNome},
+    {cultivo:"🔱 Desbaste B",tipo:"DESBASTE",data:diasAtras(130),dias:86,kg:d3kg,receita:d3v,c_racao:0,c_insumos:0,c_total:0,lucro:0,laboratorio:lab,resultado:"Parcial",ciclo_id:"C3_"+vNome},
+    {cultivo:"🎣 Despesca",tipo:"DESPESCA",data:diasAtras(118),dias:122,kg:kg3,receita:rec3,c_racao:cR3,c_insumos:cO3,c_total:c3,lucro:l3,laboratorio:lab,resultado:l3>=0?"✅ Lucro":"❌ Prejuízo",ciclo_id:"C3_"+vNome},
+  ];
 }
+VIVEIROS_ATIVOS.forEach(v=>{ v.historico=gerarHistorico(v.nome,v.lab,v.area); });
 
-async function carregarDados() {
-  document.getElementById("sync-status").innerHTML = '<span class="loading-spinner"></span>';
-  try {
-    const data = await api({ acao: "dashboard" });
-    if (data.status === "ok") {
-      CLIENTES = data.clientes || [];
-      document.getElementById("sync-status").textContent = "✓ Sincronizado";
-      document.getElementById("dash-updated").textContent = "Atualizado: " + new Date().toLocaleTimeString("pt-BR");
-      renderDash();
-      renderTabela();
-      renderAlertas();
-      renderCobrancas();
-      renderFinanceiro();
-      renderCharts();
-    } else {
-      toast("Erro ao carregar: " + data.msg, "e");
-      document.getElementById("sync-status").textContent = "⚠ Erro";
-    }
-  } catch(err) {
-    CLIENTES = CLIENTES_DEMO;
-    renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
-    document.getElementById("sync-status").textContent = "⚠ Modo demo";
-    document.getElementById("dash-updated").textContent = "Configure ADM_SCRIPT_URL para dados reais";
-  }
-  setTimeout(() => document.getElementById("sync-status").textContent = "", 3000);
-}
-
-// ══════════════════════════════════════════════════════
-// DADOS DEMO
-// ══════════════════════════════════════════════════════
-const CLIENTES_DEMO = [
-  {ID:1,Nome:"Cleudo Dias",Telefone:"(85) 98888-0001",Usuario:"cleudo",QtdViveiros:2,ValorPorViveiro:50,TotalMensal:100,DiaVencimento:10,Status:"ativo",UltimoPagamento:"18/05/2026",ProxVencimento:"18/06/2026",AsaasCustomerId:"cus_demo1",Observacoes:"Cliente fundador"},
-  {ID:2,Nome:"João Silva",Telefone:"(85) 98888-0002",Usuario:"joao",QtdViveiros:3,ValorPorViveiro:50,TotalMensal:150,DiaVencimento:22,Status:"ativo",UltimoPagamento:"22/05/2026",ProxVencimento:"22/06/2026",AsaasCustomerId:"cus_demo2",Observacoes:""},
-  {ID:3,Nome:"Carlos Mendes",Telefone:"(85) 98888-0003",Usuario:"carlos",QtdViveiros:4,ValorPorViveiro:50,TotalMensal:200,DiaVencimento:20,Status:"inadimplente",UltimoPagamento:"20/04/2026",ProxVencimento:"20/05/2026",AsaasCustomerId:"",Observacoes:"Atraso recorrente"},
-  {ID:4,Nome:"Ana Barros",Telefone:"(85) 98888-0004",Usuario:"ana",QtdViveiros:2,ValorPorViveiro:50,TotalMensal:100,DiaVencimento:23,Status:"pendente",UltimoPagamento:"23/04/2026",ProxVencimento:"23/05/2026",AsaasCustomerId:"cus_demo4",Observacoes:""},
-  {ID:5,Nome:"Pedro Alves",Telefone:"(85) 98888-0005",Usuario:"pedro",QtdViveiros:5,ValorPorViveiro:60,TotalMensal:300,DiaVencimento:17,Status:"ativo",UltimoPagamento:"17/05/2026",ProxVencimento:"17/06/2026",AsaasCustomerId:"cus_demo5",Observacoes:"Negociação especial R$60/viv"},
+const ESTOQUE_DEMO = [
+  {produto:"Ração Guabi 38%",unidade:"kg",qtd:4800,custo:4.60,total:22080,situacao:"ok"},
+  {produto:"Ração Guabi 45%",unidade:"kg",qtd:2200,custo:5.10,total:11220,situacao:"baixo"},
+  {produto:"Ração Nicoluzzi",unidade:"kg",qtd:650, custo:5.80,total:3770, situacao:"critico"},
+  {produto:"Calcário Agrícola",unidade:"kg",qtd:1800,custo:0.35,total:630, situacao:"ok"},
+  {produto:"Cal Virgem",unidade:"kg",qtd:480,custo:0.90,total:432,situacao:"baixo"},
+  {produto:"Probiótico Acqua",unidade:"L", qtd:32,  custo:85.0,total:2720,situacao:"ok"},
+  {produto:"Cloro Granulado",unidade:"kg",qtd:95,  custo:12.0,total:1140,situacao:"ok"},
+  {produto:"Zeólita",unidade:"kg",qtd:40,custo:6.50,total:260,situacao:"critico"},
+  {produto:"Diflubenzuron",unidade:"g",  qtd:0,   custo:320., total:0,   situacao:"critico"},
+  {produto:"Ácido Ascórbico",unidade:"kg",qtd:8,  custo:45.0,total:360, situacao:"baixo"},
+  {produto:"Aerador Reserva",unidade:"un",qtd:3,  custo:480., total:1440,situacao:"ok"},
 ];
 
-// ══════════════════════════════════════════════════════
-// RENDERS
-// ══════════════════════════════════════════════════════
-const CORES = ["#00e5ff","#00ffa3","#ff6b35","#ffb300","#9b5de5","#ff4060","#60efff","#f72585"];
-const SB = {
-  ativo:        '<span class="bdg bg">● Ativo</span>',
-  inadimplente: '<span class="bdg br">⚠ Inadimplente</span>',
-  pendente:     '<span class="bdg bw">⏳ Pendente</span>',
-  inativo:      '<span class="bdg" style="background:rgba(138,164,192,.1);color:var(--text3);border:1px solid rgba(138,164,192,.2)">○ Inativo</span>',
-};
-const R = n => isNaN(n)||n===null ? "—" : "R$ " + Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2});
+// ════════════════════════════════════════════════════════════════
+//  UTILITÁRIOS
+// ════════════════════════════════════════════════════════════════
+const R  = n=>(isNaN(n)||n===null)?"—":"R$ "+Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const Nf = n=>(isNaN(n)||n===null)?"—":Number(n).toLocaleString("pt-BR");
+const esc = t=>String(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
-function renderDash() {
-  const ativos       = CLIENTES.filter(c=>c.Status==="ativo");
-  const inad         = CLIENTES.filter(c=>c.Status==="inadimplente");
-  const pend         = CLIENTES.filter(c=>c.Status==="pendente");
-  const mrr          = ativos.reduce((s,c)=>s+(parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50),0);
-  const emAberto     = [...inad,...pend].reduce((s,c)=>s+(parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50),0);
-  const totalVivs    = CLIENTES.reduce((s,c)=>s+(parseInt(c.QtdViveiros)||0),0);
-  const ticket       = ativos.length > 0 ? mrr/ativos.length : 0;
-
-  document.getElementById("bdg-inad").textContent = inad.length;
-  document.getElementById("bdg-cob").textContent  = inad.length + pend.length;
-  document.getElementById("bdg-al").textContent   = inad.length + pend.length + 2;
-
-  document.getElementById("kpi-dash").innerHTML = [
-    {ic:"💰",lb:"MRR",vl:R(mrr),cls:"g",tr:"Clientes ativos"},
-    {ic:"👥",lb:"Clientes Ativos",vl:ativos.length,cls:"",tr:CLIENTES.length+" total"},
-    {ic:"🦐",lb:"Viveiros",vl:totalVivs,cls:"o",tr:"R$50/viv. padrão"},
-    {ic:"⚠️",lb:"Inadimplentes",vl:inad.length,cls:"d",tr:R(emAberto)+" em aberto"},
-    {ic:"⏳",lb:"Pendentes",vl:pend.length,cls:"w",tr:"A vencer"},
-    {ic:"📈",lb:"Ticket Médio",vl:R(ticket),cls:"p",tr:"Por cliente ativo"},
-  ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-ic">${k.ic}</div><div class="kpi-lb">${k.lb}</div><div class="kpi-vl ${k.cls==='g'?'cg':k.cls==='o'?'co':k.cls==='d'?'cd':k.cls==='w'?'cw':k.cls==='p'?'cp':'ca'}">${k.vl}</div><div class="kpi-tr">${k.tr}</div></div>`).join("");
-
-  const kpi_fin = [
-    {ic:"✅",lb:"Recebido no Mês",vl:R(mrr),cls:"g",tr:ativos.length+" clientes"},
-    {ic:"❌",lb:"Em Aberto",vl:R(emAberto),cls:"d",tr:inad.length+" inadimplentes"},
-    {ic:"📈",lb:"Ticket Médio",vl:R(ticket),cls:"p",tr:"Por cliente ativo"},
-    {ic:"🦐",lb:"Total Viveiros",vl:totalVivs,cls:"o",tr:"Todos clientes"},
-  ];
-  document.getElementById("kpi-fin").innerHTML = kpi_fin.map(k=>`<div class="kpi ${k.cls}"><div class="kpi-ic">${k.ic}</div><div class="kpi-lb">${k.lb}</div><div class="kpi-vl ${k.cls==='g'?'cg':k.cls==='o'?'co':k.cls==='d'?'cd':k.cls==='w'?'cw':k.cls==='p'?'cp':'ca'}">${k.vl}</div><div class="kpi-tr">${k.tr}</div></div>`).join("");
+function switchTab(name,btn){
+  document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("tab-"+name).classList.add("active");
+  btn.classList.add("active");
 }
+function switchIATab(name,btn){
+  document.querySelectorAll(".ia-tab-panel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".ia-tab-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("ia-tab-"+name).classList.add("active");
+  btn.classList.add("active");
+}
+function tickClock(){document.getElementById("clock").textContent=new Date().toLocaleDateString("pt-BR")+" "+new Date().toLocaleTimeString("pt-BR");}
+setInterval(tickClock,1000);tickClock();
 
-function renderTabela(filtro="") {
-  const lista = filtro
-    ? CLIENTES.filter(c => c.Nome.toLowerCase().includes(filtro.toLowerCase()) || (c.Telefone||"").includes(filtro))
-    : CLIENTES;
+// ════════════════════════════════════════════════════════════════
+//  LOGIN
+// ════════════════════════════════════════════════════════════════
+function fazerLogin(){
+  document.getElementById("login-screen").style.display="none";
+  document.getElementById("app").style.display="block";
+  renderTudo();
+}
+function fazerLogout(){
+  document.getElementById("app").style.display="none";
+  document.getElementById("login-screen").style.display="flex";
+}
+document.getElementById("inp-senha").addEventListener("keydown",e=>{if(e.key==="Enter")fazerLogin();});
+document.getElementById("inp-usuario").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("inp-senha").focus();});
 
-  document.getElementById("tbl-cli").innerHTML = lista.map((c,i) => {
-    const total = (parseInt(c.QtdViveiros)||0) * (parseFloat(c.ValorPorViveiro)||50);
-    return `<tr>
-      <td><div style="display:flex;align-items:center;gap:8px">
-        <div style="width:28px;height:28px;border-radius:50%;background:${CORES[i%CORES.length]};display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:#05080f;flex-shrink:0">${(c.Nome||"?")[0]}</div>
-        <div><div style="font-weight:600;font-size:.78rem">${c.Nome}</div><div class="mono" style="font-size:.62rem;color:var(--text3)">${c.Telefone||""}</div></div>
-      </div></td>
-      <td><div style="display:flex;align-items:center;gap:5px">
-        <span class="mono" style="font-weight:700;color:var(--accent)">${c.QtdViveiros||0}</span>
-        <button onclick="editarViveiros(${c.ID})" style="background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:4px;color:var(--accent);font-size:.58rem;padding:2px 5px;cursor:pointer" title="Editar viveiros">✏️</button>
-      </div></td>
-      <td class="mono" style="color:var(--text3)">R$${parseFloat(c.ValorPorViveiro)||50}/viv.</td>
-      <td class="mono" style="color:var(--accent2);font-weight:700">${R(total)}</td>
-      <td class="mono">Dia ${c.DiaVencimento||10}</td>
-      <td>${SB[c.Status]||SB.inativo}</td>
-      <td class="mono" style="font-size:.68rem;color:var(--text3)">${c.UltimoPagamento||"—"}</td>
-      <td>${c.AsaasCustomerId ? `<span class="bdg bg" style="font-size:.55rem">✓ Asaas</span>` : `<button class="btn btn-xs bor" onclick="criarAsaas(${c.ID})">+ Criar</button>`}</td>
-      <td><div style="display:flex;gap:3px;flex-wrap:wrap">
-        <button class="btn btn-xs bol" onclick="verDetalhe(${c.ID})" title="Ver detalhes">👁</button>
-        <button class="btn btn-xs bol" onclick="editarCliente(${c.ID})" title="Editar">✏️</button>
-        <button class="btn btn-xs bwa" onclick="wpp(${c.ID})" title="WhatsApp">🟢</button>
-        ${c.Status!=="ativo" ? `<button class="btn btn-xs bdn" onclick="gerarPix(${c.ID})" title="Gerar PIX Asaas">⚡</button>` : ""}
-      </div></td>
-    </tr>`;
+// ════════════════════════════════════════════════════════════════
+//  RENDER PAINEL — KPIs + VIVEIROS
+// ════════════════════════════════════════════════════════════════
+function renderKpiGeral(){
+  const v=VIVEIROS_ATIVOS;
+  const totBioReal=v.reduce((s,x)=>s+(x.bioReal||0),0);
+  const totBio100=v.reduce((s,x)=>s+(x.bio100||0),0);
+  const totCust=v.reduce((s,x)=>s+(x.custo||0),0);
+  const totRac=v.reduce((s,x)=>s+(x.rac||0),0);
+  const fcaMedio=v.reduce((s,x)=>s+(x.fca||0),0)/v.filter(x=>x.fca>0).length;
+  let lucroHistorico=0;
+  v.forEach(vv=>{(vv.historico||[]).filter(h=>h.tipo==="DESPESCA").forEach(h=>{lucroHistorico+=h.lucro||0;});});
+  document.getElementById("kpi-geral").innerHTML=[
+    {label:"Biomassa Real",      value:Nf(Math.round(totBioReal))+" kg",cls:"accent",sub:"Baseada na alimentação"},
+    {label:"Biomassa (100% Sob)",value:Nf(Math.round(totBio100))+" kg", cls:"green", sub:"Pressupondo 100% sobrev."},
+    {label:"Custo Total Ciclos", value:R(totCust),                       cls:"warn",  sub:"Ciclos em andamento"},
+    {label:"Ração Acumulada",    value:Nf(totRac)+" kg",                 cls:"",      sub:"Ciclo atual"},
+    {label:"FCA Médio",          value:fcaMedio.toFixed(2),              cls:"",      sub:"Meta: 1.4-1.6"},
+    {label:"Lucro Histórico",    value:R(lucroHistorico),                cls:lucroHistorico>=0?"green":"danger",sub:"3 ciclos concluídos"},
+  ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div><div class="kpi-sub">${k.sub}</div></div>`).join("");
+}
+function renderViveiros(){
+  document.getElementById("viveiros-grid").innerHTML=VIVEIROS_ATIVOS.map((v,i)=>{
+    const surv=v.surv,pctSurv=Math.min(100,Math.round(surv));
+    const corSurv=surv>=70?"var(--accent2)":surv>=50?"var(--warn)":"var(--danger)";
+    return `<div class="viveiro-card" style="animation-delay:${i*.06}s">
+      <div class="viveiro-header">
+        <div class="viveiro-name">${v.nome}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:.58rem;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:5px;padding:2px 7px;color:var(--accent)">🧪 ${v.lab.split(" ")[0]} ${v.lab.split(" ")[1]||""}</span>
+          <span class="viveiro-status status-ativo">● Ativo</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:9px 11px">
+          <div class="v-metric-label">Biomassa Real</div>
+          <div class="v-metric-value accent">${Nf(v.bioReal)} kg</div>
+        </div>
+        <div style="background:rgba(0,255,163,.06);border:1px solid rgba(0,255,163,.15);border-radius:8px;padding:9px 11px">
+          <div class="v-metric-label">Biomassa 100%</div>
+          <div class="v-metric-value green">${Nf(v.bio100)} kg</div>
+        </div>
+      </div>
+      <div class="viveiro-metrics">
+        <div><div class="v-metric-label">Sobrevivência</div><div class="v-metric-value" style="color:${corSurv}">${surv.toFixed(1)}%</div></div>
+        <div><div class="v-metric-label">FCA</div><div class="v-metric-value">${v.fca.toFixed(2)}</div></div>
+        <div><div class="v-metric-label">Peso Médio</div><div class="v-metric-value">${v.peso}g</div></div>
+        <div><div class="v-metric-label">CCMT</div><div class="v-metric-value accent">+${v.ccmt.toFixed(1)}g/sem</div></div>
+        <div><div class="v-metric-label">Ração Hoje</div><div class="v-metric-value">${v.racHoje.toFixed(1)} kg</div></div>
+        <div><div class="v-metric-label">Ração Ideal</div><div class="v-metric-value warn">${v.racaoIdeal} kg</div></div>
+        <div><div class="v-metric-label">Povoado</div><div class="v-metric-value">${Nf(v.pov)} un</div></div>
+        <div><div class="v-metric-label">Custo Ciclo</div><div class="v-metric-value warn">${R(v.custo)}</div></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+        <div class="dias-badge">🗓 ${v.dias} dias de ciclo</div>
+        <div class="dias-badge" style="background:rgba(0,255,163,.06);border-color:rgba(0,255,163,.2);color:var(--accent2)">📅 ${v.dataInicio}</div>
+      </div>
+      <div class="viveiro-bar-wrap" style="margin-top:10px">
+        <div class="viveiro-bar" style="width:${pctSurv}%;background:linear-gradient(90deg,${corSurv},${corSurv}88)"></div>
+      </div>
+      <div class="viveiro-bar-label"><span>Sobrevivência: ${surv.toFixed(1)}%</span><span>Ração: ${Nf(v.rac)} kg</span></div>
+      <div class="v-actions-panel">
+        <button class="btn-action-html" onclick="abrirModalOperacao('desbaste','${v.nome}',${v.dias})">🔱 Desbaste</button>
+        <button class="btn-action-html" onclick="abrirModalOperacao('despesca','${v.nome}',${v.dias},${v.custo})">🎣 Despesca</button>
+        <button class="btn-action-html danger-action" onclick="abrirModalOperacao('limpar','${v.nome}')">🗑️ Limpar</button>
+      </div>
+    </div>`;
   }).join("");
 }
 
-function filtrarTabela() {
-  renderTabela(document.getElementById("busca-cli").value);
+// ════════════════════════════════════════════════════════════════
+//  BIOMETRIA
+// ════════════════════════════════════════════════════════════════
+let bioChartInstance=null;
+function renderBiometria(){
+  const thead=document.getElementById("bio-thead"),tbody=document.getElementById("bio-tbody");
+  thead.innerHTML=`<tr>${["Viveiro","Sem.","Data","Peso (g)","CCMT","Biomassa"].map(h=>`<th>${h}</th>`).join("")}</tr>`;
+  let rows=[];
+  VIVEIROS_ATIVOS.forEach(v=>{(v.biometria||[]).forEach(b=>rows.push({viveiro:v.nome,...b}));});
+  tbody.innerHTML=rows.map(r=>`<tr><td>${r.viveiro}</td><td>${r.semana}</td><td>${r.data}</td><td style="color:var(--accent)">${r.peso.toFixed(2)}g</td><td style="color:var(--accent2)">+${r.ccmt.toFixed(2)}g</td><td>${Nf(r.biomassa)} kg</td></tr>`).join("");
+  const COLORS=["#00e5ff","#ff4f4f","#00ffa3","#ffb300","#c084fc","#38bdf8","#f97316","#4ade80","#f472b6","#facc15","#818cf8","#34d399"];
+  if(bioChartInstance)bioChartInstance.destroy();
+  const ctx=document.getElementById("bioChart").getContext("2d");
+  bioChartInstance=new Chart(ctx,{
+    type:"line",
+    data:{datasets:VIVEIROS_ATIVOS.map((v,i)=>({label:v.nome,data:(v.biometria||[]).map(b=>({x:b.ts,y:b.peso})),borderColor:COLORS[i%COLORS.length],backgroundColor:"transparent",borderWidth:2,pointRadius:3,tension:0.35,spanGaps:false}))},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"nearest",intersect:false,axis:"x"},plugins:{legend:{labels:{color:"#5a7a95",font:{family:"'DM Mono'",size:10},boxWidth:20,padding:10}},tooltip:{backgroundColor:"#0d1a2e",borderColor:"#1a3050",borderWidth:1,titleColor:"#e8f4f8",bodyColor:"#5a7a95",callbacks:{title:i=>i.length?new Date(i[0].parsed.x).toLocaleDateString("pt-BR"):"",label:c=>` ${c.dataset.label}: ${c.parsed.y?.toFixed(2)??"—"}g`}}},scales:{x:{type:"time",time:{unit:"week",tooltipFormat:"dd/MM/yyyy",displayFormats:{week:"dd/MM/yy"}},adapters:{date:{}},grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10},maxRotation:45}},y:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10},callback:v=>v+"g"}}}}
+  });
 }
 
-function renderAlertas() {
-  const inad = CLIENTES.filter(c=>c.Status==="inadimplente");
-  const pend = CLIENTES.filter(c=>c.Status==="pendente");
-  const html = [
-    ...inad.map(c => alertItem(c, "d", "❌", "Inadimplente")),
-    ...pend.map(c => alertItem(c, "w", "⏳", "Vence em breve")),
-    `<div class="al-item g"><div class="al-av" style="background:rgba(0,255,163,.15);color:var(--accent2)">📊</div><div class="al-inf"><div class="al-nm">✅ Relatório mensal disponível</div><div class="al-ds">MRR calculado · ${CLIENTES.filter(c=>c.Status==="ativo").length} clientes ativos</div></div><div class="al-act"><button class="btn btn-xs bol">Ver</button></div></div>`,
-  ].join("");
-  document.getElementById("al-list").innerHTML = html || "<div style='color:var(--text3);font-size:.8rem;padding:20px;text-align:center'>✅ Nenhum alerta pendente</div>";
+// ════════════════════════════════════════════════════════════════
+//  HISTÓRICO
+// ════════════════════════════════════════════════════════════════
+function toggleCiclo(id){
+  const body=document.getElementById("ciclo-body-"+id),icon=document.getElementById("ciclo-icon-"+id);
+  const open=body.style.display!=="none";
+  body.style.display=open?"none":"block";
+  icon.textContent=open?"▸":"▾";
 }
-
-function alertItem(c, cls, ic, label) {
-  const total = (parseInt(c.QtdViveiros)||0) * (parseFloat(c.ValorPorViveiro)||50);
-  return `<div class="al-item ${cls}">
-    <div class="al-av" style="background:${cls==='d'?'rgba(255,64,96,.15)':'rgba(255,179,0,.15)'};color:${cls==='d'?'var(--danger)':'var(--warn)'}">${(c.Nome||"?")[0]}</div>
-    <div class="al-inf">
-      <div class="al-nm">${ic} ${c.Nome} — ${label}</div>
-      <div class="al-ds">Vencimento: ${c.ProxVencimento||"—"} · ${R(total)} (${c.QtdViveiros} viveiros) · ${c.Telefone}</div>
-    </div>
-    <div class="al-act">
-      <button class="btn btn-xs bwa" onclick="wpp(${c.ID})">🟢 WPP</button>
-      <button class="btn btn-xs bdn" onclick="gerarPix(${c.ID})">⚡ PIX</button>
-    </div>
-  </div>`;
-}
-
-function renderCobrancas() {
-  const lista = CLIENTES.filter(c=>c.Status!=="ativo");
-  document.getElementById("cob-list").innerHTML = lista.length ? lista.map(c => alertItem(c, c.Status==="inadimplente"?"d":"w", c.Status==="inadimplente"?"❌":"⏳", c.Status==="inadimplente"?"Inadimplente":"Pendente")).join("") :
-    "<div style='color:var(--text3);font-size:.8rem;padding:20px;text-align:center'>✅ Nenhuma cobrança pendente</div>";
-}
-
-function renderFinanceiro() {
-  document.getElementById("tbl-pag").innerHTML = CLIENTES.filter(c=>c.UltimoPagamento).slice(0,10).map(c => {
-    const total = (parseInt(c.QtdViveiros)||0) * (parseFloat(c.ValorPorViveiro)||50);
-    const isPago = c.Status === "ativo";
-    return `<tr>
-      <td class="mono" style="font-size:.7rem">${c.UltimoPagamento||"—"}</td>
-      <td><b>${c.Nome}</b></td>
-      <td style="color:var(--accent)">${c.QtdViveiros||0}</td>
-      <td class="mono" style="color:${isPago?'var(--accent2)':'var(--danger)'}">${R(total)}</td>
-      <td><span class="bdg ${isPago?'bg':'br'}">${isPago?'✓ Recebido':'✗ Vencido'}</span></td>
-      <td class="mono" style="font-size:.62rem;color:var(--text3)">${c.AsaasCustomerId||"—"}</td>
-      <td style="display:flex;gap:3px">
-        ${!isPago?`<button class="btn btn-xs bwa" onclick="wpp(${c.ID})">🟢</button><button class="btn btn-xs bdn" onclick="gerarPix(${c.ID})">⚡</button>`:'<button class="btn btn-xs bol">🧾</button>'}
-      </td>
-    </tr>`;
-  }).join("") || "<tr><td colspan='7' style='text-align:center;color:var(--text3);padding:20px'>Nenhum pagamento registrado</td></tr>";
-}
-
-function renderCharts() {
-  const ativos = CLIENTES.filter(c=>c.Status==="ativo").slice(0,8);
-  if (mrr_chart) mrr_chart.destroy();
-  const ctx1 = document.getElementById("ch-mrr");
-  if (ctx1 && ativos.length) {
-    mrr_chart = new Chart(ctx1, {
-      type: "bar",
-      data: {
-        labels: ativos.map(c=>c.Nome.split(" ")[0]),
-        datasets: [{
-          label: "MRR (R$)",
-          data: ativos.map(c=>(parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50)),
-          backgroundColor: CORES.slice(0,ativos.length).map(c=>c+"99"),
-          borderColor: CORES.slice(0,ativos.length),
-          borderWidth: 2, borderRadius: 5,
-        }]
-      },
-      options: { responsive:true, plugins:{legend:{display:false},tooltip:{backgroundColor:"#0b1221",borderColor:"#152038",borderWidth:1,callbacks:{label:c=>"R$"+c.parsed.y}}}, scales:{x:{grid:{color:"rgba(21,32,56,.6)"},ticks:{color:"#4a6080",font:{family:"'JetBrains Mono'",size:10}}},y:{grid:{color:"rgba(21,32,56,.6)"},ticks:{color:"#4a6080",font:{family:"'JetBrains Mono'",size:10},callback:v=>"R$"+v}}}}
-    });
-  }
-
-  if (status_chart) status_chart.destroy();
-  const ctx2 = document.getElementById("ch-status");
-  const ativ = CLIENTES.filter(c=>c.Status==="ativo").length;
-  const inad = CLIENTES.filter(c=>c.Status==="inadimplente").length;
-  const pend = CLIENTES.filter(c=>c.Status==="pendente").length;
-  if (ctx2) {
-    status_chart = new Chart(ctx2, {
-      type: "doughnut",
-      data: { labels:["Ativo","Inadimplente","Pendente"], datasets:[{data:[ativ,inad,pend], backgroundColor:["rgba(0,255,163,.7)","rgba(255,64,96,.7)","rgba(255,179,0,.7)"], borderColor:"#0b1221", borderWidth:3}] },
-      options: { responsive:true, cutout:"65%", plugins:{legend:{position:"bottom",labels:{color:"#8ba4c0",font:{family:"'JetBrains Mono'",size:10},padding:12}},tooltip:{backgroundColor:"#0b1221",borderColor:"#152038",borderWidth:1}} }
-    });
-  }
-}
-
-// ══════════════════════════════════════════════════════
-// ASAAS
-// ══════════════════════════════════════════════════════
-async function criarAsaas(id) {
-  const c = CLIENTES.find(x=>x.ID==id);
-  if (!c) return;
-  toast(`Criando ${c.Nome} no Asaas...`, "i");
-  try {
-    const data = await api({ acao:"asaas_criar", id });
-    if (data.status === "ok") {
-      toast(`✅ ${c.Nome} criado no Asaas!`, "s");
-      c.AsaasCustomerId = data.asaas_id;
-      renderTabela();
-    } else toast("Erro Asaas: " + data.msg, "e");
-  } catch { toast("Erro de conexão", "e"); }
-}
-
-async function gerarPix(id) {
-  const c = CLIENTES.find(x=>x.ID==id);
-  if (!c) return;
-  if (!c.AsaasCustomerId) {
-    toast("Crie o cliente no Asaas primeiro", "e"); return;
-  }
-  toast(`Gerando PIX para ${c.Nome}...`, "i");
-  try {
-    const data = await api({ acao:"asaas_cobrar", id });
-    if (data.status === "ok") {
-      const total = (parseInt(c.QtdViveiros)||0) * (parseFloat(c.ValorPorViveiro)||50);
-      document.getElementById("m-pix-body").innerHTML = `
-        <div class="pix-box">
-          <div style="font-size:.68rem;color:var(--text3);margin-bottom:4px">PIX gerado para</div>
-          <div style="font-size:.9rem;font-weight:700;margin-bottom:8px">${c.Nome}</div>
-          <div class="pix-valor">${R(total)}</div>
-          <div style="font-size:.72rem;color:var(--text3)">Vencimento: ${data.vencimento}</div>
-          ${data.link_pix ? `<a href="${data.link_pix}" target="_blank" class="pix-link">🔗 ${data.link_pix}</a>` : ""}
-          <div style="margin-top:12px;padding:9px;background:rgba(0,255,163,.06);border:1px solid rgba(0,255,163,.2);border-radius:7px;font-size:.72rem;color:var(--accent2)">✅ Cobrança criada no Asaas · ID: ${data.payment_id}</div>
+function renderHistorico(){
+  const container=document.getElementById("hist-container");container.innerHTML="";
+  let lucroGlobal=0;
+  const CORES=["#00e5ff","#00ffa3","#ffb300","#a78bfa","#f97316","#38bdf8","#4ade80","#f472b6","#facc15","#34d399","#818cf8","#ff4f4f"];
+  VIVEIROS_ATIVOS.forEach((v,vi)=>{
+    const hist=v.historico||[],corV=CORES[vi%CORES.length];
+    const ciclosMap={};
+    hist.forEach(h=>{const cid=h.ciclo_id||"_sem_";if(!ciclosMap[cid])ciclosMap[cid]={id:cid,despesca:null,desbastes:[]};if(h.tipo==="DESPESCA")ciclosMap[cid].despesca=h;else ciclosMap[cid].desbastes.push(h);});
+    const ciclos=Object.values(ciclosMap);
+    let lucroV=0;ciclos.forEach(c=>{if(c.despesca)lucroV+=c.despesca.lucro||0;});
+    lucroGlobal+=lucroV;
+    const isLucroV=lucroV>=0;
+    const totalKg=ciclos.reduce((s,c)=>s+(c.despesca?.kg||0),0);
+    const totalCust=ciclos.reduce((s,c)=>s+(c.despesca?.c_total||0),0);
+    const totalRec=ciclos.reduce((s,c)=>s+(c.despesca?.receita||0),0);
+    const nCiclos=ciclos.filter(c=>c.despesca).length;
+    let ciclosHtml="",cicloNum=0;
+    ciclos.forEach(ciclo=>{
+      cicloNum++;
+      const despesca=ciclo.despesca,desbastes=ciclo.desbastes,aberto=!despesca;
+      const lucroCiclo=despesca?(despesca.lucro||0):0,isLucro=lucroCiclo>=0;
+      const cicloId=`${vi}_${cicloNum}`;
+      const corCiclo=cicloNum===1?"#ffb300":cicloNum===2?"#38bdf8":"#00ffa3";
+      const labelCiclo=cicloNum===1?"Implantação":cicloNum===2?"Operacional":"Consolidado";
+      const iniciaAberto=cicloNum<=1;
+      const rowsDesbastes=desbastes.map(d=>`<tr style="background:rgba(0,229,255,.025)"><td style="padding-left:20px;color:var(--muted)">↳ ${d.cultivo||"Desbaste"}</td><td>${d.data}</td><td>${d.dias}d</td><td>${Nf(d.kg)}</td><td style="color:var(--warn)">${R(d.receita)}</td><td colspan="3" style="color:var(--muted);font-style:italic;font-size:.68rem">incluído na despesca</td><td>—</td><td><span class="pill pill-warn">Parcial</span></td></tr>`).join("");
+      const rowDespesca=despesca?(()=>{
+        const recDesb=desbastes.reduce((s,d)=>s+(d.receita||0),0),recSoDesp=(despesca.receita||0)-recDesb;
+        const lab=despesca.laboratorio||"";
+        return `<tr style="background:rgba(0,0,0,.15);border-top:1px solid var(--border)"><td style="font-weight:600">🎣 Despesca</td><td>${despesca.data}</td><td>${despesca.dias}d</td><td style="font-weight:600">${Nf(despesca.kg)}</td><td>${R(recSoDesp)}</td><td>${R(despesca.c_racao)}</td><td>${R(despesca.c_insumos)}</td><td>${R(despesca.c_total)}</td><td class="${isLucro?"tag-lucro":"tag-prejuizo"}" style="font-weight:700">${R(lucroCiclo)}</td><td><span class="pill ${isLucro?"pill-green":"pill-red"}">${despesca.resultado}</span></td></tr>`;
+      })()`:<tr><td colspan="10" style="text-align:center;color:var(--warn);padding:16px">⏳ Aguardando despesca</td></tr>`;
+      ciclosHtml+=`<div style="margin-bottom:8px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.06)">
+        <div onclick="toggleCiclo('${cicloId}')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;cursor:pointer;background:rgba(255,255,255,.03);border-left:3px solid ${corCiclo}">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span id="ciclo-icon-${cicloId}" style="color:${corCiclo};font-size:1rem">${iniciaAberto?"▾":"▸"}</span>
+            <div><div style="font-family:'Syne',sans-serif;font-size:.76rem;font-weight:800;color:${corCiclo}">Cultivo #${cicloNum} ${aberto?"— Em andamento":""}</div>
+            <div style="font-size:.61rem;color:var(--muted)">${labelCiclo} · ${despesca?despesca.dias+"d · "+Nf(despesca.kg)+" kg":"em andamento"}</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${despesca?`<span style="font-family:'DM Mono',monospace;font-size:.76rem;font-weight:700;color:${isLucro?"var(--accent2)":"var(--danger)"}">${R(lucroCiclo)}</span>`:""}
+            <span class="pill ${aberto?"pill-warn":isLucro?"pill-green":"pill-red"}">${aberto?"aberto":isLucro?"✅ Lucro":"❌ Prejuízo"}</span>
+          </div>
         </div>
-        <div style="font-size:.72rem;color:var(--text3)">O status será atualizado automaticamente quando o cliente pagar via webhook do Asaas.</div>`;
-      document.getElementById("btn-pix-wpp").onclick = () => wppComLink(id, data.link_pix, total, data.vencimento);
-      openM("m-pix");
-      toast(`✅ PIX gerado para ${c.Nome}!`, "s");
-    } else toast("Erro Asaas: " + data.msg, "e");
-  } catch { toast("Erro de conexão com Apps Script", "e"); }
+        <div id="ciclo-body-${cicloId}" style="display:${iniciaAberto?"block":"none"}">
+          <div class="table-scroll"><table style="min-width:480px">
+            <thead><tr><th>Evento</th><th>Data</th><th>Dias</th><th>Kg</th><th>Receita</th><th>C.Ração</th><th>C.Insumos</th><th>C.Total</th><th>Lucro</th><th>Resultado</th></tr></thead>
+            <tbody>${rowsDesbastes}${rowDespesca}</tbody>
+          </table></div>
+        </div>
+      </div>`;
+    });
+    container.insertAdjacentHTML("beforeend",`<div style="margin-bottom:28px">
+      <div style="display:flex;align-items:stretch;border-radius:14px 14px 0 0;overflow:hidden;border:1px solid ${corV}44;border-bottom:none">
+        <div style="width:5px;background:${corV};flex-shrink:0"></div>
+        <div style="flex:1;padding:14px 18px;background:linear-gradient(90deg,${corV}12 0%,rgba(16,31,53,.95) 60%);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:38px;height:38px;border-radius:9px;background:${corV}22;border:1px solid ${corV}44;display:flex;align-items:center;justify-content:center;font-size:1.1rem">🦐</div>
+            <div><div style="font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:${corV}">${v.nome}</div>
+            <div style="font-size:.63rem;color:var(--muted)">${nCiclos} cultivos finalizados · ${v.lab}</div></div>
+          </div>
+          <div style="display:flex;gap:14px;flex-wrap:wrap">
+            <div style="text-align:right"><div style="font-size:.57rem;color:var(--muted);text-transform:uppercase">Produção</div><div style="font-family:'DM Mono',monospace;font-size:.85rem;font-weight:600">${Nf(Math.round(totalKg))} kg</div></div>
+            <div style="text-align:right"><div style="font-size:.57rem;color:var(--muted);text-transform:uppercase">Receita</div><div style="font-family:'DM Mono',monospace;font-size:.85rem;font-weight:600;color:var(--accent)">${R(totalRec)}</div></div>
+            <div style="text-align:right"><div style="font-size:.57rem;color:var(--muted);text-transform:uppercase">Custo</div><div style="font-family:'DM Mono',monospace;font-size:.85rem;font-weight:600;color:var(--warn)">${R(totalCust)}</div></div>
+            <div style="text-align:right"><div style="font-size:.57rem;color:var(--muted);text-transform:uppercase">Lucro acum.</div><div style="font-family:'DM Mono',monospace;font-size:.9rem;font-weight:800;color:${isLucroV?"var(--accent2)":"var(--danger)"}">${R(lucroV)}</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="border:1px solid ${corV}33;border-top:none;border-radius:0 0 14px 14px;padding:11px;background:rgba(8,15,26,.6)">${ciclosHtml}</div>
+    </div>`);
+  });
+  document.getElementById("lucro-acum").textContent="Acumulado: "+R(lucroGlobal);
 }
 
-async function gerarTodasAsaas() {
-  const pendentes = CLIENTES.filter(c=>c.Status!=="ativo"&&c.AsaasCustomerId);
-  if (!pendentes.length) { toast("Nenhum cliente com Asaas pendente", "i"); return; }
-  toast(`Gerando ${pendentes.length} cobranças...`, "i");
-  for (const c of pendentes) await gerarPix(c.ID);
-  toast("✅ Todas as cobranças geradas!", "s");
-}
-
-async function criarNoAsaas() {
-  const id = document.getElementById("c-id").value;
-  if (!id) { toast("Salve o cliente antes de criar no Asaas", "e"); return; }
-  await criarAsaas(id);
-}
-
-// ══════════════════════════════════════════════════════
-// WHATSAPP
-// ══════════════════════════════════════════════════════
-function wpp(id) {
-  const c = CLIENTES.find(x=>x.ID==id);
-  if (!c) return;
-  const total = (parseInt(c.QtdViveiros)||0) * (parseFloat(c.ValorPorViveiro)||50);
-  const msg = `Olá *${c.Nome}*! 👋\n\n🦐 *AquaShrimpTech* — Lembrete de Pagamento\n\nSua mensalidade referente a *${c.QtdViveiros} viveiro${c.QtdViveiros!=1?"s":""}* no valor de *${R(total)}* vence em *${c.ProxVencimento||"breve"}*.\n\n💳 Pague agora via PIX:\n👉 Aguardando link Asaas\n\nApós o pagamento seu acesso continua normalmente! 😊\n_AquaShrimpTech — Tecnologia que cultiva resultados_`;
-  const tel = (c.Telefone||"").replace(/\D/g,"");
-  window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, "_blank");
-  toast(`WhatsApp aberto para ${c.Nome}`, "s");
-}
-
-function wppComLink(id, link, valor, vencimento) {
-  const c = CLIENTES.find(x=>x.ID==id);
-  if (!c) return;
-  const msg = `Olá *${c.Nome}*! 👋\n\n🦐 *AquaShrimpTech* — Cobrança Gerada\n\nSua mensalidade de *${R(valor)}* (${c.QtdViveiros} viveiros) vence em *${vencimento}*.\n\n💳 *Pague agora via PIX:*\n👉 ${link||"Link em processamento"}\n\n_AquaShrimpTech — Tecnologia que cultiva resultados_ 🦐`;
-  const tel = (c.Telefone||"").replace(/\D/g,"");
-  window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, "_blank");
-}
-
-function wppBoasVindas() {
-  const n    = document.getElementById("c-nome").value || "Cliente";
-  const u    = document.getElementById("c-usr").value  || "usuario";
-  const vivs = document.getElementById("c-vivs").value || 1;
-  const val  = document.getElementById("c-valviv").value || 50;
-  const msg = `Olá *${n}*! 🎉\n\nSeja bem-vindo(a) à *AquaShrimpTech*! 🦐\n\n📋 Seu contrato:\n🦐 *${vivs} viveiro${vivs!=1?"s":""}* monitorados\n💰 *${R(vivs*val)}/mês*\n\n🔐 Acesso ao painel:\n👤 Usuário: *${u}*\n🌐 https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/\n\n📱 Bot Telegram configurado!\n_AquaShrimpTech — Tecnologia que cultiva resultados_ 🚀`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
-  toast("Mensagem de boas-vindas aberta!", "s");
-}
-
-function wppMassa() {
-  toast("Enviando WhatsApp para inadimplentes...", "i");
-  CLIENTES.filter(c=>c.Status!=="ativo").forEach((c,i) => setTimeout(()=>wpp(c.ID), i*1500));
-}
-
-// ══════════════════════════════════════════════════════
-// CRUD CLIENTES (CORRIGIDO)
-// ══════════════════════════════════════════════════════
-function calcTotal() {
-  const v = parseInt(document.getElementById("c-vivs").value)||0;
-  const p = parseFloat(document.getElementById("c-valviv").value)||0;
-  document.getElementById("total-disp").textContent = R(v*p);
-}
-
-function addViv() {
-  const ct = document.getElementById("viv-ct");
-  const n = ct.children.length+1;
-  const d = document.createElement("div"); d.className="viv-row";
-  d.innerHTML=`<div class="viv-n">V${n}</div><input type="text" placeholder="URL Apps Script — Viveiro ${n}"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>`;
-  ct.appendChild(d);
-}
-
-// NOVA FUNÇÃO: Reseta o modal limpando o c-id e todos os campos para não sobrescrever clientes
-function novoCliente() {
-  document.getElementById("m-cli-title").textContent = "➕ Novo Cliente";
-  document.getElementById("c-id").value = ""; 
-  document.getElementById("c-nome").value = "";
-  document.getElementById("c-tel").value = "";
-  document.getElementById("c-usr").value = "";
-  document.getElementById("c-pwd").value = "";
-  document.getElementById("c-email").value = "";
-  document.getElementById("c-vivs").value = 1;
-  document.getElementById("c-valviv").value = 50;
-  document.getElementById("c-obs").value = "";
-  
-  document.getElementById("viv-ct").innerHTML = `
-    <div class="viv-row">
-      <div class="viv-n">V1</div>
-      <input type="text" placeholder="https://script.google.com/macros/s/.../exec">
-      <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>
+// ════════════════════════════════════════════════════════════════
+//  ESTOQUE
+// ════════════════════════════════════════════════════════════════
+function renderEstoque(){
+  const e=ESTOQUE_DEMO;
+  const totVal=e.reduce((s,x)=>s+(x.total||0),0);
+  const crit=e.filter(x=>x.situacao==="critico").length,baix=e.filter(x=>x.situacao==="baixo").length;
+  document.getElementById("kpi-estoque").innerHTML=[
+    {label:"Valor em Estoque",value:R(totVal),cls:"accent"},
+    {label:"Itens Críticos",  value:crit,     cls:crit>0?"danger":"green"},
+    {label:"Estoque Baixo",   value:baix,     cls:baix>0?"warn":"green"},
+    {label:"Total Insumos",   value:e.length, cls:""},
+  ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div></div>`).join("");
+  const maxQ=Math.max(...e.map(x=>x.qtd||0),1);
+  document.getElementById("estoque-grid").innerHTML=e.map(x=>{
+    const sit=x.situacao,sl=sit==="ok"?"✅ OK":sit==="baixo"?"⚠ Baixo":"🔴 Crítico",sc=sit==="ok"?"pill-green":sit==="baixo"?"pill-warn":"pill-red";
+    return `<div class="est-card ${sit}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div class="est-name">${x.produto}</div><span class="pill ${sc}">${sl}</span></div>
+      <div class="est-row"><span>Quantidade</span><span>${Nf(x.qtd)} ${x.unidade}</span></div>
+      <div class="est-row"><span>Custo Unit.</span><span>${R(x.custo)}</span></div>
+      <div class="est-row"><span>Valor Total</span><span>${R(x.total)}</span></div>
+      <div class="est-bar-wrap"><div class="est-bar ${sit}" style="width:${Math.round((x.qtd||0)/maxQ*100)}%"></div></div>
+      <button class="est-btn-add" onclick="abrirModalEntradaEstoque('${x.produto}','${x.unidade}')">+ Entrada</button>
     </div>`;
-    
-  calcTotal();
-  openM("m-cli");
+  }).join("");
 }
 
-function editarViveiros(id) {
-  editarCliente(id);
+// ════════════════════════════════════════════════════════════════
+//  ★★★ AGENTES IA — LÓGICA COMPLETA ★★★
+// ════════════════════════════════════════════════════════════════
+
+const AGENTES_DEF = [
+  {id:"agua",   nome:"Water Quality",     icone:"💧", cor:"#00e5ff", bg:"rgba(0,229,255,.1)",   esp:"OD · pH · Temp · Amônia · Nitrito"},
+  {id:"prod",   nome:"Production",        icone:"🦐", cor:"#00ffa3", bg:"rgba(0,255,163,.1)",   esp:"Biomassa · Crescimento · Sobrevivência"},
+  {id:"feed",   nome:"Feed Management",   icone:"🍲", cor:"#ffb300", bg:"rgba(255,179,0,.1)",   esp:"FCA · Consumo · Eficiência Alimentar"},
+  {id:"saude",  nome:"Health & Biosec.",  icone:"🔬", cor:"#a78bfa", bg:"rgba(167,139,250,.1)", esp:"Mortalidade · Anomalias · Sanidade"},
+  {id:"energia",nome:"Energy Specialist", icone:"⚡", cor:"#f97316", bg:"rgba(249,115,22,.1)",  esp:"Aeradores · OD Noturno · Consumo"},
+  {id:"fin",    nome:"Financial Analyst", icone:"💰", cor:"#00ffa3", bg:"rgba(0,255,163,.07)",  esp:"ROI · Custo/kg · Projeção Despesca"},
+];
+
+let IA_VIVEIRO_IDX = 0;
+let IA_RESULTADOS  = {};
+let IA_PRECO_KG    = 28;
+
+// Auxiliares para cálculos
+function calcCrescimento(bio){
+  if(!bio||bio.length<2)return null;
+  return parseFloat(bio[bio.length-1].peso)-parseFloat(bio[bio.length-2].peso);
+}
+function statusClassIA(txt){
+  if(/STATUS:\s*(CRÍTICO|CRITICO)/i.test(txt))return"st-crit";
+  if(/STATUS:\s*(ATENÇÃO|ATENCAO)/i.test(txt))return"st-warn";
+  return"st-ok";
+}
+function statusTxtIA(txt){
+  const m=txt.match(/STATUS:\s*(\w+)/i);
+  return m?m[1].replace("CRITICO","CRÍTICO").replace("ATENCAO","ATENÇÃO").replace("OTIMO","ÓTIMO"):"OK";
+}
+function extrairNota(txt){const m=txt.match(/nota[:\s]+(\d+)/i);return m?parseInt(m[1]):7;}
+
+// PROMPTS — cada agente recebe os dados reais do viveiro selecionado
+function montarPrompt(agId, v){
+  const c=v.custoRacao+v.custoInsumos+v.custoAdicional;
+  const rec=(v.bio100||0)*IA_PRECO_KG;
+  const cresc=calcCrescimento(v.biometria);
+  const estCrit=ESTOQUE_DEMO.filter(e=>e.situacao==="critico").map(e=>e.produto).join(", ")||"nenhum";
+  const estBaixo=ESTOQUE_DEMO.filter(e=>e.situacao==="baixo").map(e=>e.produto).join(", ")||"nenhum";
+  const prompts={
+    agua:`Você é Water Quality Specialist em carcinicultura de L. vannamei. Analise os dados do ${v.nome} e dê um parecer técnico direto.
+Dados do viveiro:
+- Peso médio: ${v.pesoMedio}g | Dias de ciclo: ${v.diasCiclo} | Biomassa: ${v.bioReal}kg
+- Densidade: ${v.densidade} cam/m² | FCA atual: ${v.fca} | Sobrevivência: ${v.surv}%
+- Temperatura: sem sensor | OD: monitorado visualmente | Ração hoje: ${v.racHoje}kg vs ideal ${v.racaoIdeal}kg
+IMPORTANTE: sem dados de sensor neste viveiro. Analise os INDICADORES INDIRETOS de qualidade da água:
+- FCA ${v.fca} ${v.fca>1.8?"indica possível estresse ambiental":"dentro do aceitável"}
+- Sobrevivência ${v.surv}% ${v.surv<75?"sugere possíveis problemas ambientais":"dentro do normal"}
+- Ração ${v.racHoje>v.racaoIdeal?"acima":"abaixo"} do ideal
+Oriente sobre o que monitorar prioritariamente na água para um viveiro nesta fase (${v.pesoMedio}g, ${v.diasCiclo} dias).
+Máximo 200 palavras. Termine com STATUS: [ÓTIMO/BOM/ATENÇÃO/CRÍTICO] e Nota: [0-10]`,
+
+    prod:`Você é Production Specialist em L. vannamei. Analise o desempenho produtivo do ${v.nome}.
+Dados reais:
+- Peso atual: ${v.pesoMedio}g | Esperado para ${v.diasCiclo} dias: ~${(v.diasCiclo*0.20).toFixed(1)}g
+- CCMT: +${v.ccmt.toFixed(1)}g/sem | Benchmark ideal: 0.8-1.4g/sem para essa fase
+- Biomassa real: ${v.bioReal}kg | Biomassa 100%: ${v.bio100}kg | Diferença: ${(v.bio100-v.bioReal)}kg
+- Sobrevivência: ${v.surv}% | FCA: ${v.fca} | Laboratório: ${v.lab}
+- Densidade: ${v.densidade} cam/m² | Área: ${v.areaHa}ha | Povoamento: ${Nf(v.pov)} un
+- Crescimento última semana: ${cresc?"+"+cresc.toFixed(1)+"g":"dado insuficiente"}
+Avalie se o desempenho está dentro do esperado. Cite os números. Compare com benchmark.
+Máximo 200 palavras. STATUS + Nota`,
+
+    feed:`Você é Feed Management Specialist. Analise a eficiência alimentar do ${v.nome}.
+Dados:
+- Ração hoje: ${v.racHoje}kg | Ração ideal: ${v.racaoIdeal}kg | Diferença: ${(v.racHoje-v.racaoIdeal).toFixed(1)}kg
+- % ofertada vs ideal: ${v.racaoIdeal>0?((v.racHoje/v.racaoIdeal)*100).toFixed(1):"—"}%
+- FCA atual: ${v.fca} | Meta: 1.4-1.6 | Classificação: ${v.fca<=1.6?"Bom":v.fca<=1.8?"Atenção":"Ruim"}
+- Ração total no ciclo: ${v.rac}kg | Custo ração: ${R(v.custoRacao)}
+- Custo/kg ração: ${R(v.rac>0?v.custoRacao/v.rac:0)} | Laboratório: ${v.lab}
+CALCULE: se FCA fosse 1.4, quanto economizaria em ração? (${v.bioReal}kg biomassa × (${v.fca}-1.4) = ${((v.fca-1.4)*v.bioReal).toFixed(0)}kg ração poupada)
+Máximo 200 palavras. STATUS + Nota`,
+
+    saude:`Você é Health & Biosecurity Specialist. Avalie a saúde do lote do ${v.nome}.
+Dados:
+- Sobrevivência estimada: ${v.surv}% | Plantel inicial: ${Nf(v.pov)} un
+- Perda estimada: ${Nf(Math.round(v.pov*(1-v.surv/100)))} animais (${(100-v.surv).toFixed(1)}% do plantel)
+- FCA: ${v.fca} | CCMT: +${v.ccmt.toFixed(1)}g/sem
+- Dias de ciclo: ${v.diasCiclo} | Peso: ${v.pesoMedio}g | Lab: ${v.lab}
+- Estoque CRÍTICO: ${estCrit}
+- Estoque BAIXO: ${estBaixo}
+Identifique riscos sanitários. A sobrevivência de ${v.surv}% é ${v.surv>=85?"excelente":v.surv>=75?"aceitável":v.surv>=65?"preocupante":"crítica"} para esta fase.
+Máximo 200 palavras. STATUS + Nota`,
+
+    energia:`Você é Energy & Equipment Specialist. Avalie a situação energética do ${v.nome}.
+Dados:
+- Área: ${v.areaHa}ha | Biomassa: ${v.bioReal}kg | Densidade: ${v.densidade} cam/m²
+- Peso médio: ${v.pesoMedio}g | Dias: ${v.diasCiclo}
+- Custo adicional lançado (energia/manutenção): ${R(v.custoAdicional)}
+- FCA: ${v.fca} — um FCA ${v.fca>1.8?"elevado pode indicar falta de oxigenação":"dentro da faixa aceitável"}
+- Ração hoje ${v.racHoje}kg em ${v.areaHa}ha: requere aeração adequada
+Para ${v.bioReal}kg de biomassa de L. vannamei, a demanda de oxigênio é crítica especialmente entre 02h-06h.
+Avalie a adequação da aeração e orientações para economia de energia.
+Máximo 200 palavras. STATUS + Nota`,
+
+    fin:`Você é Financial Analyst especializado em carcinicultura. Faça análise IMPACTANTE do ${v.nome}.
+Dados financeiros REAIS:
+- Custo ração: ${R(v.custoRacao)} | Custo insumos: ${R(v.custoInsumos)} | Custo adicional: ${R(v.custoAdicional)}
+- TOTAL INVESTIDO: ${R(c)}
+- Biomassa real: ${v.bioReal}kg | Biomassa 100%: ${v.bio100}kg
+- Receita potencial (R$ ${IA_PRECO_KG}/kg): ${R(rec)}
+- Margem potencial: ${R(rec-c)} | ROI: ${c>0?((rec-c)/c*100).toFixed(1):0}%
+- Custo/kg produzido: ${R(v.bioReal>0?c/v.bioReal:0)}
+- Receita/hectare: ${R(v.areaHa>0?rec/v.areaHa:0)}
+- Custo/m²: ${R(v.areaHa>0?c/(v.areaHa*10000):0)}
+- FCA ${v.fca}: se fosse 1.4, economizaria ${R(Math.max(0,(v.fca-1.4)*v.bioReal*(v.rac>0?v.custoRacao/v.rac:4.60)))}
+- Semanas p/ despesca (meta 20g): ${cresc&&cresc>0?Math.ceil((20-v.pesoMedio)/cresc)+" semanas":"—"}
+Mostre o dinheiro. Seja impactante. Cite os números exatos.
+Máximo 250 palavras. STATUS + Nota`
+  };
+  return prompts[agId]||"Analise os dados e retorne STATUS e Nota.";
 }
 
-function editarCliente(id) {
-  const c = CLIENTES.find(x=>x.ID==id);
-  if (!c) return;
-  document.getElementById("m-cli-title").textContent = `✏️ Editar — ${c.Nome}`;
-  document.getElementById("c-id").value       = c.ID;
-  document.getElementById("c-nome").value     = c.Nome||"";
-  document.getElementById("c-tel").value      = c.Telefone||"";
-  document.getElementById("c-usr").value      = c.Usuario||"";
-  document.getElementById("c-email").value    = c.Email||"";
-  document.getElementById("c-vivs").value     = c.QtdViveiros||1;
-  document.getElementById("c-valviv").value   = c.ValorPorViveiro||50;
-  document.getElementById("c-obs").value      = c.Observacoes||"";
-  document.getElementById("viv-ct").innerHTML = Array.from({length:parseInt(c.QtdViveiros)||1},(_,n)=>`<div class="viv-row"><div class="viv-n">V${n+1}</div><input type="text" placeholder="URL Viveiro ${n+1}"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button></div>`).join("");
-  calcTotal();
-  openM("m-cli");
+// TEXTOS DEMO (quando não há API key)
+function gerarDemoAgente(agId, v){
+  const c=v.custoRacao+v.custoInsumos+v.custoAdicional;
+  const rec=(v.bio100||0)*IA_PRECO_KG;
+  const cresc=calcCrescimento(v.biometria);
+  const econ=Math.max(0,(v.fca-1.4)*v.bioReal*(v.rac>0?v.custoRacao/v.rac:4.60));
+  const demos={
+    agua:`Sem sensores de OD e temperatura no ${v.nome}, a avaliação é feita pelos indicadores indiretos — e eles contam uma história.
+
+O FCA de ${v.fca} ${v.fca>1.8?"está acima de 1.8, o que em ausência de superpopulação frequentemente indica estresse ambiental — oxigenação insuficiente noturna é a causa mais comum":"está dentro da faixa aceitável, sugerindo ambiente razoável"}.
+
+A sobrevivência de ${v.surv}% ${v.surv<75?"abaixo de 75% em um ciclo de "+v.diasCiclo+" dias levanta bandeiras sanitárias e ambientais":"está dentro do esperado para essa fase e densidade"}.
+
+Com ${v.bioReal}kg de biomassa em ${v.areaHa}ha, a demanda de oxigênio noturno é significativa. Para viveiros nessa fase (${v.pesoMedio}g), priorize: OD acima de 5 mg/L às 06h, pH entre 7.5-8.5, transparência 30-40cm e amônia abaixo de 1.0 mg/L.
+
+${v.fca>1.8?"O FCA elevado sugere investigar aeração noturna como primeira prioridade antes de ajustar arraçoamento.":"A ração hoje de "+v.racHoje+"kg vs ideal "+v.racaoIdeal+"kg está "+(v.racHoje>v.racaoIdeal?"acima — reduza 8% e reavalie":"abaixo — pode estar subalimentando")+"."} 
+
+STATUS: ${v.fca>1.8||v.surv<70?"ATENÇÃO":"BOM"} | Nota: ${v.fca<=1.6&&v.surv>=80?8:v.fca<=1.8&&v.surv>=70?6:5}/10`,
+
+    prod:`Com ${v.diasCiclo} dias de ciclo, o peso de ${v.pesoMedio}g está ${Math.abs(v.pesoMedio-(v.diasCiclo*0.20))<1.5?"dentro do esperado":"abaixo do esperado"} para L. vannamei — a meta para essa idade é ~${(v.diasCiclo*0.20).toFixed(1)}g.
+
+CCMT de +${v.ccmt.toFixed(1)}g/sem: ${v.ccmt>=1.2?"dentro do benchmark (0.8-1.4g/sem para essa fase)":"abaixo do benchmark — investigar alimentação e densidade"}.
+
+Biomassa real ${v.bioReal}kg vs potencial ${v.bio100}kg (100% sobrevivência): diferença de ${(v.bio100-v.bioReal)}kg, representando sobrevivência de ${v.surv}%. Para ${v.diasCiclo} dias, isso ${v.surv>=80?"é excelente":"merece investigação — possível mortalidade não registrada"}.
+
+Crescimento na última biometria: ${cresc?"+"+cresc.toFixed(1)+"g":"insuficiente — registre biometrias semanais"}. ${cresc&&cresc>1.2?"Excelente crescimento!":cresc&&cresc>0.8?"Crescimento aceitável.":"Crescimento abaixo do ideal — revisar manejo."} 
+
+FCA ${v.fca}: ${v.fca<=1.6?"eficiente":v.fca<=1.8?"aceitável, mas há margem de melhora":"preocupante — revisar arraçoamento"}.
+
+STATUS: ${v.surv>=80&&v.fca<=1.8?"BOM":"ATENÇÃO"} | Nota: ${v.surv>=85&&v.fca<=1.6?8:v.surv>=75&&v.fca<=1.8?6:5}/10`,
+
+    feed:`O arraçoamento do ${v.nome} está em ${v.racHoje}kg/dia vs ideal de ${v.racaoIdeal}kg — ${Math.abs(v.racHoje-v.racaoIdeal)<2?"no ponto":v.racHoje>v.racaoIdeal?"acima do ideal em "+(v.racHoje-v.racaoIdeal).toFixed(1)+"kg":"abaixo do ideal em "+(v.racaoIdeal-v.racHoje).toFixed(1)+"kg"}.
+
+O FCA de ${v.fca} é o número mais importante aqui. Com ${v.rac}kg de ração e ${v.bioReal}kg de biomassa produzida, cada kg de ração está gerando ${(1/v.fca).toFixed(2)}kg de camarão.
+
+Se o FCA chegasse a 1.4 (meta): você pouparia ${((v.fca-1.4)*v.bioReal).toFixed(0)}kg de ração — ou seja, ${R(econ)} que está sendo gasto sem virar produção neste ciclo.
+
+O custo por kg de ração é ${R(v.rac>0?v.custoRacao/v.rac:0)} para ${v.lab}. ${v.fca>1.8?"Com FCA acima de 1.8, revise a tabela de arraçoamento — reduza 10% e monitore sobras na bandeja.":v.fca>1.6?"FCA ligeiramente acima da meta — ajuste fino de 5% na oferta pode ajudar.":"FCA dentro do aceitável. Manter estratégia atual."}
+
+STATUS: ${v.fca<=1.6?"BOM":v.fca<=1.8?"ATENÇÃO":"CRÍTICO"} | Nota: ${v.fca<=1.4?9:v.fca<=1.6?7:v.fca<=1.8?5:4}/10`,
+
+    saude:`A sobrevivência de ${v.surv}% no ${v.nome} com ${v.diasCiclo} dias de ciclo significa ${Nf(Math.round(v.pov*(100-v.surv)/100))} animais perdidos de um plantel de ${Nf(v.pov)}.
+
+Isso é ${v.surv>=85?"excelente — abaixo da média histórica de perdas":v.surv>=75?"aceitável para produção semi-intensiva":v.surv>=65?"preocupante — investigar causa":v.surv>=50?"crítico — ação imediata necessária":"emergência sanitária"}.
+
+${v.fca>1.8?"FCA elevado ("+v.fca+") somado a sobrevivência de "+v.surv+"% sugere possível problema sanitário em curso — os animais estão comendo mas não crescendo ou há mortalidade subdiagnosticada.":"O FCA de "+v.fca+" não levanta bandeiras sanitárias específicas."}
+
+Estoque crítico relevante: ${ESTOQUE_DEMO.filter(e=>e.situacao==="critico").map(e=>e.produto).join(", ")||"nenhum"}. ${ESTOQUE_DEMO.some(e=>e.situacao==="critico"&&e.produto.toLowerCase().includes("probiót"))?"Probiótico em falta é crítico — o controle biológico de amônia fica comprometido.":""}
+
+Recomendação: registrar mortalidade diária, verificar comportamento na superfície e checar parâmetros de água às 06h.
+
+STATUS: ${v.surv>=80?"BOM":v.surv>=70?"ATENÇÃO":"CRÍTICO"} | Nota: ${v.surv>=85?8:v.surv>=75?6:4}/10`,
+
+    energia:`Para ${v.bioReal}kg de biomassa de L. vannamei em ${v.areaHa}ha com ${v.densidade} cam/m², a demanda energética de aeração é relevante especialmente entre 02h-06h — horário de pico de consumo de oxigênio e menor produção fotossintética.
+
+O custo adicional lançado de ${R(v.custoAdicional)} ${v.custoAdicional>v.custoRacao*0.15?"está acima de 15% do custo de ração — cheque se há vazamentos ou equipamentos com consumo anormal":"está dentro do esperado para um viveiro de "+v.areaHa+"ha"}.
+
+${v.fca>1.8?"FCA elevado ("+v.fca+") pode indicar aeração insuficiente noturna — os camarões consomem ração mas usam energia para compensar estresse de OD baixo em vez de crescer.":"FCA dentro da faixa aceitável sugere que a aeração está adequada para a fase atual."}
+
+Para ${v.areaHa}ha com biomassa de ${v.bioReal}kg na fase de ${v.pesoMedio}g: recomendação técnica é 1 CV por 500kg de biomassa ativa. Isso equivale a ${Math.ceil(v.bioReal/500)} aeradores de 1 CV operando continuamente.
+
+Custo energético estimado: R$ ${(v.areaHa*180).toFixed(0)}/mês para aeração adequada deste viveiro.
+
+STATUS: ${v.fca<=1.8?"BOM":"ATENÇÃO"} | Nota: ${v.fca<=1.6?8:v.fca<=1.8?6:5}/10`,
+
+    fin:`O ${v.nome} tem ${R(c)} investidos e uma receita potencial de ${R(rec)} — margem de ${R(rec-c)} e ROI de ${c>0?((rec-c)/c*100).toFixed(1):0}%.
+
+BREAKDOWN DO CUSTO:
+• Ração: ${R(v.custoRacao)} (${c>0?(v.custoRacao/c*100).toFixed(0):0}% do total)
+• Insumos: ${R(v.custoInsumos)} (${c>0?(v.custoInsumos/c*100).toFixed(0):0}%)
+• Adicional: ${R(v.custoAdicional)} (${c>0?(v.custoAdicional/c*100).toFixed(0):0}%)
+
+MÉTRICAS POR UNIDADE:
+• Custo por kg produzido: ${R(v.bioReal>0?c/v.bioReal:0)}
+• Receita por hectare: ${R(v.areaHa>0?rec/v.areaHa:0)}
+• Custo por m²: ${R(v.areaHa>0?c/(v.areaHa*10000):0)}
+
+OPORTUNIDADE — FCA: se sair de ${v.fca} para 1.4, economiza ${R(econ)} em ração neste ciclo — dinheiro que já está saindo do bolso.
+
+PROJEÇÃO DE DESPESCA (meta 20g): ${cresc&&cresc>0?Math.ceil((20-v.pesoMedio)/cresc)+" semanas":"registre biometrias para calcular"}. A cada semana extra, custo adicional de ração ~${R(v.racHoje*7*(v.rac>0?v.custoRacao/v.rac:4.60))}.
+
+Receita projetada na despesca: ${R((v.bio100||0)*(20/Math.max(v.pesoMedio,1))*IA_PRECO_KG)}.
+
+STATUS: ${(rec-c)/Math.max(c,1)*100>=30?"BOM":(rec-c)/Math.max(c,1)*100>=10?"ATENÇÃO":"CRÍTICO"} | Nota: ${((rec-c)/Math.max(c,1)*100)>=40?9:((rec-c)/Math.max(c,1)*100)>=25?7:((rec-c)/Math.max(c,1)*100)>=10?5:4}/10`
+  };
+  return demos[agId]||"Análise demo não disponível.";
 }
 
-async function salvarCliente() {
-  const nome = document.getElementById("c-nome").value.trim();
-  if (!nome) { toast("Preencha o nome do cliente", "e"); return; }
+// MASTER DEMO
+function gerarMasterDemo(v, resultados){
+  const c=v.custoRacao+v.custoInsumos+v.custoAdicional;
+  const rec=(v.bio100||0)*IA_PRECO_KG;
+  const cresc=calcCrescimento(v.biometria)||v.ccmt;
+  const econ=Math.max(0,(v.fca-1.4)*v.bioReal*(v.rac>0?v.custoRacao/v.rac:4.60));
+  const notas=AGENTES_DEF.map(ag=>extrairNota(resultados[ag.id]||"7"));
+  const indice=Math.round(notas.reduce((s,n)=>s+n,0)/notas.length*10);
+  return `${v.nome} — ${v.diasCiclo} dias de ciclo, ${v.pesoMedio}g de peso médio, ${v.bioReal}kg de biomassa real. O panorama é de ${indice>=75?"desempenho sólido com pontos de atenção":indice>=55?"atenção moderada — há oportunidades claras de melhora":"preocupação — múltiplos indicadores abaixo do ideal"}.
 
-  const params = {
-    acao:           "salvar",
-    id:             document.getElementById("c-id").value,
-    nome,
-    tel:            document.getElementById("c-tel").value,
-    usuario:        document.getElementById("c-usr").value,
-    senha:          document.getElementById("c-pwd").value,
-    email:          document.getElementById("c-email").value,
-    qtd_viveiros:   document.getElementById("c-vivs").value,
-    valor_viveiro:  document.getElementById("c-valviv").value,
-    dia_vencimento: document.getElementById("c-venc").value,
-    forma_pagamento:document.getElementById("c-cob").value,
-    observacoes:    document.getElementById("c-obs").value,
-    urls_viveiros:  [...document.querySelectorAll("#viv-ct input")].map(i=>i.value).join("|"),
-    url_estoque:    document.getElementById("c-est").value,
+O ponto que mais merece atenção esta semana é o FCA de ${v.fca}. ${v.fca>1.8?`Acima de 1.8, esse número está custando ${R(econ)} extras em ração neste ciclo — dinheiro que existe no viveiro mas não está virando camarão. A causa mais provável é ${v.surv<75?"mortalidade comprimindo a biomassa real":"subalimentação em algum momento do ciclo ou aeração insuficiente"}.`:`No limite aceitável (1.6), mas há ${R(econ)} de margem de melhora se chegar à meta de 1.4.`}
+
+${v.surv<75?`A sobrevivência de ${v.surv}% é o segundo alarme — ${Nf(Math.round(v.pov*(100-v.surv)/100))} animais perdidos de ${Nf(v.pov)} iniciais. Investigue possível mortalidade subdiagnosticada registrando a contagem diária nas redes.`:`Com sobrevivência de ${v.surv}%, o lote está saudável em termos populacionais.`}
+
+Financeiramente: ${R(c)} investidos, receita potencial de ${R(rec)}, margem de ${R(rec-c)} e ROI de ${c>0?((rec-c)/c*100).toFixed(1):0}%. Com crescimento de ${cresc.toFixed(1)}g/sem, você alcança 20g em ~${Math.ceil((20-v.pesoMedio)/cresc)} semanas — receita projetada na despesca de ${R((v.bio100||0)*(20/Math.max(v.pesoMedio,1))*IA_PRECO_KG)}.
+
+AS 3 AÇÕES DESTA SEMANA:
+
+1. ARRAÇOAMENTO — ${v.fca>1.8?"Reduza a oferta em 10% e monitore sobras na bandeja por 3 dias. Confirme que os animais estão consumindo tudo antes de repor.":"Mantenha a estratégia atual de "+v.racHoje+"kg/dia e registre qualquer sobra acima de 5% da oferta."} 
+
+2. ${v.surv<80?"REGISTRO DIÁRIO — Implemente contagem de mortalidade às 08h todos os dias. Qualquer dia com >"+Math.round(v.pov*0.001)+" mortos (0,1% do plantel) merece investigação imediata.":"BIOMETRIA — Programe biometria semanal para acompanhar o CCMT de perto e ajustar tabela de arraçoamento na semana que vem."}
+
+3. ESTOQUE — ${ESTOQUE_DEMO.some(e=>e.situacao==="critico")?`${ESTOQUE_DEMO.filter(e=>e.situacao==="critico").map(e=>e.produto).join(" e ")} em nível crítico — repor antes de quinta-feira.`:"Estoque de insumos adequado. Faça pedido preventivo de "+ESTOQUE_DEMO.filter(e=>e.situacao==="baixo").map(e=>e.produto).join(" e ")+"."}`;
+}
+
+// ─────────────────────────────────────────
+// RENDERIZAR CONSOLIDADO
+// ─────────────────────────────────────────
+function renderConsolidadoIA(){
+  const ativos=VIVEIROS_ATIVOS;
+  const totBio=ativos.reduce((s,v)=>s+v.bioReal,0);
+  const totBio100=ativos.reduce((s,v)=>s+(v.bio100||0),0);
+  const totCR=ativos.reduce((s,v)=>s+v.custoRacao,0);
+  const totCI=ativos.reduce((s,v)=>s+v.custoInsumos,0);
+  const totCA=ativos.reduce((s,v)=>s+v.custoAdicional,0);
+  const totCusto=totCR+totCI+totCA;
+  const recEst=totBio100*IA_PRECO_KG;
+  const margem=recEst-totCusto;
+  const roi=totCusto>0?(margem/totCusto*100):0;
+  const fcaMed=ativos.filter(v=>v.fca>0).reduce((s,v,_,a)=>s+v.fca/a.length,0)||0;
+  const custoPorKg=totBio>0?totCusto/totBio:0;
+
+  // Alertas
+  const alertas=[];
+  ativos.forEach(v=>{
+    if(v.fca>1.85)alertas.push({viv:v.nome,msg:`FCA ${v.fca} — acima da meta`,tipo:"warn"});
+    if(v.surv<72) alertas.push({viv:v.nome,msg:`Sobrevivência ${v.surv}% — abaixo do ideal`,tipo:"crit"});
+    if(v.pesoMedio>=17)alertas.push({viv:v.nome,msg:`${v.pesoMedio}g — pronto para despesca!`,tipo:"ok"});
+  });
+
+  document.getElementById("ia-consolidado").innerHTML=`
+    <div class="section-title">Resumo Geral da Fazenda — ${ativos.length} viveiros ativos</div>
+    <div class="fazenda-kpi">
+      <div class="fkpi accent"><div class="fkpi-label">Biomassa Real Total</div><div class="fkpi-val accent">${Nf(Math.round(totBio))} kg</div><div class="fkpi-sub">Pela alimentação</div></div>
+      <div class="fkpi green"><div class="fkpi-label">Biomassa Total 100%</div><div class="fkpi-val green">${Nf(Math.round(totBio100))} kg</div><div class="fkpi-sub">Sobrev. plena</div></div>
+      <div class="fkpi warn"><div class="fkpi-label">Investimento Total</div><div class="fkpi-val warn">${R(totCusto)}</div><div class="fkpi-sub">Ciclos ativos</div></div>
+      <div class="fkpi ${margem>=0?"green":"danger"}"><div class="fkpi-label">Margem Estimada</div><div class="fkpi-val ${margem>=0?"green":"danger"}">${R(margem)}</div><div class="fkpi-sub">A ${R(IA_PRECO_KG)}/kg</div></div>
+      <div class="fkpi ${roi>=30?"green":roi>=15?"warn":"danger"}"><div class="fkpi-label">ROI Estimado</div><div class="fkpi-val ${roi>=30?"green":roi>=15?"warn":"danger"}">${roi.toFixed(1)}%</div><div class="fkpi-sub">Ciclos ativos</div></div>
+      <div class="fkpi"><div class="fkpi-label">FCA Médio Fazenda</div><div class="fkpi-val ${fcaMed<=1.6?"green":fcaMed<=1.8?"warn":"danger"}">${fcaMed.toFixed(2)}</div><div class="fkpi-sub">Meta: 1.4-1.6</div></div>
+      <div class="fkpi"><div class="fkpi-label">Custo por kg</div><div class="fkpi-val">${R(custoPorKg)}</div><div class="fkpi-sub">Média geral</div></div>
+      <div class="fkpi ${ESTOQUE_DEMO.filter(e=>e.situacao==="critico").length>0?"danger":"green"}">
+        <div class="fkpi-label">Itens Críticos</div>
+        <div class="fkpi-val ${ESTOQUE_DEMO.filter(e=>e.situacao==="critico").length>0?"danger":"green"}">${ESTOQUE_DEMO.filter(e=>e.situacao==="critico").length}</div>
+        <div class="fkpi-sub">No estoque</div>
+      </div>
+    </div>
+
+    ${alertas.length?`
+    <div style="background:rgba(255,79,79,.05);border:1px solid rgba(255,79,79,.2);border-radius:11px;padding:14px 18px;margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:10px">⚠️ Alertas Ativos</div>
+      ${alertas.map(a=>`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(22,45,74,.4);font-size:.76rem">
+        <span class="pill ${a.tipo==="crit"?"pill-red":a.tipo==="warn"?"pill-warn":"pill-green"}">${a.tipo==="crit"?"CRÍTICO":a.tipo==="warn"?"ATENÇÃO":"DESPESCA"}</span>
+        <strong style="color:var(--accent);min-width:85px">${a.viv}</strong>
+        <span>${a.msg}</span>
+      </div>`).join("")}
+    </div>`:""}
+
+    <div class="section-title">Clique em um viveiro no seletor acima para análise detalhada dos agentes</div>
+    <div class="viv-sum-grid">
+      ${ativos.map((v,i)=>{
+        const c=v.custoRacao+v.custoInsumos+v.custoAdicional;
+        const rec=(v.bio100||0)*IA_PRECO_KG;
+        const marg=rec-c;
+        const corSurv=v.surv>=80?"var(--accent2)":v.surv>=70?"var(--warn)":"var(--danger)";
+        const pct=Math.min(100,v.surv);
+        const corBar=pct>=80?"var(--accent2)":pct>=70?"var(--warn)":"var(--danger)";
+        return `<div class="viv-sum-card" onclick="selecionarViveiroIA(${i})" style="animation-delay:${i*.04}s">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="font-family:'Syne',sans-serif;font-size:.8rem;font-weight:800">${v.nome}</div>
+            <span style="font-size:.6rem;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:5px;padding:1px 7px;color:var(--accent)">${v.diasCiclo}d</span>
+          </div>
+          <div class="viv-sum-rows">
+            <div class="vsr"><div class="vsr-lbl">Peso</div><div class="vsr-val" style="color:var(--accent)">${v.pesoMedio}g</div></div>
+            <div class="vsr"><div class="vsr-lbl">FCA</div><div class="vsr-val" style="color:${v.fca<=1.6?"var(--accent2)":v.fca<=1.8?"var(--warn)":"var(--danger)"}">${v.fca}</div></div>
+            <div class="vsr"><div class="vsr-lbl">Investimento</div><div class="vsr-val" style="color:var(--warn)">${R(c)}</div></div>
+            <div class="vsr"><div class="vsr-lbl">Margem Est.</div><div class="vsr-val" style="color:${marg>=0?"var(--accent2)":"var(--danger)"}">${R(marg)}</div></div>
+          </div>
+          <div style="margin-top:8px;background:var(--border);border-radius:3px;height:4px">
+            <div style="width:${pct}%;height:100%;background:${corBar};border-radius:3px;transition:width 1s ease"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:3px;font-size:.57rem;color:var(--muted)">
+            <span>Sobrev: <span style="color:${corSurv}">${v.surv}%</span></span>
+            <span style="color:var(--accent)">Analisar →</span>
+          </div>
+        </div>`;
+      }).join("")}
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden">
+      <div style="padding:12px 18px;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700">💰 Comparativo Financeiro</div>
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:560px">
+        <thead><tr>${["Viveiro","FCA","Sobrev.","Investimento","Receita Est.","Margem","ROI"].map(h=>`<th style="padding:8px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:.57rem;color:var(--muted);text-transform:uppercase">${h}</th>`).join("")}</tr></thead>
+        <tbody>
+          ${ativos.map(v=>{
+            const c=v.custoRacao+v.custoInsumos+v.custoAdicional;
+            const r=(v.bio100||0)*IA_PRECO_KG,m=r-c,roi=c>0?(m/c*100):0;
+            return `<tr style="border-bottom:1px solid rgba(22,45,74,.4)">
+              <td style="padding:8px 12px;font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700">${v.nome}</td>
+              <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;color:${v.fca<=1.6?"var(--accent2)":v.fca<=1.8?"var(--warn)":"var(--danger)"}">${v.fca}</td>
+              <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;color:${v.surv>=80?"var(--accent2)":v.surv>=70?"var(--warn)":"var(--danger)"}">${v.surv}%</td>
+              <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;color:var(--warn)">${R(c)}</td>
+              <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;color:var(--accent)">${R(r)}</td>
+              <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;font-weight:700;color:${m>=0?"var(--accent2)":"var(--danger)"}">${R(m)}</td>
+              <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;color:${roi>=30?"var(--accent2)":roi>=15?"var(--warn)":"var(--danger)"}">${roi.toFixed(1)}%</td>
+            </tr>`;
+          }).join("")}
+          <tr style="background:rgba(0,229,255,.04);border-top:1px solid var(--accent)">
+            <td style="padding:8px 12px;font-family:'Syne',sans-serif;font-size:.76rem;font-weight:800;color:var(--accent)">TOTAL</td>
+            <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;font-weight:700;color:${fcaMed<=1.6?"var(--accent2)":fcaMed<=1.8?"var(--warn)":"var(--danger)"}">${fcaMed.toFixed(2)}</td>
+            <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;font-weight:700">${(ativos.reduce((s,v)=>s+v.surv,0)/ativos.length).toFixed(1)}%</td>
+            <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;font-weight:700;color:var(--warn)">${R(totCusto)}</td>
+            <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;font-weight:700;color:var(--accent)">${R(recEst)}</td>
+            <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:800;color:${margem>=0?"var(--accent2)":"var(--danger)"}">${R(margem)}</td>
+            <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;font-weight:700;color:${roi>=30?"var(--accent2)":roi>=15?"var(--warn)":"var(--danger)"}">${roi.toFixed(1)}%</td>
+          </tr>
+        </tbody>
+      </table></div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────
+// RENDERIZAR AGENTES DE UM VIVEIRO
+// ─────────────────────────────────────────
+function renderAgentesVazios(v){
+  document.getElementById("ia-agentes").innerHTML=`
+    <div style="font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;color:var(--muted);margin-bottom:13px;letter-spacing:.08em;text-transform:uppercase">
+      Analisando ${v.nome} — 6 agentes em execução
+    </div>
+    <div class="agents-grid">
+      ${AGENTES_DEF.map((ag,i)=>`
+        <div class="agent-card" style="animation-delay:${i*.07}s">
+          <div class="agent-header">
+            <div class="agent-icon" style="background:${ag.bg}">${ag.icone}</div>
+            <div class="agent-meta"><div class="agent-name" style="color:${ag.cor}">${ag.nome}</div><div class="agent-spec">${ag.esp}</div></div>
+            <div class="agent-status st-run" id="ia-st-${ag.id}">Analisando</div>
+          </div>
+          <div class="agent-body" id="ia-bd-${ag.id}">
+            <div class="shimmer" style="width:92%"></div>
+            <div class="shimmer" style="width:74%"></div>
+            <div class="shimmer" style="width:83%"></div>
+            <div class="shimmer" style="width:58%"></div>
+          </div>
+        </div>`).join("")}
+    </div>`;
+}
+
+function renderCardAgente(ag, texto){
+  const nota=extrairNota(texto);
+  const notaCor=nota>=8?"var(--accent2)":nota>=6?"var(--warn)":"var(--danger)";
+  const stEl=document.getElementById("ia-st-"+ag.id);
+  const bdEl=document.getElementById("ia-bd-"+ag.id);
+  if(stEl){stEl.className="agent-status "+statusClassIA(texto);stEl.textContent=statusTxtIA(texto);}
+  if(bdEl)bdEl.innerHTML=`
+    <div class="agent-output">${esc(texto)}</div>
+    <div class="agent-score">
+      <span class="score-label">Nota do agente</span>
+      <span class="score-val" style="color:${notaCor}">${nota}<span style="font-size:.64rem;color:var(--muted)">/10</span></span>
+    </div>`;
+}
+
+// ─────────────────────────────────────────
+// MASTER CARD
+// ─────────────────────────────────────────
+function renderMasterCard(v, resultados, txtMaster){
+  const notas=AGENTES_DEF.map(ag=>extrairNota(resultados[ag.id]||"7"));
+  const indice=Math.round(notas.reduce((s,n)=>s+n,0)/notas.length*10);
+  const corI=indice>=75?"var(--accent2)":indice>=55?"var(--warn)":"var(--danger)";
+  const statusI=indice>=75?"BOM":indice>=55?"ATENÇÃO":"CRÍTICO";
+  document.getElementById("ia-relatorio").innerHTML=`
+    <div class="master-card">
+      <div class="master-header">
+        <div>
+          <div class="master-title">📋 Relatório Executivo — ${v.nome}</div>
+          <div class="master-meta">Gerado em ${new Date().toLocaleString("pt-BR")} · AquaShrimp AI</div>
+        </div>
+      </div>
+      <div class="master-body">
+        <div class="index-block">
+          <div class="index-circle">
+            <div class="index-num" style="color:${corI}">${indice}</div>
+            <div class="index-total">/100</div>
+          </div>
+          <div>
+            <div class="index-status" style="color:${corI}">ÍNDICE GERAL: ${statusI}</div>
+            <div class="index-desc">Média ponderada de 6 agentes especialistas</div>
+            <div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap">
+              ${AGENTES_DEF.map(ag=>{
+                const n=extrairNota(resultados[ag.id]||"7");
+                const c=n>=8?"var(--accent2)":n>=6?"var(--warn)":"var(--danger)";
+                return `<span style="font-size:.6rem;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:5px;padding:2px 7px;color:${c}">${ag.icone} ${n}/10</span>`;
+              }).join("")}
+            </div>
+          </div>
+        </div>
+        <div class="master-output">${esc(txtMaster)}</div>
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────
+// FINANCEIRO DETALHADO
+// ─────────────────────────────────────────
+function renderFinanceiroIA(v){
+  const c=v.custoRacao+v.custoInsumos+v.custoAdicional;
+  const rec=(v.bio100||0)*IA_PRECO_KG;
+  const marg=rec-c;
+  const roi=c>0?(marg/c*100):0;
+  const cpkg=v.bioReal>0?c/v.bioReal:0;
+  const recHa=v.areaHa>0?rec/v.areaHa:0;
+  const cpm2=v.areaHa>0?c/(v.areaHa*10000):0;
+  const cresc=calcCrescimento(v.biometria)||v.ccmt||1.5;
+  const semsRest=cresc>0?Math.ceil((20-v.pesoMedio)/cresc):null;
+  const bioDesp=(v.bio100||0)*(20/Math.max(v.pesoMedio,1));
+  const recDesp=bioDesp*IA_PRECO_KG;
+  const cpSem=v.racHoje*7*(v.rac>0?v.custoRacao/v.rac:4.60);
+  const econ=Math.max(0,(v.fca-1.4)*v.bioReal*(v.rac>0?v.custoRacao/v.rac:4.60));
+
+  const barra=(nome,valor,cor)=>{
+    const pct=c>0?(valor/c*100).toFixed(1):0;
+    return `<div style="margin-bottom:9px">
+      <div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px">
+        <span style="color:var(--muted)">${nome}</span>
+        <span style="font-family:'DM Mono',monospace">${R(valor)} <span style="color:var(--muted)">(${pct}%)</span></span>
+      </div>
+      <div style="background:var(--border);border-radius:3px;height:5px">
+        <div style="width:${pct}%;height:100%;background:${cor};border-radius:3px;transition:width 1s ease"></div>
+      </div>
+    </div>`;
   };
 
-  toast("Salvando...", "i");
-  try {
-    const data = await api(params);
-    if (data.status === "ok") {
-      toast(`✅ ${nome} salvo com sucesso!`, "s");
-      if (data.id && !document.getElementById("c-id").value) {
-        document.getElementById("c-id").value = data.id;
-      }
-      closeM("m-cli");
-      await carregarDados();
-    } else toast("Erro: " + data.msg, "e");
-  } catch {
-    const vivs = parseInt(params.qtd_viveiros)||1;
-    const val  = parseFloat(params.valor_viveiro)||50;
-    const novoId = Date.now();
-    if (!params.id) {
-      CLIENTES.push({ID:novoId, Nome:nome, Telefone:params.tel, Usuario:params.usuario, QtdViveiros:vivs, ValorPorViveiro:val, TotalMensal:vivs*val, DiaVencimento:parseInt(params.dia_vencimento)||10, Status:"ativo", UltimoPagamento:"", ProxVencimento:"", AsaasCustomerId:"", Observacoes:params.observacoes});
+  document.getElementById("ia-financeiro").innerHTML=`
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div style="padding:13px 18px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,255,163,.05),transparent)">
+        <span style="font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;color:var(--accent2)">💰 Análise Financeira — ${v.nome}</span>
+      </div>
+      <div style="padding:16px 18px">
+        <div class="fin-grid">
+          <div class="fin-card"><div class="fin-label">Investimento</div><div class="fin-val fv-warn">${R(c)}</div></div>
+          <div class="fin-card"><div class="fin-label">Receita Potencial</div><div class="fin-val fv-accent">${R(rec)}</div></div>
+          <div class="fin-card"><div class="fin-label">Margem Estimada</div><div class="fin-val ${marg>=0?"fv-green":"fv-danger"}">${R(marg)}</div></div>
+          <div class="fin-card"><div class="fin-label">ROI do Ciclo</div><div class="fin-val ${roi>=30?"fv-green":roi>=15?"fv-warn":"fv-danger"}">${roi.toFixed(1)}%</div></div>
+          <div class="fin-card"><div class="fin-label">Custo por kg</div><div class="fin-val">${R(cpkg)}</div></div>
+          <div class="fin-card"><div class="fin-label">Receita por Hectare</div><div class="fin-val fv-accent">${R(recHa)}</div></div>
+          <div class="fin-card"><div class="fin-label">Custo por m²</div><div class="fin-val">${R(cpm2)}</div></div>
+          <div class="fin-card"><div class="fin-label">Custo Semanal</div><div class="fin-val fv-warn">${R(cpSem)}</div></div>
+        </div>
+
+        <div style="margin-top:14px">
+          <div class="section-title" style="margin-bottom:10px">Decomposição de Custos</div>
+          ${barra("Ração",v.custoRacao,"var(--accent)")}
+          ${barra("Insumos",v.custoInsumos,"var(--purple)")}
+          ${barra("Adicional",v.custoAdicional,"var(--warn)")}
+        </div>
+
+        <div style="margin-top:14px;background:rgba(0,255,163,.05);border:1px solid rgba(0,255,163,.18);border-radius:10px;padding:14px">
+          <div style="font-family:'Syne',sans-serif;font-size:.76rem;font-weight:800;color:var(--accent2);margin-bottom:10px">🎣 Projeção de Despesca (meta 20g)</div>
+          <div class="fin-grid" style="margin:0">
+            <div class="fin-card" style="background:rgba(0,0,0,.15)"><div class="fin-label">Semanas restantes</div><div class="fin-val fv-accent">${semsRest?semsRest+" sem":"—"}</div></div>
+            <div class="fin-card" style="background:rgba(0,0,0,.15)"><div class="fin-label">Biomassa projetada</div><div class="fin-val fv-green">${bioDesp.toFixed(0)} kg</div></div>
+            <div class="fin-card" style="background:rgba(0,0,0,.15)"><div class="fin-label">Receita projetada</div><div class="fin-val fv-green">${R(recDesp)}</div></div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;background:rgba(255,179,0,.04);border:1px solid rgba(255,179,0,.18);border-radius:10px;overflow:hidden">
+          <div style="padding:11px 16px;font-family:'Syne',sans-serif;font-size:.76rem;font-weight:800;color:var(--warn)">⚡ Oportunidades Financeiras</div>
+          <ul class="acoes-list">
+            <li><div class="acao-num">1</div><div>Melhorar FCA de <strong style="color:var(--warn)">${v.fca}</strong> para 1.4 economiza <strong style="color:var(--accent2)">${R(econ)}</strong> em ração neste ciclo</div></li>
+            <li><div class="acao-num">2</div><div>Cada semana extra de ciclo custa <strong style="color:var(--danger)">${R(cpSem)}</strong> em ração — planeje a despesca</div></li>
+            <li><div class="acao-num">3</div><div>Aumentar sobrevivência 5% → +${((v.bio100||0)*0.05).toFixed(0)} kg → <strong style="color:var(--accent2)">+${R((v.bio100||0)*0.05*IA_PRECO_KG)}</strong> de receita</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────
+// SELETOR DE VIVEIROS
+// ─────────────────────────────────────────
+function renderSeletorViveiros(){
+  const sel=document.getElementById("ia-viv-selector");
+  const tabs=document.getElementById("ia-viv-tabs");
+  sel.style.display="block";
+  tabs.innerHTML=`<div class="ia-viv-tab consolidado ${IA_VIVEIRO_IDX===-1?"active":""}" onclick="selecionarViveiroIA(-1)">🏭 Todos</div>`
+    +VIVEIROS_ATIVOS.map((v,i)=>`
+      <div class="ia-viv-tab ${i===IA_VIVEIRO_IDX?"active":""}" onclick="selecionarViveiroIA(${i})" id="ia-vtab-${i}">
+        <div class="ia-dot ${v.fca>1.85||v.surv<70?"ia-dot-crit":v.fca>1.7||v.surv<80?"ia-dot-warn":"ia-dot-ok"}"></div>
+        ${v.nome.replace("Viveiro ","V")} <span style="font-size:.57rem;color:var(--muted)">${v.pesoMedio}g</span>
+      </div>`).join("");
+}
+
+async function selecionarViveiroIA(idx){
+  IA_VIVEIRO_IDX=idx;
+  document.querySelectorAll(".ia-viv-tab").forEach(t=>t.classList.remove("active"));
+  if(idx===-1){
+    document.querySelector(".ia-viv-tab.consolidado")?.classList.add("active");
+    renderConsolidadoIA();
+    const btn=document.querySelector('.ia-tab-btn[onclick*="consolidado"]');
+    if(btn){switchIATab("consolidado",btn);}
+  } else {
+    document.getElementById("ia-vtab-"+idx)?.classList.add("active");
+    if(IA_RESULTADOS[idx]){
+      // Já tem resultado — só renderiza
+      renderAgentesExistentes(idx);
+    } else {
+      const apiKey=document.getElementById("ia-api-key").value.trim();
+      await executarAgentesViveiro(apiKey, idx);
     }
-    toast(`✅ ${nome} salvo (modo local)`, "s");
-    closeM("m-cli");
-    renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
+    const btn=document.querySelector('.ia-tab-btn[onclick*="agentes"]');
+    if(btn)switchIATab("agentes",btn);
   }
 }
 
-function verDetalhe(id) {
-  const c = CLIENTES.find(x=>x.ID==id);
-  if (!c) return;
-  const total = (parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50);
-  document.getElementById("m-det-title").textContent = `👤 ${c.Nome}`;
-  document.getElementById("m-det-body").innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div>
-        <div class="fsec" style="margin-top:0">Dados</div>
-        ${[["Nome",c.Nome],["Telefone",`<span class="mono">${c.Telefone||"—"}</span>`],["Usuário",`<span class="mono">${c.Usuario||"—"}</span>`],["Status",SB[c.Status]||SB.inativo]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;align-items:center"><span style="color:var(--text3);font-size:.74rem">${l}</span><span style="font-size:.78rem;font-weight:600">${v}</span></div>`).join("")}
-        <div class="fsec" style="margin-top:14px">Financeiro</div>
-        ${[["Viveiros",`<span style="color:var(--accent);font-weight:700;font-family:'JetBrains Mono',monospace">${c.QtdViveiros||0}</span>`],["Valor/Viveiro",`<span class="mono">R$${c.ValorPorViveiro||50}/mês</span>`],["Total Mensal",`<span class="mono" style="color:var(--accent2);font-weight:700;font-size:.9rem">${R(total)}</span>`],["Vencimento",`Dia ${c.DiaVencimento||10}`],["Último Pag.",`<span class="mono" style="font-size:.74rem">${c.UltimoPagamento||"—"}</span>`],["Próx. Vencimento",`<span class="mono" style="font-size:.74rem">${c.ProxVencimento||"—"}</span>`],["Asaas",c.AsaasCustomerId?`<span class="bdg bg">✓ ${c.AsaasCustomerId}</span>`:`<span class="bdg br">Não criado</span>`]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;align-items:center"><span style="color:var(--text3);font-size:.74rem">${l}</span><span>${v}</span></div>`).join("")}
-      </div>
-      <div>
-        <div class="fsec" style="margin-top:0">Viveiros (${c.QtdViveiros||0})</div>
-        ${Array.from({length:parseInt(c.QtdViveiros)||1},(_,n)=>`<div style="display:flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:8px 11px;margin-bottom:6px"><span style="color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700">V${n+1}</span><span style="font-size:.72rem;color:var(--text3);flex:1">Apps Script configurado</span><span class="bdg bg" style="font-size:.55rem">✓</span></div>`).join("")}
-        <div class="fsec" style="margin-top:14px">Observações</div>
-        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.75rem;color:var(--text3)">${c.Observacoes||"Nenhuma observação."}</div>
-      </div>
+function renderAgentesExistentes(idx){
+  const v=VIVEIROS_ATIVOS[idx];
+  const res=IA_RESULTADOS[idx];
+  document.getElementById("ia-agentes").innerHTML=`
+    <div style="font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;color:var(--muted);margin-bottom:13px">${v.nome} — análise em cache</div>
+    <div class="agents-grid">
+      ${AGENTES_DEF.map((ag,i)=>`
+        <div class="agent-card" style="animation-delay:${i*.06}s">
+          <div class="agent-header">
+            <div class="agent-icon" style="background:${ag.bg}">${ag.icone}</div>
+            <div class="agent-meta"><div class="agent-name" style="color:${ag.cor}">${ag.nome}</div><div class="agent-spec">${ag.esp}</div></div>
+            <div class="agent-status ${statusClassIA(res[ag.id]||"")}" id="ia-st-${ag.id}">${statusTxtIA(res[ag.id]||"OK")}</div>
+          </div>
+          <div class="agent-body" id="ia-bd-${ag.id}"></div>
+        </div>`).join("")}
     </div>`;
-  document.getElementById("m-det-ft").innerHTML = `
-    <button class="btn bol" onclick="closeM('m-det')">Fechar</button>
-    <button class="btn bwa" onclick="wpp(${c.ID});closeM('m-det')">🟢 WhatsApp</button>
-    ${!c.AsaasCustomerId ? `<button class="btn bor" onclick="criarAsaas(${c.ID})">🏦 Criar Asaas</button>` : `<button class="btn bdn" onclick="gerarPix(${c.ID})">⚡ Gerar PIX</button>`}
-    <button class="btn bac" onclick="editarCliente(${c.ID});closeM('m-det')">✏️ Editar</button>`;
-  openM("m-det");
+  AGENTES_DEF.forEach(ag=>renderCardAgente(ag,res[ag.id]||""));
+  renderMasterCard(v,res,gerarMasterDemo(v,res));
+  renderFinanceiroIA(v);
 }
 
-// ══════════════════════════════════════════════════════
-// MENSAGENS / TEMPLATES
-// ══════════════════════════════════════════════════════
-const TMPLS = {
-  cobranca:"Olá *{NOME}*! 👋\n\n🦐 *AquaShrimpTech* — Lembrete de Pagamento\n\nSua mensalidade de *{VIVEIROS} viveiro{S}* no valor de *R$ {VALOR}* vence em *{DATA}*.\n\n💳 Pague agora via PIX:\n👉 {LINK}\n\nApós o pagamento, seu acesso continua normalmente. 😊\n_AquaShrimpTech — Tecnologia que cultiva resultados_",
-  inadimplente:"⚠️ Olá *{NOME}*,\n\nSua mensalidade da *AquaShrimpTech* (R$ {VALOR}) está em atraso desde {DATA}.\n\nPara evitar suspensão do acesso aos seus {VIVEIROS} viveiro{S}, efetue o pagamento:\n👉 {LINK}\n\n_AquaShrimpTech_",
-  boas_vindas:"Olá *{NOME}*! 🎉\n\nSeja bem-vindo(a) à *AquaShrimpTech*! 🦐\n\n📋 Seu contrato:\n🦐 *{VIVEIROS} viveiro{S}* monitorados\n💰 *R${VALOR}/mês*\n\n🔐 Login: *{USUARIO}*\n🌐 https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/\n\n📱 Bot Telegram configurado!\n_AquaShrimpTech — Tecnologia que cultiva resultados_ 🚀",
-  novo_viveiro:"Olá *{NOME}*! 🦐\n\nSeu novo viveiro foi adicionado!\n\n✅ Configurado e ativo\n📱 Bot Telegram atualizado\n💰 Mensalidade atualizada: *R${VALOR}/mês* ({VIVEIROS} viveiro{S})\n\n_AquaShrimpTech_",
-  atualizacao:"🚀 *AquaShrimpTech* — Atualização do Sistema\n\nOlá *{NOME}*!\n\n✅ Biomassa real pela alimentação\n✅ FCA calculado automaticamente\n✅ Densidade (cam/m²) no dashboard\n✅ Relatório técnico completo\n\nAcesse: https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/\n\n_AquaShrimpTech — Sempre evoluindo!_ 🦐",
-};
-function fillTpl() {
-  const t = document.getElementById("msg-tpl").value;
-  if (!t) { document.getElementById("msg-txt").value=""; document.getElementById("wa-txt").textContent="Selecione um template..."; return; }
-  const c = CLIENTES[0] || {Nome:"João Silva",QtdViveiros:2,ValorPorViveiro:50,ProxVencimento:"10/06/2026",Usuario:"joao"};
-  const total = (parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50);
-  const txt = TMPLS[t]
-    .replace(/{NOME}/g,c.Nome).replace(/{VALOR}/g,total.toFixed(2).replace(".",","))
-    .replace(/{DATA}/g,c.ProxVencimento||"—").replace(/{VIVEIROS}/g,c.QtdViveiros||1)
-    .replace(/{S}/g,(c.QtdViveiros||1)!=1?"s":"").replace(/{USUARIO}/g,c.Usuario||"usuario")
-    .replace(/{LINK}/g,"https://pix.asaas.com/link-gerado");
-  document.getElementById("msg-txt").value = txt;
-  prvWpp();
-}
-function prvWpp() {
-  const txt = document.getElementById("msg-txt").value;
-  document.getElementById("wa-txt").innerHTML = txt.replace(/\*(.*?)\*/g,"<b>$1</b>").replace(/_(.*?)_/g,"<i>$1</i>").replace(/\n/g,"<br>") || "Escreva sua mensagem...";
+// ─────────────────────────────────────────
+// EXECUTAR AGENTES DE UM VIVEIRO
+// ─────────────────────────────────────────
+async function executarAgentesViveiro(apiKey, idx){
+  const v=VIVEIROS_ATIVOS[idx];
+  renderAgentesVazios(v);
+  const resultados={};
+  for(const ag of AGENTES_DEF){
+    try{
+      let txt="";
+      if(apiKey){
+        txt=await chamarClaudeAPI(apiKey, montarPrompt(ag.id,v));
+      } else {
+        await new Promise(r=>setTimeout(r,600+Math.random()*500));
+        txt=gerarDemoAgente(ag.id,v);
+      }
+      resultados[ag.id]=txt;
+      renderCardAgente(ag,txt);
+    } catch(e){
+      const bd=document.getElementById("ia-bd-"+ag.id);
+      if(bd)bd.innerHTML=`<div class="agent-placeholder" style="color:var(--danger)">⚠️ ${esc(e.message)}</div>`;
+      const st=document.getElementById("ia-st-"+ag.id);
+      if(st){st.className="agent-status st-idle";st.textContent="Erro";}
+    }
+  }
+  IA_RESULTADOS[idx]=resultados;
+
+  // Master
+  let txtMaster="";
+  if(apiKey){
+    const c=v.custoRacao+v.custoInsumos+v.custoAdicional;
+    const rec=(v.bio100||0)*IA_PRECO_KG;
+    const promptMaster=`Você é o AquaShrimp Master AI. Consolide os pareceres dos 6 agentes e gere relatório executivo para ${v.nome}.
+PARECERES: ${AGENTES_DEF.map(ag=>`${ag.nome}: ${resultados[ag.id]||"sem dados"}`).join(" | ")}
+DADOS CHAVE: Investimento ${R(c)} | Receita pot. ${R(rec)} | Margem ${R(rec-c)} | Peso ${v.pesoMedio}g | FCA ${v.fca} | Dias ${v.diasCiclo}
+Gere relatório direto: estado real do viveiro hoje (2-3 frases), 3 ações urgentes com números, projeção financeira da despesca. Tom: consultor conversando com produtor. Máx 450 palavras.`;
+    try{txtMaster=await chamarClaudeAPI(apiKey,promptMaster,1000);}
+    catch(e){txtMaster=gerarMasterDemo(v,resultados);}
+  } else {
+    await new Promise(r=>setTimeout(r,800));
+    txtMaster=gerarMasterDemo(v,resultados);
+  }
+  renderMasterCard(v,resultados,txtMaster);
+  renderFinanceiroIA(v);
 }
 
-// ══════════════════════════════════════════════════════
-// NAV / MODAIS / UTILS
-// ══════════════════════════════════════════════════════
-const PG_TITLES = {dash:"Dashboard",clientes:"Clientes",financeiro:"Financeiro",cobrancas:"Cobranças",alertas:"Alertas",mensagens:"Mensagens",config:"Configurações"};
-function go(nm,el) {
-  document.querySelectorAll(".pg").forEach(p=>p.classList.remove("act"));
-  document.querySelectorAll(".ni").forEach(n=>n.classList.remove("act"));
-  document.getElementById("pg-"+nm).classList.add("act");
-  if(el) el.classList.add("act");
-  else document.querySelectorAll(".ni").forEach(n=>{if(n.getAttribute("onclick")?.includes("'"+nm+"'"))n.classList.add("act");});
-  document.getElementById("pg-title").textContent = PG_TITLES[nm]||nm;
-  if(window.innerWidth<860) closeSB();
+// ─────────────────────────────────────────
+// CLAUDE API
+// ─────────────────────────────────────────
+async function chamarClaudeAPI(apiKey, prompt, maxTokens=700){
+  const r=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",max_tokens:maxTokens,
+      system:"Você é especialista sênior em carcinicultura de L. vannamei. Seja direto, técnico, cite os números reais dos dados fornecidos. Responda em português. Nunca invente dados além do que foi fornecido.",
+      messages:[{role:"user",content:prompt}]
+    })
+  });
+  if(!r.ok){const err=await r.json();throw new Error(err.error?.message||"API erro "+r.status);}
+  const d=await r.json();
+  return d.content?.[0]?.text||"";
 }
-function toggleSB(){document.getElementById("sb").classList.toggle("open");document.getElementById("sb-ov").classList.toggle("open");}
-function closeSB(){document.getElementById("sb").classList.remove("open");document.getElementById("sb-ov").classList.remove("open");}
-function openM(id){document.getElementById(id).classList.add("open");}
-function closeM(id){document.getElementById(id).classList.remove("open");}
-document.querySelectorAll(".ov").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)o.classList.remove("open");}));
-function toast(msg,tipo="i"){const ic={s:"✅",e:"❌",i:"ℹ️"}[tipo];const el=document.createElement("div");el.className=`toast ${tipo}`;el.innerHTML=`<span>${ic}</span><span>${msg}</span>`;document.getElementById("tc").appendChild(el);setTimeout(()=>el.remove(),4500);}
+
+// ─────────────────────────────────────────
+// EXECUTAR ANÁLISE COMPLETA (botão principal)
+// ─────────────────────────────────────────
+async function executarAnaliseIA(){
+  const apiKey=document.getElementById("ia-api-key").value.trim();
+  const precoKg=parseFloat(document.getElementById("ia-preco-kg").value)||28;
+  IA_PRECO_KG=precoKg;
+  IA_RESULTADOS={};
+  IA_VIVEIRO_IDX=0;
+
+  const btn=document.getElementById("btn-analisar");
+  btn.disabled=true;
+  document.getElementById("btn-ia-icon").textContent="⏳";
+  document.getElementById("btn-ia-txt").textContent="Analisando...";
+
+  if(apiKey){document.getElementById("ia-demo-notice").style.display="none";}
+
+  // Renderiza seletor e consolidado
+  renderSeletorViveiros();
+  renderConsolidadoIA();
+
+  // Ativa aba consolidado
+  switchIATab("consolidado",document.querySelector('.ia-tab-btn'));
+
+  // Analisa viveiro 0 automaticamente
+  await executarAgentesViveiro(apiKey,0);
+
+  // Atualiza seletor com cores corretas
+  renderSeletorViveiros();
+
+  btn.disabled=false;
+  document.getElementById("btn-ia-icon").textContent="🔄";
+  document.getElementById("btn-ia-txt").textContent="Reanalisar";
+}
+
+// ════════════════════════════════════════════════════════════════
+//  MODAIS
+// ════════════════════════════════════════════════════════════════
+let viveiroSelecionadoContexto=null;
+function fecharModais(){document.querySelectorAll('.modal-overlay').forEach(el=>el.style.display='none');viveiroSelecionadoContexto=null;}
+function abrirModalOperacao(tipo,nome,dias=0,custo=0){
+  viveiroSelecionadoContexto={tipo,nome};
+  document.querySelectorAll('.modal-viv-nome').forEach(el=>el.textContent=nome);
+  if(tipo==='desbaste'){document.getElementById('obs-desb-kg').value='';document.getElementById('obs-desb-valor').value='';document.getElementById('obs-desb-dias').value=dias;document.getElementById('modal-desbaste').style.display='flex';}
+  else if(tipo==='despesca'){document.getElementById('obs-desp-kg').value='';document.getElementById('obs-desp-valor').value='';document.getElementById('obs-desp-cracao').value=(custo*.7).toFixed(2);document.getElementById('obs-desp-cadic').value=(custo*.3).toFixed(2);document.getElementById('obs-desp-dias').value=dias;document.getElementById('modal-despesca').style.display='flex';}
+  else if(tipo==='limpar'){document.getElementById('modal-limpar').style.display='flex';}
+}
+function executarDesbaste(){const kg=document.getElementById('obs-desb-kg').value,val=document.getElementById('obs-desb-valor').value;if(!kg||!val){alert('Preencha os campos.');return;}fecharModais();alert(`🔱 DEMO: Desbaste de ${parseFloat(kg).toLocaleString('pt-BR')} kg em ${viveiroSelecionadoContexto?.nome}!`);}
+function executarDespesca(){const kg=document.getElementById('obs-desp-kg').value,val=document.getElementById('obs-desp-valor').value;if(!kg||!val){alert('Preencha os campos.');return;}fecharModais();alert(`🎣 DEMO: Despesca de ${parseFloat(kg).toLocaleString('pt-BR')} kg finalizada!`);}
+function executarLimparCiclo(){const nome=viveiroSelecionadoContexto?.nome||'o viveiro';fecharModais();alert(`🗑️ DEMO: Ciclo de ${nome} seria zerado.`);}
+function abrirModalEntradaEstoque(produto,unidade){document.getElementById('obs-est-nome').value=produto;document.getElementById('obs-est-un-label').textContent=unidade;document.getElementById('obs-est-qtd').value='';document.getElementById('obs-est-valor').value='';document.getElementById('modal-est-entrada').style.display='flex';}
+function executarEntradaEstoque(){const produto=document.getElementById('obs-est-nome').value,qtd=parseFloat(document.getElementById('obs-est-qtd').value),valor=parseFloat(document.getElementById('obs-est-valor').value);if(!qtd||qtd<=0){alert('Quantidade inválida.');return;}const item=ESTOQUE_DEMO.find(x=>x.produto===produto);if(item){item.qtd=+(item.qtd+qtd).toFixed(3);const cu=valor>0?valor/qtd:item.custo;item.custo=+((item.custo*(item.qtd-qtd)+cu*qtd)/item.qtd).toFixed(4);item.total=+(item.qtd*item.custo).toFixed(2);if(item.qtd>0&&item.situacao==='critico')item.situacao='baixo';}fecharModais();renderEstoque();alert(`📦 DEMO: Entrada de ${qtd} ${document.getElementById('obs-est-un-label').textContent} de "${produto}" registrada!`);}
+function abrirModalNovoInsumo(){document.getElementById('obs-novo-nome').value='';document.getElementById('obs-novo-min').value='0';document.getElementById('obs-novo-qtd').value='0';document.getElementById('obs-novo-valor').value='0';document.getElementById('modal-est-novo').style.display='flex';}
+function executarCriarNovoInsumo(){const produto=document.getElementById('obs-novo-nome').value.trim();if(!produto){alert('Nome obrigatório.');return;}const un=document.getElementById('obs-novo-un').value,qtd=parseFloat(document.getElementById('obs-novo-qtd').value)||0,valor=parseFloat(document.getElementById('obs-novo-valor').value)||0,cu=qtd>0&&valor>0?valor/qtd:0;ESTOQUE_DEMO.push({produto,unidade:un,qtd,custo:+cu.toFixed(4),total:+(qtd*cu).toFixed(2),situacao:'ok'});fecharModais();renderEstoque();alert(`✨ DEMO: "${produto}" cadastrado!`);}
+document.querySelectorAll('.modal-overlay').forEach(overlay=>{overlay.addEventListener('click',e=>{if(e.target===overlay)fecharModais();});});
+
+// ════════════════════════════════════════════════════════════════
+//  RENDER GERAL
+// ════════════════════════════════════════════════════════════════
+function renderTudo(){
+  renderKpiGeral();
+  renderViveiros();
+  renderBiometria();
+  renderHistorico();
+  renderEstoque();
+}
 </script>
 </body>
 </html>
