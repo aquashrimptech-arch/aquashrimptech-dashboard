@@ -947,7 +947,7 @@ Para um viveiro de ${v.pesoMedio||"—"}g com ${v.diasCiclo||"—"} dias de cicl
 
 STATUS: ${fca>1.8||surv<70?"ATENÇÃO":"BOM"} | Nota: ${fca<=1.6&&surv>=80?8:fca<=1.8&&surv>=70?6:5}/10`,
 
-    prod:`Com ${v.diasCiclo||"—"} dias de ciclo, o peso de ${v.pesoMedio||"—"}g está ${Math.abs((v.pesoMedio||0)-((v.diasCiclo||0)*0.20))<1.5?"dentro do esperado":"${(v.pesoMedio||0)>((v.diasCiclo||0)*0.20)?"acima":"abaixo"} do esperado"} para L. vannamei — meta ~${((v.diasCiclo||0)*0.20).toFixed(1)}g.
+    prod:`Com ${v.diasCiclo||"—"} dias de ciclo, o peso de ${v.pesoMedio||"—"}g está ${Math.abs((v.pesoMedio||0)-((v.diasCiclo||0)*0.20))<1.5?"dentro do esperado":(v.pesoMedio||0)>((v.diasCiclo||0)*0.20)?"acima do esperado":"abaixo do esperado"} para L. vannamei — meta ~${((v.diasCiclo||0)*0.20).toFixed(1)}g.
 
 CCMT de ${v.ccmt?"+"+v.ccmt.toFixed(1)+"g/sem":"—"}: ${(v.ccmt||0)>=1.2?"dentro do benchmark (0.8-1.4g/sem)":"abaixo do benchmark — investigar alimentação ou densidade"}.
 
