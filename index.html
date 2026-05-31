@@ -35,6 +35,18 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
 .badge-live{display:flex;align-items:center;gap:5px;font-size:.64rem;font-weight:600;color:var(--accent2);letter-spacing:.1em;text-transform:uppercase}
 .dot-live{width:7px;height:7px;border-radius:50%;background:var(--accent2);animation:pulse-live 1.6s ease-in-out infinite;box-shadow:0 0 8px var(--accent2);flex-shrink:0}
 @keyframes pulse-live{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+/* ── ★ Badge Claude API Status ─────────────────────────── */
+.claude-badge{display:flex;align-items:center;gap:5px;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid;transition:all .6s ease;cursor:default}
+.claude-ok{color:#a78bfa;border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.09)}
+.claude-checking{color:var(--muted);border-color:rgba(90,122,149,.3);background:rgba(90,122,149,.06)}
+.claude-err{color:var(--danger);border-color:rgba(255,79,79,.35);background:rgba(255,79,79,.07)}
+.dot-claude{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:all .6s}
+.dot-claude-ok{background:#a78bfa;animation:pulse-live 1.8s ease-in-out infinite;box-shadow:0 0 8px #a78bfa}
+.dot-claude-checking{background:var(--muted)}
+.dot-claude-err{background:var(--danger)}
+/* ─────────────────────────────────────────────────────── */
+
 #cliente-nome{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;color:var(--accent2)}
 .btn-logout{font-size:.64rem;font-weight:700;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:color .2s,border-color .2s}
 .btn-logout:hover{color:var(--danger);border-color:var(--danger)}
@@ -215,12 +227,27 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 .ia-semanal-badge strong{color:#c4b5fd}
 .ia-preco-info{font-size:.58rem;color:var(--muted);margin-top:3px;font-family:'DM Mono',monospace}
 
+/* ── ★ Caixa de status Claude na aba IA ── */
+.claude-ia-status{border-radius:11px;padding:11px 16px;margin-bottom:12px;font-size:.74rem;display:flex;align-items:center;gap:10px;transition:all .6s ease}
+.claude-ia-checking{background:rgba(90,122,149,.06);border:1px solid rgba(90,122,149,.2)}
+.claude-ia-ok{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.25)}
+.claude-ia-err{background:rgba(255,79,79,.06);border:1px solid rgba(255,79,79,.22)}
+
+/* ── Bloco "sem dados" padronizado ── */
+.no-data-block{border-radius:14px;padding:36px 24px;text-align:center}
+.no-data-block.offline{background:rgba(255,79,79,.07);border:1px solid rgba(255,79,79,.25)}
+.no-data-block.waiting{background:rgba(90,122,149,.07);border:1px solid rgba(90,122,149,.2)}
+.no-data-icon{font-size:2rem;margin-bottom:12px}
+.no-data-title{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;margin-bottom:8px}
+.no-data-desc{font-size:.76rem;color:var(--muted);line-height:1.6}
+
 @media(max-width:600px){
   .login-box{padding:28px 22px}header{padding:10px 14px}.logo-text{font-size:.8rem}
   #clock,#cliente-nome{display:none}nav{padding:0 2px}.tab-btn{padding:10px 11px;font-size:.65rem}
   main{padding:12px 10px}.kpi-grid{grid-template-columns:1fr 1fr;gap:8px}.kpi-value{font-size:1.2rem}
   .viveiros-grid{grid-template-columns:1fr}.estoque-grid{grid-template-columns:1fr 1fr;gap:8px}
   .bio-chart-wrap{padding:12px}.ia-config-bar{flex-direction:column}.agents-grid{grid-template-columns:1fr}
+  .claude-badge{display:none}
 }
 @media(max-width:380px){.kpi-grid{grid-template-columns:1fr}.estoque-grid{grid-template-columns:1fr}}
 </style>
@@ -255,6 +282,13 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     <span id="cliente-nome"></span>
     <span id="clock">--:--:--</span>
     <div class="badge-live"><div class="dot-live"></div>AO VIVO</div>
+
+    <!-- ★ Badge status Claude API -->
+    <div class="claude-badge claude-checking" id="claude-badge" title="Status da conexão com Claude AI">
+      <div class="dot-claude dot-claude-checking" id="claude-dot"></div>
+      <span id="claude-badge-txt">CLAUDE</span>
+    </div>
+
     <button class="btn-logout" onclick="fazerLogout()">Sair</button>
   </div>
 </header>
@@ -306,23 +340,26 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
   <!-- ═══ ABA AGENTES IA ═══ -->
   <div id="tab-ia" class="tab-panel">
 
-    <!-- Config: tabela de preços + botão análise LOCAL -->
+    <!-- ★ Status Claude na aba IA -->
+    <div class="claude-ia-status claude-ia-checking" id="claude-status-ia">
+      <span id="claude-status-icon" style="font-size:1rem">🔵</span>
+      <div id="claude-status-msg" style="color:var(--muted)">Verificando conexão com Claude API...</div>
+    </div>
+
+    <!-- Config: tabela de preços + botão análise -->
     <div class="ia-config-bar">
       <div class="ia-cfg-grp" style="max-width:200px">
-        <!-- ★ TABELA DE PREÇOS: valor base para camarão de 10g.
-             A cada +1g no peso médio, soma +R$1,00/kg -->
         <div class="ia-cfg-lbl">📋 Tabela de Preços (R$/kg base 10g)</div>
         <input class="ia-cfg-inp" type="number" id="ia-tabela-preco" value="19" step="0.5" min="1"
                oninput="atualizarPreviewTabela()">
         <div class="ia-preco-info" id="ia-preco-preview">Base 10g → R$19,00/kg · 15g → R$24,00/kg</div>
       </div>
-      <!-- Botão: só análise local — não consome API -->
       <button class="btn-analisar" id="btn-analisar" onclick="executarAnaliseLocal()">
         <span id="ia-btn-icon">⚡</span><span id="ia-btn-txt">Analisar Fazenda</span>
       </button>
     </div>
 
-    <!-- Aviso sobre o sistema de análise -->
+    <!-- Aviso sobre o sistema -->
     <div class="ia-semanal-badge">
       <span>🤖</span>
       <div>
@@ -346,16 +383,32 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     </div>
 
     <div class="ia-tab-panel active" id="ia-tab-consolidado">
-      <div class="agent-ph" style="padding:36px">⚡ Clique em <strong>Analisar Fazenda</strong> para ver o painel consolidado com os dados reais dos seus viveiros</div>
+      <div class="no-data-block waiting">
+        <div class="no-data-icon">⚡</div>
+        <div class="no-data-title" style="color:var(--muted)">Aguardando análise</div>
+        <div class="no-data-desc">Clique em <strong style="color:var(--text)">Analisar Fazenda</strong> para ver o painel consolidado com os dados reais dos seus viveiros.</div>
+      </div>
     </div>
     <div class="ia-tab-panel" id="ia-tab-agentes">
-      <div class="agent-ph" style="padding:36px">Selecione um viveiro e clique em Analisar para ver os 6 agentes especialistas em ação</div>
+      <div class="no-data-block waiting">
+        <div class="no-data-icon">🤖</div>
+        <div class="no-data-title" style="color:var(--muted)">Agentes prontos</div>
+        <div class="no-data-desc">Selecione um viveiro e clique em Analisar para ver os 6 agentes especialistas em ação.</div>
+      </div>
     </div>
     <div class="ia-tab-panel" id="ia-tab-relatorio">
-      <div class="agent-ph" style="padding:36px" id="ia-relatorio-ph">📅 Aguardando análise semanal do servidor — gerada toda segunda-feira às 07:00.<br><br>Clique em <strong>Analisar Fazenda</strong> para ver a pré-análise local enquanto isso.</div>
+      <div class="no-data-block waiting" id="ia-relatorio-ph">
+        <div class="no-data-icon">📅</div>
+        <div class="no-data-title" style="color:var(--muted)">Aguardando análise semanal</div>
+        <div class="no-data-desc">Gerada automaticamente toda segunda-feira às 07:00.<br>Clique em <strong style="color:var(--text)">Analisar Fazenda</strong> para ver a pré-análise local enquanto isso.</div>
+      </div>
     </div>
     <div class="ia-tab-panel" id="ia-tab-financeiro">
-      <div class="agent-ph" style="padding:36px">Painel financeiro detalhado com projeções e oportunidades de ganho</div>
+      <div class="no-data-block waiting">
+        <div class="no-data-icon">💰</div>
+        <div class="no-data-title" style="color:var(--muted)">Painel financeiro</div>
+        <div class="no-data-desc">Clique em Analisar Fazenda para carregar projeções e oportunidades de ganho.</div>
+      </div>
     </div>
 
   </div>
@@ -450,7 +503,6 @@ loginImg.onload=()=>{loginImg.style.display="block";headerImg.src=loginImg.src;h
 //  CONFIG
 // ══════════════════════════════════════════════════════
 const ADM_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
-// URL do estoque padrão (usada quando o cliente não tem URL configurada na planilha ADM)
 const ESTOQUE_URL_PADRAO="https://script.google.com/macros/s/AKfycbxaZpPI2_5f4M7ojpxvliklpwBCkHALYIV6jmoZewS7Bd01ET4rgzFhveRZvtvI433s/exec";
 
 let CLIENTES_CONFIG=[];
@@ -465,27 +517,19 @@ const Nf=n=>(isNaN(n)||n===null)?"—":Number(n).toLocaleString("pt-BR");
 const esc=t=>String(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
 // ══════════════════════════════════════════════════════
-//  ★ TABELA DE PREÇOS — calcula R$/kg por peso médio
-//  Regra: tabelaBase (valor para 10g) + (pesoG - 10) * 1
-//  Ex: tabela=19, peso=15g → 19 + (15-10) = R$24,00/kg
+//  TABELA DE PREÇOS
 // ══════════════════════════════════════════════════════
 function calcPrecoKg(pesoGramas){
   const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
   const peso=parseFloat(pesoGramas)||10;
-  // Cada grama acima de 10 vale +R$1,00/kg; abaixo de 10g desconta
   return tabela+(peso-10);
 }
-
 function atualizarPreviewTabela(){
   const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
-  const p10=tabela+(10-10); // 10g = base
-  const p12=tabela+(12-10);
-  const p15=tabela+(15-10);
-  const p20=tabela+(20-10);
+  const p10=tabela,p12=tabela+2,p15=tabela+5,p20=tabela+10;
   document.getElementById("ia-preco-preview").textContent=
     `10g→R$${p10.toFixed(2)}/kg · 12g→R$${p12.toFixed(2)}/kg · 15g→R$${p15.toFixed(2)}/kg · 20g→R$${p20.toFixed(2)}/kg`;
 }
-// Inicializa preview
 setTimeout(atualizarPreviewTabela,100);
 
 // ══════════════════════════════════════════════════════
@@ -500,6 +544,74 @@ function switchTab(name,btn){
 document.addEventListener("DOMContentLoaded",()=>{window.switchTab=switchTab;});
 function tickClock(){document.getElementById("clock").textContent=new Date().toLocaleDateString("pt-BR")+" "+new Date().toLocaleTimeString("pt-BR");}
 setInterval(tickClock,1000);tickClock();
+
+// ══════════════════════════════════════════════════════
+//  ★ TESTE DE CONEXÃO COM A CLAUDE API
+//  Roda automaticamente após o login.
+//  Atualiza badge no header E caixa na aba IA.
+// ══════════════════════════════════════════════════════
+async function testarConexaoClaude(){
+  const badge  = document.getElementById('claude-badge');
+  const dot    = document.getElementById('claude-dot');
+  const txt    = document.getElementById('claude-badge-txt');
+  const iaBox  = document.getElementById('claude-status-ia');
+  const iaIcon = document.getElementById('claude-status-icon');
+  const iaMsg  = document.getElementById('claude-status-msg');
+
+  // Estado: verificando
+  badge.className='claude-badge claude-checking';
+  dot.className='dot-claude dot-claude-checking';
+  txt.textContent='CLAUDE...';
+  if(iaBox){
+    iaBox.className='claude-ia-status claude-ia-checking';
+    iaIcon.textContent='🔵';
+    iaMsg.style.color='var(--muted)';
+    iaMsg.textContent='Verificando conexão com Claude API...';
+  }
+
+  try{
+    // Ping leve — sem API key no browser vai retornar 401,
+    // mas isso PROVA que o servidor está acessível e respondendo.
+    const ctrl=new AbortController();
+    const timer=setTimeout(()=>ctrl.abort(),8000); // timeout 8s
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","anthropic-version":"2023-06-01"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1,messages:[{role:"user",content:"ping"}]}),
+      signal:ctrl.signal
+    });
+    clearTimeout(timer);
+
+    // 200 = OK com key | 401 = sem key mas servidor OK | 400 = bad request mas servidor OK
+    // Todos provam que a API está acessível
+    if([200,400,401].includes(resp.status)){
+      badge.className='claude-badge claude-ok';
+      dot.className='dot-claude dot-claude-ok';
+      txt.textContent='CLAUDE ✓';
+      if(iaBox){
+        iaBox.className='claude-ia-status claude-ia-ok';
+        iaIcon.textContent='🟣';
+        iaMsg.style.color='#c4b5fd';
+        iaMsg.textContent='Claude API acessível e respondendo. Análise local disponível ao clicar em Analisar Fazenda.';
+      }
+    } else {
+      throw new Error('HTTP '+resp.status);
+    }
+  } catch(e){
+    const isTimeout=e.name==='AbortError';
+    badge.className='claude-badge claude-err';
+    dot.className='dot-claude dot-claude-err';
+    txt.textContent='CLAUDE ✗';
+    if(iaBox){
+      iaBox.className='claude-ia-status claude-ia-err';
+      iaIcon.textContent='🔴';
+      iaMsg.style.color='var(--danger)';
+      iaMsg.textContent=isTimeout
+        ? 'Claude API não respondeu (timeout 8s). Verifique sua conexão com a internet.'
+        : 'Claude API inacessível: '+e.message+'. A análise local de dados continua disponível.';
+    }
+  }
+}
 
 // ══════════════════════════════════════════════════════
 //  LOGIN
@@ -518,7 +630,6 @@ async function loadClientesDoAdm(){
           const viveiros=Array.from({length:Math.max(qtd,urls.length)},(_,i)=>({
             nome:`Viveiro ${String(i+1).padStart(2,"0")}`,url:urls[i]||""
           })).filter(v=>v.url);
-          // ★ FIX ESTOQUE: usa URL do ADM ou fallback padrão
           const urlEstoque=String(c.UrlEstoque||"").trim();
           return{
             id:String(c.ID),nome:c.Nome||"",telefone:c.Telefone||"",
@@ -551,8 +662,9 @@ async function fazerLogin(){
   document.getElementById("cliente-nome").textContent="👤 "+cliente.nome;
   document.title="AquaShrimpTech — "+cliente.nome;
   carregarDados();
-  // Carrega análise semanal do servidor em background
   carregarAnaliseSemanal();
+  // ★ Testa conexão com Claude automaticamente após login
+  testarConexaoClaude();
 }
 document.getElementById("inp-senha").addEventListener("keydown",e=>{if(e.key==="Enter")fazerLogin();});
 document.getElementById("inp-usuario").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("inp-senha").focus();});
@@ -565,6 +677,13 @@ function fazerLogout(){
   document.getElementById("login-screen").style.display="flex";
   document.getElementById("btn-adm").style.display="block";
   document.getElementById("inp-usuario").value="";document.getElementById("inp-senha").value="";
+  // Reset badge Claude
+  const badge=document.getElementById('claude-badge');
+  const dot=document.getElementById('claude-dot');
+  const txt=document.getElementById('claude-badge-txt');
+  if(badge)badge.className='claude-badge claude-checking';
+  if(dot)dot.className='dot-claude dot-claude-checking';
+  if(txt)txt.textContent='CLAUDE';
   IA_RESULTADOS={};IA_VIVEIRO_IDX=0;
 }
 
@@ -586,7 +705,6 @@ async function carregarDados(){
       .then(data=>{const vv=data.viveiros?.[0]||{};vv.nome=v.nome;vv.scriptUrlBase=v.url;return vv;})
       .catch(()=>({nome:v.nome,_erro:true}))
   );
-  // ★ FIX ESTOQUE: usa URL correta do cliente (ou fallback)
   const urlEst=CLIENTE.estoque.url;
   const fetchEstoque=fetch(urlEst+"?tipo=listagem")
     .then(r=>r.json())
@@ -600,16 +718,14 @@ async function carregarDados(){
 }
 
 // ══════════════════════════════════════════════════════
-//  ANÁLISE SEMANAL DO SERVIDOR (lê sem consumir API)
+//  ANÁLISE SEMANAL DO SERVIDOR
 // ══════════════════════════════════════════════════════
 async function carregarAnaliseSemanal(){
   if(!CLIENTE)return;
   try{
     const resp=await fetch(ADM_SCRIPT_URL+"?acao=analise_ia&cliente_id="+CLIENTE.id);
     const data=await resp.json();
-    if(data.status==="ok"&&data.analise){
-      renderRelatorioSemanal(data);
-    }
+    if(data.status==="ok"&&data.analise){renderRelatorioSemanal(data);}
   }catch(e){console.warn("Análise semanal indisponível:",e);}
 }
 
@@ -617,7 +733,6 @@ function renderRelatorioSemanal(data){
   const el=document.getElementById("ia-tab-relatorio");
   if(!el)return;
   const txt=data.analise||"";
-  // Converte formatação Telegram (*negrito*) para HTML
   const html=txt.replace(/\*([^*]+)\*/g,"<strong>$1</strong>").replace(/\n/g,"<br>");
   el.innerHTML=`
     <div class="master-card">
@@ -887,7 +1002,7 @@ function renderEstoque(){
 function renderTudo(){renderKpiGeral();renderViveiros();renderBiometria();renderHistorico();renderEstoque();}
 
 // ══════════════════════════════════════════════════════
-//  AGENTES IA — ANÁLISE LOCAL (sem consumir API)
+//  AGENTES IA — ANÁLISE LOCAL
 // ══════════════════════════════════════════════════════
 const AGENTES_DEF=[
   {id:"agua",   nome:"Water Quality",    icone:"💧",cor:"#00e5ff",bg:"rgba(0,229,255,.1)",   esp:"OD · pH · Temp · Amônia · Nitrito"},
@@ -923,11 +1038,14 @@ function iaSttTxt(txt){
 }
 function extrairNota(txt){const m=txt.match(/nota[:\s]+(\d+)/i);return m?parseInt(m[1]):7;}
 
-// ── Textos locais usando tabela de preços correta ───────────
+// ── Textos locais — usa dados reais, sem inventar ───────────
 function gerarTextoLocal(agId,v){
+  // ★ Se não há dados mínimos para o agente, retorna null — sem análise fake
+  const temDados=v.pesoMedio||v.biomassa||v.biomassaReal||v.fca||v.racaoTotal;
+  if(!temDados)return null;
+
   const c=v.custoCiclo||0;
   const bioReal=v.biomassaReal||v.biomassa||0;
-  // ★ Usa calcPrecoKg com o peso real de CADA viveiro
   const precoKg=calcPrecoKg(v.pesoMedio||10);
   const rec=(v.biomassa100||0)*precoKg;
   const cresc=calcCrescimento(v.biometria);
@@ -936,58 +1054,77 @@ function gerarTextoLocal(agId,v){
   const econ=Math.max(0,(fca-1.4)*bioReal*(v.racaoTotal>0?c*0.72/v.racaoTotal:4.60));
   const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
 
-  const textos={
-    agua:`Sem sensores de OD e temperatura registrados no ${v.nome}, a análise parte dos indicadores indiretos — e eles contam uma história importante.
+  // ── Agente de água: só analisa se há dados do ciclo ativo ──
+  if(agId==="agua"){
+    // Sem peso ou FCA, não há o que analisar
+    if(!v.pesoMedio&&!v.fca)return null;
+    return`Com ${v.diasCiclo||"—"} dias de ciclo e peso de ${v.pesoMedio||"—"}g, a análise parte dos indicadores disponíveis na planilha — os dados de qualidade de água (OD, pH, temperatura) precisam estar registrados na aba "Dados Técnicos" para análise específica.
 
-O FCA de ${fca>0?fca:"—"} ${fca>1.8?"está acima de 1.8, o que frequentemente indica estresse ambiental — oxigenação insuficiente noturna é a causa mais comum em viveiros semi-intensivos":"está dentro da faixa aceitável, sugerindo que o ambiente não está sendo um fator limitante evidente"}.
+FCA de ${fca>0?fca:"não registrado"}: ${fca>1.8?"acima de 1.8, pode indicar estresse ambiental. OD baixo noturno é a causa mais comum.":fca>0?"dentro da faixa aceitável, sem alerta ambiental evidente.":"registre o FCA para análise de qualidade de água."}
 
-A sobrevivência de ${surv>0?surv+"%":"—"} ${surv<75?"abaixo de 75% levanta bandeiras sanitárias e ambientais":surv<85?"dentro do esperado para esta densidade":"excelente para L. vannamei"}.
+Sobrevivência de ${surv>0?surv+"%":"não registrada"}: ${surv<75?"abaixo de 75% — bandeira ambiental ou sanitária.":surv>=80?"boa, sem alerta de estresse hídrico.":"dentro do aceitável."}
 
-Para um viveiro de ${v.pesoMedio||"—"}g com ${v.diasCiclo||"—"} dias de ciclo, monitore prioritariamente: OD acima de 5 mg/L às 06h, pH entre 7.5-8.5, transparência 30-40cm e amônia abaixo de 1.0 mg/L. ${fca>1.8?"O FCA elevado sugere revisar aeração noturna como primeira prioridade.":""}
+Parâmetros recomendados para ${v.pesoMedio||"—"}g: OD >5 mg/L às 06h, pH 7.5–8.5, transparência 30–40 cm, amônia <1.0 mg/L.
 
-STATUS: ${fca>1.8||surv<70?"ATENÇÃO":"BOM"} | Nota: ${fca<=1.6&&surv>=80?8:fca<=1.8&&surv>=70?6:5}/10`,
+STATUS: ${fca>1.8||surv<70?"ATENÇÃO":"BOM"} | Nota: ${fca<=1.6&&surv>=80?8:fca<=1.8&&surv>=70?6:5}/10`;
+  }
 
-    prod:`Com ${v.diasCiclo||"—"} dias de ciclo, o peso de ${v.pesoMedio||"—"}g está ${Math.abs((v.pesoMedio||0)-((v.diasCiclo||0)*0.20))<1.5?"dentro do esperado":(v.pesoMedio||0)>((v.diasCiclo||0)*0.20)?"acima do esperado":"abaixo do esperado"} para L. vannamei — meta ~${((v.diasCiclo||0)*0.20).toFixed(1)}g.
+  if(agId==="prod"){
+    if(!v.pesoMedio&&!bioReal)return null;
+    return`Com ${v.diasCiclo||"—"} dias de ciclo, o peso de ${v.pesoMedio||"—"}g está ${Math.abs((v.pesoMedio||0)-((v.diasCiclo||0)*0.20))<1.5?"dentro do esperado":(v.pesoMedio||0)>((v.diasCiclo||0)*0.20)?"acima do esperado":"abaixo do esperado"} para L. vannamei — meta ~${((v.diasCiclo||0)*0.20).toFixed(1)}g.
 
-CCMT de ${v.ccmt?"+"+v.ccmt.toFixed(1)+"g/sem":"—"}: ${(v.ccmt||0)>=1.2?"dentro do benchmark (0.8-1.4g/sem)":"abaixo do benchmark — investigar alimentação ou densidade"}.
+CCMT de ${v.ccmt?"+"+v.ccmt.toFixed(1)+"g/sem":"não registrado (faça biometrias semanais)"}: ${(v.ccmt||0)>=1.2?"dentro do benchmark (0.8-1.4g/sem)":v.ccmt?"abaixo do benchmark — investigar alimentação ou densidade":"registre biometrias semanais para calcular o CCMT."}.
 
-Biomassa real ${bioReal}kg vs potencial ${v.biomassa100||0}kg (100%): diferença de ${(v.biomassa100||0)-bioReal}kg, sobrevivência de ${surv}%. ${surv>=80?"Excelente!":surv>=70?"Aceitável.":"Merece investigação."}
+Biomassa real ${bioReal>0?bioReal+"kg":"não calculada"} vs potencial ${v.biomassa100||0}kg (100% sobrev.): diferença de ${(v.biomassa100||0)-bioReal}kg, sobrevivência de ${surv>0?surv+"%":"não calculada"}. ${surv>=80?"Excelente!":surv>=70?"Aceitável.":surv>0?"Merece investigação.":"Registre biometria para calcular sobrevivência."}
 
-Crescimento na última biometria: ${cresc?"+"+cresc.toFixed(1)+"g":"registre biometrias semanais para cálculo preciso"}. FCA ${fca>0?fca:"—"}: ${fca<=1.6?"eficiente":fca<=1.8?"aceitável":"revisar arraçoamento urgente"}.
+FCA ${fca>0?fca:"não calculado — registre ração diária"}: ${fca<=1.6?"eficiente":fca<=1.8?"aceitável":fca>0?"revisar arraçoamento urgente":"—"}.
 
-STATUS: ${surv>=80&&fca<=1.8?"BOM":"ATENÇÃO"} | Nota: ${surv>=85&&fca<=1.6?8:surv>=75&&fca<=1.8?6:5}/10`,
+STATUS: ${surv>=80&&fca>0&&fca<=1.8?"BOM":"ATENÇÃO"} | Nota: ${surv>=85&&fca<=1.6?8:surv>=75&&fca<=1.8?6:5}/10`;
+  }
 
-    feed:`O arraçoamento do ${v.nome} está em ${v.racaoAtual||"—"}kg/dia vs ideal de ${v.racaoIdeal||"—"}kg — ${Math.abs((v.racaoAtual||0)-(v.racaoIdeal||0))<2?"no ponto":(v.racaoAtual||0)>(v.racaoIdeal||0)?"acima do ideal":"abaixo do ideal"}.
+  if(agId==="feed"){
+    if(!v.racaoTotal&&!v.racaoAtual)return null;
+    return`O arraçoamento do ${v.nome} está em ${v.racaoAtual>0?v.racaoAtual.toFixed(1)+"kg/dia":"não registrado hoje"} vs ideal de ${v.racaoIdeal>0?v.racaoIdeal.toFixed(1)+"kg":"—"} — ${v.racaoAtual>0&&v.racaoIdeal>0?Math.abs((v.racaoAtual||0)-(v.racaoIdeal||0))<2?"no ponto":(v.racaoAtual||0)>(v.racaoIdeal||0)?"acima do ideal":"abaixo do ideal":"registre a ração diária para comparação"}.
 
-O FCA de ${fca>0?fca:"—"} é o número mais importante. Com ${v.racaoTotal||"—"}kg de ração consumida e ${bioReal}kg de biomassa, cada kg de ração está gerando ${fca>0?(1/fca).toFixed(2):"—"}kg de camarão.
+O FCA de ${fca>0?fca:"não calculado ainda — necessário peso médio e ração registrados"}. Com ${v.racaoTotal||0}kg de ração consumida e ${bioReal}kg de biomassa, cada kg de ração está gerando ${fca>0?(1/fca).toFixed(2)+"kg de camarão":"—"}.
 
-Se o FCA chegasse a 1.4: economizaria ${R(econ)} em ração neste ciclo — dinheiro que existe no viveiro mas não está virando produção.
+${fca>1.8?"Com FCA acima de 1.8, revise a tabela de arraçoamento — reduza 10% e monitore sobras na bandeja.":fca>1.6?"FCA ligeiramente acima da meta — ajuste fino de 5% pode ajudar.":fca>0?"FCA dentro do aceitável. Manter estratégia atual.":"Registre peso médio e ração diariamente para calcular o FCA."}
 
-${fca>1.8?"Com FCA acima de 1.8, revise a tabela de arraçoamento — reduza 10% e monitore sobras na bandeja.":fca>1.6?"FCA ligeiramente acima da meta — ajuste fino de 5% pode ajudar.":"FCA dentro do aceitável. Manter estratégia atual."}
+${fca>1.4?"Oportunidade: melhorar FCA de "+fca+" para 1.4 economizaria "+R(econ)+" em ração neste ciclo.":""}
 
-STATUS: ${fca<=1.6?"BOM":fca<=1.8?"ATENÇÃO":"CRÍTICO"} | Nota: ${fca<=1.4?9:fca<=1.6?7:fca<=1.8?5:4}/10`,
+STATUS: ${fca<=1.6?"BOM":fca<=1.8?"ATENÇÃO":fca>0?"CRÍTICO":"SEM DADOS FCA"} | Nota: ${fca<=1.4?9:fca<=1.6?7:fca<=1.8?5:fca>0?4:5}/10`;
+  }
 
-    saude:`A sobrevivência de ${surv}% no ${v.nome} com ${v.diasCiclo||"—"} dias significa ${Nf(Math.round((v.povoado||0)*((100-surv)/100)))} animais perdidos de ${Nf(v.povoado||0)}.
+  if(agId==="saude"){
+    if(!surv&&!v.pesoMedio)return null;
+    return`A sobrevivência de ${surv>0?surv+"%":"não calculada (registre biometria)"} no ${v.nome} com ${v.diasCiclo||"—"} dias ${surv>0?`significa ${Nf(Math.round((v.povoado||0)*((100-surv)/100)))} animais perdidos de ${Nf(v.povoado||0)}.`:""}.
 
-Isso é ${surv>=85?"excelente — abaixo da média histórica de perdas":surv>=75?"aceitável para produção semi-intensiva":surv>=65?"preocupante — investigar causa":surv>=50?"crítico — ação imediata":"emergência sanitária"}.
+${surv>0?`Isso é ${surv>=85?"excelente — abaixo da média histórica de perdas":surv>=75?"aceitável para produção semi-intensiva":surv>=65?"preocupante — investigar causa":surv>=50?"crítico — ação imediata":"emergência sanitária"}.`:"Registre biometrias semanais para acompanhar a sobrevivência."}
 
-${fca>1.8?"FCA elevado ("+fca+") somado a sobrevivência de "+surv+"% sugere possível problema em curso — os animais consomem ração mas não crescem ou há mortalidade subdiagnosticada.":"O FCA de "+fca+" não levanta bandeiras sanitárias específicas."}
+${fca>1.8?"FCA elevado ("+fca+") somado a sobrevivência de "+surv+"% sugere possível problema em curso.":fca>0?"O FCA de "+fca+" não levanta bandeiras sanitárias específicas.":"Registre FCA para análise sanitária completa."}
 
 Estoque crítico: ${DADOS.estoque.filter(e=>String(e.situacao||"").toLowerCase().includes("critico")).map(e=>e.produto).join(", ")||"nenhum"}.
 
-STATUS: ${surv>=80?"BOM":surv>=70?"ATENÇÃO":"CRÍTICO"} | Nota: ${surv>=85?8:surv>=75?6:4}/10`,
+STATUS: ${surv>=80?"BOM":surv>=70?"ATENÇÃO":surv>0?"CRÍTICO":"SEM DADOS"} | Nota: ${surv>=85?8:surv>=75?6:surv>0?4:5}/10`;
+  }
 
-    energia:`Para ${bioReal}kg de biomassa de L. vannamei em ${v.areaHa||"—"}ha com ${v.densidade||"—"} cam/m², a demanda de aeração é crítica especialmente entre 02h-06h.
+  if(agId==="energia"){
+    if(!bioReal&&!v.areaHa)return null;
+    return`Para ${bioReal>0?bioReal+"kg":"biomassa não calculada"} de L. vannamei em ${v.areaHa>0?v.areaHa.toFixed(2)+"ha":"área não configurada"} com ${v.densidade>0?v.densidade.toFixed(1)+" cam/m²":"densidade não calculada"}, a demanda de aeração é crítica especialmente entre 02h–06h.
 
-${fca>1.8?"FCA de "+fca+" pode indicar aeração insuficiente noturna — os camarões usam energia para compensar o estresse de OD baixo em vez de crescer.":"FCA dentro da faixa sugere que a aeração está adequada para a fase atual."}
+${fca>1.8?"FCA de "+fca+" pode indicar aeração insuficiente noturna — os camarões usam energia para compensar o estresse de OD baixo em vez de crescer.":fca>0?"FCA dentro da faixa sugere que a aeração está adequada para a fase atual.":"Calcule o FCA para avaliar indiretamente a qualidade da aeração."}
 
-Para ${bioReal}kg de biomassa na fase de ${v.pesoMedio||"—"}g: recomendação técnica é 1 CV por 500kg de biomassa. Equivale a ${Math.ceil(bioReal/500)} aeradores de 1 CV operando continuamente.
+${bioReal>0?"Para "+bioReal+"kg de biomassa: recomendação técnica é 1 CV por 500kg → "+Math.ceil(bioReal/500)+" aeradores de 1 CV operando continuamente.":"Configure o ciclo ativo para calcular a necessidade de aeração."}
 
-STATUS: ${fca<=1.8?"BOM":"ATENÇÃO"} | Nota: ${fca<=1.6?8:fca<=1.8?6:5}/10`,
+STATUS: ${fca<=1.8?"BOM":"ATENÇÃO"} | Nota: ${fca<=1.6?8:fca<=1.8?6:5}/10`;
+  }
 
-    fin:`O ${v.nome} tem ${R(c)} investidos.
-    
-📋 PREÇO pela TABELA (base R$${tabela}/kg p/ 10g):
+  if(agId==="fin"){
+    if(!c&&!bioReal&&!v.biomassa100)return null;
+    const precoDesp20=tabela+(20-10);
+    return`O ${v.nome} tem ${R(c)} investidos.
+
+📋 TABELA DE PREÇOS (base R$${tabela}/kg p/ 10g):
 • Peso atual ${v.pesoMedio||"—"}g → R$${precoKg.toFixed(2)}/kg
 • Receita potencial (biomassa 100%: ${v.biomassa100||0}kg): ${R(rec)}
 • Margem: ${R(rec-c)} | ROI: ${c>0?((rec-c)/c*100).toFixed(1):0}%
@@ -997,50 +1134,54 @@ BREAKDOWN:
 • Custo/kg produzido: ${R(bioReal>0?c/bioReal:0)}
 • Receita/hectare: ${R(v.areaHa>0?rec/v.areaHa:0)}
 
-OPORTUNIDADE FCA: saindo de ${fca} para 1.4 você economizaria ${R(econ)} em ração neste ciclo.
+${fca>1.4?"OPORTUNIDADE FCA: saindo de "+fca+" para 1.4 você economizaria "+R(econ)+" em ração neste ciclo.":""}
 
-PROJEÇÃO: com crescimento de ${cresc?cresc.toFixed(1)+"g/sem":"—"}, chega a 20g em ~${cresc&&cresc>0?Math.ceil((20-(v.pesoMedio||0))/cresc)+" semanas":"—"}.
-Preço na despesca (20g + tabela R$${tabela}): R$${(tabela+(20-10)).toFixed(2)}/kg.
-Receita projetada na despesca: ${R((v.biomassa100||0)*(20/Math.max(v.pesoMedio||1,1))*(tabela+(20-10)))}.
+PROJEÇÃO: com crescimento de ${cresc?cresc.toFixed(1)+"g/sem":v.ccmt?v.ccmt.toFixed(1)+"g/sem (CCMT)":"—"}, chega a 20g em ~${cresc&&cresc>0?Math.ceil((20-(v.pesoMedio||0))/cresc)+" semanas":v.ccmt&&v.ccmt>0?Math.ceil((20-(v.pesoMedio||0))/v.ccmt)+" semanas":"—"}.
+Preço na despesca (20g): R$${precoDesp20.toFixed(2)}/kg.
+Receita projetada: ${R((v.biomassa100||0)*(20/Math.max(v.pesoMedio||1,1))*precoDesp20)}.
 
-STATUS: ${(rec-c)/Math.max(c,1)*100>=30?"BOM":(rec-c)/Math.max(c,1)*100>=10?"ATENÇÃO":"CRÍTICO"} | Nota: ${((rec-c)/Math.max(c,1)*100)>=40?9:((rec-c)/Math.max(c,1)*100)>=25?7:((rec-c)/Math.max(c,1)*100)>=10?5:4}/10`
-  };
-  return textos[agId]||"Análise não disponível para este agente.";
+STATUS: ${(rec-c)/Math.max(c,1)*100>=30?"BOM":(rec-c)/Math.max(c,1)*100>=10?"ATENÇÃO":"CRÍTICO"} | Nota: ${((rec-c)/Math.max(c,1)*100)>=40?9:((rec-c)/Math.max(c,1)*100)>=25?7:((rec-c)/Math.max(c,1)*100)>=10?5:4}/10`;
+  }
+
+  return null;
 }
 
 function gerarMasterLocal(v,resultados){
   const c=v.custoCiclo||0;
   const bioReal=v.biomassaReal||v.biomassa||0;
-  // ★ Preço correto por peso do viveiro
   const precoKg=calcPrecoKg(v.pesoMedio||10);
   const rec=(v.biomassa100||0)*precoKg;
-  const cresc=calcCrescimento(v.biometria)||(v.ccmt||1.5);
+  const cresc=calcCrescimento(v.biometria)||(v.ccmt||0);
   const fca=v.fca||0;
   const surv=v.sobrevivencia||0;
-  const notas=AGENTES_DEF.map(ag=>extrairNota(resultados[ag.id]||"7"));
-  const indice=Math.round(notas.reduce((s,n)=>s+n,0)/notas.length*10);
+  const notasValidas=AGENTES_DEF.map(ag=>resultados[ag.id]?extrairNota(resultados[ag.id]):null).filter(n=>n!==null);
+  if(!notasValidas.length)return"Dados insuficientes para gerar síntese.";
+  const indice=Math.round(notasValidas.reduce((s,n)=>s+n,0)/notasValidas.length*10);
   const econ=Math.max(0,(fca-1.4)*bioReal*(v.racaoTotal>0?c*0.72/v.racaoTotal:4.60));
   const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
-  const precoDesp20=tabela+(20-10);
+  const precoDesp20=tabela+10;
+  const agentesComDados=AGENTES_DEF.filter(ag=>resultados[ag.id]);
 
-  return `${v.nome} — ${v.diasCiclo||"—"} dias de ciclo, ${v.pesoMedio||"—"}g de peso médio, ${bioReal}kg de biomassa real. Preço atual pela tabela: R$${precoKg.toFixed(2)}/kg (tabela R$${tabela} + (${v.pesoMedio||10}g - 10g) × R$1). O panorama é de ${indice>=75?"desempenho sólido com pontos de atenção":indice>=55?"atenção moderada — há oportunidades claras de melhora":"múltiplos indicadores merecem ação imediata"}.
+  return `${v.nome} — ${v.diasCiclo||"—"} dias de ciclo, ${v.pesoMedio||"—"}g de peso médio, ${bioReal}kg de biomassa real. Preço atual: R$${precoKg.toFixed(2)}/kg. Índice calculado a partir de ${agentesComDados.length} agente${agentesComDados.length!==1?"s":""} com dados disponíveis: ${indice}/100.
 
-O ponto que mais merece atenção é o FCA de ${fca>0?fca:"—"}. ${fca>1.8?`Acima de 1.8, está custando ${R(econ)} extras em ração neste ciclo — dinheiro que existe no viveiro mas não está virando camarão.`:`No limite aceitável, mas há ${R(econ)} de margem de melhora se chegar à meta de 1.4.`}
+${fca>0?`FCA de ${fca}: ${fca>1.8?`acima de 1.8 — está custando ${R(econ)} extras em ração neste ciclo.`:fca>1.6?`no limite aceitável, há ${R(econ)} de margem de melhora.`:`dentro da meta. Arraçoamento eficiente.`}`:"FCA não calculado — registre peso e ração diariamente."}
 
-${surv<75?`Sobrevivência de ${surv}% — ${Nf(Math.round((v.povoado||0)*((100-surv)/100)))} animais perdidos de ${Nf(v.povoado||0)}. Investigue possível mortalidade subdiagnosticada.`:`Com sobrevivência de ${surv}%, o lote está saudável em termos populacionais.`}
+${surv>0?`Sobrevivência de ${surv}% — ${surv<75?`${Nf(Math.round((v.povoado||0)*((100-surv)/100)))} animais perdidos. Investigue mortalidade.`:`lote saudável.`}`:"Sobrevivência não calculada — registre biometrias semanais."}
 
-Financeiro (tabela R$${tabela}/kg base 10g): ${R(c)} investidos, receita potencial ${R(rec)} a R$${precoKg.toFixed(2)}/kg, margem ${R(rec-c)}, ROI ${c>0?((rec-c)/c*100).toFixed(1):0}%. Com crescimento de ${typeof cresc==="number"?cresc.toFixed(1):cresc}g/sem, você alcança 20g em ~${cresc>0?Math.ceil((20-(v.pesoMedio||0))/cresc):"-"} semanas — preço na despesca R$${precoDesp20.toFixed(2)}/kg, receita projetada de ${R((v.biomassa100||0)*(20/Math.max(v.pesoMedio||1,1))*precoDesp20)}.
+${c>0?`Financeiro: ${R(c)} investidos, receita potencial ${R(rec)}, margem ${R(rec-c)}, ROI ${c>0?((rec-c)/c*100).toFixed(1):0}%.`:""}
 
-AS 3 AÇÕES DESTA SEMANA:
+${cresc>0?`Com crescimento de ${cresc.toFixed(1)}g/sem, você alcança 20g em ~${Math.ceil((20-(v.pesoMedio||0))/cresc)} semanas — preço na despesca R$${precoDesp20.toFixed(2)}/kg.`:"Registre biometrias semanais para calcular projeção de despesca."}
 
-1. ${fca>1.8?"ARRAÇOAMENTO — Reduza a oferta em 10% e monitore sobras na bandeja por 3 dias. FCA de "+fca+" está custando "+R(econ)+" extras neste ciclo.":"BIOMETRIA — Programe biometria semanal para acompanhar o CCMT e ajustar a tabela de arraçoamento."}
+AÇÕES DESTA SEMANA:
 
-2. ${surv<80?"MORTALIDADE — Implemente contagem diária às 08h. Qualquer dia com >"+Math.round((v.povoado||0)*0.001)+" mortos (0.1%) merece investigação imediata.":"QUALIDADE DA ÁGUA — Monitore OD às 06h e às 14h. Com "+bioReal+"kg de biomassa, a demanda noturna de oxigênio é crítica."}
+1. ${fca>1.8?"ARRAÇOAMENTO — Reduza a oferta em 10% e monitore sobras na bandeja por 3 dias.":"BIOMETRIA — Programe biometria semanal para acompanhar o CCMT."}
 
-3. ESTOQUE — ${DADOS.estoque.some(e=>String(e.situacao||"").toLowerCase().includes("critico"))?"Itens críticos detectados: "+DADOS.estoque.filter(e=>String(e.situacao||"").toLowerCase().includes("critico")).map(e=>e.produto).join(", ")+". Repor antes de quinta-feira.":"Estoque adequado. Faça pedido preventivo dos itens com saldo baixo."}`;
+2. ${surv>0&&surv<80?"MORTALIDADE — Implemente contagem diária às 08h. Investigar qualquer perda acima de 0.1%/dia.":"QUALIDADE DA ÁGUA — Monitore OD às 06h. Preencha a aba Dados Técnicos para análise específica de qualidade de água."}
+
+3. ESTOQUE — ${DADOS.estoque.some(e=>String(e.situacao||"").toLowerCase().includes("critico"))?"Itens críticos: "+DADOS.estoque.filter(e=>String(e.situacao||"").toLowerCase().includes("critico")).map(e=>e.produto).join(", ")+". Repor urgente.":"Estoque adequado. Faça pedido preventivo dos itens com saldo baixo."}`;
 }
 
-// ── Renderização dos agentes ─────────────────────────────────
+// ── Render agentes ───────────────────────────────────────────
 function renderAgentesVazios(v){
   document.getElementById("ia-tab-agentes").innerHTML=`
     <div style="font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;color:var(--muted);margin-bottom:13px;letter-spacing:.08em;text-transform:uppercase">
@@ -1055,17 +1196,32 @@ function renderAgentesVazios(v){
             <div class="agent-status st-run" id="ia-st-${ag.id}">Analisando</div>
           </div>
           <div class="agent-body" id="ia-bd-${ag.id}">
-            <div class="shim" style="width:92%"></div><div class="shim" style="width:74%"></div><div class="shim" style="width:83%"></div><div class="shim" style="width:58%"></div>
+            <div class="shim" style="width:92%"></div><div class="shim" style="width:74%"></div><div class="shim" style="width:83%"></div>
           </div>
         </div>`).join("")}
     </div>`;
 }
 
 function renderCardAgente(ag,texto){
-  const nota=extrairNota(texto);
-  const notaCor=nota>=8?"var(--accent2)":nota>=6?"var(--warn)":"var(--danger)";
   const stEl=document.getElementById("ia-st-"+ag.id);
   const bdEl=document.getElementById("ia-bd-"+ag.id);
+
+  // ★ Sem dados reais: mostra mensagem clara, sem análise inventada
+  if(!texto){
+    if(stEl){stEl.className="agent-status st-idle";stEl.textContent="SEM DADOS";}
+    if(bdEl)bdEl.innerHTML=`
+      <div style="background:rgba(90,122,149,.07);border:1px solid rgba(90,122,149,.2);border-radius:9px;padding:14px;text-align:center">
+        <div style="font-size:1.2rem;margin-bottom:6px">📭</div>
+        <div style="font-size:.72rem;color:var(--muted);line-height:1.5">
+          Sem dados suficientes para análise.<br>
+          <span style="font-size:.65rem;color:rgba(90,122,149,.7)">Registre dados na planilha para ativar este agente.</span>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const nota=extrairNota(texto);
+  const notaCor=nota>=8?"var(--accent2)":nota>=6?"var(--warn)":"var(--danger)";
   if(stEl){stEl.className="agent-status "+iaSttClass(texto);stEl.textContent=iaSttTxt(texto);}
   if(bdEl)bdEl.innerHTML=`
     <div class="agent-output">${esc(texto)}</div>
@@ -1076,13 +1232,12 @@ function renderCardAgente(ag,texto){
 }
 
 function renderMaster(v,resultados,txtMaster){
-  const notas=AGENTES_DEF.map(ag=>extrairNota(resultados[ag.id]||"7"));
-  const indice=Math.round(notas.reduce((s,n)=>s+n,0)/notas.length*10);
+  const notasValidas=AGENTES_DEF.map(ag=>resultados[ag.id]?extrairNota(resultados[ag.id]):null).filter(n=>n!==null);
+  if(!notasValidas.length)return;
+  const indice=Math.round(notasValidas.reduce((s,n)=>s+n,0)/notasValidas.length*10);
   const corI=indice>=75?"var(--accent2)":indice>=55?"var(--warn)":"var(--danger)";
   const stI=indice>=75?"BOM":indice>=55?"ATENÇÃO":"CRÍTICO";
-  // Não sobrescreve o relatório semanal — usa um div separado dentro da aba
   const tab=document.getElementById("ia-tab-relatorio");
-  // Preserva análise semanal se existir
   const semanal=tab.querySelector(".master-card");
   const preAnalise=document.createElement("div");
   preAnalise.id="ia-pre-analise";
@@ -1091,15 +1246,18 @@ function renderMaster(v,resultados,txtMaster){
       <div style="font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:.08em;text-transform:uppercase">⚡ Pré-análise local — ${v.nome} — ${new Date().toLocaleString("pt-BR")}</div>
       <div class="index-block" style="margin-bottom:12px">
         <div class="index-circle"><div class="index-num" style="color:${corI}">${indice}</div><div class="index-total">/100</div></div>
-        <div><div class="index-st" style="color:${corI}">ÍNDICE: ${stI}</div><div class="index-desc">Média de 6 agentes especialistas (análise local)</div>
+        <div><div class="index-st" style="color:${corI}">ÍNDICE: ${stI}</div><div class="index-desc">Média de ${notasValidas.length} agente${notasValidas.length!==1?"s com":""} dados disponíveis</div>
           <div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap">
-            ${AGENTES_DEF.map(ag=>{const n=extrairNota(resultados[ag.id]||"7");const c=n>=8?"var(--accent2)":n>=6?"var(--warn)":"var(--danger)";return`<span style="font-size:.6rem;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:5px;padding:2px 7px;color:${c}">${ag.icone} ${n}/10</span>`;}).join("")}
+            ${AGENTES_DEF.map(ag=>{
+              if(!resultados[ag.id])return`<span style="font-size:.6rem;background:rgba(90,122,149,.1);border:1px solid rgba(90,122,149,.2);border-radius:5px;padding:2px 7px;color:var(--muted)">${ag.icone} —</span>`;
+              const n=extrairNota(resultados[ag.id]);const c=n>=8?"var(--accent2)":n>=6?"var(--warn)":"var(--danger)";
+              return`<span style="font-size:.6rem;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:5px;padding:2px 7px;color:${c}">${ag.icone} ${n}/10</span>`;
+            }).join("")}
           </div>
         </div>
       </div>
       <div class="master-output">${esc(txtMaster)}</div>
     </div>`;
-  // Remove pré-análise anterior se houver
   const old=tab.querySelector("#ia-pre-analise");
   if(old)old.remove();
   if(semanal){tab.insertBefore(preAnalise,semanal);}
@@ -1109,17 +1267,16 @@ function renderMaster(v,resultados,txtMaster){
 function renderFinanceiro(v){
   const c=v.custoCiclo||0;
   const bioReal=v.biomassaReal||v.biomassa||0;
-  // ★ Preço correto: tabela + (pesoAtual - 10)
   const precoKgAtual=calcPrecoKg(v.pesoMedio||10);
   const rec=(v.biomassa100||0)*precoKgAtual;
   const marg=rec-c,roi=c>0?(marg/c*100):0;
   const cpkg=bioReal>0?c/bioReal:0;
   const recHa=v.areaHa>0?rec/v.areaHa:0;
   const cpm2=v.areaHa>0?c/(v.areaHa*10000):0;
-  const cresc=calcCrescimento(v.biometria)||(v.ccmt||1.5);
+  const cresc=calcCrescimento(v.biometria)||(v.ccmt||0);
   const semsRest=cresc>0?Math.ceil((20-(v.pesoMedio||0))/cresc):null;
   const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
-  const precoDesp20=tabela+(20-10); // preço quando atingir 20g
+  const precoDesp20=tabela+10;
   const bioDesp=(v.biomassa100||0)*(20/Math.max(v.pesoMedio||1,1));
   const recDesp=bioDesp*precoDesp20;
   const cpSem=(v.racaoAtual||0)*7*(v.racaoTotal>0?c*0.72/v.racaoTotal:4.60);
@@ -1163,10 +1320,10 @@ function renderFinanceiro(v){
         <div style="margin-top:14px;background:rgba(255,179,0,.04);border:1px solid rgba(255,179,0,.18);border-radius:10px;overflow:hidden">
           <div style="padding:11px 16px;font-family:'Syne',sans-serif;font-size:.76rem;font-weight:800;color:var(--warn)">⚡ Oportunidades Financeiras</div>
           <ul class="acoes-list">
-            <li><div class="acao-num">1</div><div>Melhorar FCA de <strong style="color:var(--warn)">${v.fca||"—"}</strong> para 1.4 economiza <strong style="color:var(--accent2)">${R(econ)}</strong> em ração neste ciclo</div></li>
-            <li><div class="acao-num">2</div><div>Cada semana extra de ciclo custa <strong style="color:var(--danger)">${R(cpSem)}</strong> em ração — planeje a despesca</div></li>
+            ${(v.fca||0)>1.4?`<li><div class="acao-num">1</div><div>Melhorar FCA de <strong style="color:var(--warn)">${v.fca||"—"}</strong> para 1.4 economiza <strong style="color:var(--accent2)">${R(econ)}</strong> em ração neste ciclo</div></li>`:""}
+            ${cpSem>0?`<li><div class="acao-num">2</div><div>Cada semana extra de ciclo custa <strong style="color:var(--danger)">${R(cpSem)}</strong> em ração — planeje a despesca</div></li>`:""}
             <li><div class="acao-num">3</div><div>Aumentar sobrevivência 5% → +${((v.biomassa100||0)*0.05).toFixed(0)} kg → <strong style="color:var(--accent2)">+${R((v.biomassa100||0)*0.05*precoKgAtual)}</strong> de receita</div></li>
-            <li><div class="acao-num">4</div><div>Cada +1g de peso médio (de ${v.pesoMedio||"—"}g para ${(v.pesoMedio||10)+1}g) = +R$1,00/kg → +${R((v.biomassa100||0)*1)} de receita potencial</div></li>
+            <li><div class="acao-num">4</div><div>Cada +1g de peso médio (de ${v.pesoMedio||"—"}g) = +R$1,00/kg → +${R((v.biomassa100||0)*1)} de receita potencial</div></li>
           </ul>
         </div>
       </div>
@@ -1174,13 +1331,11 @@ function renderFinanceiro(v){
 }
 
 function renderConsolidado(){
-  const ativos=DADOS.viveiros.filter(v=>!v._erro&&(v.povoado||v.biomassa));
+  const ativos=DADOS.viveiros.filter(v=>!v._erro&&(v.povoado||v.biomassa||v.pesoMedio));
   const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
-  // ★ Cada viveiro tem seu próprio preço baseado no peso real
   const totBio=ativos.reduce((s,v)=>s+(v.biomassaReal||v.biomassa||0),0);
   const totBio100=ativos.reduce((s,v)=>s+(v.biomassa100||0),0);
   const totC=ativos.reduce((s,v)=>s+(v.custoCiclo||0),0);
-  // ★ Receita estimada: soma viveiro a viveiro com preço correto
   const recEst=ativos.reduce((s,v)=>{const preco=calcPrecoKg(v.pesoMedio||10);return s+(v.biomassa100||0)*preco;},0);
   const marg=recEst-totC;
   const roi=totC>0?(marg/totC*100):0;
@@ -1190,14 +1345,13 @@ function renderConsolidado(){
   const alertas=[];
   ativos.forEach(v=>{
     if((v.fca||0)>1.85)alertas.push({viv:v.nome,msg:`FCA ${v.fca} — acima da meta`,tipo:"warn"});
-    if((v.sobrevivencia||0)<72)alertas.push({viv:v.nome,msg:`Sobrevivência ${v.sobrevivencia}% — abaixo do ideal`,tipo:"crit"});
+    if((v.sobrevivencia||0)>0&&(v.sobrevivencia||0)<72)alertas.push({viv:v.nome,msg:`Sobrevivência ${v.sobrevivencia}% — abaixo do ideal`,tipo:"crit"});
     if((v.pesoMedio||0)>=17){const precoDesp=calcPrecoKg(v.pesoMedio);alertas.push({viv:v.nome,msg:`${v.pesoMedio}g — pronto para despesca! R$${precoDesp.toFixed(2)}/kg`,tipo:"ok"});}
   });
 
   document.getElementById("ia-tab-consolidado").innerHTML=`
     <div style="background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.12);border-radius:10px;padding:10px 15px;margin-bottom:14px;font-size:.72rem;color:var(--accent)">
       📋 <strong>Tabela de Preços:</strong> R$${tabela.toFixed(2)}/kg base (10g) · A cada +1g no peso médio = +R$1,00/kg
-      — cada viveiro usa o preço calculado pelo seu próprio peso médio atual
     </div>
     <div class="section-title">Resumo Geral — ${CLIENTE?.nome||""} (${ativos.length} viveiros ativos)</div>
     <div class="fazenda-kpi">
@@ -1219,11 +1373,10 @@ function renderConsolidado(){
       </div>`).join("")}
     </div>`:""}
 
-    <div class="section-title">Clique em um viveiro para análise detalhada dos agentes</div>
+    <div class="section-title">Clique em um viveiro para análise detalhada</div>
     <div class="viv-sum-grid">
       ${ativos.map((v,i)=>{
         const c=v.custoCiclo||0,bioReal=v.biomassaReal||v.biomassa||0;
-        // ★ preço correto por peso do viveiro
         const precoKg=calcPrecoKg(v.pesoMedio||10);
         const rec=(v.biomassa100||0)*precoKg,marg=rec-c;
         const pct=Math.min(100,v.sobrevivencia||0);
@@ -1255,7 +1408,7 @@ function renderConsolidado(){
     </div>
 
     <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden">
-      <div style="padding:12px 18px;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700">💰 Comparativo Financeiro — preço por peso de cada viveiro</div>
+      <div style="padding:12px 18px;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700">💰 Comparativo Financeiro</div>
       <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:600px">
         <thead><tr>${["Viveiro","Peso","Preço/kg","FCA","Sobrev.","Investimento","Receita Est.","Margem","ROI"].map(h=>`<th style="padding:8px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:.57rem;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2)">${h}</th>`).join("")}</tr></thead>
         <tbody>
@@ -1288,7 +1441,7 @@ function renderSeletorViveiros(){
   const ativos=DADOS.viveiros.filter(v=>!v._erro);
   tabs.innerHTML=ativos.map((v)=>{
     const realIdx=DADOS.viveiros.indexOf(v);
-    const dotCls=(v.fca||0)>1.85||(v.sobrevivencia||0)<70?"ia-dot-crit":(v.fca||0)>1.7||(v.sobrevivencia||0)<80?"ia-dot-warn":"ia-dot-ok";
+    const dotCls=(v.fca||0)>1.85||(v.sobrevivencia||0)>0&&(v.sobrevivencia||0)<70?"ia-dot-crit":(v.fca||0)>1.7||(v.sobrevivencia||0)>0&&(v.sobrevivencia||0)<80?"ia-dot-warn":"ia-dot-ok";
     return`<div class="ia-viv-tab ${realIdx===IA_VIVEIRO_IDX?"active":""}" onclick="selecionarViveiroIA(${realIdx})" id="ia-vtab-${realIdx}">
       <div class="ia-dot ${dotCls}"></div>
       ${v.nome} <span style="font-size:.57rem;color:var(--muted)">${v.pesoMedio||"—"}g · R$${calcPrecoKg(v.pesoMedio||10).toFixed(0)}/kg</span>
@@ -1300,11 +1453,8 @@ async function selecionarViveiroIA(idx){
   IA_VIVEIRO_IDX=idx;
   document.querySelectorAll(".ia-viv-tab").forEach(t=>t.classList.remove("active"));
   document.getElementById("ia-vtab-"+idx)?.classList.add("active");
-  if(IA_RESULTADOS[idx]){
-    renderAgentesCache(idx);
-  } else {
-    await executarAgentesViveiro(idx);
-  }
+  if(IA_RESULTADOS[idx]){renderAgentesCache(idx);}
+  else{await executarAgentesViveiro(idx);}
   const btn=document.querySelector('.ia-tab-btn[onclick*="agentes"]');
   if(btn)iaTab("agentes",btn);
 }
@@ -1319,42 +1469,78 @@ function renderAgentesCache(idx){
           <div class="agent-hd">
             <div class="agent-icon" style="background:${ag.bg}">${ag.icone}</div>
             <div class="agent-meta"><div class="agent-name" style="color:${ag.cor}">${ag.nome}</div><div class="agent-spec">${ag.esp}</div></div>
-            <div class="agent-status ${iaSttClass(res[ag.id]||"")}" id="ia-st-${ag.id}">${iaSttTxt(res[ag.id]||"OK")}</div>
+            <div class="agent-status ${res[ag.id]?iaSttClass(res[ag.id]):"st-idle"}" id="ia-st-${ag.id}">${res[ag.id]?iaSttTxt(res[ag.id]):"SEM DADOS"}</div>
           </div>
           <div class="agent-body" id="ia-bd-${ag.id}"></div>
         </div>`).join("")}
     </div>`;
-  AGENTES_DEF.forEach(ag=>renderCardAgente(ag,res[ag.id]||""));
-  renderMaster(v,res,gerarMasterLocal(v,res));
+  AGENTES_DEF.forEach(ag=>renderCardAgente(ag,res[ag.id]||null));
+  const txtMaster=gerarMasterLocal(v,res);
+  if(txtMaster&&txtMaster!=="Dados insuficientes para gerar síntese.")renderMaster(v,res,txtMaster);
   renderFinanceiro(v);
 }
 
-// ★ Executa agentes SOMENTE localmente (sem API)
+// ★ executarAgentesViveiro — bloqueia viveiro sem dados, sem análise fake
 async function executarAgentesViveiro(idx){
   const v=DADOS.viveiros[idx];
-  if(!v||v._erro){document.getElementById("ia-tab-agentes").innerHTML=`<div class="agent-ph" style="padding:30px">⚠️ Viveiro offline ou sem dados disponíveis.</div>`;return;}
+
+  // Viveiro offline ou sem ciclo ativo — para aqui, mensagem clara
+  if(!v||v._erro||(!v.povoado&&!v.biomassa&&!v.pesoMedio)){
+    document.getElementById("ia-tab-agentes").innerHTML=`
+      <div class="no-data-block offline">
+        <div class="no-data-icon">📭</div>
+        <div class="no-data-title" style="color:var(--danger)">Sem dados para análise</div>
+        <div class="no-data-desc">
+          ${v?v.nome+" está offline ou sem ciclo ativo na planilha.":"Viveiro indisponível."}<br>
+          Não é possível gerar análise sem dados reais registrados.
+        </div>
+      </div>`;
+    return;
+  }
+
   renderAgentesVazios(v);
   const resultados={};
   for(const ag of AGENTES_DEF){
-    await new Promise(r=>setTimeout(r,200+Math.random()*300)); // pequeno delay para UX
-    const txt=gerarTextoLocal(ag.id,v);
-    resultados[ag.id]=txt;
+    await new Promise(r=>setTimeout(r,150+Math.random()*200));
+    const txt=gerarTextoLocal(ag.id,v); // retorna null se sem dados
+    resultados[ag.id]=txt||null;
     renderCardAgente(ag,txt);
   }
   IA_RESULTADOS[idx]=resultados;
+
   const txtMaster=gerarMasterLocal(v,resultados);
-  renderMaster(v,resultados,txtMaster);
+  if(txtMaster&&txtMaster!=="Dados insuficientes para gerar síntese."){
+    renderMaster(v,resultados,txtMaster);
+  }
   renderFinanceiro(v);
 }
 
-// ★ EXECUTAR ANÁLISE LOCAL — não chama Claude API
+// ★ executarAnaliseLocal — para sem análise se não há dados válidos
 async function executarAnaliseLocal(){
   atualizarPreviewTabela();
   IA_RESULTADOS={};
   IA_VIVEIRO_IDX=0;
 
-  if(!DADOS.viveiros.length||!DADOS.viveiros.some(v=>!v._erro)){
-    alert("Nenhum viveiro com dados disponíveis. Aguarde o carregamento dos dados.");
+  // Verifica se há viveiros com dados mínimos reais
+  const viveirosValidos=DADOS.viveiros.filter(v=>!v._erro&&(v.povoado||v.biomassa||v.pesoMedio));
+
+  if(!viveirosValidos.length){
+    // ★ Sem dados: mensagem clara, para aqui — sem análise inventada
+    document.getElementById("ia-tab-consolidado").innerHTML=`
+      <div class="no-data-block offline">
+        <div class="no-data-icon">📭</div>
+        <div class="no-data-title" style="color:var(--danger)">Sem dados para análise</div>
+        <div class="no-data-desc">
+          Nenhum viveiro retornou dados válidos.<br>
+          Verifique se os viveiros estão online e com ciclo ativo antes de analisar.
+        </div>
+      </div>`;
+    document.getElementById("ia-tab-agentes").innerHTML=`
+      <div class="no-data-block waiting">
+        <div class="no-data-icon">🔌</div>
+        <div class="no-data-title" style="color:var(--muted)">Agentes aguardando dados</div>
+        <div class="no-data-desc">Nenhum viveiro disponível para análise.</div>
+      </div>`;
     return;
   }
 
@@ -1363,16 +1549,13 @@ async function executarAnaliseLocal(){
   document.getElementById("ia-btn-icon").textContent="⏳";
   document.getElementById("ia-btn-txt").textContent="Analisando...";
 
-  // Renderiza consolidado com dados reais + tabela de preços
   renderConsolidado();
   renderSeletorViveiros();
 
-  // Ativa aba consolidado
   const btnConsol=document.querySelector('.ia-tab-btn[onclick*="consolidado"]');
   if(btnConsol)iaTab("consolidado",btnConsol);
 
-  // Analisa o primeiro viveiro válido automaticamente
-  const primeiroIdx=DADOS.viveiros.findIndex(v=>!v._erro&&(v.povoado||v.biomassa));
+  const primeiroIdx=DADOS.viveiros.findIndex(v=>!v._erro&&(v.povoado||v.biomassa||v.pesoMedio));
   if(primeiroIdx>=0){
     IA_VIVEIRO_IDX=primeiroIdx;
     await executarAgentesViveiro(primeiroIdx);
