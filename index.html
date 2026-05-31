@@ -6,15 +6,10 @@
 <title>AquaShrimpTech — Painel</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════════════
-   VARIÁVEIS E RESET — inalterado do original
-═══════════════════════════════════════════════════════ */
 :root{--bg:#080f1a;--surface:#0d1a2e;--card:#101f35;--border:#1a3050;--accent:#00e5ff;--accent2:#00ffa3;--warn:#ffb300;--danger:#ff4f4f;--text:#e8f4f8;--muted:#5a7a95;--glow:0 0 24px rgba(0,229,255,.18)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-
-/* LOGIN — inalterado */
 #login-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
 .login-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 0 60px rgba(0,229,255,.08);animation:fadeUp .4s ease}
 .login-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:32px;gap:12px}
@@ -30,8 +25,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .login-btn:hover{opacity:.9;transform:translateY(-1px)}
 .login-btn:active{transform:translateY(0)}
 .login-error{background:rgba(255,79,79,.1);border:1px solid rgba(255,79,79,.3);border-radius:8px;padding:10px 14px;color:var(--danger);font-size:.78rem;margin-top:12px;display:none;text-align:center}
-
-/* APP — inalterado */
 #app{display:none}
 header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,229,255,.06) 0%,transparent 60%)}
 .logo{display:flex;align-items:center;gap:10px}
@@ -132,24 +125,15 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 .btn-modal{flex:1;padding:11px;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;border-radius:8px;border:none;cursor:pointer;text-transform:uppercase;transition:all .2s}
 .btn-modal.confirm{background:var(--accent);color:#080f1a}.btn-modal.confirm:hover{opacity:.9}
 .btn-modal.cancel{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-modal.cancel:hover{color:var(--text);border-color:var(--muted)}
-
-/* ═══════════════════════════════════════════════════════
-   ★★★ NOVOS ESTILOS — AGENTES IA ★★★
-═══════════════════════════════════════════════════════ */
-
-/* Config bar da IA */
+/* IA */
 .ia-config-bar{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
 .ia-cfg-grp{display:flex;flex-direction:column;gap:5px;flex:1;min-width:180px}
 .ia-cfg-lbl{font-size:.6rem;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
 .ia-cfg-inp{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 13px;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;outline:none;transition:border-color .2s;width:100%}
 .ia-cfg-inp:focus{border-color:var(--accent)}
-
-/* Botão analisar */
 .btn-analisar{padding:10px 22px;background:linear-gradient(135deg,var(--accent),#0090a8);border:none;border-radius:9px;color:#080f1a;font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;white-space:nowrap}
 .btn-analisar:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,229,255,.2)}
 .btn-analisar:disabled{opacity:.5;cursor:not-allowed;transform:none}
-
-/* Seletor de viveiros */
 .ia-viv-sel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:16px}
 .ia-viv-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
 .ia-viv-tab{padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'DM Mono',monospace;font-size:.7rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
@@ -157,20 +141,14 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 .ia-viv-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,.06)}
 .ia-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .ia-dot-ok{background:var(--accent2)}.ia-dot-warn{background:var(--warn)}.ia-dot-crit{background:var(--danger)}
-
-/* Sub-abas internas */
 .ia-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
 .ia-tabs::-webkit-scrollbar{display:none}
 .ia-tab-btn{font-family:'Syne',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:9px 14px;background:transparent;border:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .2s,border-color .2s}
 .ia-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
 .ia-tab-panel{display:none}.ia-tab-panel.active{display:block}
-
-/* Grid de agentes */
 .agents-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
 @media(max-width:1100px){.agents-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:680px){.agents-grid{grid-template-columns:1fr}}
-
-/* Card de agente */
 .agent-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;animation:fadeUp .4s ease both}
 .agent-hd{padding:13px 15px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .agent-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
@@ -190,35 +168,25 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 .score-lbl{font-size:.59rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
 .score-val{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800}
 .agent-ph{text-align:center;padding:20px 10px;color:var(--muted);font-size:.7rem;font-family:'DM Mono',monospace;border:1px dashed var(--border);border-radius:9px}
-
-/* Shimmer */
 .shim{background:linear-gradient(90deg,var(--border) 25%,rgba(26,48,80,.8) 50%,var(--border) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:5px;height:11px;margin-bottom:7px}
 @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* Master card */
 .master-card{background:var(--card);border:1px solid var(--accent);border-radius:18px;overflow:hidden;margin-bottom:18px;box-shadow:0 0 40px rgba(0,229,255,.07)}
 .master-hd{padding:16px 20px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,229,255,.05),transparent);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .master-title{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;color:var(--accent)}
 .master-meta{font-size:.63rem;color:var(--muted);margin-top:2px}
 .master-body{padding:20px}
 .master-output{font-size:.79rem;line-height:1.75;white-space:pre-wrap;word-break:break-word}
-
-/* Índice geral */
 .index-block{display:flex;align-items:center;gap:16px;background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.14);border-radius:11px;padding:13px 16px;margin-bottom:16px}
 .index-circle{width:64px;height:64px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--accent);background:rgba(0,229,255,.05)}
 .index-num{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;line-height:1}
 .index-total{font-size:.57rem;color:var(--muted)}
 .index-st{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;margin-bottom:3px}
 .index-desc{font-size:.7rem;color:var(--muted);line-height:1.5}
-
-/* Financeiro */
 .fin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:10px 0}
 .fin-card{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:8px;padding:11px 13px}
 .fin-lbl{font-size:.57rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
 .fin-val{font-family:'DM Mono',monospace;font-size:.88rem;font-weight:500}
 .fv-g{color:var(--accent2)}.fv-w{color:var(--warn)}.fv-a{color:var(--accent)}.fv-d{color:var(--danger)}
-
-/* Consolidado */
 .fazenda-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(144px,1fr));gap:9px;margin-bottom:16px}
 .fkpi{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 15px;position:relative;overflow:hidden}
 .fkpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
@@ -230,8 +198,6 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 .fkpi-val{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;line-height:1}
 .fkpi-val.a{color:var(--accent)}.fkpi-val.g{color:var(--accent2)}.fkpi-val.w{color:var(--warn)}.fkpi-val.d{color:var(--danger)}
 .fkpi-sub{font-size:.57rem;color:var(--muted);margin-top:3px}
-
-/* Cards de sumário por viveiro */
 .viv-sum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:11px;margin-bottom:18px}
 .viv-sum{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:border-color .2s}
 .viv-sum:hover{border-color:rgba(0,229,255,.3)}
@@ -239,72 +205,50 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 .vsr{background:rgba(0,0,0,.15);border-radius:6px;padding:7px 9px}
 .vsr-lbl{font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .vsr-val{font-family:'DM Mono',monospace;font-size:.78rem;margin-top:2px}
-
-/* Lista de ações */
 .acoes-list{list-style:none}
 .acoes-list li{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border-bottom:1px solid rgba(26,48,80,.5);font-size:.74rem}
 .acoes-list li:last-child{border-bottom:none}
 .acao-num{width:20px;height:20px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.62rem;font-weight:700;background:rgba(0,229,255,.1);color:var(--accent);margin-top:1px}
 
+/* ── Badge análise semanal ── */
+.ia-semanal-badge{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:11px;padding:12px 16px;margin-bottom:16px;font-size:.75rem;color:#a78bfa;display:flex;align-items:flex-start;gap:10px}
+.ia-semanal-badge strong{color:#c4b5fd}
+.ia-preco-info{font-size:.58rem;color:var(--muted);margin-top:3px;font-family:'DM Mono',monospace}
+
 @media(max-width:600px){
-  .login-box{padding:28px 22px}
-  header{padding:10px 14px}
-  .logo-text{font-size:.8rem}
-  #clock,#cliente-nome{display:none}
-  nav{padding:0 2px}
-  .tab-btn{padding:10px 11px;font-size:.65rem}
-  main{padding:12px 10px}
-  .kpi-grid{grid-template-columns:1fr 1fr;gap:8px}
-  .kpi-value{font-size:1.2rem}
-  .viveiros-grid{grid-template-columns:1fr}
-  .estoque-grid{grid-template-columns:1fr 1fr;gap:8px}
-  .bio-chart-wrap{padding:12px}
-  .ia-config-bar{flex-direction:column}
-  .agents-grid{grid-template-columns:1fr}
+  .login-box{padding:28px 22px}header{padding:10px 14px}.logo-text{font-size:.8rem}
+  #clock,#cliente-nome{display:none}nav{padding:0 2px}.tab-btn{padding:10px 11px;font-size:.65rem}
+  main{padding:12px 10px}.kpi-grid{grid-template-columns:1fr 1fr;gap:8px}.kpi-value{font-size:1.2rem}
+  .viveiros-grid{grid-template-columns:1fr}.estoque-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .bio-chart-wrap{padding:12px}.ia-config-bar{flex-direction:column}.agents-grid{grid-template-columns:1fr}
 }
 @media(max-width:380px){.kpi-grid{grid-template-columns:1fr}.estoque-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- BOTÃO ADM — inalterado -->
 <a id="btn-adm" href="adm.html" target="_blank"
-   style="position:fixed;top:14px;left:14px;z-index:1001;
-          background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.22);
-          border-radius:7px;padding:5px 10px;font-size:.62rem;font-weight:700;
-          color:rgba(255,107,53,.55);letter-spacing:.08em;cursor:pointer;
-          transition:all .25s;text-decoration:none;font-family:'DM Sans',sans-serif;
-          display:none">⚙️ ADM</a>
+   style="position:fixed;top:14px;left:14px;z-index:1001;background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.22);border-radius:7px;padding:5px 10px;font-size:.62rem;font-weight:700;color:rgba(255,107,53,.55);letter-spacing:.08em;cursor:pointer;transition:all .25s;text-decoration:none;font-family:'DM Sans',sans-serif;display:none">⚙️ ADM</a>
 
-<!-- LOGIN — inalterado -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <img id="login-logo-img" alt="AquaShrimpTech Logo"
-           src="https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png">
+      <img id="login-logo-img" alt="AquaShrimpTech Logo" src="https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png">
       <span class="logo-fallback" id="logo-fallback">🦐</span>
       <div class="login-brand">Tecnologia que cultiva resultados</div>
       <div class="login-sub">Painel de Controle</div>
     </div>
-    <div class="login-field">
-      <label>Usuário</label>
-      <input type="text" id="inp-usuario" placeholder="seu usuário" autocomplete="username">
-    </div>
-    <div class="login-field">
-      <label>Senha</label>
-      <input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password">
-    </div>
+    <div class="login-field"><label>Usuário</label><input type="text" id="inp-usuario" placeholder="seu usuário" autocomplete="username"></div>
+    <div class="login-field"><label>Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"></div>
     <button class="login-btn" onclick="fazerLogin()">Entrar</button>
     <div class="login-error" id="login-error">Usuário ou senha incorretos.</div>
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
 <header>
   <div class="logo">
-    <img id="header-logo" src="https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png"
-         alt="logo" style="display:none">
+    <img id="header-logo" src="https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png" alt="logo" style="display:none">
     <span class="logo-text">AquaShrimpTech</span>
   </div>
   <div class="header-right">
@@ -315,7 +259,6 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
   </div>
 </header>
 
-<!-- NAVEGAÇÃO — adicionada aba IA -->
 <nav>
   <button class="tab-btn active" onclick="switchTab('painel',this)">📊 Painel</button>
   <button class="tab-btn" onclick="switchTab('biometria',this)">⚖️ Biometria</button>
@@ -325,7 +268,6 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 </nav>
 
 <main>
-  <!-- ── PAINEL — inalterado ─────────────────────────── -->
   <div id="tab-painel" class="tab-panel active">
     <div class="section-title">Resumo Geral</div>
     <div class="kpi-grid" id="kpi-geral"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
@@ -333,7 +275,6 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     <div class="viveiros-grid" id="viveiros-grid"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
   </div>
 
-  <!-- ── BIOMETRIA — inalterado ─────────────────────── -->
   <div id="tab-biometria" class="tab-panel">
     <div class="section-title">Evolução de Crescimento</div>
     <div class="bio-chart-wrap" style="max-width:900px;margin:0 auto 18px auto;position:relative">
@@ -345,7 +286,6 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     </div>
   </div>
 
-  <!-- ── HISTÓRICO — inalterado ─────────────────────── -->
   <div id="tab-historico" class="tab-panel">
     <div class="section-title">Cultivos Finalizados</div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
@@ -354,7 +294,6 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     </div>
   </div>
 
-  <!-- ── ESTOQUE — inalterado ───────────────────────── -->
   <div id="tab-estoque" class="tab-panel">
     <div class="top-bar-est">
       <div class="section-title" style="margin-bottom:0;flex:1">Situação dos Insumos</div>
@@ -364,41 +303,41 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     <div class="estoque-grid" id="estoque-grid"></div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       ★★★ ABA AGENTES IA — NOVA ★★★
-       Usa DADOS.viveiros e DADOS.estoque do sistema real
-  ═══════════════════════════════════════════════════ -->
+  <!-- ═══ ABA AGENTES IA ═══ -->
   <div id="tab-ia" class="tab-panel">
 
-    <!-- 1. Config API key + preço de referência -->
+    <!-- Config: tabela de preços + botão análise LOCAL -->
     <div class="ia-config-bar">
-      <div class="ia-cfg-grp" style="max-width:380px">
-        <div class="ia-cfg-lbl">🔑 Chave API Anthropic (Claude)</div>
-        <input class="ia-cfg-inp" type="password" id="ia-api-key"
-               placeholder="sk-ant-api03-... (opcional — sem chave usa análise inteligente local)">
+      <div class="ia-cfg-grp" style="max-width:200px">
+        <!-- ★ TABELA DE PREÇOS: valor base para camarão de 10g.
+             A cada +1g no peso médio, soma +R$1,00/kg -->
+        <div class="ia-cfg-lbl">📋 Tabela de Preços (R$/kg base 10g)</div>
+        <input class="ia-cfg-inp" type="number" id="ia-tabela-preco" value="19" step="0.5" min="1"
+               oninput="atualizarPreviewTabela()">
+        <div class="ia-preco-info" id="ia-preco-preview">Base 10g → R$19,00/kg · 15g → R$24,00/kg</div>
       </div>
-      <div class="ia-cfg-grp" style="max-width:130px">
-        <div class="ia-cfg-lbl">Preço ref. R$/kg</div>
-        <input class="ia-cfg-inp" type="number" id="ia-preco-kg" value="28" step="0.5">
-      </div>
-      <button class="btn-analisar" id="btn-analisar" onclick="executarAnaliseIA()">
+      <!-- Botão: só análise local — não consome API -->
+      <button class="btn-analisar" id="btn-analisar" onclick="executarAnaliseLocal()">
         <span id="ia-btn-icon">⚡</span><span id="ia-btn-txt">Analisar Fazenda</span>
       </button>
     </div>
 
-    <!-- Aviso de uso sem chave -->
-    <div id="ia-aviso" style="background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.22);border-radius:11px;padding:11px 16px;margin-bottom:16px;font-size:.74rem;color:#a78bfa;display:flex;align-items:center;gap:9px">
-      <span>💡</span>
-      <span>Sem chave API: análise técnica gerada localmente com os dados reais dos seus viveiros. Com chave <strong>sk-ant-...</strong> o Claude Sonnet escreve a análise ao vivo.</span>
+    <!-- Aviso sobre o sistema de análise -->
+    <div class="ia-semanal-badge">
+      <span>🤖</span>
+      <div>
+        <div><strong>Pré-análise local:</strong> o botão "Analisar Fazenda" gera análise técnica instantânea com os dados reais dos seus viveiros — sem consumir créditos da API.</div>
+        <div style="margin-top:4px;color:rgba(167,139,250,.7);font-size:.68rem">📅 Análise completa com Claude IA: gerada automaticamente toda segunda-feira às 07:00 pelo servidor. Verifique a aba <strong style="color:#c4b5fd">Relatório</strong> após segunda-feira.</div>
+      </div>
     </div>
 
-    <!-- 2. Seletor de viveiro -->
+    <!-- Seletor de viveiro -->
     <div class="ia-viv-sel" id="ia-viv-sel" style="display:none">
       <div class="section-title" style="margin-bottom:0">Selecione o viveiro para análise detalhada</div>
       <div class="ia-viv-tabs" id="ia-viv-tabs"></div>
     </div>
 
-    <!-- 3. Sub-abas -->
+    <!-- Sub-abas -->
     <div class="ia-tabs">
       <button class="ia-tab-btn active" onclick="iaTab('consolidado',this)">🏭 Consolidado</button>
       <button class="ia-tab-btn" onclick="iaTab('agentes',this)">🤖 Agentes</button>
@@ -413,21 +352,18 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
       <div class="agent-ph" style="padding:36px">Selecione um viveiro e clique em Analisar para ver os 6 agentes especialistas em ação</div>
     </div>
     <div class="ia-tab-panel" id="ia-tab-relatorio">
-      <div class="agent-ph" style="padding:36px">O relatório executivo do Agente Mestre aparece aqui após a análise</div>
+      <div class="agent-ph" style="padding:36px" id="ia-relatorio-ph">📅 Aguardando análise semanal do servidor — gerada toda segunda-feira às 07:00.<br><br>Clique em <strong>Analisar Fazenda</strong> para ver a pré-análise local enquanto isso.</div>
     </div>
     <div class="ia-tab-panel" id="ia-tab-financeiro">
       <div class="agent-ph" style="padding:36px">Painel financeiro detalhado com projeções e oportunidades de ganho</div>
     </div>
 
-  </div><!-- /tab-ia -->
-
+  </div>
 </main>
 <footer>AQUASHRIMPTECH · PAINEL EXECUTIVO · ATUALIZADO VIA ESP32 + TELEGRAM</footer>
-</div><!-- /app -->
+</div>
 
-<!-- ══════════════════════════════════════════════
-     MODAIS — inalterados do original
-══════════════════════════════════════════════ -->
+<!-- MODAIS -->
 <div id="modal-desbaste" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-title">🔱 Registrar Desbaste (<span class="modal-viv-nome"></span>)</div>
@@ -484,16 +420,10 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     <div class="modal-title">✨ Cadastrar Novo Item</div>
     <div class="login-field"><label>Nome do Insumo</label><input type="text" id="obs-novo-nome" placeholder="Ex: Ração Inicial 38%"></div>
     <div class="login-field"><label>Categoria</label>
-      <select id="obs-novo-cat">
-        <option value="Ração">Ração</option><option value="Insumo">Insumo</option>
-        <option value="Produtos">Produtos</option><option value="Outros">Outros</option>
-      </select>
+      <select id="obs-novo-cat"><option value="Ração">Ração</option><option value="Insumo">Insumo</option><option value="Produtos">Produtos</option><option value="Outros">Outros</option></select>
     </div>
     <div class="login-field"><label>Unidade de Medida</label>
-      <select id="obs-novo-un">
-        <option value="kg">kg</option><option value="g">g</option><option value="L">L</option>
-        <option value="mL">mL</option><option value="un">un</option><option value="saco">saco</option>
-      </select>
+      <select id="obs-novo-un"><option value="kg">kg</option><option value="g">g</option><option value="L">L</option><option value="mL">mL</option><option value="un">un</option><option value="saco">saco</option></select>
     </div>
     <div class="login-field"><label>Estoque Mínimo Alerta (0=sem alerta)</label><input type="number" id="obs-novo-min" step="0.01" value="0"></div>
     <div class="login-field"><label>Qtd Inicial de Entrada</label><input type="number" id="obs-novo-qtd" step="0.001" value="0"></div>
@@ -507,45 +437,60 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-// ════════════════════════════════════════════════════════════════
-//  LOGO — inalterado
-// ════════════════════════════════════════════════════════════════
-const LOGO_URLS = [
-  "https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png",
-  "https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.PNG",
-  "https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/logo.png",
-  "https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/logo.PNG",
-];
+// ══════════════════════════════════════════════════════
+//  LOGO
+// ══════════════════════════════════════════════════════
+const LOGO_URLS=["https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png","https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.PNG","https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/logo.png","https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/logo.PNG"];
 function tryLogo(imgs,idx){if(idx>=LOGO_URLS.length){imgs.forEach(i=>i.style.display="none");document.getElementById("logo-fallback").style.display="block";return;}imgs.forEach(img=>{img.src=LOGO_URLS[idx];img.onerror=()=>tryLogo(imgs,idx+1);img.onload=()=>{img.style.display="block";img.onerror=null;img.onload=null;};});}
-const loginImg=document.getElementById("login-logo-img");
-const headerImg=document.getElementById("header-logo");
+const loginImg=document.getElementById("login-logo-img");const headerImg=document.getElementById("header-logo");
 loginImg.onerror=()=>tryLogo([loginImg,headerImg],1);
 loginImg.onload=()=>{loginImg.style.display="block";headerImg.src=loginImg.src;headerImg.style.display="block";};
 
-// ════════════════════════════════════════════════════════════════
-//  CONFIG E ESTADO — inalterado
-// ════════════════════════════════════════════════════════════════
-const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
-const CLIENTES_FALLBACK = [];
-let CLIENTES_CONFIG = [];
-let CLIENTE = null;
-let DADOS = { viveiros: [], estoque: [] };
-let refreshTimer = null;
-let _clientesCarregados = false;
-let viveiroSelecionadoContexto = null;
+// ══════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════
+const ADM_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
+// URL do estoque padrão (usada quando o cliente não tem URL configurada na planilha ADM)
+const ESTOQUE_URL_PADRAO="https://script.google.com/macros/s/AKfycbxaZpPI2_5f4M7ojpxvliklpwBCkHALYIV6jmoZewS7Bd01ET4rgzFhveRZvtvI433s/exec";
 
-const R  = n=>(isNaN(n)||n===null)?"—":"R$ "+Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
-const Nf = n=>(isNaN(n)||n===null)?"—":Number(n).toLocaleString("pt-BR");
-const esc= t=>String(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-const LD = ()=>`<div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>`;
+let CLIENTES_CONFIG=[];
+let CLIENTE=null;
+let DADOS={viveiros:[],estoque:[]};
+let refreshTimer=null;
+let _clientesCarregados=false;
+let viveiroSelecionadoContexto=null;
 
-function parseData(val){if(!val)return null;if(typeof val==="number")return new Date((val-25569)*86400*1000);const s=String(val).trim();const br=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(br)return new Date(+br[3],+br[2]-1,+br[1]);const d=new Date(s);return isNaN(d)?null:d;}
-function fmtData(val){const d=parseData(val);return d?d.toLocaleDateString("pt-BR"):"—";}
-function diasDesde(val){const d=parseData(val);return d?Math.floor((new Date()-d)/86400000):null;}
+const R=n=>(isNaN(n)||n===null)?"—":"R$ "+Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const Nf=n=>(isNaN(n)||n===null)?"—":Number(n).toLocaleString("pt-BR");
+const esc=t=>String(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
-// ════════════════════════════════════════════════════════════════
-//  NAVEGAÇÃO — inalterada
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  ★ TABELA DE PREÇOS — calcula R$/kg por peso médio
+//  Regra: tabelaBase (valor para 10g) + (pesoG - 10) * 1
+//  Ex: tabela=19, peso=15g → 19 + (15-10) = R$24,00/kg
+// ══════════════════════════════════════════════════════
+function calcPrecoKg(pesoGramas){
+  const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
+  const peso=parseFloat(pesoGramas)||10;
+  // Cada grama acima de 10 vale +R$1,00/kg; abaixo de 10g desconta
+  return tabela+(peso-10);
+}
+
+function atualizarPreviewTabela(){
+  const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
+  const p10=tabela+(10-10); // 10g = base
+  const p12=tabela+(12-10);
+  const p15=tabela+(15-10);
+  const p20=tabela+(20-10);
+  document.getElementById("ia-preco-preview").textContent=
+    `10g→R$${p10.toFixed(2)}/kg · 12g→R$${p12.toFixed(2)}/kg · 15g→R$${p15.toFixed(2)}/kg · 20g→R$${p20.toFixed(2)}/kg`;
+}
+// Inicializa preview
+setTimeout(atualizarPreviewTabela,100);
+
+// ══════════════════════════════════════════════════════
+//  NAVEGAÇÃO
+// ══════════════════════════════════════════════════════
 function switchTab(name,btn){
   document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
@@ -556,12 +501,9 @@ document.addEventListener("DOMContentLoaded",()=>{window.switchTab=switchTab;});
 function tickClock(){document.getElementById("clock").textContent=new Date().toLocaleDateString("pt-BR")+" "+new Date().toLocaleTimeString("pt-BR");}
 setInterval(tickClock,1000);tickClock();
 
-// ════════════════════════════════════════════════════════════════
-//  LOGIN — inalterado (lê da planilha ADM)
-//  ⚠️ NOTA: usuário é convertido para minúsculo na comparação
-//           senha é comparada EXATAMENTE como está na planilha
-//           Clientes sem URL de viveiro são filtrados automaticamente
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════════════
 async function loadClientesDoAdm(){
   if(_clientesCarregados)return;
   try{
@@ -576,16 +518,19 @@ async function loadClientesDoAdm(){
           const viveiros=Array.from({length:Math.max(qtd,urls.length)},(_,i)=>({
             nome:`Viveiro ${String(i+1).padStart(2,"0")}`,url:urls[i]||""
           })).filter(v=>v.url);
+          // ★ FIX ESTOQUE: usa URL do ADM ou fallback padrão
+          const urlEstoque=String(c.UrlEstoque||"").trim();
           return{
             id:String(c.ID),nome:c.Nome||"",telefone:c.Telefone||"",
             usuario:(c.Usuario||"").toLowerCase(),senha:c.Senha||"",
-            viveiros,estoque:{url:c.UrlEstoque||""}
+            viveiros,
+            estoque:{url:urlEstoque||ESTOQUE_URL_PADRAO}
           };
         })
         .filter(c=>c.usuario&&c.senha&&c.viveiros.length>0);
       _clientesCarregados=true;
     }
-  }catch(e){if(CLIENTES_FALLBACK.length>0)CLIENTES_CONFIG=CLIENTES_FALLBACK;}
+  }catch(e){console.warn("ADM offline:",e);}
 }
 
 async function fazerLogin(){
@@ -593,23 +538,22 @@ async function fazerLogin(){
   const senha=document.getElementById("inp-senha").value.trim();
   const erro=document.getElementById("login-error");
   const btn=document.querySelector(".login-btn");
-  erro.style.display="none";
-  btn.textContent="Carregando...";btn.disabled=true;
+  erro.style.display="none";btn.textContent="Carregando...";btn.disabled=true;
   await loadClientesDoAdm();
   btn.textContent="Entrar";btn.disabled=false;
   const cliente=CLIENTES_CONFIG.find(c=>c.usuario.toLowerCase()===usuario&&c.senha===senha);
   if(!cliente){erro.style.display="block";return;}
   CLIENTE=cliente;
-  sessionStorage.setItem("ast_usuario",usuario);
-  sessionStorage.setItem("ast_senha",senha);
+  sessionStorage.setItem("ast_usuario",usuario);sessionStorage.setItem("ast_senha",senha);
   document.getElementById("login-screen").style.display="none";
   document.getElementById("btn-adm").style.display="none";
   document.getElementById("app").style.display="block";
   document.getElementById("cliente-nome").textContent="👤 "+cliente.nome;
   document.title="AquaShrimpTech — "+cliente.nome;
   carregarDados();
+  // Carrega análise semanal do servidor em background
+  carregarAnaliseSemanal();
 }
-
 document.getElementById("inp-senha").addEventListener("keydown",e=>{if(e.key==="Enter")fazerLogin();});
 document.getElementById("inp-usuario").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("inp-senha").focus();});
 
@@ -620,26 +564,20 @@ function fazerLogout(){
   document.getElementById("app").style.display="none";
   document.getElementById("login-screen").style.display="flex";
   document.getElementById("btn-adm").style.display="block";
-  document.getElementById("inp-usuario").value="";
-  document.getElementById("inp-senha").value="";
-  // Limpa cache de agentes
+  document.getElementById("inp-usuario").value="";document.getElementById("inp-senha").value="";
   IA_RESULTADOS={};IA_VIVEIRO_IDX=0;
 }
 
 window.addEventListener("load",async()=>{
-  const u=sessionStorage.getItem("ast_usuario");
-  const s=sessionStorage.getItem("ast_senha");
+  const u=sessionStorage.getItem("ast_usuario");const s=sessionStorage.getItem("ast_senha");
   loadClientesDoAdm();
-  if(u&&s){
-    document.getElementById("inp-usuario").value=u;
-    document.getElementById("inp-senha").value=s;
-    fazerLogin();
-  }else{document.getElementById("btn-adm").style.display="block";}
+  if(u&&s){document.getElementById("inp-usuario").value=u;document.getElementById("inp-senha").value=s;fazerLogin();}
+  else{document.getElementById("btn-adm").style.display="block";}
 });
 
-// ════════════════════════════════════════════════════════════════
-//  CARREGAR DADOS — inalterado
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  CARREGAR DADOS
+// ══════════════════════════════════════════════════════
 async function carregarDados(){
   if(!CLIENTE)return;
   const fetchViveiros=CLIENTE.viveiros.map(v=>
@@ -648,10 +586,12 @@ async function carregarDados(){
       .then(data=>{const vv=data.viveiros?.[0]||{};vv.nome=v.nome;vv.scriptUrlBase=v.url;return vv;})
       .catch(()=>({nome:v.nome,_erro:true}))
   );
-  const fetchEstoque=fetch(CLIENTE.estoque.url+"?tipo=listagem")
+  // ★ FIX ESTOQUE: usa URL correta do cliente (ou fallback)
+  const urlEst=CLIENTE.estoque.url;
+  const fetchEstoque=fetch(urlEst+"?tipo=listagem")
     .then(r=>r.json())
     .then(d=>Array.isArray(d)?d:(d.estoque||[]))
-    .catch(()=>[]);
+    .catch(e=>{console.warn("Estoque offline:",e,urlEst);return[];});
   const[vivs,est]=await Promise.all([Promise.all(fetchViveiros),fetchEstoque]);
   DADOS.viveiros=vivs;DADOS.estoque=est;
   renderTudo();
@@ -659,9 +599,52 @@ async function carregarDados(){
   refreshTimer=setTimeout(carregarDados,30*1000);
 }
 
-// ════════════════════════════════════════════════════════════════
-//  RENDER PAINEL — inalterado
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  ANÁLISE SEMANAL DO SERVIDOR (lê sem consumir API)
+// ══════════════════════════════════════════════════════
+async function carregarAnaliseSemanal(){
+  if(!CLIENTE)return;
+  try{
+    const resp=await fetch(ADM_SCRIPT_URL+"?acao=analise_ia&cliente_id="+CLIENTE.id);
+    const data=await resp.json();
+    if(data.status==="ok"&&data.analise){
+      renderRelatorioSemanal(data);
+    }
+  }catch(e){console.warn("Análise semanal indisponível:",e);}
+}
+
+function renderRelatorioSemanal(data){
+  const el=document.getElementById("ia-tab-relatorio");
+  if(!el)return;
+  const txt=data.analise||"";
+  // Converte formatação Telegram (*negrito*) para HTML
+  const html=txt.replace(/\*([^*]+)\*/g,"<strong>$1</strong>").replace(/\n/g,"<br>");
+  el.innerHTML=`
+    <div class="master-card">
+      <div class="master-hd">
+        <div>
+          <div class="master-title">📋 Análise Semanal IA — ${esc(data.cliente_nome||CLIENTE.nome)}</div>
+          <div class="master-meta">Semana ${esc(data.semana||"—")} · Gerado em ${esc(data.gerado_em||"—")} · Claude Sonnet</div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div class="fin-card" style="min-width:100px"><div class="fin-lbl">Viveiros</div><div class="fin-val fv-a">${data.viveiros_ativos||"—"}</div></div>
+          <div class="fin-card" style="min-width:100px"><div class="fin-lbl">Biomassa</div><div class="fin-val fv-g">${data.biomassa_total?Nf(parseFloat(data.biomassa_total))+" kg":"—"}</div></div>
+          <div class="fin-card" style="min-width:100px"><div class="fin-lbl">FCA Médio</div><div class="fin-val">${data.fca_medio||"—"}</div></div>
+        </div>
+      </div>
+      <div class="master-body">
+        <div class="master-output" style="white-space:normal">${html}</div>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER PAINEL
+// ══════════════════════════════════════════════════════
+function parseData(val){if(!val)return null;if(typeof val==="number")return new Date((val-25569)*86400*1000);const s=String(val).trim();const br=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(br)return new Date(+br[3],+br[2]-1,+br[1]);const d=new Date(s);return isNaN(d)?null:d;}
+function fmtData(val){const d=parseData(val);return d?d.toLocaleDateString("pt-BR"):"—";}
+function diasDesde(val){const d=parseData(val);return d?Math.floor((new Date()-d)/86400000):null;}
+
 function renderKpiGeral(){
   const v=DADOS.viveiros.filter(x=>!x._erro);
   const totBioReal=v.reduce((s,x)=>s+(x.biomassaReal||x.biomassa||0),0);
@@ -672,12 +655,12 @@ function renderKpiGeral(){
   v.forEach(x=>{if(x.historico?.length)lucro+=x.historico[x.historico.length-1].l_acum||0;});
   const fcaMedio=v.length?v.reduce((s,x)=>s+(x.fca||0),0)/v.filter(x=>x.fca>0).length:0;
   document.getElementById("kpi-geral").innerHTML=[
-    {label:"Biomassa Real",      value:Nf(totBioReal)+" kg",cls:"accent",sub:"Baseada na alimentação"},
-    {label:"Biomassa (100% Sob)",value:Nf(totBio100)+" kg", cls:"green", sub:"Pressupondo 100% sobrev."},
-    {label:"Custo Total Ciclos", value:R(totCust),           cls:"warn",  sub:"Ciclos em andamento"},
-    {label:"Ração Acumulada",    value:Nf(totRac)+" kg",    cls:"",      sub:"Ciclo atual"},
-    {label:"FCA Médio",          value:isNaN(fcaMedio)?"—":fcaMedio.toFixed(2),cls:"",sub:"Ração / Biomassa real"},
-    {label:"Lucro Acumulado",    value:R(lucro),             cls:"green", sub:"Histórico"},
+    {label:"Biomassa Real",value:Nf(totBioReal)+" kg",cls:"accent",sub:"Baseada na alimentação"},
+    {label:"Biomassa (100% Sob)",value:Nf(totBio100)+" kg",cls:"green",sub:"Pressupondo 100% sobrev."},
+    {label:"Custo Total Ciclos",value:R(totCust),cls:"warn",sub:"Ciclos em andamento"},
+    {label:"Ração Acumulada",value:Nf(totRac)+" kg",cls:"",sub:"Ciclo atual"},
+    {label:"FCA Médio",value:isNaN(fcaMedio)?"—":fcaMedio.toFixed(2),cls:"",sub:"Ração / Biomassa real"},
+    {label:"Lucro Acumulado",value:R(lucro),cls:"green",sub:"Histórico"},
   ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div><div class="kpi-sub">${k.sub}</div></div>`).join("");
 }
 
@@ -749,9 +732,9 @@ function renderViveiros(){
   }).join("");
 }
 
-// ════════════════════════════════════════════════════════════════
-//  MODAIS — inalterado
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  MODAIS
+// ══════════════════════════════════════════════════════
 function fecharModais(){document.querySelectorAll('.modal-overlay').forEach(el=>el.style.display='none');viveiroSelecionadoContexto=null;}
 function abrirModalOperacao(tipo,nome,url,dias=0,custo=0){
   viveiroSelecionadoContexto={tipo,nome,url};
@@ -798,17 +781,16 @@ async function executarEntradaEstoque(){
 async function executarCriarNovoInsumo(){
   const produto=document.getElementById('obs-novo-nome').value.trim(),categoria=document.getElementById('obs-novo-cat').value,unidade=document.getElementById('obs-novo-un').value,estoqueMin=document.getElementById('obs-novo-min').value,qtd=document.getElementById('obs-novo-qtd').value,valor=document.getElementById('obs-novo-valor').value,usuarioLogado=sessionStorage.getItem("ast_usuario")||"Desconhecido";
   if(!produto){alert('O nome do insumo é obrigatório.');return;}
-  let custoUnit=0;
-  if(parseFloat(qtd)>0&&parseFloat(valor)>0)custoUnit=parseFloat(valor)/parseFloat(qtd);
+  let custoUnit=0;if(parseFloat(qtd)>0&&parseFloat(valor)>0)custoUnit=parseFloat(valor)/parseFloat(qtd);
   const obsString=`Cadastro via HTML | Usuario: ${usuarioLogado}|unidade=${unidade}|min=${estoqueMin}`;
   const endpoint=`${CLIENTE.estoque.url}?acao=entrada&produto=${encodeURIComponent(produto)}&qtd=${parseFloat(qtd)}&custo=${custoUnit.toFixed(4)}&categoria=${encodeURIComponent(categoria)}&obs=${encodeURIComponent(obsString)}`;
   fecharModais();
   try{const r=await fetch(endpoint).then(res=>res.json());alert(r.status==='ok'?'✨ Novo insumo cadastrado com sucesso!':'Erro: '+r.msg);carregarDados();}catch(e){alert('Falha ao cadastrar item.');}
 }
 
-// ════════════════════════════════════════════════════════════════
-//  BIOMETRIA — inalterado
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  BIOMETRIA
+// ══════════════════════════════════════════════════════
 let bioChartInstance=null;
 function renderBiometria(){
   const thead=document.getElementById("bio-thead"),tbody=document.getElementById("bio-tbody");
@@ -816,15 +798,11 @@ function renderBiometria(){
   let rows=[];
   DADOS.viveiros.filter(x=>!x._erro).forEach(v=>{(v.biometria||[]).forEach(b=>rows.push({viveiro:v.nome,...b}));});
   rows.sort((a,b)=>{const da=parseData(a.data),db=parseData(b.data);if(!da&&!db)return 0;if(!da)return 1;if(!db)return -1;return da-db;});
-  const porV={};
-  rows.forEach(r=>{if(!porV[r.viveiro])porV[r.viveiro]=[];porV[r.viveiro].push(r);});
+  const porV={};rows.forEach(r=>{if(!porV[r.viveiro])porV[r.viveiro]=[];porV[r.viveiro].push(r);});
   rows.forEach(r=>{const l=porV[r.viveiro],i=l.indexOf(r);r.ganhoCalc=i>0?+(r.peso-l[i-1].peso).toFixed(2):null;r.crescCalc=i>0&&l[i-1].peso>0?+((r.peso-l[i-1].peso)/l[i-1].peso*100).toFixed(1):null;});
-  tbody.innerHTML=!rows.length
-    ?`<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">Sem dados ainda</td></tr>`
-    :rows.map(r=>`<tr><td>${r.viveiro}</td><td>${r.semana}</td><td>${fmtData(r.data)}</td><td style="color:var(--accent)">${r.peso??'—'}g</td><td>${r.ganhoCalc!==null?(r.ganhoCalc>0?"+":"")+r.ganhoCalc+"g":"—"}</td><td style="color:var(--accent2)">${r.crescCalc!==null?(r.crescCalc>0?"+":"")+r.crescCalc+"%":"—"}</td><td>${Nf(r.biomassa)} kg</td></tr>`).join("");
+  tbody.innerHTML=!rows.length?`<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">Sem dados ainda</td></tr>`:rows.map(r=>`<tr><td>${r.viveiro}</td><td>${r.semana}</td><td>${fmtData(r.data)}</td><td style="color:var(--accent)">${r.peso??'—'}g</td><td>${r.ganhoCalc!==null?(r.ganhoCalc>0?"+":"")+r.ganhoCalc+"g":"—"}</td><td style="color:var(--accent2)">${r.crescCalc!==null?(r.crescCalc>0?"+":"")+r.crescCalc+"%":"—"}</td><td>${Nf(r.biomassa)} kg</td></tr>`).join("");
   const COLORS=["#00e5ff","#00ffa3","#ffb300","#ff6b6b","#a78bfa"];
-  const tsSet=new Map();
-  rows.forEach(r=>{const d=parseData(r.data);if(d)tsSet.set(d.getTime(),fmtData(r.data));});
+  const tsSet=new Map();rows.forEach(r=>{const d=parseData(r.data);if(d)tsSet.set(d.getTime(),fmtData(r.data));});
   const labels=[...tsSet.entries()].sort((a,b)=>a[0]-b[0]).map(e=>e[1]);
   if(bioChartInstance)bioChartInstance.destroy();
   const ctx=document.getElementById("bioChart").getContext("2d");
@@ -832,9 +810,9 @@ function renderBiometria(){
   bioChartInstance=new Chart(ctx,{type:"line",data:{labels,datasets:DADOS.viveiros.filter(x=>!x._erro&&x.biometria?.length>0).map((v,i)=>({label:v.nome,data:labels.map(lbl=>{const b=(v.biometria||[]).find(x=>fmtData(x.data)===lbl);return b?b.peso:null;}),borderColor:COLORS[i%COLORS.length],backgroundColor:COLORS[i%COLORS.length]+"22",borderWidth:2.5,pointRadius:4,tension:0.35,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{labels:{color:"#5a7a95",font:{family:"'DM Mono'",size:11}}},tooltip:{backgroundColor:"#0d1a2e",borderColor:"#1a3050",borderWidth:1,titleColor:"#e8f4f8",bodyColor:"#5a7a95",callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y?.toFixed(2)??"—"}g`}}},scales:{x:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10}}},y:{grid:{color:"#1a3050"},ticks:{color:"#5a7a95",font:{family:"'DM Mono'",size:10},callback:v=>v+"g"}}}}});
 }
 
-// ════════════════════════════════════════════════════════════════
-//  HISTÓRICO — inalterado
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  HISTÓRICO
+// ══════════════════════════════════════════════════════
 function toggleCiclo(id){const body=document.getElementById("ciclo-body-"+id),icon=document.getElementById("ciclo-icon-"+id);const open=body.style.display!=="none";body.style.display=open?"none":"block";icon.textContent=open?"▸":"▾";}
 function renderHistorico(){
   const viveirosValidos=DADOS.viveiros.filter(x=>!x._erro);
@@ -874,9 +852,9 @@ function renderHistorico(){
   document.getElementById("lucro-acum").textContent="Acumulado total: "+R(lucroGlobal);
 }
 
-// ════════════════════════════════════════════════════════════════
-//  ESTOQUE — inalterado
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  ESTOQUE
+// ══════════════════════════════════════════════════════
 function renderEstoque(){
   const e=DADOS.estoque.filter(x=>x.produto);
   const totVal=e.reduce((s,x)=>s+(x.total||0),0);
@@ -884,11 +862,11 @@ function renderEstoque(){
   const baix=e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("BAIXO")||s.includes("MÍNIMO")||s.includes("MINIMO");}).length;
   document.getElementById("kpi-estoque").innerHTML=[
     {label:"Valor em Estoque",value:R(totVal),cls:"accent"},
-    {label:"Itens Críticos",  value:crit,    cls:crit>0?"danger":"green"},
-    {label:"Estoque Baixo",   value:baix,    cls:baix>0?"warn":"green"},
-    {label:"Total Insumos",   value:e.length,cls:""},
+    {label:"Itens Críticos",value:crit,cls:crit>0?"danger":"green"},
+    {label:"Estoque Baixo",value:baix,cls:baix>0?"warn":"green"},
+    {label:"Total Insumos",value:e.length,cls:""},
   ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div></div>`).join("");
-  if(!e.length){document.getElementById("estoque-grid").innerHTML=`<div class="error-msg">Sem dados de estoque.</div>`;return;}
+  if(!e.length){document.getElementById("estoque-grid").innerHTML=`<div class="error-msg">Sem dados de estoque. URL: ${CLIENTE?.estoque?.url||"não configurada"}</div>`;return;}
   const maxQ=Math.max(...e.map(x=>x.qtd||0),1);
   document.getElementById("estoque-grid").innerHTML=e.map(x=>{
     const raw=String(x.situacao||"").toLowerCase();
@@ -908,25 +886,21 @@ function renderEstoque(){
 
 function renderTudo(){renderKpiGeral();renderViveiros();renderBiometria();renderHistorico();renderEstoque();}
 
-// ════════════════════════════════════════════════════════════════
-//  ★★★ AGENTES IA — NOVO ★★★
-//  Usa DADOS.viveiros e DADOS.estoque (dados reais do cliente logado)
-// ════════════════════════════════════════════════════════════════
-
-const AGENTES_DEF = [
-  {id:"agua",   nome:"Water Quality",    icone:"💧", cor:"#00e5ff", bg:"rgba(0,229,255,.1)",   esp:"OD · pH · Temp · Amônia · Nitrito"},
-  {id:"prod",   nome:"Production",       icone:"🦐", cor:"#00ffa3", bg:"rgba(0,255,163,.1)",   esp:"Biomassa · Crescimento · Sobrevivência"},
-  {id:"feed",   nome:"Feed Management",  icone:"🍲", cor:"#ffb300", bg:"rgba(255,179,0,.1)",   esp:"FCA · Consumo · Eficiência"},
-  {id:"saude",  nome:"Health & Biosec.", icone:"🔬", cor:"#a78bfa", bg:"rgba(167,139,250,.1)", esp:"Mortalidade · Anomalias · Sanidade"},
-  {id:"energia",nome:"Energy Specialist",icone:"⚡", cor:"#f97316", bg:"rgba(249,115,22,.1)",  esp:"Aeradores · OD noturno · Consumo"},
-  {id:"fin",    nome:"Financial Analyst",icone:"💰", cor:"#00ffa3", bg:"rgba(0,255,163,.07)",  esp:"ROI · Custo/kg · Projeção Despesca"},
+// ══════════════════════════════════════════════════════
+//  AGENTES IA — ANÁLISE LOCAL (sem consumir API)
+// ══════════════════════════════════════════════════════
+const AGENTES_DEF=[
+  {id:"agua",   nome:"Water Quality",    icone:"💧",cor:"#00e5ff",bg:"rgba(0,229,255,.1)",   esp:"OD · pH · Temp · Amônia · Nitrito"},
+  {id:"prod",   nome:"Production",       icone:"🦐",cor:"#00ffa3",bg:"rgba(0,255,163,.1)",   esp:"Biomassa · Crescimento · Sobrevivência"},
+  {id:"feed",   nome:"Feed Management",  icone:"🍲",cor:"#ffb300",bg:"rgba(255,179,0,.1)",   esp:"FCA · Consumo · Eficiência"},
+  {id:"saude",  nome:"Health & Biosec.", icone:"🔬",cor:"#a78bfa",bg:"rgba(167,139,250,.1)", esp:"Mortalidade · Anomalias · Sanidade"},
+  {id:"energia",nome:"Energy Specialist",icone:"⚡",cor:"#f97316",bg:"rgba(249,115,22,.1)",  esp:"Aeradores · OD noturno · Consumo"},
+  {id:"fin",    nome:"Financial Analyst",icone:"💰",cor:"#00ffa3",bg:"rgba(0,255,163,.07)",  esp:"ROI · Custo/kg · Projeção Despesca"},
 ];
 
-let IA_RESULTADOS  = {};
-let IA_VIVEIRO_IDX = 0;
-let IA_PRECO_KG    = 28;
+let IA_RESULTADOS={};
+let IA_VIVEIRO_IDX=0;
 
-// ── Auxiliares ───────────────────────────────────────────────
 function iaTab(name,btn){
   document.querySelectorAll(".ia-tab-panel").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".ia-tab-btn").forEach(b=>b.classList.remove("active"));
@@ -949,87 +923,31 @@ function iaSttTxt(txt){
 }
 function extrairNota(txt){const m=txt.match(/nota[:\s]+(\d+)/i);return m?parseInt(m[1]):7;}
 
-// ── Prompts dos agentes usando dados reais ───────────────────
-function montarPrompt(agId, v){
-  const c=(v.custoRacao||0)+(v.custoInsumos||0)+(v.custoAdicional||0)||(v.custoCiclo||0);
-  const rec=(v.biomassa100||0)*IA_PRECO_KG;
-  const cresc=calcCrescimento(v.biometria);
+// ── Textos locais usando tabela de preços correta ───────────
+function gerarTextoLocal(agId,v){
+  const c=v.custoCiclo||0;
   const bioReal=v.biomassaReal||v.biomassa||0;
-  const estCrit=DADOS.estoque.filter(e=>String(e.situacao||"").toLowerCase().includes("critico")).map(e=>e.produto).join(", ")||"nenhum";
-  const estBaixo=DADOS.estoque.filter(e=>String(e.situacao||"").toLowerCase().includes("baixo")).map(e=>e.produto).join(", ")||"nenhum";
-
-  const prompts={
-    agua:`Você é Water Quality Specialist em carcinicultura de L. vannamei. Analise o ${v.nome}.
-Dados: Peso ${v.pesoMedio||"—"}g | Dias ${v.diasCiclo||diasDesde(v.dataInicio)||"—"} | Biomassa ${bioReal}kg | Densidade ${v.densidade||"—"} cam/m² | FCA ${v.fca||"—"} | Sobrevivência ${v.sobrevivencia||"—"}%
-Ração hoje ${v.racaoAtual||"—"}kg vs ideal ${v.racaoIdeal||"—"}kg | Lab: ${v.laboratorio||"não informado"}
-Sem dados de sensor: analise pelos indicadores indiretos. FCA e sobrevivência revelam muito sobre qualidade da água.
-Oriente sobre parâmetros críticos a monitorar nesta fase. Máx 200 palavras.
-Termine com: STATUS: [ÓTIMO/BOM/ATENÇÃO/CRÍTICO] e Nota: [0-10]`,
-
-    prod:`Você é Production Specialist em L. vannamei. Analise o desempenho do ${v.nome}.
-Peso atual: ${v.pesoMedio||"—"}g | Esperado para ${v.diasCiclo||"—"} dias: ~${((v.diasCiclo||0)*0.20).toFixed(1)}g
-Biomassa real: ${bioReal}kg | Biomassa 100%: ${v.biomassa100||0}kg | Sobrevivência: ${v.sobrevivencia||"—"}%
-FCA: ${v.fca||"—"} | CCMT: ${v.ccmt?"+"+v.ccmt.toFixed(1)+"g/sem":"—"} | Lab: ${v.laboratorio||"—"}
-Crescimento última biometria: ${cresc?"+"+cresc.toFixed(1)+"g":"insuficiente para calcular"}
-Compare com benchmark de L. vannamei. Cite os números reais. Máx 200 palavras.
-STATUS + Nota`,
-
-    feed:`Você é Feed Management Specialist. Analise a eficiência alimentar do ${v.nome}.
-Ração hoje: ${v.racaoAtual||"—"}kg | Ração ideal: ${v.racaoIdeal||"—"}kg
-FCA: ${v.fca||"—"} (meta: 1.4-1.6) | Ração total no ciclo: ${v.racaoTotal||"—"}kg | Custo ciclo: ${R(c)}
-Biomassa real: ${bioReal}kg | Lab: ${v.laboratorio||"—"}
-CALCULE: se FCA fosse 1.4, quanto economizaria em ração? (${bioReal} × (${v.fca||0}-1.4))
-Mostre o impacto financeiro em R$. Máx 200 palavras. STATUS + Nota`,
-
-    saude:`Você é Health & Biosecurity Specialist. Avalie a saúde do ${v.nome}.
-Sobrevivência: ${v.sobrevivencia||"—"}% | Plantel: ${Nf(v.povoado)} un
-Perda estimada: ${Nf(Math.round((v.povoado||0)*((100-(v.sobrevivencia||0))/100)))} animais
-FCA: ${v.fca||"—"} | CCMT: ${v.ccmt?"+"+v.ccmt.toFixed(1)+"g/sem":"—"} | Dias: ${v.diasCiclo||"—"}
-Estoque crítico: ${estCrit} | Estoque baixo: ${estBaixo}
-Interprete sobrevivência de ${v.sobrevivencia||"—"}% para esta fase. Máx 200 palavras. STATUS + Nota`,
-
-    energia:`Você é Energy & Equipment Specialist. Avalie o ${v.nome}.
-Área: ${v.areaHa||"—"}ha | Biomassa: ${bioReal}kg | Densidade: ${v.densidade||"—"} cam/m²
-Peso: ${v.pesoMedio||"—"}g | Dias: ${v.diasCiclo||"—"} | FCA: ${v.fca||"—"}
-Um FCA ${(v.fca||0)>1.8?"elevado pode indicar aeração insuficiente noturna":"dentro da faixa sugere aeração adequada"}.
-Para ${bioReal}kg de biomassa, avalie demanda de aeração e orientações para eficiência energética.
-Máx 200 palavras. STATUS + Nota`,
-
-    fin:`Você é Financial Analyst especializado em carcinicultura. Análise IMPACTANTE do ${v.nome}.
-Investimento total: ${R(c)}
-Biomassa real: ${bioReal}kg | Biomassa 100%: ${v.biomassa100||0}kg
-Receita potencial (R$ ${IA_PRECO_KG}/kg): ${R(rec)}
-Margem: ${R(rec-c)} | ROI: ${c>0?((rec-c)/c*100).toFixed(1):0}%
-Custo/kg: ${R(bioReal>0?c/bioReal:0)} | Receita/ha: ${R(v.areaHa>0?rec/v.areaHa:0)}
-FCA ${v.fca||"—"}: economia se chegar a 1.4 = R$ ${((( v.fca||0)-1.4)*bioReal*(v.racaoTotal>0?(v.custoCiclo||0)*0.72/v.racaoTotal:4.60)).toFixed(2)}
-Semanas p/ despesca (meta 20g): ${cresc&&cresc>0?Math.ceil((20-(v.pesoMedio||0))/cresc)+" semanas":"—"}
-Mostre os números. Seja direto e impactante. Máx 250 palavras. STATUS + Nota`
-  };
-  return prompts[agId]||"Analise os dados e retorne STATUS e Nota.";
-}
-
-// ── Textos locais (sem API key) ──────────────────────────────
-function gerarTextoLocal(agId, v){
-  const c=(v.custoCiclo||0);
-  const bioReal=v.biomassaReal||v.biomassa||0;
-  const rec=(v.biomassa100||0)*IA_PRECO_KG;
+  // ★ Usa calcPrecoKg com o peso real de CADA viveiro
+  const precoKg=calcPrecoKg(v.pesoMedio||10);
+  const rec=(v.biomassa100||0)*precoKg;
   const cresc=calcCrescimento(v.biometria);
   const fca=v.fca||0;
   const surv=v.sobrevivencia||0;
   const econ=Math.max(0,(fca-1.4)*bioReal*(v.racaoTotal>0?c*0.72/v.racaoTotal:4.60));
+  const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
 
   const textos={
     agua:`Sem sensores de OD e temperatura registrados no ${v.nome}, a análise parte dos indicadores indiretos — e eles contam uma história importante.
 
 O FCA de ${fca>0?fca:"—"} ${fca>1.8?"está acima de 1.8, o que frequentemente indica estresse ambiental — oxigenação insuficiente noturna é a causa mais comum em viveiros semi-intensivos":"está dentro da faixa aceitável, sugerindo que o ambiente não está sendo um fator limitante evidente"}.
 
-A sobrevivência de ${surv>0?surv+"%" :"—"} ${surv<75?"abaixo de 75% levanta bandeiras sanitárias e ambientais":surv<85?"dentro do esperado para esta densidade":"excelente para L. vannamei"}.
+A sobrevivência de ${surv>0?surv+"%":"—"} ${surv<75?"abaixo de 75% levanta bandeiras sanitárias e ambientais":surv<85?"dentro do esperado para esta densidade":"excelente para L. vannamei"}.
 
 Para um viveiro de ${v.pesoMedio||"—"}g com ${v.diasCiclo||"—"} dias de ciclo, monitore prioritariamente: OD acima de 5 mg/L às 06h, pH entre 7.5-8.5, transparência 30-40cm e amônia abaixo de 1.0 mg/L. ${fca>1.8?"O FCA elevado sugere revisar aeração noturna como primeira prioridade.":""}
 
 STATUS: ${fca>1.8||surv<70?"ATENÇÃO":"BOM"} | Nota: ${fca<=1.6&&surv>=80?8:fca<=1.8&&surv>=70?6:5}/10`,
 
-    prod:`Com ${v.diasCiclo||"—"} dias de ciclo, o peso de ${v.pesoMedio||"—"}g está ${Math.abs((v.pesoMedio||0)-((v.diasCiclo||0)*0.20))<1.5?"dentro do esperado":"${(v.pesoMedio||0)>((v.diasCiclo||0)*0.20)?\"acima\":\"abaixo\"} do esperado"} para L. vannamei — meta ~${((v.diasCiclo||0)*0.20).toFixed(1)}g.
+    prod:`Com ${v.diasCiclo||"—"} dias de ciclo, o peso de ${v.pesoMedio||"—"}g está ${Math.abs((v.pesoMedio||0)-((v.diasCiclo||0)*0.20))<1.5?"dentro do esperado":"${(v.pesoMedio||0)>((v.diasCiclo||0)*0.20)?"acima":"abaixo"} do esperado"} para L. vannamei — meta ~${((v.diasCiclo||0)*0.20).toFixed(1)}g.
 
 CCMT de ${v.ccmt?"+"+v.ccmt.toFixed(1)+"g/sem":"—"}: ${(v.ccmt||0)>=1.2?"dentro do benchmark (0.8-1.4g/sem)":"abaixo do benchmark — investigar alimentação ou densidade"}.
 
@@ -1067,7 +985,12 @@ Para ${bioReal}kg de biomassa na fase de ${v.pesoMedio||"—"}g: recomendação 
 
 STATUS: ${fca<=1.8?"BOM":"ATENÇÃO"} | Nota: ${fca<=1.6?8:fca<=1.8?6:5}/10`,
 
-    fin:`O ${v.nome} tem ${R(c)} investidos com receita potencial de ${R(rec)} — margem de ${R(rec-c)} e ROI de ${c>0?((rec-c)/c*100).toFixed(1):0}%.
+    fin:`O ${v.nome} tem ${R(c)} investidos.
+    
+📋 PREÇO pela TABELA (base R$${tabela}/kg p/ 10g):
+• Peso atual ${v.pesoMedio||"—"}g → R$${precoKg.toFixed(2)}/kg
+• Receita potencial (biomassa 100%: ${v.biomassa100||0}kg): ${R(rec)}
+• Margem: ${R(rec-c)} | ROI: ${c>0?((rec-c)/c*100).toFixed(1):0}%
 
 BREAKDOWN:
 • Biomassa real: ${bioReal}kg | Biomassa potencial: ${v.biomassa100||0}kg
@@ -1077,31 +1000,36 @@ BREAKDOWN:
 OPORTUNIDADE FCA: saindo de ${fca} para 1.4 você economizaria ${R(econ)} em ração neste ciclo.
 
 PROJEÇÃO: com crescimento de ${cresc?cresc.toFixed(1)+"g/sem":"—"}, chega a 20g em ~${cresc&&cresc>0?Math.ceil((20-(v.pesoMedio||0))/cresc)+" semanas":"—"}.
-Receita projetada na despesca: ${R((v.biomassa100||0)*(20/Math.max(v.pesoMedio||1,1))*IA_PRECO_KG)}.
+Preço na despesca (20g + tabela R$${tabela}): R$${(tabela+(20-10)).toFixed(2)}/kg.
+Receita projetada na despesca: ${R((v.biomassa100||0)*(20/Math.max(v.pesoMedio||1,1))*(tabela+(20-10)))}.
 
 STATUS: ${(rec-c)/Math.max(c,1)*100>=30?"BOM":(rec-c)/Math.max(c,1)*100>=10?"ATENÇÃO":"CRÍTICO"} | Nota: ${((rec-c)/Math.max(c,1)*100)>=40?9:((rec-c)/Math.max(c,1)*100)>=25?7:((rec-c)/Math.max(c,1)*100)>=10?5:4}/10`
   };
   return textos[agId]||"Análise não disponível para este agente.";
 }
 
-function gerarMasterLocal(v, resultados){
+function gerarMasterLocal(v,resultados){
   const c=v.custoCiclo||0;
   const bioReal=v.biomassaReal||v.biomassa||0;
-  const rec=(v.biomassa100||0)*IA_PRECO_KG;
+  // ★ Preço correto por peso do viveiro
+  const precoKg=calcPrecoKg(v.pesoMedio||10);
+  const rec=(v.biomassa100||0)*precoKg;
   const cresc=calcCrescimento(v.biometria)||(v.ccmt||1.5);
   const fca=v.fca||0;
   const surv=v.sobrevivencia||0;
   const notas=AGENTES_DEF.map(ag=>extrairNota(resultados[ag.id]||"7"));
   const indice=Math.round(notas.reduce((s,n)=>s+n,0)/notas.length*10);
   const econ=Math.max(0,(fca-1.4)*bioReal*(v.racaoTotal>0?c*0.72/v.racaoTotal:4.60));
+  const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
+  const precoDesp20=tabela+(20-10);
 
-  return `${v.nome} — ${v.diasCiclo||"—"} dias de ciclo, ${v.pesoMedio||"—"}g de peso médio, ${bioReal}kg de biomassa real. O panorama é de ${indice>=75?"desempenho sólido com pontos de atenção":indice>=55?"atenção moderada — há oportunidades claras de melhora":"múltiplos indicadores merecem ação imediata"}.
+  return `${v.nome} — ${v.diasCiclo||"—"} dias de ciclo, ${v.pesoMedio||"—"}g de peso médio, ${bioReal}kg de biomassa real. Preço atual pela tabela: R$${precoKg.toFixed(2)}/kg (tabela R$${tabela} + (${v.pesoMedio||10}g - 10g) × R$1). O panorama é de ${indice>=75?"desempenho sólido com pontos de atenção":indice>=55?"atenção moderada — há oportunidades claras de melhora":"múltiplos indicadores merecem ação imediata"}.
 
 O ponto que mais merece atenção é o FCA de ${fca>0?fca:"—"}. ${fca>1.8?`Acima de 1.8, está custando ${R(econ)} extras em ração neste ciclo — dinheiro que existe no viveiro mas não está virando camarão.`:`No limite aceitável, mas há ${R(econ)} de margem de melhora se chegar à meta de 1.4.`}
 
 ${surv<75?`Sobrevivência de ${surv}% — ${Nf(Math.round((v.povoado||0)*((100-surv)/100)))} animais perdidos de ${Nf(v.povoado||0)}. Investigue possível mortalidade subdiagnosticada.`:`Com sobrevivência de ${surv}%, o lote está saudável em termos populacionais.`}
 
-Financeiro: ${R(c)} investidos, receita potencial ${R(rec)}, margem ${R(rec-c)}, ROI ${c>0?((rec-c)/c*100).toFixed(1):0}%. Com crescimento de ${cresc.toFixed?cresc.toFixed(1):cresc}g/sem, você alcança 20g em ~${cresc>0?Math.ceil((20-(v.pesoMedio||0))/cresc):"-"} semanas — receita projetada de ${R((v.biomassa100||0)*(20/Math.max(v.pesoMedio||1,1))*IA_PRECO_KG)}.
+Financeiro (tabela R$${tabela}/kg base 10g): ${R(c)} investidos, receita potencial ${R(rec)} a R$${precoKg.toFixed(2)}/kg, margem ${R(rec-c)}, ROI ${c>0?((rec-c)/c*100).toFixed(1):0}%. Com crescimento de ${typeof cresc==="number"?cresc.toFixed(1):cresc}g/sem, você alcança 20g em ~${cresc>0?Math.ceil((20-(v.pesoMedio||0))/cresc):"-"} semanas — preço na despesca R$${precoDesp20.toFixed(2)}/kg, receita projetada de ${R((v.biomassa100||0)*(20/Math.max(v.pesoMedio||1,1))*precoDesp20)}.
 
 AS 3 AÇÕES DESTA SEMANA:
 
@@ -1112,27 +1040,11 @@ AS 3 AÇÕES DESTA SEMANA:
 3. ESTOQUE — ${DADOS.estoque.some(e=>String(e.situacao||"").toLowerCase().includes("critico"))?"Itens críticos detectados: "+DADOS.estoque.filter(e=>String(e.situacao||"").toLowerCase().includes("critico")).map(e=>e.produto).join(", ")+". Repor antes de quinta-feira.":"Estoque adequado. Faça pedido preventivo dos itens com saldo baixo."}`;
 }
 
-// ── Claude API ───────────────────────────────────────────────
-async function chamarClaude(apiKey, prompt, maxTokens=700){
-  const r=await fetch("https://api.anthropic.com/v1/messages",{
-    method:"POST",
-    headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01"},
-    body:JSON.stringify({
-      model:"claude-sonnet-4-20250514",max_tokens:maxTokens,
-      system:"Você é especialista sênior em carcinicultura de L. vannamei. Seja direto, técnico, cite os números reais dos dados. Responda em português. Nunca invente dados.",
-      messages:[{role:"user",content:prompt}]
-    })
-  });
-  if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error?.message||"API erro "+r.status);}
-  const d=await r.json();
-  return d.content?.[0]?.text||"";
-}
-
 // ── Renderização dos agentes ─────────────────────────────────
 function renderAgentesVazios(v){
   document.getElementById("ia-tab-agentes").innerHTML=`
     <div style="font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;color:var(--muted);margin-bottom:13px;letter-spacing:.08em;text-transform:uppercase">
-      Analisando ${v.nome} — 6 agentes em execução
+      Analisando ${v.nome}...
     </div>
     <div class="agents-grid">
       ${AGENTES_DEF.map((ag,i)=>`
@@ -1143,10 +1055,7 @@ function renderAgentesVazios(v){
             <div class="agent-status st-run" id="ia-st-${ag.id}">Analisando</div>
           </div>
           <div class="agent-body" id="ia-bd-${ag.id}">
-            <div class="shim" style="width:92%"></div>
-            <div class="shim" style="width:74%"></div>
-            <div class="shim" style="width:83%"></div>
-            <div class="shim" style="width:58%"></div>
+            <div class="shim" style="width:92%"></div><div class="shim" style="width:74%"></div><div class="shim" style="width:83%"></div><div class="shim" style="width:58%"></div>
           </div>
         </div>`).join("")}
     </div>`;
@@ -1171,86 +1080,80 @@ function renderMaster(v,resultados,txtMaster){
   const indice=Math.round(notas.reduce((s,n)=>s+n,0)/notas.length*10);
   const corI=indice>=75?"var(--accent2)":indice>=55?"var(--warn)":"var(--danger)";
   const stI=indice>=75?"BOM":indice>=55?"ATENÇÃO":"CRÍTICO";
-  document.getElementById("ia-tab-relatorio").innerHTML=`
-    <div class="master-card">
-      <div class="master-hd">
-        <div>
-          <div class="master-title">📋 Relatório Executivo — ${v.nome}</div>
-          <div class="master-meta">Gerado em ${new Date().toLocaleString("pt-BR")} · AquaShrimp AI · ${CLIENTE?.nome||""}</div>
-        </div>
-      </div>
-      <div class="master-body">
-        <div class="index-block">
-          <div class="index-circle">
-            <div class="index-num" style="color:${corI}">${indice}</div>
-            <div class="index-total">/100</div>
-          </div>
-          <div>
-            <div class="index-st" style="color:${corI}">ÍNDICE: ${stI}</div>
-            <div class="index-desc">Média ponderada de 6 agentes especialistas</div>
-            <div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap">
-              ${AGENTES_DEF.map(ag=>{
-                const n=extrairNota(resultados[ag.id]||"7");
-                const c=n>=8?"var(--accent2)":n>=6?"var(--warn)":"var(--danger)";
-                return`<span style="font-size:.6rem;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:5px;padding:2px 7px;color:${c}">${ag.icone} ${n}/10</span>`;
-              }).join("")}
-            </div>
+  // Não sobrescreve o relatório semanal — usa um div separado dentro da aba
+  const tab=document.getElementById("ia-tab-relatorio");
+  // Preserva análise semanal se existir
+  const semanal=tab.querySelector(".master-card");
+  const preAnalise=document.createElement("div");
+  preAnalise.id="ia-pre-analise";
+  preAnalise.innerHTML=`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:14px">
+      <div style="font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:.08em;text-transform:uppercase">⚡ Pré-análise local — ${v.nome} — ${new Date().toLocaleString("pt-BR")}</div>
+      <div class="index-block" style="margin-bottom:12px">
+        <div class="index-circle"><div class="index-num" style="color:${corI}">${indice}</div><div class="index-total">/100</div></div>
+        <div><div class="index-st" style="color:${corI}">ÍNDICE: ${stI}</div><div class="index-desc">Média de 6 agentes especialistas (análise local)</div>
+          <div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap">
+            ${AGENTES_DEF.map(ag=>{const n=extrairNota(resultados[ag.id]||"7");const c=n>=8?"var(--accent2)":n>=6?"var(--warn)":"var(--danger)";return`<span style="font-size:.6rem;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:5px;padding:2px 7px;color:${c}">${ag.icone} ${n}/10</span>`;}).join("")}
           </div>
         </div>
-        <div class="master-output">${esc(txtMaster)}</div>
       </div>
+      <div class="master-output">${esc(txtMaster)}</div>
     </div>`;
+  // Remove pré-análise anterior se houver
+  const old=tab.querySelector("#ia-pre-analise");
+  if(old)old.remove();
+  if(semanal){tab.insertBefore(preAnalise,semanal);}
+  else{tab.innerHTML="";tab.appendChild(preAnalise);}
 }
 
 function renderFinanceiro(v){
   const c=v.custoCiclo||0;
   const bioReal=v.biomassaReal||v.biomassa||0;
-  const rec=(v.biomassa100||0)*IA_PRECO_KG;
+  // ★ Preço correto: tabela + (pesoAtual - 10)
+  const precoKgAtual=calcPrecoKg(v.pesoMedio||10);
+  const rec=(v.biomassa100||0)*precoKgAtual;
   const marg=rec-c,roi=c>0?(marg/c*100):0;
   const cpkg=bioReal>0?c/bioReal:0;
   const recHa=v.areaHa>0?rec/v.areaHa:0;
   const cpm2=v.areaHa>0?c/(v.areaHa*10000):0;
   const cresc=calcCrescimento(v.biometria)||(v.ccmt||1.5);
   const semsRest=cresc>0?Math.ceil((20-(v.pesoMedio||0))/cresc):null;
+  const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
+  const precoDesp20=tabela+(20-10); // preço quando atingir 20g
   const bioDesp=(v.biomassa100||0)*(20/Math.max(v.pesoMedio||1,1));
-  const recDesp=bioDesp*IA_PRECO_KG;
+  const recDesp=bioDesp*precoDesp20;
   const cpSem=(v.racaoAtual||0)*7*(v.racaoTotal>0?c*0.72/v.racaoTotal:4.60);
   const econ=Math.max(0,((v.fca||0)-1.4)*bioReal*(v.racaoTotal>0?c*0.72/v.racaoTotal:4.60));
 
   const barra=(nome,pct,cor)=>`<div style="margin-bottom:9px">
     <div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px">
-      <span style="color:var(--muted)">${nome}</span>
-      <span style="font-family:'DM Mono',monospace">${pct.toFixed(1)}%</span>
+      <span style="color:var(--muted)">${nome}</span><span style="font-family:'DM Mono',monospace">${pct.toFixed(1)}%</span>
     </div>
-    <div style="background:var(--border);border-radius:3px;height:5px">
-      <div style="width:${pct}%;height:100%;background:${cor};border-radius:3px;transition:width 1s ease"></div>
-    </div>
+    <div style="background:var(--border);border-radius:3px;height:5px"><div style="width:${pct}%;height:100%;background:${cor};border-radius:3px;transition:width 1s ease"></div></div>
   </div>`;
 
   document.getElementById("ia-tab-financeiro").innerHTML=`
     <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
       <div style="padding:13px 18px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,255,163,.05),transparent)">
         <span style="font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;color:var(--accent2)">💰 Análise Financeira — ${v.nome}</span>
+        <span style="font-size:.65rem;color:var(--muted);margin-left:10px">Tabela R$${tabela}/kg base · Peso ${v.pesoMedio||"—"}g → R$${precoKgAtual.toFixed(2)}/kg atual</span>
       </div>
       <div style="padding:16px 18px">
         <div class="fin-grid">
           <div class="fin-card"><div class="fin-lbl">Investimento</div><div class="fin-val fv-w">${R(c)}</div></div>
+          <div class="fin-card"><div class="fin-lbl">Preço Atual (${v.pesoMedio||"—"}g)</div><div class="fin-val fv-a">R$${precoKgAtual.toFixed(2)}/kg</div></div>
           <div class="fin-card"><div class="fin-lbl">Receita Potencial</div><div class="fin-val fv-a">${R(rec)}</div></div>
           <div class="fin-card"><div class="fin-lbl">Margem Estimada</div><div class="fin-val ${marg>=0?"fv-g":"fv-d"}">${R(marg)}</div></div>
           <div class="fin-card"><div class="fin-lbl">ROI do Ciclo</div><div class="fin-val ${roi>=30?"fv-g":roi>=15?"fv-w":"fv-d"}">${roi.toFixed(1)}%</div></div>
           <div class="fin-card"><div class="fin-lbl">Custo por kg</div><div class="fin-val">${R(cpkg)}</div></div>
           <div class="fin-card"><div class="fin-lbl">Receita por Hectare</div><div class="fin-val fv-a">${R(recHa)}</div></div>
           <div class="fin-card"><div class="fin-lbl">Custo por m²</div><div class="fin-val">${R(cpm2)}</div></div>
-          <div class="fin-card"><div class="fin-lbl">Custo Semanal (ração)</div><div class="fin-val fv-w">${R(cpSem)}</div></div>
         </div>
-        <div style="margin-top:14px">
-          <div class="section-title" style="margin-bottom:10px">Decomposição de Custos</div>
-          ${barra("Ração (~72%)",72,"var(--accent)")}
-          ${barra("Insumos (~18%)",18,"#a78bfa")}
-          ${barra("Adicional (~10%)",10,"var(--warn)")}
+        <div style="margin-top:14px"><div class="section-title" style="margin-bottom:10px">Decomposição de Custos</div>
+          ${barra("Ração (~72%)",72,"var(--accent)")}${barra("Insumos (~18%)",18,"#a78bfa")}${barra("Adicional (~10%)",10,"var(--warn)")}
         </div>
         <div style="margin-top:14px;background:rgba(0,255,163,.05);border:1px solid rgba(0,255,163,.18);border-radius:10px;padding:14px">
-          <div style="font-family:'Syne',sans-serif;font-size:.76rem;font-weight:800;color:var(--accent2);margin-bottom:10px">🎣 Projeção de Despesca (meta 20g)</div>
+          <div style="font-family:'Syne',sans-serif;font-size:.76rem;font-weight:800;color:var(--accent2);margin-bottom:10px">🎣 Projeção de Despesca (meta 20g → R$${precoDesp20.toFixed(2)}/kg)</div>
           <div class="fin-grid" style="margin:0">
             <div class="fin-card" style="background:rgba(0,0,0,.15)"><div class="fin-lbl">Semanas restantes</div><div class="fin-val fv-a">${semsRest?semsRest+" sem":"—"}</div></div>
             <div class="fin-card" style="background:rgba(0,0,0,.15)"><div class="fin-lbl">Biomassa projetada</div><div class="fin-val fv-g">${bioDesp.toFixed(0)} kg</div></div>
@@ -1262,7 +1165,8 @@ function renderFinanceiro(v){
           <ul class="acoes-list">
             <li><div class="acao-num">1</div><div>Melhorar FCA de <strong style="color:var(--warn)">${v.fca||"—"}</strong> para 1.4 economiza <strong style="color:var(--accent2)">${R(econ)}</strong> em ração neste ciclo</div></li>
             <li><div class="acao-num">2</div><div>Cada semana extra de ciclo custa <strong style="color:var(--danger)">${R(cpSem)}</strong> em ração — planeje a despesca</div></li>
-            <li><div class="acao-num">3</div><div>Aumentar sobrevivência 5% → +${((v.biomassa100||0)*0.05).toFixed(0)} kg → <strong style="color:var(--accent2)">+${R((v.biomassa100||0)*0.05*IA_PRECO_KG)}</strong> de receita</div></li>
+            <li><div class="acao-num">3</div><div>Aumentar sobrevivência 5% → +${((v.biomassa100||0)*0.05).toFixed(0)} kg → <strong style="color:var(--accent2)">+${R((v.biomassa100||0)*0.05*precoKgAtual)}</strong> de receita</div></li>
+            <li><div class="acao-num">4</div><div>Cada +1g de peso médio (de ${v.pesoMedio||"—"}g para ${(v.pesoMedio||10)+1}g) = +R$1,00/kg → +${R((v.biomassa100||0)*1)} de receita potencial</div></li>
           </ul>
         </div>
       </div>
@@ -1271,11 +1175,13 @@ function renderFinanceiro(v){
 
 function renderConsolidado(){
   const ativos=DADOS.viveiros.filter(v=>!v._erro&&(v.povoado||v.biomassa));
+  const tabela=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
+  // ★ Cada viveiro tem seu próprio preço baseado no peso real
   const totBio=ativos.reduce((s,v)=>s+(v.biomassaReal||v.biomassa||0),0);
   const totBio100=ativos.reduce((s,v)=>s+(v.biomassa100||0),0);
   const totC=ativos.reduce((s,v)=>s+(v.custoCiclo||0),0);
-  const totRac=ativos.reduce((s,v)=>s+(v.racaoTotal||0),0);
-  const recEst=totBio100*IA_PRECO_KG;
+  // ★ Receita estimada: soma viveiro a viveiro com preço correto
+  const recEst=ativos.reduce((s,v)=>{const preco=calcPrecoKg(v.pesoMedio||10);return s+(v.biomassa100||0)*preco;},0);
   const marg=recEst-totC;
   const roi=totC>0?(marg/totC*100):0;
   const fcaMed=ativos.filter(v=>v.fca>0).reduce((s,v,_,a)=>s+v.fca/a.length,0)||0;
@@ -1285,16 +1191,20 @@ function renderConsolidado(){
   ativos.forEach(v=>{
     if((v.fca||0)>1.85)alertas.push({viv:v.nome,msg:`FCA ${v.fca} — acima da meta`,tipo:"warn"});
     if((v.sobrevivencia||0)<72)alertas.push({viv:v.nome,msg:`Sobrevivência ${v.sobrevivencia}% — abaixo do ideal`,tipo:"crit"});
-    if((v.pesoMedio||0)>=17)alertas.push({viv:v.nome,msg:`${v.pesoMedio}g — pronto para despesca!`,tipo:"ok"});
+    if((v.pesoMedio||0)>=17){const precoDesp=calcPrecoKg(v.pesoMedio);alertas.push({viv:v.nome,msg:`${v.pesoMedio}g — pronto para despesca! R$${precoDesp.toFixed(2)}/kg`,tipo:"ok"});}
   });
 
   document.getElementById("ia-tab-consolidado").innerHTML=`
+    <div style="background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.12);border-radius:10px;padding:10px 15px;margin-bottom:14px;font-size:.72rem;color:var(--accent)">
+      📋 <strong>Tabela de Preços:</strong> R$${tabela.toFixed(2)}/kg base (10g) · A cada +1g no peso médio = +R$1,00/kg
+      — cada viveiro usa o preço calculado pelo seu próprio peso médio atual
+    </div>
     <div class="section-title">Resumo Geral — ${CLIENTE?.nome||""} (${ativos.length} viveiros ativos)</div>
     <div class="fazenda-kpi">
       <div class="fkpi a"><div class="fkpi-lbl">Biomassa Real Total</div><div class="fkpi-val a">${Nf(Math.round(totBio))} kg</div><div class="fkpi-sub">Pela alimentação</div></div>
       <div class="fkpi g"><div class="fkpi-lbl">Biomassa Total 100%</div><div class="fkpi-val g">${Nf(Math.round(totBio100))} kg</div><div class="fkpi-sub">Sobrev. plena</div></div>
       <div class="fkpi w"><div class="fkpi-lbl">Investimento Total</div><div class="fkpi-val w">${R(totC)}</div><div class="fkpi-sub">Ciclos ativos</div></div>
-      <div class="fkpi ${marg>=0?"g":"d"}"><div class="fkpi-lbl">Margem Estimada</div><div class="fkpi-val ${marg>=0?"g":"d"}">${R(marg)}</div><div class="fkpi-sub">A R$ ${IA_PRECO_KG}/kg</div></div>
+      <div class="fkpi ${marg>=0?"g":"d"}"><div class="fkpi-lbl">Margem Estimada</div><div class="fkpi-val ${marg>=0?"g":"d"}">${R(marg)}</div><div class="fkpi-sub">Tabela por viveiro</div></div>
       <div class="fkpi ${roi>=30?"g":roi>=15?"w":"d"}"><div class="fkpi-lbl">ROI Estimado</div><div class="fkpi-val ${roi>=30?"g":roi>=15?"w":"d"}">${roi.toFixed(1)}%</div><div class="fkpi-sub">Ciclos ativos</div></div>
       <div class="fkpi ${fcaMed<=1.6?"g":fcaMed<=1.8?"w":"d"}"><div class="fkpi-lbl">FCA Médio</div><div class="fkpi-val ${fcaMed<=1.6?"g":fcaMed<=1.8?"w":"d"}">${fcaMed>0?fcaMed.toFixed(2):"—"}</div><div class="fkpi-sub">Meta: 1.4-1.6</div></div>
       <div class="fkpi"><div class="fkpi-lbl">Custo por kg</div><div class="fkpi-val">${R(custoPorKg)}</div><div class="fkpi-sub">Média geral</div></div>
@@ -1305,23 +1215,27 @@ function renderConsolidado(){
       <div class="section-title" style="margin-bottom:10px">⚠️ Alertas Ativos</div>
       ${alertas.map(a=>`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(26,48,80,.4);font-size:.76rem">
         <span class="pill ${a.tipo==="crit"?"pill-red":a.tipo==="warn"?"pill-warn":"pill-green"}">${a.tipo==="crit"?"CRÍTICO":a.tipo==="warn"?"ATENÇÃO":"DESPESCA"}</span>
-        <strong style="color:var(--accent);min-width:85px">${a.viv}</strong>
-        <span>${a.msg}</span>
+        <strong style="color:var(--accent);min-width:85px">${a.viv}</strong><span>${a.msg}</span>
       </div>`).join("")}
     </div>`:""}
 
-    <div class="section-title">Clique em um viveiro acima para análise detalhada dos agentes</div>
+    <div class="section-title">Clique em um viveiro para análise detalhada dos agentes</div>
     <div class="viv-sum-grid">
       ${ativos.map((v,i)=>{
         const c=v.custoCiclo||0,bioReal=v.biomassaReal||v.biomassa||0;
-        const rec=(v.biomassa100||0)*IA_PRECO_KG,marg=rec-c;
+        // ★ preço correto por peso do viveiro
+        const precoKg=calcPrecoKg(v.pesoMedio||10);
+        const rec=(v.biomassa100||0)*precoKg,marg=rec-c;
         const pct=Math.min(100,v.sobrevivencia||0);
         const corBar=pct>=80?"var(--accent2)":pct>=70?"var(--warn)":"var(--danger)";
         const realIdx=DADOS.viveiros.indexOf(v);
         return`<div class="viv-sum" onclick="selecionarViveiroIA(${realIdx})" style="animation-delay:${i*.04}s">
           <div style="display:flex;align-items:center;justify-content:space-between">
             <div style="font-family:'Syne',sans-serif;font-size:.8rem;font-weight:800">${v.nome}</div>
-            <span style="font-size:.6rem;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:5px;padding:1px 7px;color:var(--accent)">${v.diasCiclo||"—"}d</span>
+            <div style="display:flex;gap:5px;align-items:center">
+              <span style="font-size:.6rem;color:var(--accent2);font-family:'DM Mono',monospace">R$${precoKg.toFixed(2)}/kg</span>
+              <span style="font-size:.6rem;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:5px;padding:1px 7px;color:var(--accent)">${v.diasCiclo||"—"}d</span>
+            </div>
           </div>
           <div class="viv-sum-rows">
             <div class="vsr"><div class="vsr-lbl">Peso</div><div class="vsr-val" style="color:var(--accent)">${v.pesoMedio||"—"}g</div></div>
@@ -1341,14 +1255,18 @@ function renderConsolidado(){
     </div>
 
     <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden">
-      <div style="padding:12px 18px;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700">💰 Comparativo Financeiro</div>
-      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:520px">
-        <thead><tr>${["Viveiro","FCA","Sobrev.","Investimento","Receita Est.","Margem","ROI"].map(h=>`<th style="padding:8px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:.57rem;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2)">${h}</th>`).join("")}</tr></thead>
+      <div style="padding:12px 18px;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700">💰 Comparativo Financeiro — preço por peso de cada viveiro</div>
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:600px">
+        <thead><tr>${["Viveiro","Peso","Preço/kg","FCA","Sobrev.","Investimento","Receita Est.","Margem","ROI"].map(h=>`<th style="padding:8px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:.57rem;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2)">${h}</th>`).join("")}</tr></thead>
         <tbody>
           ${ativos.map(v=>{
-            const c=v.custoCiclo||0,bioReal=v.biomassaReal||v.biomassa||0,rec=(v.biomassa100||0)*IA_PRECO_KG,m=rec-c,roi=c>0?(m/c*100):0;
+            const c=v.custoCiclo||0;
+            const precoKg=calcPrecoKg(v.pesoMedio||10);
+            const rec=(v.biomassa100||0)*precoKg,m=rec-c,roi=c>0?(m/c*100):0;
             return`<tr style="border-bottom:1px solid rgba(26,48,80,.4)">
               <td style="padding:8px 12px;font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700">${v.nome}</td>
+              <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;color:var(--accent)">${v.pesoMedio||"—"}g</td>
+              <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;color:var(--accent2);font-weight:700">R$${precoKg.toFixed(2)}</td>
               <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;color:${(v.fca||0)<=1.6?"var(--accent2)":(v.fca||0)<=1.8?"var(--warn)":"var(--danger)"}">${v.fca||"—"}</td>
               <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;color:${(v.sobrevivencia||0)>=80?"var(--accent2)":(v.sobrevivencia||0)>=70?"var(--warn)":"var(--danger)"}">${v.sobrevivencia||"—"}%</td>
               <td style="padding:8px 12px;font-family:'DM Mono',monospace;font-size:.74rem;color:var(--warn)">${R(c)}</td>
@@ -1368,12 +1286,12 @@ function renderSeletorViveiros(){
   const tabs=document.getElementById("ia-viv-tabs");
   sel.style.display="block";
   const ativos=DADOS.viveiros.filter(v=>!v._erro);
-  tabs.innerHTML=ativos.map((v,i)=>{
+  tabs.innerHTML=ativos.map((v)=>{
     const realIdx=DADOS.viveiros.indexOf(v);
     const dotCls=(v.fca||0)>1.85||(v.sobrevivencia||0)<70?"ia-dot-crit":(v.fca||0)>1.7||(v.sobrevivencia||0)<80?"ia-dot-warn":"ia-dot-ok";
     return`<div class="ia-viv-tab ${realIdx===IA_VIVEIRO_IDX?"active":""}" onclick="selecionarViveiroIA(${realIdx})" id="ia-vtab-${realIdx}">
       <div class="ia-dot ${dotCls}"></div>
-      ${v.nome} <span style="font-size:.57rem;color:var(--muted)">${v.pesoMedio||"—"}g</span>
+      ${v.nome} <span style="font-size:.57rem;color:var(--muted)">${v.pesoMedio||"—"}g · R$${calcPrecoKg(v.pesoMedio||10).toFixed(0)}/kg</span>
     </div>`;
   }).join("");
 }
@@ -1383,19 +1301,16 @@ async function selecionarViveiroIA(idx){
   document.querySelectorAll(".ia-viv-tab").forEach(t=>t.classList.remove("active"));
   document.getElementById("ia-vtab-"+idx)?.classList.add("active");
   if(IA_RESULTADOS[idx]){
-    // Já tem resultado em cache — apenas exibe
     renderAgentesCache(idx);
   } else {
-    const apiKey=document.getElementById("ia-api-key").value.trim();
-    await executarAgentesViveiro(apiKey,idx);
+    await executarAgentesViveiro(idx);
   }
   const btn=document.querySelector('.ia-tab-btn[onclick*="agentes"]');
   if(btn)iaTab("agentes",btn);
 }
 
 function renderAgentesCache(idx){
-  const v=DADOS.viveiros[idx];
-  const res=IA_RESULTADOS[idx];
+  const v=DADOS.viveiros[idx];const res=IA_RESULTADOS[idx];
   document.getElementById("ia-tab-agentes").innerHTML=`
     <div style="font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;color:var(--muted);margin-bottom:13px">${v.nome} — análise em cache</div>
     <div class="agents-grid">
@@ -1414,53 +1329,27 @@ function renderAgentesCache(idx){
   renderFinanceiro(v);
 }
 
-async function executarAgentesViveiro(apiKey,idx){
+// ★ Executa agentes SOMENTE localmente (sem API)
+async function executarAgentesViveiro(idx){
   const v=DADOS.viveiros[idx];
   if(!v||v._erro){document.getElementById("ia-tab-agentes").innerHTML=`<div class="agent-ph" style="padding:30px">⚠️ Viveiro offline ou sem dados disponíveis.</div>`;return;}
   renderAgentesVazios(v);
   const resultados={};
   for(const ag of AGENTES_DEF){
-    try{
-      let txt="";
-      if(apiKey){
-        txt=await chamarClaude(apiKey,montarPrompt(ag.id,v));
-      } else {
-        await new Promise(r=>setTimeout(r,600+Math.random()*400));
-        txt=gerarTextoLocal(ag.id,v);
-      }
-      resultados[ag.id]=txt;
-      renderCardAgente(ag,txt);
-    }catch(e){
-      const bd=document.getElementById("ia-bd-"+ag.id);
-      if(bd)bd.innerHTML=`<div class="agent-ph" style="color:var(--danger)">⚠️ ${esc(e.message)}</div>`;
-      const st=document.getElementById("ia-st-"+ag.id);
-      if(st){st.className="agent-status st-idle";st.textContent="Erro";}
-    }
+    await new Promise(r=>setTimeout(r,200+Math.random()*300)); // pequeno delay para UX
+    const txt=gerarTextoLocal(ag.id,v);
+    resultados[ag.id]=txt;
+    renderCardAgente(ag,txt);
   }
   IA_RESULTADOS[idx]=resultados;
-
-  // Master
-  let txtMaster="";
-  if(apiKey){
-    const c=v.custoCiclo||0,bioReal=v.biomassaReal||v.biomassa||0,rec=(v.biomassa100||0)*IA_PRECO_KG;
-    const promptMaster=`Consolide os pareceres dos 6 agentes e gere relatório executivo para ${v.nome} — ${CLIENTE?.nome||""}.
-PARECERES: ${AGENTES_DEF.map(ag=>`${ag.nome}: ${resultados[ag.id]||"sem dados"}`).join(" | ")}
-DADOS: Investimento ${R(c)} | Receita pot. ${R(rec)} | Margem ${R(rec-c)} | Peso ${v.pesoMedio||"—"}g | FCA ${v.fca||"—"} | Dias ${v.diasCiclo||"—"} | Sobrev. ${v.sobrevivencia||"—"}%
-Gere: estado real hoje (2-3 frases), 3 ações urgentes com números, projeção financeira. Tom direto. Máx 450 palavras.`;
-    try{txtMaster=await chamarClaude(apiKey,promptMaster,1000);}
-    catch(e){txtMaster=gerarMasterLocal(v,resultados);}
-  } else {
-    await new Promise(r=>setTimeout(r,800));
-    txtMaster=gerarMasterLocal(v,resultados);
-  }
+  const txtMaster=gerarMasterLocal(v,resultados);
   renderMaster(v,resultados,txtMaster);
   renderFinanceiro(v);
 }
 
-// ── Executar análise completa ────────────────────────────────
-async function executarAnaliseIA(){
-  const apiKey=document.getElementById("ia-api-key").value.trim();
-  IA_PRECO_KG=parseFloat(document.getElementById("ia-preco-kg").value)||28;
+// ★ EXECUTAR ANÁLISE LOCAL — não chama Claude API
+async function executarAnaliseLocal(){
+  atualizarPreviewTabela();
   IA_RESULTADOS={};
   IA_VIVEIRO_IDX=0;
 
@@ -1474,11 +1363,8 @@ async function executarAnaliseIA(){
   document.getElementById("ia-btn-icon").textContent="⏳";
   document.getElementById("ia-btn-txt").textContent="Analisando...";
 
-  if(apiKey)document.getElementById("ia-aviso").style.display="none";
-
-  // Renderiza consolidado com dados reais
+  // Renderiza consolidado com dados reais + tabela de preços
   renderConsolidado();
-  // Mostra seletor de viveiros
   renderSeletorViveiros();
 
   // Ativa aba consolidado
@@ -1489,8 +1375,8 @@ async function executarAnaliseIA(){
   const primeiroIdx=DADOS.viveiros.findIndex(v=>!v._erro&&(v.povoado||v.biomassa));
   if(primeiroIdx>=0){
     IA_VIVEIRO_IDX=primeiroIdx;
-    await executarAgentesViveiro(apiKey,primeiroIdx);
-    renderSeletorViveiros(); // atualiza dots de cor
+    await executarAgentesViveiro(primeiroIdx);
+    renderSeletorViveiros();
   }
 
   btn.disabled=false;
