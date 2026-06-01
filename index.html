@@ -547,8 +547,10 @@ setInterval(tickClock,1000);tickClock();
 
 // ══════════════════════════════════════════════════════
 //  ★ TESTE DE CONEXÃO COM A CLAUDE API
+//  Pinga a rota ?acao=ping_claude do ADM Script —
+//  o Apps Script faz a chamada real do lado servidor
+//  (sem problema de CORS no browser).
 //  Roda automaticamente após o login.
-//  Atualiza badge no header E caixa na aba IA.
 // ══════════════════════════════════════════════════════
 async function testarConexaoClaude(){
   const badge  = document.getElementById('claude-badge');
@@ -559,58 +561,67 @@ async function testarConexaoClaude(){
   const iaMsg  = document.getElementById('claude-status-msg');
 
   // Estado: verificando
-  badge.className='claude-badge claude-checking';
-  dot.className='dot-claude dot-claude-checking';
-  txt.textContent='CLAUDE...';
-  if(iaBox){
-    iaBox.className='claude-ia-status claude-ia-checking';
-    iaIcon.textContent='🔵';
-    iaMsg.style.color='var(--muted)';
-    iaMsg.textContent='Verificando conexão com Claude API...';
-  }
+  setBadgeClaude('checking','CLAUDE...');
+  if(iaBox){setIaStatus('checking','🔵','Verificando conexão com Claude API...');}
 
   try{
-    // Ping leve — sem API key no browser vai retornar 401,
-    // mas isso PROVA que o servidor está acessível e respondendo.
+    // ★ Chama o ADM Script (sem CORS) que por sua vez pinga a API Claude
     const ctrl=new AbortController();
-    const timer=setTimeout(()=>ctrl.abort(),8000); // timeout 8s
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json","anthropic-version":"2023-06-01"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1,messages:[{role:"user",content:"ping"}]}),
-      signal:ctrl.signal
-    });
+    const timer=setTimeout(()=>ctrl.abort(),12000); // 12s — Apps Script pode demorar um pouco
+    const resp=await fetch(ADM_SCRIPT_URL+"?acao=ping_claude",{signal:ctrl.signal});
     clearTimeout(timer);
 
-    // 200 = OK com key | 401 = sem key mas servidor OK | 400 = bad request mas servidor OK
-    // Todos provam que a API está acessível
-    if([200,400,401].includes(resp.status)){
-      badge.className='claude-badge claude-ok';
-      dot.className='dot-claude dot-claude-ok';
-      txt.textContent='CLAUDE ✓';
-      if(iaBox){
-        iaBox.className='claude-ia-status claude-ia-ok';
-        iaIcon.textContent='🟣';
-        iaMsg.style.color='#c4b5fd';
-        iaMsg.textContent='Claude API acessível e respondendo. Análise local disponível ao clicar em Analisar Fazenda.';
-      }
+    const data=await resp.json();
+
+    if(data.status==="ok"&&data.claude==="online"){
+      // API Claude OK e respondendo
+      setBadgeClaude('ok','CLAUDE ✓');
+      if(iaBox)setIaStatus('ok','🟣',
+        'Claude API online ✓ — Análise semanal automática ativa toda segunda-feira às 07h. ' +
+        'Análise local disponível agora com o botão Analisar Fazenda.');
+    } else if(data.claude==="key_invalida"){
+      setBadgeClaude('err','CLAUDE ✗');
+      if(iaBox)setIaStatus('err','🔴','API key inválida ou expirada — verifique a aba Config da planilha ADM (linha ClaudeApiKey).');
     } else {
-      throw new Error('HTTP '+resp.status);
+      throw new Error(data.msg||'Resposta inesperada do servidor');
     }
   } catch(e){
     const isTimeout=e.name==='AbortError';
-    badge.className='claude-badge claude-err';
-    dot.className='dot-claude dot-claude-err';
-    txt.textContent='CLAUDE ✗';
-    if(iaBox){
-      iaBox.className='claude-ia-status claude-ia-err';
-      iaIcon.textContent='🔴';
-      iaMsg.style.color='var(--danger)';
-      iaMsg.textContent=isTimeout
-        ? 'Claude API não respondeu (timeout 8s). Verifique sua conexão com a internet.'
-        : 'Claude API inacessível: '+e.message+'. A análise local de dados continua disponível.';
-    }
+    setBadgeClaude('err','CLAUDE ✗');
+    if(iaBox)setIaStatus('err','🔴',
+      isTimeout
+        ? 'Servidor ADM não respondeu (timeout). Verifique se o Apps Script está publicado.'
+        : 'Não foi possível verificar a API Claude: '+e.message);
   }
+}
+
+// Helpers para atualizar badge e caixa IA de forma limpa
+function setBadgeClaude(estado,label){
+  const badge=document.getElementById('claude-badge');
+  const dot  =document.getElementById('claude-dot');
+  const txt  =document.getElementById('claude-badge-txt');
+  if(!badge)return;
+  const map={
+    checking:{badge:'claude-checking',dot:'dot-claude-checking'},
+    ok:      {badge:'claude-ok',      dot:'dot-claude-ok'},
+    err:     {badge:'claude-err',     dot:'dot-claude-err'}
+  };
+  const cls=map[estado]||map.checking;
+  badge.className='claude-badge '+cls.badge;
+  dot.className  ='dot-claude '+cls.dot;
+  txt.textContent=label;
+}
+function setIaStatus(estado,icon,msg){
+  const iaBox =document.getElementById('claude-status-ia');
+  const iaIcon=document.getElementById('claude-status-icon');
+  const iaMsg =document.getElementById('claude-status-msg');
+  if(!iaBox)return;
+  const clsMap={checking:'claude-ia-checking',ok:'claude-ia-ok',err:'claude-ia-err'};
+  const corMap={checking:'var(--muted)',ok:'#c4b5fd',err:'var(--danger)'};
+  iaBox.className='claude-ia-status '+(clsMap[estado]||clsMap.checking);
+  iaIcon.textContent=icon;
+  iaMsg.style.color=corMap[estado]||corMap.checking;
+  iaMsg.textContent=msg;
 }
 
 // ══════════════════════════════════════════════════════
@@ -720,37 +731,88 @@ async function carregarDados(){
 // ══════════════════════════════════════════════════════
 //  ANÁLISE SEMANAL DO SERVIDOR
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  ANÁLISE SEMANAL — lê do ADM Script a análise salva
+//  Gerada pelo trigger toda segunda-feira 07h
+// ══════════════════════════════════════════════════════
 async function carregarAnaliseSemanal(){
   if(!CLIENTE)return;
   try{
-    const resp=await fetch(ADM_SCRIPT_URL+"?acao=analise_ia&cliente_id="+CLIENTE.id);
+    // Passa o ID do cliente logado para puxar SÓ a análise dele
+    const resp=await fetch(ADM_SCRIPT_URL+"?acao=analise_ia&cliente_id="+encodeURIComponent(CLIENTE.id));
     const data=await resp.json();
-    if(data.status==="ok"&&data.analise){renderRelatorioSemanal(data);}
-  }catch(e){console.warn("Análise semanal indisponível:",e);}
+    if(data.status==="ok"&&data.analise){
+      renderRelatorioSemanal(data);
+    }
+    // Se não tiver análise salva ainda, a aba Relatório mostra o placeholder padrão
+  }catch(e){
+    console.warn("Análise semanal indisponível:",e);
+  }
 }
 
 function renderRelatorioSemanal(data){
   const el=document.getElementById("ia-tab-relatorio");
   if(!el)return;
   const txt=data.analise||"";
-  const html=txt.replace(/\*([^*]+)\*/g,"<strong>$1</strong>").replace(/\n/g,"<br>");
-  el.innerHTML=`
+  // Converte *negrito* Telegram para HTML
+  const html=txt
+    .replace(/\*([^*\n]+)\*/g,"<strong>$1</strong>")
+    .replace(/\n/g,"<br>");
+
+  // Calcula tempo desde geração
+  const geradoStr=data.gerado_em||"";
+  let idadeTexto="";
+  if(geradoStr){
+    try{
+      const partes=geradoStr.match(/(\d+)\/(\d+)\/(\d+)\s+(\d+):(\d+)/);
+      if(partes){
+        const dt=new Date(+partes[3],+partes[2]-1,+partes[1],+partes[4],+partes[5]);
+        const horas=Math.round((new Date()-dt)/3600000);
+        idadeTexto=horas<1?"há menos de 1h":horas<24?`há ${horas}h`:`há ${Math.round(horas/24)} dias`;
+      }
+    }catch(e){}
+  }
+
+  // Só sobrescreve o placeholder — preserva pré-análise local se existir
+  const preAnalise=el.querySelector("#ia-pre-analise");
+  const relatorioEl=document.createElement("div");
+  relatorioEl.id="ia-relatorio-semanal";
+  relatorioEl.innerHTML=`
     <div class="master-card">
       <div class="master-hd">
         <div>
-          <div class="master-title">📋 Análise Semanal IA — ${esc(data.cliente_nome||CLIENTE.nome)}</div>
-          <div class="master-meta">Semana ${esc(data.semana||"—")} · Gerado em ${esc(data.gerado_em||"—")} · Claude Sonnet</div>
+          <div class="master-title">📋 Análise Semanal Claude — ${esc(data.cliente_nome||CLIENTE.nome)}</div>
+          <div class="master-meta">
+            Semana ${esc(data.semana||"—")} · Gerado em ${esc(geradoStr||"—")} ${idadeTexto?"("+idadeTexto+")":""}
+            · claude-sonnet-4
+          </div>
         </div>
-        <div style="display:flex;gap:12px;flex-wrap:wrap">
-          <div class="fin-card" style="min-width:100px"><div class="fin-lbl">Viveiros</div><div class="fin-val fv-a">${data.viveiros_ativos||"—"}</div></div>
-          <div class="fin-card" style="min-width:100px"><div class="fin-lbl">Biomassa</div><div class="fin-val fv-g">${data.biomassa_total?Nf(parseFloat(data.biomassa_total))+" kg":"—"}</div></div>
-          <div class="fin-card" style="min-width:100px"><div class="fin-lbl">FCA Médio</div><div class="fin-val">${data.fca_medio||"—"}</div></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <div class="fin-card" style="min-width:90px"><div class="fin-lbl">Viveiros</div><div class="fin-val fv-a">${data.viveiros_ativos||"—"}</div></div>
+          <div class="fin-card" style="min-width:90px"><div class="fin-lbl">Biomassa</div><div class="fin-val fv-g">${data.biomassa_total?Nf(parseFloat(data.biomassa_total))+" kg":"—"}</div></div>
+          <div class="fin-card" style="min-width:90px"><div class="fin-lbl">FCA Médio</div><div class="fin-val">${data.fca_medio||"—"}</div></div>
+          <!-- Badge gerado por Claude real -->
+          <div style="display:flex;align-items:center;gap:5px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:8px;padding:5px 10px">
+            <div style="width:7px;height:7px;border-radius:50%;background:#a78bfa;animation:pulse-live 1.6s infinite;box-shadow:0 0 6px #a78bfa"></div>
+            <span style="font-size:.62rem;font-weight:700;color:#c4b5fd;letter-spacing:.06em">CLAUDE IA</span>
+          </div>
         </div>
       </div>
       <div class="master-body">
         <div class="master-output" style="white-space:normal">${html}</div>
       </div>
     </div>`;
+
+  // Remove relatório semanal anterior se houver
+  const old=el.querySelector("#ia-relatorio-semanal");
+  if(old)old.remove();
+  // Remove placeholder se existir
+  const ph=el.querySelector("#ia-relatorio-ph");
+  if(ph)ph.remove();
+
+  // Insere: pré-análise (se houver) primeiro, depois relatório semanal
+  if(preAnalise){el.insertBefore(relatorioEl,preAnalise);}
+  else{el.insertBefore(relatorioEl,el.firstChild);}
 }
 
 // ══════════════════════════════════════════════════════
