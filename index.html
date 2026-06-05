@@ -841,6 +841,8 @@ function renderCustos(){
     const bioR=v.biomassaReal||v.biomassa||0;
     const cpkgV=bioR>0?c/bioR:0;
     const realIdx=DADOS.viveiros.indexOf(v);
+    // ★ Fix: mesmo fallback de renderViveiros — calcula dias pela dataInicio se diasCiclo não vier
+    const diasCicloC=v.diasCiclo??diasDesde(v.dataInicio)??0;
     return`<div class="custo-viv-card" onclick="abrirDetalhesCusto(${realIdx})" style="animation-delay:${i*.06}s">
       <div class="custo-viv-header">
         <div style="font-family:'Syne',sans-serif;font-size:.85rem;font-weight:800">${v.nome||"Viveiro"}</div>
@@ -849,7 +851,7 @@ function renderCustos(){
       <div class="custo-viv-rows">
         <div class="cvr"><div class="cvr-lbl">Custo/kg</div><div class="cvr-val" style="color:var(--warn)">${R(cpkgV)}</div></div>
         <div class="cvr"><div class="cvr-lbl">Ração total</div><div class="cvr-val">${Nf(v.racaoTotal||0)} kg</div></div>
-        <div class="cvr"><div class="cvr-lbl">Dias de ciclo</div><div class="cvr-val">${v.diasCiclo||"—"}d</div></div>
+        <div class="cvr"><div class="cvr-lbl">Dias de ciclo</div><div class="cvr-val">${diasCicloC>0?diasCicloC+"d":"—"}</div></div>
         <div class="cvr"><div class="cvr-lbl">Biomassa real</div><div class="cvr-val" style="color:var(--accent)">${Nf(Math.round(bioR))} kg</div></div>
       </div>
       <div style="margin-top:10px;font-size:.62rem;color:var(--warn);display:flex;align-items:center;gap:4px">
