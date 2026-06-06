@@ -303,7 +303,7 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
       <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:10px">
         <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:.68rem;color:var(--muted)">
           <input type="checkbox" id="toggle-curva" onchange="renderBiometria()" style="accent-color:var(--accent);width:14px;height:14px;cursor:pointer">
-          Mostrar curva esperada L. vannamei
+          <span id="toggle-curva-lbl">Mostrar curva esperada L. vannamei</span>
         </label>
       </div>
       <canvas id="bioChart" height="250"></canvas>
@@ -843,28 +843,135 @@ async function executarRegistrarPL(){
 // ═══════════════════════════════════════════════
 // BIOMETRIA
 // ═══════════════════════════════════════════════
-const CURVA_ESP={1:0.5,2:0.8,3:1.2,4:1.7,5:2.3,6:3.0,7:3.8,8:4.8,9:5.9,10:7.2,11:8.6,12:10.1,13:11.8,14:13.5,15:15.3,16:17.1,17:18.9,18:20.7};
+// ═══════════════════════════════════════════════
+// CURVAS DE CRESCIMENTO POR FAIXA DE DENSIDADE
+// Fonte: Wyban & Sweeney (1991), Boyd (2001),
+//        dados de campo Brasil — L. vannamei
+// Lógica: densidade atual do viveiro seleciona
+//         automaticamente a faixa de referência
+// ═══════════════════════════════════════════════
+const CURVAS_DENS={
+  // ≤15 cam/m² — extensivo/semi-intensivo leve
+  leve:[0,0.8,1.6,2.5,3.6,4.9,6.4,8.0,9.7,11.4,13.1,14.8,16.4,17.9,19.2,20.4,21.4,22.2,22.8],
+  // 16–30 cam/m² — semi-intensivo padrão (mais comum no Brasil)
+  medio:[0,0.6,1.2,2.0,2.9,3.9,5.1,6.4,7.8,9.2,10.6,12.0,13.3,14.5,15.6,16.6,17.5,18.2,18.8],
+  // 31–60 cam/m² — intensivo
+  intensivo:[0,0.5,0.9,1.5,2.2,3.0,3.9,4.9,6.0,7.1,8.2,9.3,10.3,11.2,12.1,12.9,13.6,14.2,14.7],
+  // >60 cam/m² — super-intensivo
+  super:[0,0.4,0.7,1.1,1.6,2.2,2.9,3.6,4.4,5.2,6.0,6.8,7.6,8.3,9.0,9.6,10.1,10.5,10.9],
+};
+
+function getCurvaEsperada(densidadeCamM2){
+  const d=parseFloat(densidadeCamM2)||0;
+  if(d<=0)   return null; // sem densidade cadastrada — não exibe curva
+  if(d<=15)  return {curva:CURVAS_DENS.leve,     label:"Ref. ≤15 cam/m²",    cor:"rgba(0,255,163,.7)"};
+  if(d<=30)  return {curva:CURVAS_DENS.medio,     label:"Ref. 16–30 cam/m²",  cor:"rgba(0,229,255,.7)"};
+  if(d<=60)  return {curva:CURVAS_DENS.intensivo, label:"Ref. 31–60 cam/m²",  cor:"rgba(255,179,0,.7)"};
+  return       {curva:CURVAS_DENS.super,           label:"Ref. >60 cam/m²",    cor:"rgba(255,79,79,.7)"};
+}
+
+function getPesoEsperado(semana, densidadeCamM2){
+  const ref=getCurvaEsperada(densidadeCamM2);
+  if(!ref) return null;
+  const sem=parseInt(semana)||0;
+  return ref.curva[sem]||null;
+}
+
+// Tolerância de status: ±15% do esperado = ✅, -15 a -30% = ⚠️, <-30% = 🔴
+function getStatusPeso(pesoReal, pesoEsperado){
+  if(!pesoEsperado) return {icon:"—", cor:"var(--muted)", diff:null};
+  const diff=+(pesoReal-pesoEsperado).toFixed(1);
+  const pct=pesoReal/pesoEsperado;
+  if(pct>=0.85) return {icon:"✅", cor:"var(--accent2)", diff};
+  if(pct>=0.70) return {icon:"⚠️", cor:"var(--warn)",    diff};
+  return              {icon:"🔴", cor:"var(--danger)",   diff};
+}
+
 function renderBiometria(){
   const vivs=DADOS.viveiros.filter(v=>!v._erro&&v.biometria&&v.biometria.length>0);
-  if(!vivs.length){document.getElementById("bio-thead").innerHTML="";document.getElementById("bio-tbody").innerHTML=`<tr><td colspan="7" style="padding:30px;text-align:center;color:var(--muted)">Sem registros de biometria.</td></tr>`;if(_bioChart){_bioChart.destroy();_bioChart=null;}return;}
-  const v=vivs[0];const bio=v.biometria||[];
+  if(!vivs.length){
+    document.getElementById("bio-thead").innerHTML="";
+    document.getElementById("bio-tbody").innerHTML=`<tr><td colspan="8" style="padding:30px;text-align:center;color:var(--muted)">Sem registros de biometria.</td></tr>`;
+    if(_bioChart){_bioChart.destroy();_bioChart=null;}
+    return;
+  }
+  const v=vivs[0];
+  const bio=v.biometria||[];
+  const dens=v.densidade||0;
+  const ref=getCurvaEsperada(dens);
   const labels=bio.map(b=>"Sem."+b.semana);
   const pesos=bio.map(b=>parseFloat(b.peso)||0);
   const mostrarCurva=document.getElementById("toggle-curva").checked;
-  const datasets=[{label:"Peso Médio (g)",data:pesos,borderColor:"#00e5ff",backgroundColor:"rgba(0,229,255,.1)",tension:.4,pointBackgroundColor:"#00e5ff",pointRadius:5,fill:true}];
-  if(mostrarCurva){const curva=bio.map(b=>CURVA_ESP[b.semana]||null);datasets.push({label:"Curva Esperada L. vannamei",data:curva,borderColor:"rgba(0,255,163,.6)",backgroundColor:"transparent",borderDash:[6,4],tension:.4,pointRadius:3,pointBackgroundColor:"rgba(0,255,163,.6)"});}
+  const datasets=[{
+    label:"Peso Médio (g)",
+    data:pesos,
+    borderColor:"#00e5ff",
+    backgroundColor:"rgba(0,229,255,.1)",
+    tension:.4,
+    pointBackgroundColor:"#00e5ff",
+    pointRadius:5,
+    fill:true
+  }];
+  // Legenda da densidade no toggle
+  const toggleLbl=document.getElementById("toggle-curva-lbl");
+  if(toggleLbl){
+    if(ref&&dens>0) toggleLbl.textContent=`Curva esperada L. vannamei (${ref.label} — ${dens.toFixed(0)} cam/m²)`;
+    else toggleLbl.textContent="Curva esperada L. vannamei (sem densidade cadastrada)";
+  }
+  if(mostrarCurva&&ref){
+    const curva=bio.map(b=>ref.curva[parseInt(b.semana)]||null);
+    datasets.push({
+      label:ref.label,
+      data:curva,
+      borderColor:ref.cor,
+      backgroundColor:"transparent",
+      borderDash:[6,4],
+      tension:.4,
+      pointRadius:3,
+      pointBackgroundColor:ref.cor
+    });
+  }
   const ctx=document.getElementById("bioChart").getContext("2d");
   if(_bioChart){_bioChart.destroy();_bioChart=null;}
-  _bioChart=new Chart(ctx,{type:"line",data:{labels,datasets},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:"#5a7a95",font:{family:"'DM Mono',monospace",size:11}}}},scales:{x:{ticks:{color:"#5a7a95"},grid:{color:"rgba(26,48,80,.5)"}},y:{ticks:{color:"#5a7a95"},grid:{color:"rgba(26,48,80,.5)"},title:{display:true,text:"Peso (g)",color:"#5a7a95"}}}}});
+  _bioChart=new Chart(ctx,{
+    type:"line",
+    data:{labels,datasets},
+    options:{
+      responsive:true,
+      maintainAspectRatio:true,
+      plugins:{legend:{labels:{color:"#5a7a95",font:{family:"'DM Mono',monospace",size:11}}}},
+      scales:{
+        x:{ticks:{color:"#5a7a95"},grid:{color:"rgba(26,48,80,.5)"}},
+        y:{ticks:{color:"#5a7a95"},grid:{color:"rgba(26,48,80,.5)"},title:{display:true,text:"Peso (g)",color:"#5a7a95"}}
+      }
+    }
+  });
   // Tabela
   const thead=document.getElementById("bio-thead");
   const tbody=document.getElementById("bio-tbody");
-  thead.innerHTML=`<tr><th>Semana</th><th>Data</th><th>Peso (g)</th><th>Esperado (g)</th><th>Status</th><th>CCMT</th><th>Biomassa Real</th></tr>`;
+  const densLabel=dens>0?` <span style="font-size:.58rem;color:var(--muted);font-weight:400">(${dens.toFixed(0)} cam/m²)</span>`:"";
+  thead.innerHTML=`<tr>
+    <th>Semana</th><th>Data</th><th>Peso (g)</th>
+    <th>Esperado${densLabel}</th><th>Status</th>
+    <th>CCMT</th><th>Biomassa Real</th>
+  </tr>`;
   tbody.innerHTML=bio.slice().reverse().map(b=>{
-    const p=parseFloat(b.peso)||0;const sem=parseInt(b.semana)||0;
-    const esp=CURVA_ESP[sem]||null;const diff=esp?+(p-esp).toFixed(1):null;
-    const statusEl=diff===null?"—":diff>=-0.5?`✅ +${diff}g`:`<span style="color:${diff>=-1.5?"var(--warn)":"var(--danger)"}">${diff>=0?"✅ +":"⚠️ "}${diff}g</span>`;
-    return`<tr><td>Sem. ${b.semana}</td><td>${fmtData(b.data)}</td><td>${p}g</td><td>${esp?esp+"g":"—"}</td><td>${statusEl}</td><td>${b.ccmt>0?"+"+parseFloat(b.ccmt).toFixed(1)+"g":"—"}</td><td>${Nf(Math.round(parseFloat(b.biomassa)||0))} kg</td></tr>`;
+    const p=parseFloat(b.peso)||0;
+    const sem=parseInt(b.semana)||0;
+    const esp=getPesoEsperado(sem,dens);
+    const st=getStatusPeso(p,esp);
+    const diffStr=st.diff!==null?(st.diff>=0?"+":"")+st.diff+"g":"";
+    const statusEl=!esp?"<span style='color:var(--muted)'>Sem ref.</span>"
+      :`<span style="color:${st.cor};font-weight:600">${st.icon} ${diffStr}</span>`;
+    return`<tr>
+      <td>Sem. ${b.semana}</td>
+      <td>${fmtData(b.data)}</td>
+      <td><strong>${p}g</strong></td>
+      <td style="color:var(--muted)">${esp?esp+"g":"—"}</td>
+      <td>${statusEl}</td>
+      <td>${b.ccmt>0?`<span style="color:var(--accent)">+${parseFloat(b.ccmt).toFixed(1)}g</span>`:"—"}</td>
+      <td>${Nf(Math.round(parseFloat(b.biomassa)||0))} kg</td>
+    </tr>`;
   }).join("");
 }
 
@@ -893,33 +1000,38 @@ function renderHistorico(){
 // ESTOQUE
 // ═══════════════════════════════════════════════
 function renderEstoque(){
-  const est=DADOS.estoque;
+  const e=DADOS.estoque.filter(x=>x.produto);
   const kpiEl=document.getElementById("kpi-estoque");
   const grid=document.getElementById("estoque-grid");
-  if(!est.length){kpiEl.innerHTML="";grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">Estoque vazio ou offline.</div>`;return;}
-  const crit=est.filter(i=>String(i.situacao||"").toLowerCase().includes("crit")).length;
-  const baixo=est.filter(i=>String(i.situacao||"").toLowerCase().includes("baixo")).length;
-  const ok=est.length-crit-baixo;
+  if(!e.length){kpiEl.innerHTML="";grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">Estoque vazio ou offline.</div>`;return;}
+  const totVal=e.reduce((s,x)=>s+(parseFloat(x.total)||parseFloat(x.valor_total)||0),0);
+  const crit=e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("CRITICO")||s.includes("SEM ESTOQUE");}).length;
+  const baix=e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("BAIXO")||s.includes("MINIMO")||s.includes("MÍNIMO");}).length;
   kpiEl.innerHTML=[
-    {l:"Total de Itens",v:est.length,cls:""},
-    {l:"Situação OK",v:ok,cls:"green"},
-    {l:"Estoque Baixo",v:baixo,cls:"warn"},
-    {l:"Estoque Crítico",v:crit,cls:"danger"},
-  ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.l}</div><div class="kpi-value ${k.cls}">${k.v}</div></div>`).join("");
-  grid.innerHTML=est.map(item=>{
-    const sit=String(item.situacao||"ok").toLowerCase();
-    const cls=sit.includes("crit")?"critico":sit.includes("baixo")?"baixo":"ok";
-    const pct=item.estoque_minimo>0?Math.min(100,Math.round((parseFloat(item.estoque_atual)||0)/parseFloat(item.estoque_minimo)*100)):100;
-    const idx=est.indexOf(item);
-    return`<div class="est-card ${cls}">
-      <div class="est-name">${esc(item.produto||"—")}</div>
-      ${cls==="critico"?`<div style="font-size:.62rem;color:var(--danger);font-weight:700;margin-bottom:5px">⚠️ ESTOQUE CRÍTICO</div>`:""}
-      <div class="est-row"><span>Categoria</span><span>${esc(item.categoria||"—")}</span></div>
-      <div class="est-row"><span>Estoque atual</span><span>${Nf(item.estoque_atual)} ${esc(item.unidade||"")}</span></div>
-      <div class="est-row"><span>Estoque mínimo</span><span>${Nf(item.estoque_minimo)} ${esc(item.unidade||"")}</span></div>
-      <div class="est-row"><span>Custo/unit</span><span>${R(item.custo_unitario)}</span></div>
-      <div class="est-row"><span>Valor em estoque</span><span>${R(item.valor_total)}</span></div>
-      <div class="est-bar-wrap"><div class="est-bar ${cls}" style="width:${pct}%"></div></div>
+    {label:"Valor em Estoque",value:R(totVal),cls:"accent"},
+    {label:"Itens Críticos",value:crit,cls:crit>0?"danger":"green"},
+    {label:"Estoque Baixo",value:baix,cls:baix>0?"warn":"green"},
+    {label:"Total Insumos",value:e.length,cls:""},
+  ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div></div>`).join("");
+  const maxQ=Math.max(...e.map(x=>parseFloat(x.qtd)||parseFloat(x.estoque_atual)||0),1);
+  grid.innerHTML=e.map((x,idx)=>{
+    const raw=String(x.situacao||"").toLowerCase();
+    const sit=raw.includes("critico")||raw.includes("sem estoque")?"critico":raw.includes("baixo")||raw.includes("minimo")||raw.includes("mínimo")?"baixo":"ok";
+    const sl=sit==="ok"?"✅ OK":sit==="baixo"?"⚠ Baixo":"🔴 Crítico";
+    const sc=sit==="ok"?"pill-green":sit==="baixo"?"pill-warn":"pill-red";
+    const qtd=parseFloat(x.qtd)||parseFloat(x.estoque_atual)||0;
+    const custo=parseFloat(x.custo)||parseFloat(x.custo_unitario)||0;
+    const total=parseFloat(x.total)||parseFloat(x.valor_total)||0;
+    const pct=Math.round(qtd/maxQ*100);
+    return`<div class="est-card ${sit}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div class="est-name">${esc(x.produto)}</div>
+        <span class="pill ${sc}">${sl}</span>
+      </div>
+      <div class="est-row"><span>Quantidade</span><span>${Nf(qtd)} ${esc(x.unidade||"")}</span></div>
+      <div class="est-row"><span>Custo Unit.</span><span>${R(custo)}</span></div>
+      <div class="est-row"><span>Valor Total</span><span>${R(total)}</span></div>
+      <div class="est-bar-wrap"><div class="est-bar ${sit}" style="width:${pct}%"></div></div>
       <button class="est-btn-add" onclick="abrirModalEntrada(${idx})">+ Entrada</button>
     </div>`;
   }).join("");
