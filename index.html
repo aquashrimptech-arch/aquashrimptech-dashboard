@@ -747,7 +747,7 @@ function renderViveiros(){
         <div><div class="v-metric-label">Custo Ciclo</div><div class="v-metric-value warn">${R(v.custoCiclo)}</div></div>
         <div><div class="v-metric-label">Rec. Projetada</div><div class="v-metric-value green">${bioReal>0?"R$"+Nf(Math.round(recProj)):"—"}</div></div>
       </div>
-      ${dias>0?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><div class="dias-badge">🗓 ${dias} dias de ciclo</div>${v.dataInicio?`<div class="dias-badge" style="background:rgba(0,255,163,.06);border-color:rgba(0,255,163,.2);color:var(--accent2)">📅 ${fmtData(v.dataInicio)}</div>`""}</div>`:""}
+      ${dias>0?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><div class="dias-badge">🗓 ${dias} dias de ciclo</div>${v.dataInicio?`<div class="dias-badge" style="background:rgba(0,255,163,.06);border-color:rgba(0,255,163,.2);color:var(--accent2)">📅 ${fmtData(v.dataInicio)}</div>`:""}  </div>`:""}
       <div class="viveiro-bar-wrap" style="margin-top:10px"><div class="viveiro-bar" style="width:${pct}%;background:linear-gradient(90deg,${corS},${corS}88)"></div></div>
       <div class="viveiro-bar-label"><span>Sobrevivência: ${surv>0?surv.toFixed(1)+"%":"—"}</span><span>Lucro proj: ${bioReal>0?"R$"+Nf(Math.round(lucroProj)):"—"}</span></div>
       <div class="v-actions-panel">
