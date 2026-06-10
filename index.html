@@ -1180,149 +1180,139 @@ async function abrirDetalhesCusto(ri){
     const data=await fetch(v.scriptUrlBase+"?tipo=custos_detalhados").then(r=>r.json());
     if(data.status!=="ok")throw new Error(data.msg||"Erro");
 
-    // ★ Totais reais vindos direto do dashboard (já corrigidos)
-    const custoRacao   = v.custoCiclo - (data.total_geral||0); // ração = diferença
-    // Monta totais por bloco
-    const totalPL      = (data.totais?.["Insumo"]||0);  // PL vem como Insumo do Apps Script
-    const totalRacao   = v.racaoTotal * (v.custoKgRacao||4.6); // estimativa local
-    const totalOutros  = data.total_geral||0;
-    const totalGeral   = v.custoCiclo||0; // ← usa o valor correto do dashboard
-
-    const lancs=data.lancamentos||[];
-
-    // ★ Busca também os insumos (PL) diretamente
-    const insumos=[];
-    try{
-      const raw=await fetch(v.scriptUrlBase+"?tipo=custos_detalhados_insumos").then(r=>r.json()).catch(()=>null);
-    }catch(e){}
-
     const R2=n=>isNaN(n)||n==null?"—":"R$ "+Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
     const pct=(n,t)=>t>0?((n/t)*100).toFixed(1)+"%" :"0%";
 
-    // Cards de resumo por categoria
-    const blocos=[
-      {label:"Pós-larva",     icon:"ti-fish",        valor:v.pl_ciclo_atual?.valor_total||0,  cor:"var(--accent)"},
-      {label:"Ração",         icon:"ti-bowl",         valor:v.racaoTotal*(v.custoKgRacao||4.6),cor:"var(--accent2)"},
-      {label:"Outros custos", icon:"ti-package",      valor:totalOutros,                       cor:"var(--warn)"},
+    // ★ Valores de cada bloco — fontes separadas, sem cruzamento
+    const valPL     = v.pl_ciclo_atual?.valor_total || 0;
+    const custoKg   = v.custoKgRacao || 4.6;
+    const valRacao  = Math.round(v.racaoTotal * custoKg * 100) / 100;
+    const valOutros = data.total_geral || 0;
+    const totalReal = Math.round((valPL + valRacao + valOutros) * 100) / 100;
+
+    const lancs = data.lancamentos || [];
+
+    // ── Cards de resumo ───────────────────────────────────
+    let html=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin-bottom:18px">`;
+
+    const cards=[
+      {label:"Pós-larva", icon:"ti-fish",    val:valPL,     cor:"var(--accent)"},
+      {label:"Ração",     icon:"ti-bowl",     val:valRacao,  cor:"var(--accent2)"},
+      {label:"Outros",    icon:"ti-package",  val:valOutros, cor:"var(--warn)"},
     ];
-    const totalReal=(v.pl_ciclo_atual?.valor_total||0)+(v.racaoTotal*(v.custoKgRacao||4.6))+totalOutros;
-
-    let html=`
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-bottom:18px">
-      ${blocos.map(b=>`
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 15px">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;display:flex;align-items:center;gap:5px">
-            <i class="ti ${b.icon}" style="font-size:13px"></i>${b.label}
-          </div>
-          <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:${b.cor}">${R2(b.valor)}</div>
-          <div style="margin-top:6px;background:var(--border);border-radius:2px;height:3px">
-            <div style="width:${Math.min(100,(b.valor/(totalReal||1))*100).toFixed(1)}%;height:100%;background:${b.cor};border-radius:2px;transition:width .8s ease"></div>
-          </div>
-          <div style="font-size:.57rem;color:var(--muted);margin-top:3px">${pct(b.valor,totalReal)} do total</div>
-        </div>`).join("")}
-      <div style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);border-radius:11px;padding:13px 15px;display:flex;flex-direction:column;justify-content:center">
-        <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Total geral</div>
-        <div style="font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:var(--accent)">${R2(totalReal)}</div>
-      </div>
-    </div>`;
-
-    // Bloco PL
-    if(v.pl_ciclo_atual){
-      const pl=v.pl_ciclo_atual;
-      html+=`
-      <div style="margin-bottom:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(0,229,255,.05);border-radius:9px 9px 0 0;border:1px solid var(--border);border-bottom:none">
-          <span style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;display:flex;align-items:center;gap:6px">
-            <i class="ti ti-fish" style="color:var(--accent)"></i> Pós-larva
-          </span>
-          <span style="font-family:'DM Mono',monospace;font-size:.82rem;font-weight:700;color:var(--accent)">${R2(pl.valor_total)}</span>
+    cards.forEach(c=>{
+      html+=`<div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 15px">
+        <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;display:flex;align-items:center;gap:5px">
+          <i class="ti ${c.icon}" style="font-size:13px"></i>${c.label}
         </div>
-        <div style="border:1px solid var(--border);border-radius:0 0 9px 9px;overflow:hidden">
-          <table style="width:100%;border-collapse:collapse">
-            <thead><tr style="background:rgba(0,0,0,.2)">
-              <th style="padding:7px 12px;text-align:left;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Produto</th>
-              <th style="padding:7px 12px;text-align:right;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Qtd</th>
-              <th style="padding:7px 12px;text-align:right;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Unit</th>
-              <th style="padding:7px 12px;text-align:right;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Total</th>
-            </tr></thead>
-            <tbody>
-              <tr>
-                <td style="padding:10px 12px;font-size:.75rem">
-                  <div style="font-weight:600">PL — ${esc(pl.laboratorio)}</div>
-                  <div style="font-size:.65rem;color:var(--muted);margin-top:2px">${(pl.qtd_milhar*1000).toLocaleString("pt-BR")} PLs · Lançamento automático</div>
-                </td>
-                <td style="padding:10px 12px;font-size:.73rem;font-family:'DM Mono',monospace;text-align:right">1 un</td>
-                <td style="padding:10px 12px;font-size:.73rem;font-family:'DM Mono',monospace;text-align:right">${R2(pl.valor_total)}</td>
-                <td style="padding:10px 12px;font-size:.78rem;font-family:'DM Mono',monospace;font-weight:700;text-align:right;color:var(--accent)">${R2(pl.valor_total)}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:${c.cor}">${R2(c.val)}</div>
+        <div style="margin-top:6px;background:var(--border);border-radius:2px;height:3px">
+          <div style="width:${Math.min(100,totalReal>0?(c.val/totalReal*100):0).toFixed(1)}%;height:100%;background:${c.cor};border-radius:2px"></div>
         </div>
+        <div style="font-size:.57rem;color:var(--muted);margin-top:3px">${pct(c.val,totalReal)} do total</div>
       </div>`;
-    }
+    });
+    html+=`<div style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);border-radius:11px;padding:13px 15px;display:flex;flex-direction:column;justify-content:center">
+      <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Total geral</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--accent)">${R2(totalReal)}</div>
+    </div></div>`;
 
-    // Bloco Ração — busca da planilha via estado_cultivo
-    const custoRacaoReal=v.custoCiclo-(v.pl_ciclo_atual?.valor_total||0)-totalOutros;
-    html+=`
-    <div style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(0,255,163,.04);border-radius:9px 9px 0 0;border:1px solid var(--border);border-bottom:none">
+    // ── Bloco Pós-larva ───────────────────────────────────
+    const pl=v.pl_ciclo_atual;
+    html+=`<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:rgba(0,229,255,.05);border:1px solid var(--border);border-bottom:none;border-radius:9px 9px 0 0">
         <span style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;display:flex;align-items:center;gap:6px">
-          <i class="ti ti-bowl" style="color:var(--accent2)"></i> Ração
+          <i class="ti ti-fish" style="color:var(--accent)"></i>Pós-larva
         </span>
-        <span style="font-family:'DM Mono',monospace;font-size:.82rem;font-weight:700;color:var(--accent2)">${R2(custoRacaoReal>0?custoRacaoReal:v.racaoTotal*(v.custoKgRacao||4.6))}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:.82rem;font-weight:700;color:var(--accent)">${R2(valPL)}</span>
       </div>
-      <div style="border:1px solid var(--border);border-radius:0 0 9px 9px;padding:10px 12px">
-        <div style="display:flex;justify-content:space-between;font-size:.73rem;font-family:'DM Mono',monospace">
+      <div style="border:1px solid var(--border);border-radius:0 0 9px 9px;overflow:hidden">`;
+
+    if(pl){
+      html+=`<table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:rgba(0,0,0,.2)">
+          <th style="padding:7px 13px;text-align:left;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Produto</th>
+          <th style="padding:7px 13px;text-align:center;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Qtd</th>
+          <th style="padding:7px 13px;text-align:right;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Total</th>
+        </tr></thead>
+        <tbody><tr>
+          <td style="padding:10px 13px;font-size:.75rem">
+            <div style="font-weight:600">PL — ${esc(pl.laboratorio)}</div>
+            <div style="font-size:.63rem;color:var(--muted);margin-top:2px">${(pl.qtd_milhar*1000).toLocaleString("pt-BR")} PLs · Lançamento automático</div>
+          </td>
+          <td style="padding:10px 13px;font-size:.73rem;font-family:'DM Mono',monospace;text-align:center">1 un</td>
+          <td style="padding:10px 13px;font-size:.78rem;font-family:'DM Mono',monospace;font-weight:700;text-align:right;color:var(--accent)">${R2(valPL)}</td>
+        </tr></tbody>
+      </table>`;
+    } else {
+      html+=`<div style="padding:14px;text-align:center;color:var(--muted);font-size:.76rem">Sem PL registrada neste ciclo</div>`;
+    }
+    html+=`</div></div>`;
+
+    // ── Bloco Ração ───────────────────────────────────────
+    html+=`<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:rgba(0,255,163,.04);border:1px solid var(--border);border-bottom:none;border-radius:9px 9px 0 0">
+        <span style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;display:flex;align-items:center;gap:6px">
+          <i class="ti ti-bowl" style="color:var(--accent2)"></i>Ração
+        </span>
+        <span style="font-family:'DM Mono',monospace;font-size:.82rem;font-weight:700;color:var(--accent2)">${R2(valRacao)}</span>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:0 0 9px 9px;padding:12px 13px">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:.73rem;font-family:'DM Mono',monospace">
           <span style="color:var(--muted)">Total acumulado no ciclo</span>
-          <span>${Nf(Math.round(v.racaoTotal))} kg × ${R2(v.custoKgRacao||4.6)}/kg</span>
+          <span>${Nf(Math.round(v.racaoTotal))} kg × ${R2(custoKg)}/kg</span>
         </div>
-        <div style="font-size:.63rem;color:var(--muted);margin-top:5px">Lançamentos automáticos por registro de arraçoamento</div>
+        <div style="font-size:.63rem;color:var(--muted);margin-top:5px">Registros automáticos por arraçoamento via Telegram</div>
       </div>
     </div>`;
 
-    // Bloco Outros
+    // ── Bloco Outros custos ───────────────────────────────
+    html+=`<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:rgba(255,179,0,.04);border:1px solid var(--border);border-bottom:none;border-radius:9px 9px 0 0">
+        <span style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;display:flex;align-items:center;gap:6px">
+          <i class="ti ti-package" style="color:var(--warn)"></i>Outros custos
+        </span>
+        <span style="font-family:'DM Mono',monospace;font-size:.82rem;font-weight:700;color:var(--warn)">${R2(valOutros)}</span>
+      </div>`;
+
     if(lancs.length>0){
-      const cats=[...new Set(lancs.map(l=>l.categoria))];
-      const corCat=c=>({
-        "Manutenção":"var(--warn)",Manutencao:"var(--warn)",
-        "CustoFixo-Energia":"#f97316","CustoFixo-Agua":"#38bdf8",
-        "CustoFixo-Internet":"#4ade80","CustoFixo-Funcionario":"#facc15",
-      }[c]||"var(--muted)");
-      html+=`
-      <div style="margin-bottom:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(255,179,0,.04);border-radius:9px 9px 0 0;border:1px solid var(--border);border-bottom:none">
-          <span style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;display:flex;align-items:center;gap:6px">
-            <i class="ti ti-package" style="color:var(--warn)"></i> Outros custos
-          </span>
-          <span style="font-family:'DM Mono',monospace;font-size:.82rem;font-weight:700;color:var(--warn)">${R2(totalOutros)}</span>
-        </div>
-        <div style="border:1px solid var(--border);border-radius:0 0 9px 9px;overflow:hidden">
-          <table style="width:100%;border-collapse:collapse">
-            <thead><tr style="background:rgba(0,0,0,.2)">
-              <th style="padding:7px 12px;text-align:left;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Produto</th>
-              <th style="padding:7px 12px;text-align:center;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Categoria</th>
-              <th style="padding:7px 12px;text-align:right;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Total</th>
-            </tr></thead>
-            <tbody>
-              ${lancs.map((l,i)=>`
-              <tr style="border-bottom:1px solid rgba(26,48,80,.4);background:${i%2?"rgba(0,0,0,.06)":"transparent"}">
-                <td style="padding:9px 12px;font-size:.74rem">${esc(l.produto)}<br><span style="font-size:.62rem;color:var(--muted)">${esc(l.obs)}</span></td>
-                <td style="padding:9px 12px;text-align:center"><span style="font-size:.62rem;padding:2px 8px;border-radius:20px;background:rgba(255,179,0,.1);color:var(--warn)">${esc(l.categoria)}</span></td>
-                <td style="padding:9px 12px;font-size:.78rem;font-family:'DM Mono',monospace;font-weight:700;text-align:right;color:${corCat(l.categoria)}">${R2(l.total)}</td>
-              </tr>`).join("")}
-            </tbody>
-          </table>
-        </div>
+      html+=`<div style="border:1px solid var(--border);border-radius:0 0 9px 9px;overflow:hidden">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr style="background:rgba(0,0,0,.2)">
+            <th style="padding:7px 13px;text-align:left;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Produto</th>
+            <th style="padding:7px 13px;text-align:center;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Categoria</th>
+            <th style="padding:7px 13px;text-align:right;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Total</th>
+          </tr></thead><tbody>
+          ${lancs.map((l,i)=>`<tr style="border-bottom:1px solid rgba(26,48,80,.4);background:${i%2?"rgba(0,0,0,.06)":"transparent"}">
+            <td style="padding:9px 13px;font-size:.74rem">
+              <div>${esc(l.produto)}</div>
+              ${l.obs?`<div style="font-size:.62rem;color:var(--muted);margin-top:1px">${esc(l.obs)}</div>`:""}
+            </td>
+            <td style="padding:9px 13px;text-align:center">
+              <span style="font-size:.62rem;padding:2px 8px;border-radius:20px;background:rgba(255,179,0,.1);color:var(--warn)">${esc(l.categoria)}</span>
+            </td>
+            <td style="padding:9px 13px;font-size:.78rem;font-family:'DM Mono',monospace;font-weight:700;text-align:right;color:var(--warn)">${R2(l.total)}</td>
+          </tr>`).join("")}
+          </tbody>
+        </table>
       </div>`;
     } else {
-      html+=`
-      <div style="background:rgba(90,122,149,.06);border:1px solid rgba(90,122,149,.2);border-radius:9px;padding:16px;text-align:center;color:var(--muted);font-size:.76rem">
+      html+=`<div style="border:1px solid var(--border);border-radius:0 0 9px 9px;padding:16px;text-align:center;color:var(--muted);font-size:.76rem">
         Nenhum custo adicional lançado neste ciclo
       </div>`;
     }
+    html+=`</div>`;
+
+    // ── Rodapé total ──────────────────────────────────────
+    html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.15);border-radius:11px;margin-top:4px">
+      <span style="font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800">Total geral do ciclo</span>
+      <span style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--accent)">${R2(totalReal)}</span>
+    </div>`;
 
     document.getElementById("det-corpo").innerHTML=html;
-  }catch(e){document.getElementById("det-corpo").innerHTML=`<div class="error-msg">Erro: ${esc(e.message)}</div>`;}
+  }catch(e){
+    document.getElementById("det-corpo").innerHTML=`<div class="error-msg">Erro: ${esc(e.message)}</div>`;
+  }
 }
 
 // ═══════════════════════════════════════════════
