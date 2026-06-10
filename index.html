@@ -4,268 +4,771 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>AquaShrimpTech — Painel</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080f1a;--surface:#0d1a2e;--card:#101f35;--border:#1a3050;--accent:#00e5ff;--accent2:#00ffa3;--warn:#ffb300;--danger:#ff4f4f;--text:#e8f4f8;--muted:#5a7a95;--glow:0 0 24px rgba(0,229,255,.18)}
+:root{
+  --bg:#05080f;
+  --bg2:#080d18;
+  --surface:#0c1423;
+  --card:#111d30;
+  --card2:#162035;
+  --border:#1e3050;
+  --border2:#253860;
+  --cyan:#00d4ff;
+  --cyan2:#00a8cc;
+  --mint:#00f0a0;
+  --mint2:#00c080;
+  --amber:#ffb830;
+  --red:#ff4f6a;
+  --purple:#a78bfa;
+  --text:#e2eeff;
+  --text2:#b8cfe8;
+  --muted:#5a7a9e;
+  --muted2:#3a5878;
+  --glow-c:0 0 40px rgba(0,212,255,.15);
+  --glow-m:0 0 40px rgba(0,240,160,.12);
+  --radius:20px;
+  --radius-sm:12px;
+  --radius-xs:8px;
+  --t:.22s;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,.03)1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03)1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-#login-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
-.login-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 0 60px rgba(0,229,255,.08);animation:fadeUp .4s ease}
-.login-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:32px;gap:12px}
-.login-logo img{width:260px;height:260px;object-fit:contain;filter:drop-shadow(0 0 3px white) drop-shadow(0 0 6px rgba(0,229,255,.4))}
-.login-brand{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:600;color:var(--accent);letter-spacing:.04em;text-align:center;font-style:italic}
-.login-sub{font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;text-align:center}
-.login-field{margin-bottom:14px}
-.login-field label{display:block;font-size:.66rem;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
-.login-field input,.login-field select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:.88rem;outline:none;transition:border-color .2s}
-.login-field input:focus,.login-field select:focus{border-color:var(--accent)}
-.login-btn{width:100%;margin-top:8px;padding:13px;background:linear-gradient(135deg,var(--accent),#0090a8);border:none;border-radius:10px;color:#080f1a;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;letter-spacing:.06em;cursor:pointer;transition:opacity .2s,transform .15s}
-.login-btn:hover{opacity:.9;transform:translateY(-1px)}
-.login-error{background:rgba(255,79,79,.1);border:1px solid rgba(255,79,79,.3);border-radius:8px;padding:10px 14px;color:var(--danger);font-size:.78rem;margin-top:12px;display:none;text-align:center}
-#app{display:none}
-header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,229,255,.06)0%,transparent 60%);gap:10px;flex-wrap:nowrap}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* Animated background */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(0,212,255,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(0,240,160,.04) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,212,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,.025) 1px, transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── LOGIN ─────────────────────────────────────────── */
+#login-screen{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  background:var(--bg);
+}
+.login-box{
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:28px;
+  padding:44px 40px;
+  width:100%;max-width:400px;
+  box-shadow:0 0 80px rgba(0,212,255,.1);
+  animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1);
+}
+.login-logo{
+  display:flex;flex-direction:column;align-items:center;
+  margin-bottom:36px;gap:14px;
+}
+.login-logo img{
+  width:120px;height:120px;object-fit:contain;
+  filter:drop-shadow(0 0 20px rgba(0,212,255,.5));
+}
+.login-brand{
+  font-size:1.3rem;font-weight:800;
+  background:linear-gradient(135deg,var(--cyan),var(--mint));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;letter-spacing:-.02em;
+}
+.login-sub{font-size:.72rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+
+.login-field{margin-bottom:16px}
+.login-field label{
+  display:block;font-size:.65rem;font-weight:700;
+  color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;
+}
+.login-field input{
+  width:100%;
+  background:var(--bg2);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:13px 16px;
+  color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.88rem;outline:none;
+  transition:border-color var(--t),box-shadow var(--t);
+}
+.login-field input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.login-btn{
+  width:100%;margin-top:10px;padding:14px;
+  background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+  border:none;border-radius:var(--radius-sm);
+  color:#05080f;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.95rem;font-weight:800;letter-spacing:.04em;
+  cursor:pointer;transition:all var(--t);
+}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,255,.3)}
+.login-error{
+  background:rgba(255,79,106,.1);border:1px solid rgba(255,79,106,.3);
+  border-radius:var(--radius-xs);padding:11px 15px;
+  color:var(--red);font-size:.78rem;margin-top:12px;display:none;text-align:center;
+}
+
+/* ── APP ─────────────────────────────────────────── */
+#app{display:none;position:relative;z-index:1}
+
+/* ── HEADER ─────────────────────────────────────────── */
+header{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:10px;flex-wrap:nowrap;
+  padding:12px 24px;
+  background:rgba(5,8,15,.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(30,48,80,.6);
+}
 .logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.logo img{width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(0,229,255,.4))}
-.logo-text{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;letter-spacing:.04em;color:var(--accent);text-shadow:0 0 16px rgba(0,229,255,.4)}
-.preco-chip{display:flex;align-items:center;gap:5px;background:rgba(0,255,163,.07);border:1px solid rgba(0,255,163,.25);border-radius:20px;padding:3px 10px;cursor:pointer;transition:all .2s;user-select:none;flex-shrink:0}
-.preco-chip:hover{background:rgba(0,255,163,.12);border-color:rgba(0,255,163,.4)}
-.preco-chip-label{font-family:'DM Mono',monospace;font-size:.68rem;font-weight:700;color:var(--accent2)}
-.preco-chip-edit{display:none;align-items:center;gap:5px;background:rgba(0,255,163,.07);border:1px solid rgba(0,255,163,.4);border-radius:20px;padding:3px 8px;flex-shrink:0}
+.logo img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(0,212,255,.5))}
+.logo-text{
+  font-size:1rem;font-weight:800;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--cyan),var(--mint));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+.preco-chip{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(0,240,160,.08);
+  border:1px solid rgba(0,240,160,.25);
+  border-radius:30px;padding:5px 13px;
+  cursor:pointer;transition:all var(--t);flex-shrink:0;
+}
+.preco-chip:hover{background:rgba(0,240,160,.14);border-color:rgba(0,240,160,.5)}
+.preco-chip-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;color:var(--mint)}
+.preco-chip-edit{
+  display:none;align-items:center;gap:6px;
+  background:rgba(0,240,160,.08);border:1.5px solid rgba(0,240,160,.4);
+  border-radius:30px;padding:5px 10px;flex-shrink:0;
+}
 .preco-chip-edit.open{display:flex}
-.preco-chip-inp{background:transparent;border:none;color:var(--accent2);font-family:'DM Mono',monospace;font-size:.68rem;font-weight:700;outline:none;width:55px}
-.preco-chip-conf{background:var(--accent2);border:none;border-radius:10px;color:#080f1a;font-size:.58rem;font-weight:800;padding:2px 7px;cursor:pointer}
-.header-right{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
-#clock{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.06em}
-.badge-live{display:flex;align-items:center;gap:5px;font-size:.64rem;font-weight:600;color:var(--accent2);letter-spacing:.1em;text-transform:uppercase}
-.dot-live{width:7px;height:7px;border-radius:50%;background:var(--accent2);animation:pulse-live 1.6s ease-in-out infinite;box-shadow:0 0 8px var(--accent2);flex-shrink:0}
+.preco-chip-inp{
+  background:transparent;border:none;color:var(--mint);
+  font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+  outline:none;width:55px;
+}
+.preco-chip-conf{
+  background:var(--mint);border:none;border-radius:12px;
+  color:#05080f;font-size:.6rem;font-weight:800;padding:3px 8px;cursor:pointer;
+}
+
+.header-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:nowrap}
+#clock{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted)}
+.badge-live{
+  display:flex;align-items:center;gap:5px;
+  font-size:.63rem;font-weight:700;color:var(--mint);letter-spacing:.1em;
+}
+.dot-live{
+  width:7px;height:7px;border-radius:50%;background:var(--mint);
+  box-shadow:0 0 8px var(--mint);
+  animation:pulse-live 1.6s ease-in-out infinite;
+}
 @keyframes pulse-live{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
-.claude-badge{display:flex;align-items:center;gap:5px;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid;transition:all .6s ease}
-.claude-ok{color:#a78bfa;border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.09)}
+
+.claude-badge{
+  display:flex;align-items:center;gap:5px;
+  font-size:.62rem;font-weight:700;letter-spacing:.07em;
+  padding:4px 10px;border-radius:20px;border:1px solid;transition:all .6s;
+}
+.claude-ok{color:var(--purple);border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.09)}
 .claude-checking{color:var(--muted);border-color:rgba(90,122,149,.3);background:rgba(90,122,149,.06)}
-.claude-err{color:var(--danger);border-color:rgba(255,79,79,.35);background:rgba(255,79,79,.07)}
+.claude-err{color:var(--red);border-color:rgba(255,79,106,.35);background:rgba(255,79,106,.07)}
 .dot-claude{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:all .6s}
-.dot-ok{background:#a78bfa;animation:pulse-live 1.8s ease-in-out infinite;box-shadow:0 0 8px #a78bfa}
-.dot-chk{background:var(--muted)}.dot-err{background:var(--danger)}
-#cliente-nome{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;color:var(--accent2)}
-.btn-logout{font-size:.64rem;font-weight:700;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:color .2s,border-color .2s}
-.btn-logout:hover{color:var(--danger);border-color:var(--danger)}
-nav{position:relative;z-index:10;display:flex;padding:0 8px;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.dot-ok{background:var(--purple);animation:pulse-live 1.8s ease-in-out infinite;box-shadow:0 0 8px var(--purple)}
+.dot-chk{background:var(--muted)}.dot-err{background:var(--red)}
+
+#cliente-nome{
+  font-size:.75rem;font-weight:700;color:var(--mint);
+  background:rgba(0,240,160,.08);border:1px solid rgba(0,240,160,.2);
+  border-radius:20px;padding:4px 12px;
+}
+.btn-logout{
+  font-size:.65rem;font-weight:700;color:var(--muted);
+  background:transparent;border:1.5px solid var(--border);
+  border-radius:var(--radius-xs);padding:5px 12px;
+  cursor:pointer;letter-spacing:.05em;transition:all var(--t);
+}
+.btn-logout:hover{color:var(--red);border-color:var(--red)}
+
+/* ── NAV TABS ─────────────────────────────────────────── */
+nav{
+  position:relative;z-index:10;
+  display:flex;padding:0 16px;
+  border-bottom:1px solid rgba(30,48,80,.5);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  background:rgba(5,8,15,.6);backdrop-filter:blur(10px);
+}
 nav::-webkit-scrollbar{display:none}
-.tab-btn{font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:11px 14px;background:transparent;border:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;white-space:nowrap;flex-shrink:0}
-.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
-main{position:relative;z-index:5;padding:18px;max-width:1500px;margin:0 auto}
+.tab-btn{
+  font-size:.72rem;font-weight:700;letter-spacing:.04em;
+  padding:14px 16px;
+  background:transparent;border:none;color:var(--muted);
+  cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;
+  transition:color var(--t),border-color var(--t);white-space:nowrap;flex-shrink:0;
+  display:flex;align-items:center;gap:5px;
+}
+.tab-btn:hover{color:var(--text2)}
+.tab-btn.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+
+/* ── MAIN ─────────────────────────────────────────── */
+main{position:relative;z-index:5;padding:22px 24px;max-width:1600px;margin:0 auto}
 .tab-panel{display:none!important}.tab-panel.active{display:block!important}
-.section-title{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:10px}
-.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
-.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
-.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--glow)}
-.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);border-radius:14px 14px 0 0}
-.kpi-card.green::before{background:linear-gradient(90deg,var(--accent2),transparent)}
-.kpi-card.warn::before{background:linear-gradient(90deg,var(--warn),transparent)}
-.kpi-label{font-size:.62rem;font-weight:500;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
-.kpi-value{font-family:'Syne',sans-serif;font-size:1.45rem;font-weight:800;line-height:1}
-.kpi-value.accent{color:var(--accent)}.kpi-value.green{color:var(--accent2)}.kpi-value.warn{color:var(--warn)}.kpi-value.danger{color:var(--danger)}
-.kpi-sub{font-size:.6rem;color:var(--muted);margin-top:4px}
-.pl-aviso{background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.3);border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.pl-aviso-txt{flex:1;font-size:.76rem;color:var(--warn);line-height:1.5}
-.pl-aviso-btn{padding:7px 14px;background:var(--warn);border:none;border-radius:8px;color:#080f1a;font-family:'Syne',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer;white-space:nowrap}
-.viveiros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-bottom:18px}
-.viveiro-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;animation:fadeUp .4s ease both}
-.viveiro-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 0 30px rgba(0,229,255,.12)}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.viveiro-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;cursor:pointer;padding:4px;border-radius:8px;transition:background .15s;margin:-4px -4px 10px -4px}
-.viveiro-header:hover{background:rgba(0,229,255,.06)}
-.viveiro-name{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;letter-spacing:.04em;transition:color .15s}
-.viveiro-header:hover .viveiro-name{color:var(--accent)}
-.viveiro-status{font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase}
-.status-ativo{background:rgba(0,255,163,.12);color:var(--accent2);border:1px solid rgba(0,255,163,.3)}
-.status-alerta{background:rgba(255,179,0,.12);color:var(--warn);border:1px solid rgba(255,179,0,.3)}
-.viveiro-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.v-metric-label{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
-.v-metric-value{font-family:'DM Mono',monospace;font-size:.98rem;font-weight:500}
-.v-metric-value.accent{color:var(--accent)}.v-metric-value.warn{color:var(--warn)}.v-metric-value.green{color:var(--accent2)}
-.viveiro-bar-wrap{margin-top:12px;background:var(--border);border-radius:4px;height:4px;overflow:hidden}
-.viveiro-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 1.2s ease}
-.viveiro-bar-label{display:flex;justify-content:space-between;margin-top:4px;font-size:.57rem;color:var(--muted)}
-.dias-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:5px 10px;font-size:.66rem;color:var(--accent);font-family:'DM Mono',monospace}
-.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:18px}
+
+/* ── SECTION TITLE ─────────────────────────────────────────── */
+.section-title{
+  font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+
+/* ── KPI CARDS ─────────────────────────────────────────── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:22px}
+.kpi-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  position:relative;overflow:hidden;
+  transition:transform var(--t),box-shadow var(--t),border-color var(--t);
+  cursor:default;
+}
+.kpi-card:hover{transform:translateY(-3px);box-shadow:var(--glow-c);border-color:var(--border2)}
+.kpi-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+.kpi-card.c::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+.kpi-card.g::before{background:linear-gradient(90deg,var(--mint),transparent)}
+.kpi-card.w::before{background:linear-gradient(90deg,var(--amber),transparent)}
+.kpi-card.p::before{background:linear-gradient(90deg,var(--purple),transparent)}
+
+.kpi-emoji{font-size:1.6rem;margin-bottom:8px;display:block}
+.kpi-label{font-size:.63rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.kpi-value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;line-height:1}
+.kpi-value.c{color:var(--cyan)}.kpi-value.g{color:var(--mint)}.kpi-value.w{color:var(--amber)}.kpi-value.r{color:var(--red)}
+.kpi-sub{font-size:.6rem;color:var(--muted);margin-top:6px}
+
+/* ── AVISOS PL ─────────────────────────────────────────── */
+.pl-aviso{
+  background:rgba(255,184,48,.07);border:1px solid rgba(255,184,48,.3);
+  border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:16px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.pl-aviso-txt{flex:1;font-size:.76rem;color:var(--amber);line-height:1.5}
+.pl-aviso-btn{
+  padding:8px 16px;background:var(--amber);border:none;border-radius:var(--radius-xs);
+  color:#05080f;font-family:'Plus Jakarta Sans',sans-serif;font-size:.7rem;font-weight:800;
+  cursor:pointer;white-space:nowrap;transition:all var(--t);
+}
+.pl-aviso-btn:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(255,184,48,.3)}
+
+/* ── VIVEIRO CARDS ─────────────────────────────────────────── */
+.viveiros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;margin-bottom:22px}
+.viveiro-card{
+  background:var(--card);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  position:relative;overflow:hidden;
+  transition:all var(--t);
+  animation:fadeUp .45s cubic-bezier(.34,1.2,.64,1) both;
+}
+.viveiro-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:100%;
+  background:linear-gradient(135deg,rgba(0,212,255,.03),transparent 60%);
+  pointer-events:none;border-radius:var(--radius);
+}
+.viveiro-card:hover{
+  transform:translateY(-5px);
+  border-color:rgba(0,212,255,.4);
+  box-shadow:0 20px 50px rgba(0,212,255,.1);
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.viveiro-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;cursor:pointer;padding:6px 8px;border-radius:var(--radius-xs);
+  transition:background var(--t);margin:-6px -8px 14px -8px;
+}
+.viveiro-header:hover{background:rgba(0,212,255,.06)}
+.viveiro-name{font-size:.95rem;font-weight:800;letter-spacing:-.01em}
+.viveiro-header:hover .viveiro-name{color:var(--cyan)}
+.viveiro-status{
+  font-size:.6rem;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.07em;
+}
+.status-ativo{background:rgba(0,240,160,.12);color:var(--mint);border:1px solid rgba(0,240,160,.3)}
+.status-alerta{background:rgba(255,184,48,.12);color:var(--amber);border:1px solid rgba(255,184,48,.3)}
+
+/* 2-col highlight boxes */
+.viv-highlight{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.viv-hl-box{
+  border-radius:var(--radius-sm);padding:12px 14px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.viv-hl-box.c{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.18)}
+.viv-hl-box.g{background:rgba(0,240,160,.07);border:1px solid rgba(0,240,160,.18)}
+.viv-hl-emoji{font-size:1rem}
+.viv-hl-lbl{font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.viv-hl-val{font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700}
+.viv-hl-sub{font-size:.57rem;color:var(--muted)}
+
+/* metrics grid */
+.viv-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vm-row{background:rgba(0,0,0,.2);border-radius:var(--radius-xs);padding:9px 11px}
+.vm-label{font-size:.57rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.vm-value{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:500}
+.vm-value.c{color:var(--cyan)}.vm-value.g{color:var(--mint)}.vm-value.w{color:var(--amber)}.vm-value.r{color:var(--red)}
+
+/* progress bar */
+.viv-prog{margin-top:14px}
+.viv-prog-track{height:6px;background:rgba(30,48,80,.8);border-radius:10px;overflow:hidden}
+.viv-prog-bar{height:100%;border-radius:10px;transition:width 1.4s cubic-bezier(.16,1,.3,1)}
+.viv-prog-labels{display:flex;justify-content:space-between;margin-top:5px;font-size:.58rem;color:var(--muted)}
+
+/* dias badges */
+.dias-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.dias-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.2);
+  border-radius:var(--radius-xs);padding:5px 10px;
+  font-size:.65rem;color:var(--cyan);font-family:'JetBrains Mono',monospace;
+}
+.dias-badge.g{background:rgba(0,240,160,.07);border-color:rgba(0,240,160,.2);color:var(--mint)}
+
+/* PL badges */
+.pl-badge-reg{
+  font-size:.59rem;background:rgba(0,240,160,.1);border:1px solid rgba(0,240,160,.25);
+  border-radius:6px;padding:3px 8px;color:var(--mint);font-weight:600;
+}
+.pl-badge-sem{
+  font-size:.59rem;background:rgba(255,184,48,.1);border:1px solid rgba(255,184,48,.25);
+  border-radius:6px;padding:3px 8px;color:var(--amber);font-weight:600;cursor:pointer;
+  transition:all var(--t);
+}
+.pl-badge-sem:hover{background:rgba(255,184,48,.2)}
+
+/* action buttons */
+.v-actions-panel{
+  display:flex;gap:7px;margin-top:16px;padding-top:14px;
+  border-top:1px solid var(--border);flex-wrap:wrap;
+}
+.btn-action{
+  flex:1;min-width:70px;padding:8px 6px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.62rem;font-weight:700;
+  border:1.5px solid var(--border);border-radius:var(--radius-xs);
+  background:var(--surface);color:var(--text2);
+  cursor:pointer;transition:all var(--t);text-transform:uppercase;letter-spacing:.04em;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+}
+.btn-action:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,.06);transform:translateY(-1px)}
+.btn-action.warn:hover{border-color:var(--amber);color:var(--amber);background:rgba(255,184,48,.06)}
+.btn-action.danger:hover{border-color:var(--red);color:var(--red);background:rgba(255,79,106,.06)}
+
+/* ── TABLES ─────────────────────────────────────────── */
+.table-wrap{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;margin-bottom:22px;
+}
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.table-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
-.table-title{font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.05em}
+.table-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;
+}
+.table-title{font-size:.78rem;font-weight:700;letter-spacing:-.01em}
 table{width:100%;border-collapse:collapse;min-width:480px}
-thead th{font-family:'DM Mono',monospace;font-size:.58rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);white-space:nowrap}
-tbody tr{border-bottom:1px solid rgba(26,48,80,.5);transition:background .15s}
+thead th{
+  font-family:'JetBrains Mono',monospace;font-size:.58rem;font-weight:500;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.1em;
+  padding:10px 14px;text-align:left;
+  border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid rgba(30,48,80,.5);transition:background var(--t)}
 tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:rgba(0,229,255,.04)}
-tbody td{padding:9px 13px;font-size:.76rem;font-family:'DM Mono',monospace;white-space:nowrap}
-.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.6rem;font-weight:700;letter-spacing:.06em}
-.pill-green{background:rgba(0,255,163,.12);color:var(--accent2)}.pill-red{background:rgba(255,79,79,.12);color:var(--danger)}
-.pill-warn{background:rgba(255,179,0,.12);color:var(--warn)}.pill-blue{background:rgba(0,229,255,.12);color:var(--accent)}
-.estoque-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px;margin-bottom:18px}
-.est-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:15px 17px;transition:transform .2s}
-.est-card:hover{transform:translateY(-2px)}
-.est-card.critico{border-color:rgba(255,79,79,.4)}.est-card.baixo{border-color:rgba(255,179,0,.4)}.est-card.ok{border-color:rgba(0,255,163,.15)}
-.est-name{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;margin-bottom:5px}
-.est-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-top:4px}
-.est-row span:last-child{color:var(--text);font-family:'DM Mono',monospace}
-.est-bar-wrap{margin-top:9px;background:var(--border);border-radius:3px;height:3px}
-.est-bar{height:100%;border-radius:3px;transition:width 1s ease}
-.est-bar.ok{background:var(--accent2)}.est-bar.baixo{background:var(--warn)}.est-bar.critico{background:var(--danger)}
-.bio-chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:18px}
-.loading{text-align:center;padding:50px 20px;color:var(--muted);font-family:'DM Mono',monospace;font-size:.8rem}
-.loading-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin:0 3px;animation:bounce .8s ease-in-out infinite}
-.loading-dot:nth-child(2){animation-delay:.15s}.loading-dot:nth-child(3){animation-delay:.3s}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.error-msg{background:rgba(255,79,79,.08);border:1px solid rgba(255,79,79,.3);border-radius:10px;padding:13px 17px;color:var(--danger);font-size:.76rem;margin-bottom:13px}
-footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62rem;color:var(--muted);border-top:1px solid var(--border);font-family:'DM Mono',monospace;letter-spacing:.06em}
-::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-.v-actions-panel{display:flex;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap}
-.btn-action-html{flex:1;min-width:75px;padding:7px 5px;font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;gap:3px}
-.btn-action-html:hover{border-color:var(--accent);box-shadow:0 0 10px rgba(0,229,255,.2);transform:translateY(-1px)}
-.btn-action-html.danger-act:hover{border-color:var(--danger);color:var(--danger)}
-.btn-action-html.custo-act:hover{border-color:var(--warn);color:var(--warn)}
-.top-bar-est{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.btn-top{padding:8px 14px;font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;background:linear-gradient(135deg,var(--accent2),#00b072);border:none;color:#080f1a;border-radius:8px;cursor:pointer;transition:all .2s;text-transform:uppercase}
-.btn-top:hover{opacity:.9;transform:translateY(-1px)}
-.custo-kpi-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin-bottom:16px}
-.ckpi{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px 15px;position:relative;overflow:hidden}
-.ckpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.ckpi.w::before{background:linear-gradient(90deg,var(--warn),transparent)}
-.ckpi.a::before{background:linear-gradient(90deg,var(--accent),transparent)}
-.ckpi.g::before{background:linear-gradient(90deg,var(--accent2),transparent)}
-.ckpi-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-.ckpi-val{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800}
-.btn-rateio{padding:10px 20px;background:linear-gradient(135deg,var(--accent2),#00b072);border:none;border-radius:9px;color:#080f1a;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;transition:all .2s;text-transform:uppercase;display:inline-flex;align-items:center;gap:7px}
-.btn-rateio:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,255,163,.2)}
-.custo-viv-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;cursor:pointer;transition:transform .2s,border-color .25s,box-shadow .25s;animation:fadeUp .4s ease both}
-.custo-viv-card:hover{transform:translateY(-3px);border-color:var(--warn);box-shadow:0 0 24px rgba(255,179,0,.1)}
-.cvr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.cvr{background:rgba(0,0,0,.15);border-radius:7px;padding:8px 10px}
-.cvr-lbl{font-size:.57rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
-.cvr-val{font-family:'DM Mono',monospace;font-size:.82rem;font-weight:500}
-.modal-overlay{position:fixed;inset:0;background:rgba(4,8,15,.85);backdrop-filter:blur(4px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-box{background:var(--card);border:1px solid var(--border);border-radius:20px;width:100%;max-width:420px;padding:24px;box-shadow:0 0 40px rgba(0,229,255,.1);animation:fadeUp .3s ease}
-.modal-title{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;color:var(--accent);margin-bottom:16px;text-transform:uppercase;letter-spacing:.05em}
-.modal-buttons{display:flex;gap:10px;margin-top:20px}
-.btn-modal{flex:1;padding:11px;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;border-radius:8px;border:none;cursor:pointer;text-transform:uppercase;transition:all .2s}
-.btn-modal.confirm{background:var(--accent);color:#080f1a}.btn-modal.confirm:hover{opacity:.9}
-.btn-modal.cancel{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-modal.cancel:hover{color:var(--text)}
-.ia-config-bar{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
-.ia-cfg-grp{display:flex;flex-direction:column;gap:5px;flex:1;min-width:180px}
-.ia-cfg-lbl{font-size:.6rem;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
-.ia-cfg-inp{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 13px;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;outline:none;transition:border-color .2s;width:100%}
-.ia-cfg-inp:focus{border-color:var(--accent)}
-.btn-analisar{padding:10px 22px;background:linear-gradient(135deg,var(--accent),#0090a8);border:none;border-radius:9px;color:#080f1a;font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;white-space:nowrap}
-.btn-analisar:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,229,255,.2)}
+tbody tr:hover{background:rgba(0,212,255,.04)}
+tbody td{padding:10px 14px;font-size:.76rem;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:.6rem;font-weight:700;letter-spacing:.05em}
+.pill-g{background:rgba(0,240,160,.12);color:var(--mint)}.pill-r{background:rgba(255,79,106,.12);color:var(--red)}
+.pill-w{background:rgba(255,184,48,.12);color:var(--amber)}.pill-c{background:rgba(0,212,255,.12);color:var(--cyan)}
+
+/* ── ESTOQUE ─────────────────────────────────────────── */
+.estoque-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:22px}
+.est-card{
+  background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;transition:transform var(--t),border-color var(--t);
+}
+.est-card:hover{transform:translateY(-3px)}
+.est-card.critico{border-color:rgba(255,79,106,.4)}.est-card.baixo{border-color:rgba(255,184,48,.4)}.est-card.ok{border-color:rgba(0,240,160,.2)}
+.est-name{font-size:.82rem;font-weight:700;margin-bottom:6px}
+.est-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-top:5px}
+.est-row span:last-child{color:var(--text);font-family:'JetBrains Mono',monospace}
+.est-bar-wrap{margin-top:10px;background:rgba(30,48,80,.8);border-radius:4px;height:4px}
+.est-bar{height:100%;border-radius:4px;transition:width 1s ease}
+.est-bar.ok{background:var(--mint)}.est-bar.baixo{background:var(--amber)}.est-bar.critico{background:var(--red)}
+.est-btn-add{
+  margin-top:10px;width:100%;padding:7px;
+  background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.2);
+  border-radius:var(--radius-xs);color:var(--cyan);
+  font-size:.65rem;font-weight:700;cursor:pointer;transition:all var(--t);
+}
+.est-btn-add:hover{background:rgba(0,212,255,.15)}
+
+/* ── TOP BAR ─────────────────────────────────────────── */
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.btn-top{
+  padding:9px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem;font-weight:800;
+  background:linear-gradient(135deg,var(--mint),var(--mint2));border:none;color:#05080f;
+  border-radius:var(--radius-xs);cursor:pointer;transition:all var(--t);text-transform:uppercase;letter-spacing:.04em;
+  display:flex;align-items:center;gap:6px;
+}
+.btn-top:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,240,160,.3)}
+
+/* ── CUSTOS ─────────────────────────────────────────── */
+.custo-kpi-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.ckpi{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 17px;position:relative;overflow:hidden}
+.ckpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius-sm) var(--radius-sm) 0 0}
+.ckpi.w::before{background:linear-gradient(90deg,var(--amber),transparent)}
+.ckpi.c::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+.ckpi.g::before{background:linear-gradient(90deg,var(--mint),transparent)}
+.ckpi-emoji{font-size:1.2rem;margin-bottom:5px;display:block}
+.ckpi-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.ckpi-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700}
+
+.custo-viv-card{
+  background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;cursor:pointer;transition:all var(--t);animation:fadeUp .4s ease both;
+}
+.custo-viv-card:hover{transform:translateY(-3px);border-color:rgba(255,184,48,.4);box-shadow:0 12px 30px rgba(255,184,48,.08)}
+.cvr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.cvr{background:rgba(0,0,0,.15);border-radius:var(--radius-xs);padding:9px 11px}
+.cvr-lbl{font-size:.57rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.cvr-val{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:500}
+
+.btn-rateio{
+  padding:11px 22px;background:linear-gradient(135deg,var(--mint),var(--mint2));
+  border:none;border-radius:var(--radius-xs);color:#05080f;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:800;
+  cursor:pointer;transition:all var(--t);text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-rateio:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,240,160,.25)}
+
+/* ── IA TAB ─────────────────────────────────────────── */
+.ia-status-bar{
+  border-radius:var(--radius-sm);padding:12px 18px;margin-bottom:14px;
+  font-size:.76rem;display:flex;align-items:center;gap:10px;transition:all .6s;
+}
+.ia-chk{background:rgba(90,122,149,.06);border:1px solid rgba(90,122,149,.2)}
+.ia-online{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25)}
+.ia-err{background:rgba(255,79,106,.06);border:1px solid rgba(255,79,106,.22)}
+
+.ia-config-bar{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;margin-bottom:18px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;
+}
+.ia-cfg-grp{display:flex;flex-direction:column;gap:6px;flex:1;min-width:180px}
+.ia-cfg-lbl{font-size:.62rem;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.ia-cfg-inp{
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;
+  font-size:.82rem;outline:none;transition:border-color var(--t),box-shadow var(--t);width:100%;
+}
+.ia-cfg-inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.btn-analisar{
+  padding:11px 24px;background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+  border:none;border-radius:var(--radius-xs);color:#05080f;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.84rem;font-weight:800;
+  cursor:pointer;transition:all var(--t);display:flex;align-items:center;gap:8px;white-space:nowrap;
+}
+.btn-analisar:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,255,.3)}
 .btn-analisar:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.ia-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+
+.ia-semanal-info{
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.22);
+  border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:18px;
+  font-size:.76rem;color:var(--purple);display:flex;align-items:flex-start;gap:12px;
+  line-height:1.6;
+}
+.ia-preco-preview{font-size:.59rem;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace}
+
+.ia-tabs{
+  display:flex;border-bottom:1px solid rgba(30,48,80,.5);margin-bottom:18px;
+  overflow-x:auto;scrollbar-width:none;
+}
 .ia-tabs::-webkit-scrollbar{display:none}
-.ia-tab-btn{font-family:'Syne',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:9px 14px;background:transparent;border:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .2s,border-color .2s}
-.ia-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.ia-tab-btn{
+  font-size:.68rem;font-weight:700;letter-spacing:.05em;
+  padding:10px 16px;background:transparent;border:none;color:var(--muted);
+  cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;
+  white-space:nowrap;transition:all var(--t);
+}
+.ia-tab-btn.active{color:var(--cyan);border-bottom-color:var(--cyan)}
 .ia-tab-panel{display:none}.ia-tab-panel.active{display:block}
-.agents-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+
+/* Agents grid */
+.agents-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
 @media(max-width:1100px){.agents-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:680px){.agents-grid{grid-template-columns:1fr}}
-.agent-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;animation:fadeUp .4s ease both}
-.agent-hd{padding:13px 15px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.agent-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+
+.agent-card{
+  background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;display:flex;flex-direction:column;animation:fadeUp .4s ease both;
+  transition:border-color var(--t),transform var(--t);
+}
+.agent-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.agent-hd{
+  padding:14px 16px 12px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+}
+.agent-icon{
+  width:40px;height:40px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;
+}
 .agent-meta{flex:1;min-width:0}
-.agent-name{font-family:'Syne',sans-serif;font-size:.76rem;font-weight:800}
-.agent-spec{font-size:.59rem;color:var(--muted);margin-top:1px}
-.agent-status{font-size:.57rem;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.07em;text-transform:uppercase;flex-shrink:0}
+.agent-name{font-size:.78rem;font-weight:800;letter-spacing:-.01em}
+.agent-spec{font-size:.6rem;color:var(--muted);margin-top:2px}
+.agent-status{
+  font-size:.58rem;font-weight:700;padding:3px 9px;border-radius:20px;
+  letter-spacing:.06em;text-transform:uppercase;flex-shrink:0;
+}
 .st-idle{background:rgba(90,122,149,.15);color:var(--muted);border:1px solid rgba(90,122,149,.3)}
-.st-run{background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.3);animation:blink .8s ease infinite}
-.st-ok{background:rgba(0,255,163,.1);color:var(--accent2);border:1px solid rgba(0,255,163,.3)}
-.st-warn{background:rgba(255,179,0,.1);color:var(--warn);border:1px solid rgba(255,179,0,.3)}
-.st-crit{background:rgba(255,79,79,.1);color:var(--danger);border:1px solid rgba(255,79,79,.3)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-.agent-body{padding:13px 15px;flex:1}
-.agent-output{font-size:.75rem;line-height:1.65;white-space:pre-wrap;word-break:break-word}
-.agent-score{margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:7px;display:flex;align-items:center;justify-content:space-between}
-.score-lbl{font-size:.59rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
-.score-val{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800}
-.shim{background:linear-gradient(90deg,var(--border)25%,rgba(26,48,80,.8)50%,var(--border)75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:5px;height:11px;margin-bottom:7px}
+.st-run{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);animation:blink .8s ease infinite}
+.st-ok{background:rgba(0,240,160,.1);color:var(--mint);border:1px solid rgba(0,240,160,.3)}
+.st-warn{background:rgba(255,184,48,.1);color:var(--amber);border:1px solid rgba(255,184,48,.3)}
+.st-crit{background:rgba(255,79,106,.1);color:var(--red);border:1px solid rgba(255,79,106,.3)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.agent-body{padding:14px 16px;flex:1}
+.agent-output{font-size:.76rem;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.agent-score{
+  margin-top:12px;padding:10px 13px;background:rgba(0,0,0,.2);
+  border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:space-between;
+}
+.score-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.score-val{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700}
+
+/* Skeleton */
+.shim{
+  background:linear-gradient(90deg,var(--border) 25%,rgba(30,48,80,.8) 50%,var(--border) 75%);
+  background-size:200% 100%;animation:shim 1.4s infinite;border-radius:6px;height:11px;margin-bottom:8px;
+}
 @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.master-card{background:var(--card);border:1px solid var(--accent);border-radius:18px;overflow:hidden;margin-bottom:18px;box-shadow:0 0 40px rgba(0,229,255,.07)}
-.master-hd{padding:16px 20px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,229,255,.05),transparent);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.master-title{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;color:var(--accent)}
-.master-meta{font-size:.63rem;color:var(--muted);margin-top:2px}
-.master-body{padding:20px}
-.master-output{font-size:.79rem;line-height:1.75;white-space:pre-wrap;word-break:break-word}
-.fin-card{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:8px;padding:11px 13px}
-.fin-lbl{font-size:.57rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
-.fin-val{font-family:'DM Mono',monospace;font-size:.88rem;font-weight:500}
-.fv-g{color:var(--accent2)}.fv-w{color:var(--warn)}.fv-a{color:var(--accent)}.fv-d{color:var(--danger)}
-.fazenda-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(144px,1fr));gap:9px;margin-bottom:16px}
-.fkpi{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 15px;position:relative;overflow:hidden}
-.fkpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.fkpi.a::before{background:linear-gradient(90deg,var(--accent),transparent)}
-.fkpi.g::before{background:linear-gradient(90deg,var(--accent2),transparent)}
-.fkpi.w::before{background:linear-gradient(90deg,var(--warn),transparent)}
-.fkpi-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.fkpi-val{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;line-height:1}
-.ia-semanal-info{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:11px;padding:12px 16px;margin-bottom:16px;font-size:.75rem;color:#a78bfa;display:flex;align-items:flex-start;gap:10px}
-.ia-status-bar{border-radius:11px;padding:11px 16px;margin-bottom:12px;font-size:.74rem;display:flex;align-items:center;gap:10px;transition:all .6s}
-.ia-chk{background:rgba(90,122,149,.06);border:1px solid rgba(90,122,149,.2)}
-.ia-online{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.25)}
-.ia-err{background:rgba(255,79,79,.06);border:1px solid rgba(255,79,79,.22)}
-.no-data{border-radius:14px;padding:36px 24px;text-align:center}
-.no-data.wait{background:rgba(90,122,149,.07);border:1px solid rgba(90,122,149,.2)}
-.no-data-icon{font-size:2rem;margin-bottom:12px}
-.no-data-title{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;margin-bottom:8px}
-.no-data-desc{font-size:.76rem;color:var(--muted);line-height:1.6}
-.ia-preco-preview{font-size:.58rem;color:var(--muted);margin-top:3px;font-family:'DM Mono',monospace}
-.viv-sum{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+
+/* Master card */
+.master-card{
+  background:var(--card);border:1.5px solid rgba(0,212,255,.25);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:20px;box-shadow:0 0 50px rgba(0,212,255,.06);
+}
+.master-hd{
+  padding:18px 22px;border-bottom:1px solid var(--border);
+  background:linear-gradient(90deg,rgba(0,212,255,.06),transparent);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.master-title{font-size:.9rem;font-weight:800;color:var(--cyan);letter-spacing:-.01em}
+.master-meta{font-size:.64rem;color:var(--muted);margin-top:3px}
+.master-body{padding:22px}
+.master-output{font-size:.8rem;line-height:1.8;white-space:pre-wrap;word-break:break-word}
+
+/* Fin cards */
+.fin-card{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:var(--radius-xs);padding:12px 14px}
+.fin-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.fin-val{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:500}
+.fv-g{color:var(--mint)}.fv-w{color:var(--amber)}.fv-c{color:var(--cyan)}.fv-r{color:var(--red)}
+
+/* fazenda kpis */
+.fazenda-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.fkpi{
+  background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px 16px;position:relative;overflow:hidden;
+}
+.fkpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius-sm) var(--radius-sm) 0 0}
+.fkpi.c::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+.fkpi.g::before{background:linear-gradient(90deg,var(--mint),transparent)}
+.fkpi.w::before{background:linear-gradient(90deg,var(--amber),transparent)}
+.fkpi-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.fkpi-val{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;line-height:1}
+
+.no-data{border-radius:var(--radius);padding:44px 28px;text-align:center}
+.no-data.wait{background:rgba(90,122,149,.05);border:1px solid rgba(90,122,149,.15)}
+.no-data-icon{font-size:2.5rem;margin-bottom:14px}
+.no-data-title{font-size:.92rem;font-weight:800;margin-bottom:8px}
+.no-data-desc{font-size:.78rem;color:var(--muted);line-height:1.6}
+
+/* viv summary */
+.viv-sum{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:15px}
 .viv-sum-rows{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
-.vsr{background:rgba(0,0,0,.15);border-radius:6px;padding:7px 9px}
+.vsr{background:rgba(0,0,0,.15);border-radius:6px;padding:8px 10px}
 .vsr-lbl{font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.vsr-val{font-family:'DM Mono',monospace;font-size:.78rem;margin-top:2px}
-.acoes-list{list-style:none}
-.acoes-list li{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border-bottom:1px solid rgba(26,48,80,.5);font-size:.74rem}
-.acoes-list li:last-child{border-bottom:none}
-.acao-num{width:20px;height:20px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.62rem;font-weight:700;background:rgba(0,229,255,.1);color:var(--accent);margin-top:1px}
-.pl-badge-reg{font-size:.58rem;background:rgba(0,255,163,.1);border:1px solid rgba(0,255,163,.25);border-radius:5px;padding:2px 7px;color:var(--accent2)}
-.pl-badge-sem{font-size:.58rem;background:rgba(255,179,0,.1);border:1px solid rgba(255,179,0,.25);border-radius:5px;padding:2px 7px;color:var(--warn);cursor:pointer}
-.rat-check-lbl{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:background .15s,border-color .15s;margin-bottom:6px}
-.rat-check-lbl:hover{background:rgba(0,229,255,.04);border-color:rgba(0,229,255,.2)}
-.rat-preview{background:rgba(0,255,163,.07);border:1px solid rgba(0,255,163,.25);border-radius:9px;padding:11px 14px;margin-top:10px}
-@media print{body>*:not(#pdf-wrap){display:none!important}#pdf-wrap{display:block!important;position:fixed;inset:0;background:#fff;padding:32px;color:#111;font-family:Arial,sans-serif}.pdf-logo{font-size:1.2rem;font-weight:900;color:#006080;margin-bottom:4px}.pdf-sub{font-size:.75rem;color:#666;margin-bottom:20px}.pdf-titulo{font-size:1.1rem;font-weight:800;color:#003040;border-bottom:2px solid #006080;padding-bottom:6px;margin-bottom:16px}.pdf-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}.pdf-cell{border:1px solid #ccc;border-radius:6px;padding:10px 12px}.pdf-cell-lbl{font-size:.62rem;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}.pdf-cell-val{font-size:1rem;font-weight:700;color:#003040}.pdf-cell-val.verde{color:#008060}.pdf-cell-val.vermelho{color:#c00}.pdf-footer{font-size:.62rem;color:#999;margin-top:20px;text-align:center;border-top:1px solid #eee;padding-top:10px}}
+.vsr-val{font-family:'JetBrains Mono',monospace;font-size:.78rem;margin-top:2px}
+
+/* ── MODALS ─────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(3,5,10,.88);backdrop-filter:blur(8px);
+  z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-box{
+  background:var(--card);border:1.5px solid var(--border2);border-radius:28px;
+  width:100%;max-width:440px;padding:28px;
+  box-shadow:0 0 60px rgba(0,212,255,.1);animation:fadeUp .3s cubic-bezier(.34,1.2,.64,1);
+}
+.modal-title{
+  font-size:.9rem;font-weight:800;color:var(--cyan);margin-bottom:18px;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.modal-field{margin-bottom:15px}
+.modal-field label{
+  display:block;font-size:.65rem;font-weight:700;color:var(--muted);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;
+}
+.modal-field input,.modal-field select{
+  width:100%;background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 15px;color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:.88rem;outline:none;
+  transition:border-color var(--t),box-shadow var(--t);
+}
+.modal-field input:focus,.modal-field select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.modal-btns{display:flex;gap:10px;margin-top:22px}
+.btn-modal{
+  flex:1;padding:12px;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.78rem;font-weight:700;border-radius:var(--radius-xs);border:none;cursor:pointer;
+  text-transform:uppercase;transition:all var(--t);letter-spacing:.04em;
+}
+.btn-confirm{background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#05080f}
+.btn-confirm:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,212,255,.3)}
+.btn-cancel{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+.btn-cancel:hover{color:var(--text);border-color:var(--border2)}
+
+/* Rateio */
+.rat-check-lbl{
+  display:flex;align-items:center;gap:10px;padding:10px 13px;
+  border-radius:var(--radius-xs);border:1.5px solid var(--border);cursor:pointer;
+  transition:all var(--t);margin-bottom:6px;
+}
+.rat-check-lbl:hover{background:rgba(0,212,255,.04);border-color:rgba(0,212,255,.2)}
+.rat-preview{
+  background:rgba(0,240,160,.06);border:1px solid rgba(0,240,160,.22);
+  border-radius:var(--radius-xs);padding:12px 15px;margin-top:12px;
+}
+
+/* Loading dots */
+.loading{text-align:center;padding:50px 20px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.8rem}
+.loading-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--cyan);margin:0 3px;animation:bounce .8s ease-in-out infinite}
+.loading-dot:nth-child(2){animation-delay:.16s}.loading-dot:nth-child(3){animation-delay:.32s}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+.error-msg{
+  background:rgba(255,79,106,.08);border:1px solid rgba(255,79,106,.3);
+  border-radius:var(--radius-xs);padding:13px 18px;color:var(--red);font-size:.76rem;margin-bottom:14px;
+}
+footer{
+  position:relative;z-index:5;text-align:center;padding:14px;
+  font-size:.62rem;color:var(--muted);border-top:1px solid rgba(30,48,80,.5);
+  font-family:'JetBrains Mono',monospace;letter-spacing:.07em;
+  background:rgba(5,8,15,.6);
+}
+
+/* bio chart */
+.bio-chart-wrap{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;margin-bottom:22px;
+}
+
+/* PDF print */
 #pdf-wrap{display:none}
-@media(max-width:600px){header{padding:10px 12px;gap:6px}.logo-text{font-size:.8rem}#clock,#cliente-nome,.claude-badge{display:none}nav{padding:0 2px}.tab-btn{padding:10px 11px;font-size:.65rem}main{padding:12px 10px}.kpi-grid{grid-template-columns:1fr 1fr;gap:8px}.kpi-value{font-size:1.2rem}.viveiros-grid{grid-template-columns:1fr}.estoque-grid{grid-template-columns:1fr 1fr;gap:8px}.agents-grid{grid-template-columns:1fr}.preco-chip{display:none}}
-@media(max-width:380px){.kpi-grid{grid-template-columns:1fr}.estoque-grid{grid-template-columns:1fr}}
+@media print{
+  body>*:not(#pdf-wrap){display:none!important}
+  #pdf-wrap{display:block!important;position:fixed;inset:0;background:#fff;padding:32px;color:#111;font-family:Arial,sans-serif}
+  .pdf-logo{font-size:1.2rem;font-weight:900;color:#006080;margin-bottom:4px}
+  .pdf-sub{font-size:.75rem;color:#666;margin-bottom:20px}
+  .pdf-titulo{font-size:1.1rem;font-weight:800;color:#003040;border-bottom:2px solid #006080;padding-bottom:6px;margin-bottom:16px}
+  .pdf-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+  .pdf-cell{border:1px solid #ccc;border-radius:6px;padding:10px 12px}
+  .pdf-cell-lbl{font-size:.62rem;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+  .pdf-cell-val{font-size:1rem;font-weight:700;color:#003040}
+  .pdf-cell-val.verde{color:#008060}.pdf-cell-val.vermelho{color:#c00}
+  .pdf-footer{font-size:.62rem;color:#999;margin-top:20px;text-align:center;border-top:1px solid #eee;padding-top:10px}
+}
+
+/* Responsive */
+@media(max-width:600px){
+  header{padding:10px 14px;gap:6px}
+  .logo-text{font-size:.85rem}
+  #clock,#cliente-nome,.claude-badge{display:none}
+  nav{padding:0 4px}
+  .tab-btn{padding:12px 12px;font-size:.66rem}
+  main{padding:14px 12px}
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .kpi-value{font-size:1.2rem}
+  .viveiros-grid{grid-template-columns:1fr}
+  .estoque-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .agents-grid{grid-template-columns:1fr}
+  .preco-chip{display:none}
+}
+@media(max-width:380px){
+  .kpi-grid{grid-template-columns:1fr}
+  .estoque-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<a id="btn-adm" href="adm.html" target="_blank" style="position:fixed;top:14px;left:14px;z-index:1001;background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.22);border-radius:7px;padding:5px 10px;font-size:.62rem;font-weight:700;color:rgba(255,107,53,.55);letter-spacing:.08em;cursor:pointer;transition:all .25s;text-decoration:none;font-family:'DM Sans',sans-serif;display:none">⚙️ ADM</a>
+<a id="btn-adm" href="adm.html" target="_blank" style="position:fixed;top:14px;left:14px;z-index:1001;background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.22);border-radius:7px;padding:5px 10px;font-size:.62rem;font-weight:700;color:rgba(255,107,53,.55);letter-spacing:.08em;cursor:pointer;transition:all .25s;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;display:none">⚙️ ADM</a>
 <div id="pdf-wrap"></div>
+
+<!-- ══════════ LOGIN ══════════ -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
       <img id="login-img" src="https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png" alt="logo" onerror="this.style.display='none';document.getElementById('logo-fb').style.display='block'">
-      <span id="logo-fb" style="display:none;font-size:2.8rem">🦐</span>
-      <div class="login-brand">Tecnologia que cultiva resultados</div>
-      <div class="login-sub">Painel de Controle</div>
+      <span id="logo-fb" style="display:none;font-size:3.2rem">🦐</span>
+      <div class="login-brand">AquaShrimpTech</div>
+      <div class="login-sub">Painel de Controle 🚀</div>
     </div>
-    <div class="login-field"><label>Usuário</label><input type="text" id="inp-usuario" placeholder="seu usuário" autocomplete="username"></div>
-    <div class="login-field"><label>Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"></div>
-    <button class="login-btn" onclick="fazerLogin()">Entrar</button>
-    <div class="login-error" id="login-error">Usuário ou senha incorretos.</div>
+    <div class="login-field"><label>👤 Usuário</label><input type="text" id="inp-usuario" placeholder="seu usuário" autocomplete="username"></div>
+    <div class="login-field"><label>🔒 Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="login-btn" onclick="fazerLogin()">✨ Entrar no Painel</button>
+    <div class="login-error" id="login-error">⚠️ Usuário ou senha incorretos.</div>
   </div>
 </div>
+
+<!-- ══════════ APP ══════════ -->
 <div id="app">
+
 <header>
   <div class="logo">
     <img id="hdr-logo" src="https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/logo.png" alt="logo" style="display:none" onerror="this.style.display='none'">
-    <span class="logo-text">AquaShrimpTech</span>
+    <span class="logo-text">🦐 AquaShrimpTech</span>
   </div>
   <div id="preco-chip" class="preco-chip" onclick="abrirChipPreco()" title="Editar preço base">
     <span class="preco-chip-label" id="preco-chip-lbl">💰 R$19,00/kg</span>
     <span style="font-size:.6rem;color:var(--muted)">✏️</span>
   </div>
   <div id="preco-chip-edit" class="preco-chip-edit">
-    <span style="font-size:.65rem;color:var(--accent2);font-weight:700">R$</span>
+    <span style="font-size:.65rem;color:var(--mint);font-weight:700">R$</span>
     <input class="preco-chip-inp" id="preco-chip-inp" type="number" step="0.5" min="1" value="19">
     <span style="font-size:.62rem;color:var(--muted)">/kg</span>
     <button class="preco-chip-conf" onclick="confirmarChipPreco()">OK</button>
@@ -278,9 +781,10 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
       <div class="dot-claude dot-chk" id="claude-dot"></div>
       <span id="claude-txt">CLAUDE</span>
     </div>
-    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+    <button class="btn-logout" onclick="fazerLogout()">👋 Sair</button>
   </div>
 </header>
+
 <nav>
   <button class="tab-btn active" onclick="switchTab('painel',this)">📊 Painel</button>
   <button class="tab-btn" onclick="switchTab('biometria',this)">⚖️ Biometria</button>
@@ -289,68 +793,80 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
   <button class="tab-btn" onclick="switchTab('custos',this)">💸 Custos</button>
   <button class="tab-btn" onclick="switchTab('ia',this)">🤖 Agentes IA</button>
 </nav>
+
 <main>
+  <!-- ─── PAINEL ─── -->
   <div id="tab-painel" class="tab-panel active">
     <div id="pl-avisos-wrap"></div>
-    <div class="section-title">Resumo Geral</div>
+    <div class="section-title">🌊 Resumo Geral</div>
     <div class="kpi-grid" id="kpi-geral"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
-    <div class="section-title">Viveiros em Produção</div>
+    <div class="section-title">🦐 Viveiros em Produção</div>
     <div class="viveiros-grid" id="viveiros-grid"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
   </div>
+
+  <!-- ─── BIOMETRIA ─── -->
   <div id="tab-biometria" class="tab-panel">
-    <div class="section-title">Evolução de Crescimento</div>
-    <div class="bio-chart-wrap" style="max-width:900px;margin:0 auto 18px auto">
-      <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:10px">
-        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:.68rem;color:var(--muted)">
-          <input type="checkbox" id="toggle-curva" onchange="renderBiometria()" style="accent-color:var(--accent);width:14px;height:14px;cursor:pointer">
+    <div class="section-title">📈 Evolução de Crescimento</div>
+    <div class="bio-chart-wrap" style="max-width:900px;margin:0 auto 22px auto">
+      <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:12px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.7rem;color:var(--muted)">
+          <input type="checkbox" id="toggle-curva" onchange="renderBiometria()" style="accent-color:var(--cyan);width:14px;height:14px;cursor:pointer">
           <span id="toggle-curva-lbl">Mostrar curva esperada L. vannamei</span>
         </label>
       </div>
       <canvas id="bioChart" height="250"></canvas>
     </div>
     <div class="table-wrap">
-      <div class="table-head"><span class="table-title">Registros de Biometria</span></div>
+      <div class="table-head"><span class="table-title">⚖️ Registros de Biometria</span></div>
       <div class="table-scroll"><table><thead id="bio-thead"></thead><tbody id="bio-tbody"></tbody></table></div>
     </div>
   </div>
+
+  <!-- ─── HISTÓRICO ─── -->
   <div id="tab-historico" class="tab-panel">
-    <div class="section-title">Cultivos Finalizados</div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <span id="hist-titulo" style="font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700"></span>
-      <span id="lucro-acum" class="pill pill-green"></span>
+    <div class="section-title">🏆 Cultivos Finalizados</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <span id="hist-titulo" style="font-size:.88rem;font-weight:800"></span>
+      <span id="lucro-acum" class="pill"></span>
     </div>
     <div id="hist-container"></div>
   </div>
+
+  <!-- ─── ESTOQUE ─── -->
   <div id="tab-estoque" class="tab-panel">
-    <div class="top-bar-est">
-      <div class="section-title" style="margin-bottom:0;flex:1">Situação dos Insumos</div>
+    <div class="top-bar">
+      <div class="section-title" style="margin-bottom:0;flex:1">🏭 Situação dos Insumos</div>
       <button class="btn-top" onclick="abrirModalNovoInsumo()">➕ Novo Item</button>
     </div>
     <div class="kpi-grid" id="kpi-estoque"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
     <div class="estoque-grid" id="estoque-grid"></div>
   </div>
+
+  <!-- ─── CUSTOS ─── -->
   <div id="tab-custos" class="tab-panel">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-      <div class="section-title" style="margin-bottom:0;flex:1">Custos dos Ciclos Ativos</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0;flex:1">💸 Custos dos Ciclos Ativos</div>
       <button class="btn-rateio" onclick="abrirModalCustoRateado()">➕ Lançar Custo Rateado</button>
     </div>
     <div class="custo-kpi-bar">
-      <div class="ckpi w"><div class="ckpi-lbl">Custo Total</div><div class="ckpi-val" id="ckpi-total" style="color:var(--warn)">—</div></div>
-      <div class="ckpi a"><div class="ckpi-lbl">Custo Médio/kg</div><div class="ckpi-val" id="ckpi-cpkg" style="color:var(--accent)">—</div></div>
-      <div class="ckpi g"><div class="ckpi-lbl">Est. Ração (~72%)</div><div class="ckpi-val" id="ckpi-racao" style="color:var(--accent2)">—</div></div>
-      <div class="ckpi g"><div class="ckpi-lbl">Est. Custos Fixos (~10%)</div><div class="ckpi-val" id="ckpi-fixos" style="color:var(--muted)">—</div></div>
+      <div class="ckpi w"><span class="ckpi-emoji">💰</span><div class="ckpi-lbl">Custo Total</div><div class="ckpi-val" id="ckpi-total" style="color:var(--amber)">—</div></div>
+      <div class="ckpi c"><span class="ckpi-emoji">⚖️</span><div class="ckpi-lbl">Custo Médio/kg</div><div class="ckpi-val" id="ckpi-cpkg" style="color:var(--cyan)">—</div></div>
+      <div class="ckpi g"><span class="ckpi-emoji">🍽️</span><div class="ckpi-lbl">Est. Ração (~72%)</div><div class="ckpi-val" id="ckpi-racao" style="color:var(--mint)">—</div></div>
+      <div class="ckpi g"><span class="ckpi-emoji">🏗️</span><div class="ckpi-lbl">Est. Fixos (~10%)</div><div class="ckpi-val" id="ckpi-fixos" style="color:var(--muted)">—</div></div>
     </div>
-    <div class="section-title">Clique para ver o detalhamento completo</div>
+    <div class="section-title">🔍 Clique para ver o detalhamento completo</div>
     <div class="viveiros-grid" id="custos-grid"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
   </div>
+
+  <!-- ─── IA ─── -->
   <div id="tab-ia" class="tab-panel">
     <div class="ia-status-bar ia-chk" id="ia-status-bar">
       <span id="ia-status-icon">🔵</span>
       <div id="ia-status-msg" style="color:var(--muted)">Verificando conexão com Claude API...</div>
     </div>
     <div class="ia-config-bar">
-      <div class="ia-cfg-grp" style="max-width:220px">
-        <div class="ia-cfg-lbl">📋 Preço base (R$/kg @ 10g)</div>
+      <div class="ia-cfg-grp" style="max-width:240px">
+        <div class="ia-cfg-lbl">💰 Preço base (R$/kg @ 10g)</div>
         <input class="ia-cfg-inp" type="number" id="ia-tabela-preco" value="19" step="0.5" min="1" oninput="sincronizarPrecoChip()">
         <div class="ia-preco-preview" id="ia-preco-prev">10g→R$19,00 · 15g→R$24,00 · 20g→R$29,00</div>
       </div>
@@ -359,10 +875,10 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
       </button>
     </div>
     <div class="ia-semanal-info">
-      <span>🤖</span>
+      <span style="font-size:1.2rem">🤖</span>
       <div>
         <div><strong style="color:#c4b5fd">Análise local instantânea:</strong> usa os dados reais dos seus viveiros, sem consumir créditos da API.</div>
-        <div style="margin-top:4px;color:rgba(167,139,250,.7);font-size:.68rem">📅 Análise completa com Claude IA: toda segunda-feira às 07:00 pelo servidor.</div>
+        <div style="margin-top:4px;color:rgba(167,139,250,.65);font-size:.68rem">📅 Análise completa com Claude IA: toda segunda-feira às 07:00 pelo servidor.</div>
       </div>
     </div>
     <div class="ia-tabs">
@@ -377,123 +893,144 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
     <div class="ia-tab-panel" id="ia-tab-financeiro"><div class="no-data wait"><div class="no-data-icon">💰</div><div class="no-data-title" style="color:var(--muted)">Painel financeiro</div><div class="no-data-desc">Clique em Analisar Fazenda para carregar projeções.</div></div></div>
   </div>
 </main>
-<footer>AQUASHRIMPTECH · PAINEL EXECUTIVO · ATUALIZADO VIA ESP32 + TELEGRAM</footer>
+
+<footer>🦐 AQUASHRIMPTECH · PAINEL EXECUTIVO · ATUALIZADO VIA ESP32 + TELEGRAM</footer>
 </div>
 
-<!-- MODAIS -->
-<div id="modal-desbaste" class="modal-overlay"><div class="modal-box">
-  <div class="modal-title">🔱 Desbaste — <span class="mvn"></span></div>
-  <div class="login-field"><label>Quantidade (kg)</label><input type="number" id="desb-kg" step="0.01" placeholder="Ex: 150.50"></div>
-  <div class="login-field"><label>Valor Recebido (R$)</label><input type="number" id="desb-valor" step="0.01" placeholder="Ex: 3200.00"></div>
-  <div class="login-field"><label>Dias de Ciclo</label><input type="number" id="desb-dias" placeholder="Ex: 55"></div>
-  <div class="login-field"><label>Senha de Confirmação</label><input type="password" id="desb-senha"></div>
-  <div class="modal-buttons"><button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal confirm" onclick="executarDesbaste()">Salvar</button></div>
-</div></div>
+<!-- ══════════ MODAIS ══════════ -->
+<div id="modal-desbaste" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🔱 Desbaste — <span class="mvn"></span></div>
+    <div class="modal-field"><label>Quantidade (kg)</label><input type="number" id="desb-kg" step="0.01" placeholder="Ex: 150.50"></div>
+    <div class="modal-field"><label>Valor Recebido (R$)</label><input type="number" id="desb-valor" step="0.01" placeholder="Ex: 3200.00"></div>
+    <div class="modal-field"><label>Dias de Ciclo</label><input type="number" id="desb-dias" placeholder="Ex: 55"></div>
+    <div class="modal-field"><label>🔒 Senha de Confirmação</label><input type="password" id="desb-senha"></div>
+    <div class="modal-btns"><button class="btn-modal btn-cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal btn-confirm" onclick="executarDesbaste()">✅ Salvar</button></div>
+  </div>
+</div>
 
-<div id="modal-despesca" class="modal-overlay"><div class="modal-box">
-  <div class="modal-title">🎣 Despesca Final — <span class="mvn"></span></div>
-  <div class="login-field"><label>Total Vendido (kg)</label><input type="number" id="desp-kg" step="0.01" placeholder="Ex: 1200.00"></div>
-  <div class="login-field"><label>Valor Total Recebido (R$)</label><input type="number" id="desp-valor" step="0.01" placeholder="Ex: 28000.00"></div>
-  <div class="login-field"><label>Custo Estimado da Ração (R$)</label><input type="number" id="desp-cracao" step="0.01" placeholder="Da planilha de custos"></div>
-  <div class="login-field"><label>Custo Adicional Lançado (R$)</label><input type="number" id="desp-cadic" step="0.01" placeholder="Da planilha de custos"></div>
-  <div class="login-field"><label>Dias Totais de Ciclo</label><input type="number" id="desp-dias" placeholder="Ex: 85"></div>
-  <div class="login-field"><label>Senha de Confirmação</label><input type="password" id="desp-senha"></div>
-  <div class="modal-buttons"><button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal confirm" onclick="executarDespesca()">Finalizar e Gerar PDF</button></div>
-</div></div>
+<div id="modal-despesca" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🎣 Despesca Final — <span class="mvn"></span></div>
+    <div class="modal-field"><label>Total Vendido (kg)</label><input type="number" id="desp-kg" step="0.01" placeholder="Ex: 1200.00"></div>
+    <div class="modal-field"><label>Valor Total Recebido (R$)</label><input type="number" id="desp-valor" step="0.01" placeholder="Ex: 28000.00"></div>
+    <div class="modal-field"><label>Custo Estimado da Ração (R$)</label><input type="number" id="desp-cracao" step="0.01" placeholder="Da planilha de custos"></div>
+    <div class="modal-field"><label>Custo Adicional Lançado (R$)</label><input type="number" id="desp-cadic" step="0.01" placeholder="Da planilha de custos"></div>
+    <div class="modal-field"><label>Dias Totais de Ciclo</label><input type="number" id="desp-dias" placeholder="Ex: 85"></div>
+    <div class="modal-field"><label>🔒 Senha de Confirmação</label><input type="password" id="desp-senha"></div>
+    <div class="modal-btns"><button class="btn-modal btn-cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal btn-confirm" onclick="executarDespesca()">🎣 Finalizar + PDF</button></div>
+  </div>
+</div>
 
-<div id="modal-limpar" class="modal-overlay"><div class="modal-box">
-  <div class="modal-title">🗑️ Limpar Ciclo — <span class="mvn"></span></div>
-  <p style="font-size:.8rem;color:var(--danger);margin-bottom:15px;font-weight:600">⚠️ Esta ação apagará todos os dados do ciclo ativo!</p>
-  <div class="login-field"><label>Senha de Confirmação</label><input type="password" id="limpar-senha"></div>
-  <div class="modal-buttons"><button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal confirm" style="background:var(--danger);color:white" onclick="executarLimparCiclo()">Zerar Ciclo</button></div>
-</div></div>
+<div id="modal-limpar" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🗑️ Limpar Ciclo — <span class="mvn"></span></div>
+    <p style="font-size:.8rem;color:var(--red);margin-bottom:16px;font-weight:600;line-height:1.5">⚠️ Esta ação apagará todos os dados do ciclo ativo! Esta operação é irreversível.</p>
+    <div class="modal-field"><label>🔒 Senha de Confirmação</label><input type="password" id="limpar-senha"></div>
+    <div class="modal-btns"><button class="btn-modal btn-cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal btn-confirm" style="background:linear-gradient(135deg,var(--red),#c4002f);color:white" onclick="executarLimparCiclo()">🗑️ Zerar Ciclo</button></div>
+  </div>
+</div>
 
-<div id="modal-est-entrada" class="modal-overlay"><div class="modal-box">
-  <div class="modal-title">📦 Entrada de Insumo</div>
-  <div class="login-field"><label>Produto</label><input type="text" id="est-nome" readonly style="opacity:.7"></div>
-  <div class="login-field"><label>Quantidade (<span id="est-un-lbl"></span>)</label><input type="number" id="est-qtd" step="0.001" placeholder="Ex: 50"></div>
-  <div class="login-field"><label>Valor Total Pago (R$)</label><input type="number" id="est-valor" step="0.01" placeholder="Ex: 250.00"></div>
-  <div class="modal-buttons"><button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal confirm" onclick="executarEntradaEstoque()">Salvar</button></div>
-</div></div>
+<div id="modal-est-entrada" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">📦 Entrada de Insumo</div>
+    <div class="modal-field"><label>Produto</label><input type="text" id="est-nome" readonly style="opacity:.6"></div>
+    <div class="modal-field"><label>Quantidade (<span id="est-un-lbl"></span>)</label><input type="number" id="est-qtd" step="0.001" placeholder="Ex: 50"></div>
+    <div class="modal-field"><label>Valor Total Pago (R$)</label><input type="number" id="est-valor" step="0.01" placeholder="Ex: 250.00"></div>
+    <div class="modal-btns"><button class="btn-modal btn-cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal btn-confirm" onclick="executarEntradaEstoque()">✅ Salvar</button></div>
+  </div>
+</div>
 
-<div id="modal-est-novo" class="modal-overlay"><div class="modal-box">
-  <div class="modal-title">✨ Cadastrar Novo Item</div>
-  <div class="login-field"><label>Nome do Insumo</label><input type="text" id="novo-nome" placeholder="Ex: Ração Inicial 38%"></div>
-  <div class="login-field"><label>Categoria</label><select id="novo-cat"><option>Ração</option><option>Insumo</option><option>Produtos</option><option>Outros</option></select></div>
-  <div class="login-field"><label>Unidade</label><select id="novo-un"><option>kg</option><option>g</option><option>L</option><option>mL</option><option>un</option><option>saco</option></select></div>
-  <div class="login-field"><label>Estoque Mínimo (0=sem alerta)</label><input type="number" id="novo-min" step="0.01" value="0"></div>
-  <div class="login-field"><label>Qtd Inicial</label><input type="number" id="novo-qtd" step="0.001" value="0"></div>
-  <div class="login-field"><label>Valor Total Pago (R$)</label><input type="number" id="novo-valor" step="0.01" value="0"></div>
-  <div class="modal-buttons"><button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal confirm" onclick="executarCriarNovoInsumo()">Cadastrar</button></div>
-</div></div>
+<div id="modal-est-novo" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">✨ Cadastrar Novo Item</div>
+    <div class="modal-field"><label>Nome do Insumo</label><input type="text" id="novo-nome" placeholder="Ex: Ração Inicial 38%"></div>
+    <div class="modal-field"><label>Categoria</label><select id="novo-cat"><option>Ração</option><option>Insumo</option><option>Produtos</option><option>Outros</option></select></div>
+    <div class="modal-field"><label>Unidade</label><select id="novo-un"><option>kg</option><option>g</option><option>L</option><option>mL</option><option>un</option><option>saco</option></select></div>
+    <div class="modal-field"><label>Estoque Mínimo (0=sem alerta)</label><input type="number" id="novo-min" step="0.01" value="0"></div>
+    <div class="modal-field"><label>Qtd Inicial</label><input type="number" id="novo-qtd" step="0.001" value="0"></div>
+    <div class="modal-field"><label>Valor Total Pago (R$)</label><input type="number" id="novo-valor" step="0.01" value="0"></div>
+    <div class="modal-btns"><button class="btn-modal btn-cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal btn-confirm" onclick="executarCriarNovoInsumo()">➕ Cadastrar</button></div>
+  </div>
+</div>
 
-<div id="modal-custo-rateado" class="modal-overlay"><div class="modal-box" style="max-width:520px">
-  <div class="modal-title">➕ Lançar Custo Rateado</div>
-  <div class="login-field"><label>Categoria</label><select id="rat-cat" class="ia-cfg-inp" style="width:100%"><option value="Energia">⚡ Energia Elétrica</option><option value="Agua">💧 Água</option><option value="Internet">🌐 Internet</option><option value="Funcionario">👷 Funcionário</option><option value="Outros">📝 Outros</option></select></div>
-  <div class="login-field"><label>Descrição</label><input type="text" id="rat-desc" class="ia-cfg-inp" style="width:100%" placeholder="Ex: Conta de luz junho/2026"></div>
-  <div class="login-field"><label>Valor Total da Fazenda (R$)</label><input type="number" id="rat-valor" class="ia-cfg-inp" style="width:100%" step="0.01" min="0" oninput="atualizarPreviewRateio()"></div>
-  <div style="margin-top:14px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <label style="font-size:.66rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Ratear para quais viveiros?</label>
-      <button onclick="selecionarTodosViveiros()" style="font-size:.65rem;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);color:var(--accent);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">✓ Todos</button>
+<div id="modal-custo-rateado" class="modal-overlay">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-title">➕ Lançar Custo Rateado</div>
+    <div class="modal-field"><label>Categoria</label>
+      <select id="rat-cat" class="ia-cfg-inp" style="width:100%">
+        <option value="Energia">⚡ Energia Elétrica</option>
+        <option value="Agua">💧 Água</option>
+        <option value="Internet">🌐 Internet</option>
+        <option value="Funcionario">👷 Funcionário</option>
+        <option value="Outros">📝 Outros</option>
+      </select>
     </div>
-    <div id="rat-viveiros-lista" style="max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
+    <div class="modal-field"><label>Descrição</label><input type="text" id="rat-desc" class="ia-cfg-inp" style="width:100%" placeholder="Ex: Conta de luz junho/2026"></div>
+    <div class="modal-field"><label>Valor Total da Fazenda (R$)</label><input type="number" id="rat-valor" class="ia-cfg-inp" style="width:100%" step="0.01" min="0" oninput="atualizarPreviewRateio()"></div>
+    <div style="margin-top:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <label style="font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Ratear para quais viveiros?</label>
+        <button onclick="selecionarTodosViveiros()" style="font-size:.65rem;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--cyan);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700">✓ Todos</button>
+      </div>
+      <div id="rat-viveiros-lista" style="max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
+    </div>
+    <div id="rat-preview" class="rat-preview" style="display:none"></div>
+    <div class="modal-btns" style="margin-top:18px"><button class="btn-modal btn-cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal btn-confirm" onclick="confirmarCustoRateado()">✅ Confirmar</button></div>
   </div>
-  <div id="rat-preview" class="rat-preview" style="display:none"></div>
-  <div class="modal-buttons" style="margin-top:16px"><button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal confirm" onclick="confirmarCustoRateado()">Confirmar Lançamento</button></div>
-</div></div>
+</div>
 
-<div id="modal-custos-det" class="modal-overlay"><div class="modal-box" style="max-width:900px;width:100%;max-height:88vh;overflow-y:auto">
-  <div class="modal-title" id="det-titulo">💸 Custos do Ciclo</div>
-  <div id="det-corpo"></div>
-  <div style="margin-top:16px;text-align:right"><button class="btn-modal cancel" style="display:inline-block;width:auto;padding:10px 24px" onclick="fecharModais()">Fechar</button></div>
-</div></div>
+<div id="modal-custos-det" class="modal-overlay">
+  <div class="modal-box" style="max-width:900px;width:100%;max-height:88vh;overflow-y:auto">
+    <div class="modal-title" id="det-titulo">💸 Custos do Ciclo</div>
+    <div id="det-corpo"></div>
+    <div style="margin-top:18px;text-align:right"><button class="btn-modal btn-cancel" style="display:inline-block;width:auto;padding:10px 26px" onclick="fecharModais()">Fechar</button></div>
+  </div>
+</div>
 
-<div id="modal-benchmark" class="modal-overlay"><div class="modal-box" style="max-width:720px;width:100%;max-height:88vh;overflow-y:auto">
-  <div class="modal-title" id="bmk-titulo">📊 Histórico de Ciclos</div>
-  <div id="bmk-corpo"></div>
-  <div style="margin-top:16px;text-align:right"><button class="btn-modal cancel" style="display:inline-block;width:auto;padding:10px 24px" onclick="fecharModais()">Fechar</button></div>
-</div></div>
+<div id="modal-benchmark" class="modal-overlay">
+  <div class="modal-box" style="max-width:720px;width:100%;max-height:88vh;overflow-y:auto">
+    <div class="modal-title" id="bmk-titulo">📊 Histórico de Ciclos</div>
+    <div id="bmk-corpo"></div>
+    <div style="margin-top:18px;text-align:right"><button class="btn-modal btn-cancel" style="display:inline-block;width:auto;padding:10px 26px" onclick="fecharModais()">Fechar</button></div>
+  </div>
+</div>
 
-<div id="modal-pl" class="modal-overlay"><div class="modal-box" style="max-width:460px">
-  <div class="modal-title">🦐 Registrar Pós-Larva — <span class="mvn"></span></div>
-  <p style="font-size:.74rem;color:var(--muted);margin-bottom:14px;line-height:1.5">Dados das PLs para análise comparativa entre laboratórios pela IA.</p>
-
-  <div class="login-field"><label>Laboratório</label>
-    <input type="text" id="pl-lab" placeholder="Ex: Larvifort, INVE, Aquatec...">
+<div id="modal-pl" class="modal-overlay">
+  <div class="modal-box" style="max-width:460px">
+    <div class="modal-title">🦐 Registrar Pós-Larva — <span class="mvn"></span></div>
+    <p style="font-size:.74rem;color:var(--muted);margin-bottom:16px;line-height:1.55">Dados das PLs para análise comparativa entre laboratórios pela IA.</p>
+    <div class="modal-field"><label>Laboratório</label><input type="text" id="pl-lab" placeholder="Ex: Larvifort, INVE, Aquatec..."></div>
+    <div class="modal-field"><label>Lote / Código (opcional)</label><input type="text" id="pl-lote" placeholder="Ex: L2026-042"></div>
+    <div class="modal-field">
+      <label>Quantidade total de PLs</label>
+      <input type="number" id="pl-qtd-total" step="1000" placeholder="Ex: 250000" oninput="previewPL()">
+      <div style="font-size:.62rem;color:var(--muted);margin-top:4px">Informe o total de larvas (ex: 250000)</div>
+    </div>
+    <div class="modal-field">
+      <label>Valor total pago no povoamento (R$)</label>
+      <input type="number" id="pl-valor-total" step="0.01" placeholder="Ex: 3500.00" oninput="previewPL()">
+      <div style="font-size:.62rem;color:var(--muted);margin-top:4px">Será lançado automaticamente nos custos</div>
+    </div>
+    <div class="modal-field">
+      <label>Gramatura inicial das PLs (g)</label>
+      <input type="number" id="pl-gramatura" step="0.01" placeholder="Ex: 0.053" oninput="previewPL()">
+      <div style="font-size:.62rem;color:var(--muted);margin-top:4px">Será registrado como Biometria Semana 0</div>
+    </div>
+    <div class="modal-field"><label>Observações (opcional)</label><input type="text" id="pl-obs" placeholder="Ex: PL12, livre de WSSV..."></div>
+    <div id="pl-preview" style="background:rgba(0,240,160,.06);border:1px solid rgba(0,240,160,.2);border-radius:var(--radius-xs);padding:12px 15px;margin-bottom:16px;font-size:.72rem;color:var(--mint);display:none;line-height:1.8"></div>
+    <div class="modal-btns">
+      <button class="btn-modal btn-cancel" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-modal btn-confirm" style="background:linear-gradient(135deg,var(--mint),var(--mint2));color:#05080f" onclick="executarRegistrarPL()">🦐 Salvar PL</button>
+    </div>
   </div>
-  <div class="login-field"><label>Lote / Código (opcional)</label>
-    <input type="text" id="pl-lote" placeholder="Ex: L2026-042">
-  </div>
-  <div class="login-field"><label>Quantidade total de PLs</label>
-    <input type="number" id="pl-qtd-total" step="1000" placeholder="Ex: 250000" oninput="previewPL()">
-    <div style="font-size:.62rem;color:var(--muted);margin-top:4px">Informe o total de larvas (ex: 250000)</div>
-  </div>
-  <div class="login-field"><label>Valor total pago no povoamento (R$)</label>
-    <input type="number" id="pl-valor-total" step="0.01" placeholder="Ex: 3500.00" oninput="previewPL()">
-    <div style="font-size:.62rem;color:var(--muted);margin-top:4px">Será lançado automaticamente nos custos</div>
-  </div>
-  <div class="login-field"><label>Gramatura inicial das PLs (g)</label>
-    <input type="number" id="pl-gramatura" step="0.01" placeholder="Ex: 0.053" oninput="previewPL()">
-    <div style="font-size:.62rem;color:var(--muted);margin-top:4px">Será registrado como Biometria Semana 0</div>
-  </div>
-  <div class="login-field"><label>Observações (opcional)</label>
-    <input type="text" id="pl-obs" placeholder="Ex: PL12, livre de WSSV...">
-  </div>
-
-  <div id="pl-preview" style="background:rgba(0,255,163,.06);border:1px solid rgba(0,255,163,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.72rem;color:var(--accent2);display:none;line-height:1.7"></div>
-
-  <div class="modal-buttons">
-    <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
-    <button class="btn-modal confirm" style="background:var(--accent2);color:#080f1a" onclick="executarRegistrarPL()">Salvar PL</button>
-  </div>
-</div></div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════
 // CONFIG / GLOBALS
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════
 const ADM_URL="https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
 const EST_URL_PAD="https://script.google.com/macros/s/AKfycbxaZpPI2_5f4M7ojpxvliklpwBCkHALYIV6jmoZewS7Bd01ET4rgzFhveRZvtvI433s/exec";
 let CLIENTES=[],CLIENTE=null,DADOS={viveiros:[],estoque:[]};
@@ -502,12 +1039,11 @@ const R=n=>(isNaN(n)||n==null)?"—":"R$ "+Number(n).toLocaleString("pt-BR",{min
 const Nf=n=>(isNaN(n)||n==null)?"—":Number(n).toLocaleString("pt-BR");
 const esc=t=>String(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
-// ═══════════════════════════════════════════════
-// CLOCK + TABS
-// ═══════════════════════════════════════════════
+// ── CLOCK ──
 function tick(){const n=new Date();document.getElementById("clock").textContent=n.toLocaleDateString("pt-BR")+" "+n.toLocaleTimeString("pt-BR")}
 setInterval(tick,1000);tick();
 
+// ── TABS ──
 function switchTab(name,btn){
   document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
@@ -517,9 +1053,7 @@ function switchTab(name,btn){
   if(name==="historico")renderHistorico();
 }
 
-// ═══════════════════════════════════════════════
-// CHIP DE PREÇO (bidirecional com #ia-tabela-preco)
-// ═══════════════════════════════════════════════
+// ── PREÇO CHIP ──
 function abrirChipPreco(){
   const v=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
   document.getElementById("preco-chip-inp").value=v;
@@ -548,9 +1082,7 @@ function atualizarPreviewTabela(){
 document.getElementById("preco-chip-inp").addEventListener("keydown",e=>{if(e.key==="Enter")confirmarChipPreco();if(e.key==="Escape"){document.getElementById("preco-chip-edit").classList.remove("open");document.getElementById("preco-chip").style.display="flex";}});
 setTimeout(()=>{atualizarPreviewTabela();sincronizarPrecoChip()},100);
 
-// ═══════════════════════════════════════════════
-// CLAUDE BADGE
-// ═══════════════════════════════════════════════
+// ── CLAUDE BADGE ──
 async function testarClaude(){
   setBadge("chk","CLAUDE...");setIaStatus("chk","🔵","Verificando conexão com Claude API...");
   try{
@@ -570,12 +1102,10 @@ function setBadge(st,lbl){
 function setIaStatus(st,icon,msg){
   const bar=document.getElementById("ia-status-bar"),ic=document.getElementById("ia-status-icon"),ms=document.getElementById("ia-status-msg");
   bar.className="ia-status-bar "+{ok:"ia-online",chk:"ia-chk",err:"ia-err"}[st];
-  ic.textContent=icon;ms.textContent=msg;ms.style.color={ok:"#c4b5fd",chk:"var(--muted)",err:"var(--danger)"}[st];
+  ic.textContent=icon;ms.textContent=msg;ms.style.color={ok:"#c4b5fd",chk:"var(--muted)",err:"var(--red)"}[st];
 }
 
-// ═══════════════════════════════════════════════
-// LOGIN / LOGOUT
-// ═══════════════════════════════════════════════
+// ── LOGIN ──
 async function loadClientes(){
   if(_clCarreg)return;
   try{
@@ -591,13 +1121,12 @@ async function loadClientes(){
     }
   }catch(e){console.warn("ADM offline",e);}
 }
-
 async function fazerLogin(){
   const u=document.getElementById("inp-usuario").value.trim().toLowerCase();
   const s=document.getElementById("inp-senha").value.trim();
   const err=document.getElementById("login-error");const btn=document.querySelector(".login-btn");
-  err.style.display="none";btn.textContent="Carregando...";btn.disabled=true;
-  await loadClientes();btn.textContent="Entrar";btn.disabled=false;
+  err.style.display="none";btn.textContent="⏳ Carregando...";btn.disabled=true;
+  await loadClientes();btn.textContent="✨ Entrar no Painel";btn.disabled=false;
   const cl=CLIENTES.find(c=>c.usuario===u&&c.senha===s);
   if(!cl){err.style.display="block";return;}
   CLIENTE=cl;
@@ -611,7 +1140,6 @@ async function fazerLogin(){
 }
 document.getElementById("inp-senha").addEventListener("keydown",e=>{if(e.key==="Enter")fazerLogin()});
 document.getElementById("inp-usuario").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("inp-senha").focus()});
-
 function fazerLogout(){
   sessionStorage.removeItem("ast_u");sessionStorage.removeItem("ast_s");
   CLIENTE=null;DADOS={viveiros:[],estoque:[]};_IA={};
@@ -623,7 +1151,6 @@ function fazerLogout(){
   document.getElementById("inp-usuario").value="";document.getElementById("inp-senha").value="";
   setBadge("chk","CLAUDE");
 }
-
 window.addEventListener("load",async()=>{
   loadClientes();
   const u=sessionStorage.getItem("ast_u"),s=sessionStorage.getItem("ast_s");
@@ -631,9 +1158,7 @@ window.addEventListener("load",async()=>{
   else document.getElementById("btn-adm").style.display="block";
 });
 
-// ═══════════════════════════════════════════════
-// CARREGAR DADOS
-// ═══════════════════════════════════════════════
+// ── DADOS ──
 async function carregarDados(){
   if(!CLIENTE)return;
   const fetches=CLIENTE.viveiros.map(v=>
@@ -649,9 +1174,7 @@ async function carregarDados(){
   _timer=setTimeout(carregarDados,30000);
 }
 
-// ═══════════════════════════════════════════════
-// ANÁLISE SEMANAL
-// ═══════════════════════════════════════════════
+// ── ANÁLISE SEMANAL ──
 async function carregarAnaliseSemanal(){
   if(!CLIENTE)return;
   try{
@@ -667,27 +1190,21 @@ function renderRelatorio(d){
   let idade="";
   try{const m=gerado.match(/(\d+)\/(\d+)\/(\d+)\s+(\d+):(\d+)/);if(m){const dt=new Date(+m[3],+m[2]-1,+m[1],+m[4],+m[5]);const h=Math.round((new Date()-dt)/3600000);idade=h<1?"há menos de 1h":h<24?`há ${h}h`:`há ${Math.round(h/24)} dias`;}}catch(e){}
   const div=document.createElement("div");div.id="ia-rel-semanal";
-  div.innerHTML=`<div class="master-card"><div class="master-hd"><div><div class="master-title">📋 Análise Semanal Claude — ${esc(d.cliente_nome||CLIENTE.nome)}</div><div class="master-meta">Semana ${esc(d.semana||"—")} · ${esc(gerado)} ${idade?"("+idade+")":""} · claude-haiku-4</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><div class="fin-card"><div class="fin-lbl">Viveiros</div><div class="fin-val fv-a">${d.viveiros_ativos||"—"}</div></div><div class="fin-card"><div class="fin-lbl">Biomassa</div><div class="fin-val fv-g">${d.biomassa_total?Nf(parseFloat(d.biomassa_total))+" kg":"—"}</div></div><div class="fin-card"><div class="fin-lbl">FCA Médio</div><div class="fin-val">${d.fca_medio||"—"}</div></div></div></div><div class="master-body"><div class="master-output" style="white-space:normal">${html}</div></div></div>`;
+  div.innerHTML=`<div class="master-card"><div class="master-hd"><div><div class="master-title">📋 Análise Semanal Claude — ${esc(d.cliente_nome||CLIENTE.nome)}</div><div class="master-meta">Semana ${esc(d.semana||"—")} · ${esc(gerado)} ${idade?"("+idade+")":""} · claude-haiku-4</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><div class="fin-card"><div class="fin-lbl">Viveiros</div><div class="fin-val fv-c">${d.viveiros_ativos||"—"}</div></div><div class="fin-card"><div class="fin-lbl">Biomassa</div><div class="fin-val fv-g">${d.biomassa_total?Nf(parseFloat(d.biomassa_total))+" kg":"—"}</div></div><div class="fin-card"><div class="fin-lbl">FCA Médio</div><div class="fin-val">${d.fca_medio||"—"}</div></div></div></div><div class="master-body"><div class="master-output" style="white-space:normal">${html}</div></div></div>`;
   const old=el.querySelector("#ia-rel-semanal");if(old)old.remove();
   const ph=el.querySelector("#ia-rel-ph");if(ph)ph.remove();
   el.insertBefore(div,el.firstChild);
 }
 
-// ═══════════════════════════════════════════════
-// HELPERS DATA
-// ═══════════════════════════════════════════════
+// ── HELPERS ──
 function parseData(v){if(!v)return null;if(typeof v==="number")return new Date((v-25569)*86400*1000);const s=String(v).trim();const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);const d=new Date(s);return isNaN(d)?null:d;}
 function fmtData(v){const d=parseData(v);return d?d.toLocaleDateString("pt-BR"):"—";}
 function diasDesde(v){const d=parseData(v);return d?Math.floor((new Date()-d)/86400000):null;}
 
-// ═══════════════════════════════════════════════
-// RENDER TUDO
-// ═══════════════════════════════════════════════
+// ── RENDER TUDO ──
 function renderTudo(){renderKpiGeral();renderAvisosPL();renderViveiros();renderBiometria();renderEstoque();}
 
-// ═══════════════════════════════════════════════
-// KPI GERAL
-// ═══════════════════════════════════════════════
+// ── KPI GERAL ──
 function renderKpiGeral(){
   const v=DADOS.viveiros.filter(x=>!x._erro);
   const totBioReal=v.reduce((s,x)=>s+(x.biomassaReal||x.biomassa||0),0);
@@ -696,125 +1213,120 @@ function renderKpiGeral(){
   const totRacao=v.reduce((s,x)=>s+(x.racaoTotal||0),0);
   const fcas=v.filter(x=>x.fca>0);const fcaMed=fcas.length?fcas.reduce((s,x)=>s+x.fca,0)/fcas.length:0;
   document.getElementById("kpi-geral").innerHTML=[
-    {label:"Biomassa Real",value:Nf(Math.round(totBioReal))+" kg",cls:"accent",sub:"Baseada na alimentação"},
-    {label:"Biomassa 100% Sobrev.",value:Nf(Math.round(totBio100))+" kg",cls:"green",sub:"Pressupondo 100% sobrev."},
-    {label:"Custo Total Ciclos",value:R(totCusto),cls:"warn",sub:"Ciclos em andamento"},
-    {label:"Ração Acumulada",value:Nf(Math.round(totRacao))+" kg",cls:"",sub:"Ciclo atual"},
-    {label:"FCA Médio",value:fcaMed>0?fcaMed.toFixed(2):"—",cls:"",sub:"Ração / Biomassa real"},
-  ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div><div class="kpi-sub">${k.sub}</div></div>`).join("");
+    {emoji:"🌊",label:"Biomassa Real",value:Nf(Math.round(totBioReal))+" kg",cls:"c",sub:"Baseada na alimentação"},
+    {emoji:"🎯",label:"Biomassa 100% Sobrev.",value:Nf(Math.round(totBio100))+" kg",cls:"g",sub:"Pressupondo 100% sobrev."},
+    {emoji:"💰",label:"Custo Total Ciclos",value:R(totCusto),cls:"w",sub:"Ciclos em andamento"},
+    {emoji:"🍽️",label:"Ração Acumulada",value:Nf(Math.round(totRacao))+" kg",cls:"",sub:"Ciclo atual"},
+    {emoji:"📊",label:"FCA Médio",value:fcaMed>0?fcaMed.toFixed(2):"—",cls:"",sub:"Ração / Biomassa real"},
+  ].map(k=>`<div class="kpi-card ${k.cls}"><span class="kpi-emoji">${k.emoji}</span><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div><div class="kpi-sub">${k.sub}</div></div>`).join("");
 }
 
-// ═══════════════════════════════════════════════
-// AVISOS PLs PENDENTES
-// ═══════════════════════════════════════════════
+// ── AVISOS PL ──
 function renderAvisosPL(){
   const wrap=document.getElementById("pl-avisos-wrap");if(!wrap)return;
   const sem=DADOS.viveiros.filter(v=>!v._erro&&v.povoado>0&&!v.pl_ciclo_atual);
   if(!sem.length){wrap.innerHTML="";return;}
-  wrap.innerHTML=sem.map(v=>{
-    const idx=DADOS.viveiros.indexOf(v);
-    return`<div class="pl-aviso"><span style="font-size:1.2rem">🦐</span><div class="pl-aviso-txt"><strong>${v.nome}</strong> — Ciclo ativo sem PL registrada. Registre o laboratório para habilitar a análise comparativa da IA.</div><button class="pl-aviso-btn" onclick="abrirModalPL(${idx})">Registrar PL</button></div>`;
-  }).join("");
+  wrap.innerHTML=sem.map(v=>{const idx=DADOS.viveiros.indexOf(v);return`<div class="pl-aviso"><span style="font-size:1.4rem">🦐</span><div class="pl-aviso-txt"><strong>${v.nome}</strong> — Ciclo ativo sem PL registrada. Registre o laboratório para habilitar a análise comparativa da IA.</div><button class="pl-aviso-btn" onclick="abrirModalPL(${idx})">🧬 Registrar PL</button></div>`;}).join("");
 }
 
-// ═══════════════════════════════════════════════
-// RENDER VIVEIROS
-// ═══════════════════════════════════════════════
+// ── VIVEIROS ──
 function renderViveiros(){
   const grid=document.getElementById("viveiros-grid");
   if(!DADOS.viveiros.length){grid.innerHTML=`<div class="error-msg">Nenhum viveiro configurado.</div>`;return;}
   grid.innerHTML=DADOS.viveiros.map((v,i)=>{
-    if(v._erro)return`<div class="viveiro-card"><div class="viveiro-header" style="cursor:default"><div class="viveiro-name">${v.nome}</div><span class="viveiro-status status-alerta">⚠ Offline</span></div><div class="error-msg">Não foi possível conectar.</div></div>`;
+    if(v._erro)return`<div class="viveiro-card"><div class="viveiro-header" style="cursor:default"><div class="viveiro-name">⚠️ ${v.nome}</div><span class="viveiro-status status-alerta">Offline</span></div><div class="error-msg">Não foi possível conectar.</div></div>`;
     const dias=v.diasCiclo??diasDesde(v.dataInicio)??0;
     const bioReal=v.biomassaReal??v.biomassa??0;
-    const surv=v.sobrevivencia??0;
-    const fca=v.fca??0;
-    const racAt=v.racaoAtual??0;
-    const racId=v.racaoIdeal??0;
+    const surv=v.sobrevivencia??0;const fca=v.fca??0;
+    const racAt=v.racaoAtual??0;const racId=v.racaoIdeal??0;
     const pct=Math.min(100,Math.round(surv));
-    const corS=surv>=70?"var(--accent2)":surv>=50?"var(--warn)":"var(--danger)";
+    const corS=surv>=70?"var(--mint)":surv>=50?"var(--amber)":"var(--red)";
     const ri=DADOS.viveiros.indexOf(v);
     const pl=v.pl_ciclo_atual;
     const plBadge=pl?`<span class="pl-badge-reg">🦐 ${pl.laboratorio}</span>`:`<span class="pl-badge-sem" onclick="abrirModalPL(${ri})">🦐 Sem PL</span>`;
     const precoHoje=calcPrecoKg(v.pesoMedio||10);
     const recProj=(bioReal*precoHoje).toFixed(0);
     const lucroProj=((bioReal*precoHoje)-(v.custoCiclo||0)).toFixed(0);
-    return`<div class="viveiro-card" style="animation-delay:${i*.07}s">
-      <div class="viveiro-header" onclick="abrirBenchmark(${ri})" title="Ver histórico de ciclos">
-        <div class="viveiro-name">${v.nome} <span style="font-size:.55rem;color:var(--muted)">📊</span></div>
+    return`<div class="viveiro-card" style="animation-delay:${i*.08}s">
+      <div class="viveiro-header" onclick="abrirBenchmark(${ri})" title="📊 Ver histórico de ciclos">
+        <div class="viveiro-name">🦐 ${v.nome}</div>
         <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
           ${plBadge}
           <span class="viveiro-status status-ativo">● Ativo</span>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <div style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:9px 11px">
-          <div class="v-metric-label">🌊 Biomassa Real</div><div class="v-metric-value accent">${Nf(Math.round(bioReal))} kg</div>
-          <div style="font-size:.58rem;color:var(--muted)">pela alimentação</div>
+      <div class="viv-highlight">
+        <div class="viv-hl-box c">
+          <span class="viv-hl-emoji">🌊</span>
+          <div class="viv-hl-lbl">Biomassa Real</div>
+          <div class="viv-hl-val" style="color:var(--cyan)">${Nf(Math.round(bioReal))} kg</div>
+          <div class="viv-hl-sub">pela alimentação</div>
         </div>
-        <div style="background:rgba(0,255,163,.06);border:1px solid rgba(0,255,163,.15);border-radius:8px;padding:9px 11px">
-          <div class="v-metric-label">🎯 Biomassa 100%</div><div class="v-metric-value green">${Nf(Math.round(v.biomassa100||0))} kg</div>
-          <div style="font-size:.58rem;color:var(--muted)">sobrev. 100%</div>
+        <div class="viv-hl-box g">
+          <span class="viv-hl-emoji">🎯</span>
+          <div class="viv-hl-lbl">Biomassa 100%</div>
+          <div class="viv-hl-val" style="color:var(--mint)">${Nf(Math.round(v.biomassa100||0))} kg</div>
+          <div class="viv-hl-sub">sobrev. 100%</div>
         </div>
       </div>
-      <div class="viveiro-metrics">
-        <div><div class="v-metric-label">Sobrevivência</div><div class="v-metric-value" style="color:${corS}">${surv>0?surv.toFixed(1)+"%":"—"}</div></div>
-        <div><div class="v-metric-label">FCA</div><div class="v-metric-value">${fca>0?fca.toFixed(2):"—"}</div></div>
-        <div><div class="v-metric-label">Peso Médio</div><div class="v-metric-value">${v.pesoMedio??0}g</div></div>
-        <div><div class="v-metric-label">CCMT</div><div class="v-metric-value accent">${v.ccmt>0?"+"+v.ccmt.toFixed(1)+"g":"—"}</div></div>
-        <div><div class="v-metric-label">Densidade</div><div class="v-metric-value">${v.densidade>0?v.densidade.toFixed(1)+" cam/m²":"—"}</div></div>
-        <div><div class="v-metric-label">Área</div><div class="v-metric-value">${v.areaHa?v.areaHa.toFixed(2)+" ha":"—"}</div></div>
-        <div><div class="v-metric-label">Ração Hoje</div><div class="v-metric-value">${racAt>0?racAt.toFixed(1)+" kg":"—"}</div></div>
-        <div><div class="v-metric-label">Ração p/ 100%</div><div class="v-metric-value warn">${racId>0?racId.toFixed(1)+" kg":"—"}</div></div>
-        <div><div class="v-metric-label">Custo Ciclo</div><div class="v-metric-value warn">${R(v.custoCiclo)}</div></div>
-        <div><div class="v-metric-label">Rec. Projetada</div><div class="v-metric-value green">${bioReal>0?"R$"+Nf(Math.round(recProj)):"—"}</div></div>
+      <div class="viv-metrics">
+        <div class="vm-row"><div class="vm-label">💪 Sobrevivência</div><div class="vm-value" style="color:${corS}">${surv>0?surv.toFixed(1)+"%":"—"}</div></div>
+        <div class="vm-row"><div class="vm-label">📊 FCA</div><div class="vm-value">${fca>0?fca.toFixed(2):"—"}</div></div>
+        <div class="vm-row"><div class="vm-label">⚖️ Peso Médio</div><div class="vm-value">${v.pesoMedio??0}g</div></div>
+        <div class="vm-row"><div class="vm-label">📈 CCMT</div><div class="vm-value c">${v.ccmt>0?"+"+v.ccmt.toFixed(1)+"g":"—"}</div></div>
+        <div class="vm-row"><div class="vm-label">🔢 Densidade</div><div class="vm-value">${v.densidade>0?v.densidade.toFixed(1)+" cam/m²":"—"}</div></div>
+        <div class="vm-row"><div class="vm-label">📐 Área</div><div class="vm-value">${v.areaHa?v.areaHa.toFixed(2)+" ha":"—"}</div></div>
+        <div class="vm-row"><div class="vm-label">🍽️ Ração Hoje</div><div class="vm-value">${racAt>0?racAt.toFixed(1)+" kg":"—"}</div></div>
+        <div class="vm-row"><div class="vm-label">🎯 Ração p/100%</div><div class="vm-value w">${racId>0?racId.toFixed(1)+" kg":"—"}</div></div>
+        <div class="vm-row"><div class="vm-label">💸 Custo Ciclo</div><div class="vm-value w">${R(v.custoCiclo)}</div></div>
+        <div class="vm-row"><div class="vm-label">💵 Rec. Projetada</div><div class="vm-value g">${bioReal>0?"R$"+Nf(Math.round(recProj)):"—"}</div></div>
       </div>
-      ${dias>0?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><div class="dias-badge">🗓 ${dias} dias de ciclo</div>${v.dataInicio?`<div class="dias-badge" style="background:rgba(0,255,163,.06);border-color:rgba(0,255,163,.2);color:var(--accent2)">📅 ${fmtData(v.dataInicio)}</div>`:""}  </div>`:""}
-      <div class="viveiro-bar-wrap" style="margin-top:10px"><div class="viveiro-bar" style="width:${pct}%;background:linear-gradient(90deg,${corS},${corS}88)"></div></div>
-      <div class="viveiro-bar-label"><span>Sobrevivência: ${surv>0?surv.toFixed(1)+"%":"—"}</span><span>Lucro proj: ${bioReal>0?"R$"+Nf(Math.round(lucroProj)):"—"}</span></div>
+      ${dias>0?`<div class="dias-wrap"><div class="dias-badge">🗓 ${dias} dias de ciclo</div>${v.dataInicio?`<div class="dias-badge g">📅 ${fmtData(v.dataInicio)}</div>`:""}</div>`:""}
+      <div class="viv-prog">
+        <div class="viv-prog-track"><div class="viv-prog-bar" style="width:${pct}%;background:linear-gradient(90deg,${corS},${corS}88)"></div></div>
+        <div class="viv-prog-labels"><span>Sobrevivência: ${surv>0?surv.toFixed(1)+"%":"—"}</span><span>Lucro proj: ${bioReal>0?"R$"+Nf(Math.round(lucroProj)):"—"}</span></div>
+      </div>
       <div class="v-actions-panel">
-        <button class="btn-action-html custo-act" onclick="abrirDetalhesCusto(${ri})">💸 Custos</button>
-        <button class="btn-action-html" onclick="abrirModalOp('desbaste','${v.nome}','${v.scriptUrlBase}',${dias})">🔱 Desbaste</button>
-        <button class="btn-action-html" onclick="abrirModalOp('despesca','${v.nome}','${v.scriptUrlBase}',${dias},${v.custoCiclo||0},${ri})">🎣 Despesca</button>
-        <button class="btn-action-html danger-act" onclick="abrirModalOp('limpar','${v.nome}','${v.scriptUrlBase}')">🗑️ Limpar</button>
+        <button class="btn-action warn" onclick="abrirDetalhesCusto(${ri})">💸 Custos</button>
+        <button class="btn-action" onclick="abrirModalOp('desbaste','${v.nome}','${v.scriptUrlBase}',${dias})">🔱 Desbaste</button>
+        <button class="btn-action" onclick="abrirModalOp('despesca','${v.nome}','${v.scriptUrlBase}',${dias},${v.custoCiclo||0},${ri})">🎣 Despesca</button>
+        <button class="btn-action danger" onclick="abrirModalOp('limpar','${v.nome}','${v.scriptUrlBase}')">🗑️ Limpar</button>
       </div>
     </div>`;
   }).join("");
 }
 
-// ═══════════════════════════════════════════════
-// MODAL BENCHMARK
-// ═══════════════════════════════════════════════
+// ── BENCHMARK ──
 function abrirBenchmark(ri){
   const v=DADOS.viveiros[ri];if(!v||v._erro)return;
   document.getElementById("bmk-titulo").textContent=`📊 Histórico de Ciclos — ${v.nome}`;
   const hist=(v.historico||[]).filter(h=>h.tipo==="DESPESCA");
   const corpo=document.getElementById("bmk-corpo");
-  if(!hist.length){corpo.innerHTML=`<div style="text-align:center;padding:40px;color:var(--muted);font-size:.82rem">Nenhum ciclo finalizado ainda.</div>`;document.getElementById("modal-benchmark").style.display="flex";return;}
+  if(!hist.length){corpo.innerHTML=`<div style="text-align:center;padding:40px;color:var(--muted);font-size:.82rem">🎣 Nenhum ciclo finalizado ainda.</div>`;document.getElementById("modal-benchmark").style.display="flex";return;}
   const fcas=hist.filter(h=>parseFloat(h.fca)>0).map(h=>parseFloat(h.fca));
   const lucros=hist.map(h=>h.lucro||0);
   const lucroTot=lucros.reduce((s,v)=>s+v,0);
   const fcaMed=fcas.length?(fcas.reduce((s,v)=>s+v,0)/fcas.length).toFixed(2):"—";
   const melhor=fcas.length?Math.min(...fcas).toFixed(2):"—";
-  let html=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:18px">
-    <div class="fin-card"><div class="fin-lbl">Ciclos</div><div class="fin-val fv-a">${hist.length}</div></div>
-    <div class="fin-card"><div class="fin-lbl">FCA Médio</div><div class="fin-val">${fcaMed}</div></div>
-    <div class="fin-card"><div class="fin-lbl">Melhor FCA</div><div class="fin-val fv-g">${melhor}</div></div>
-    <div class="fin-card"><div class="fin-lbl">Lucro Acum.</div><div class="fin-val ${lucroTot>=0?"fv-g":"fv-d"}">${R(lucroTot)}</div></div>
+  let html=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:20px">
+    <div class="fin-card"><div class="fin-lbl">🏆 Ciclos</div><div class="fin-val fv-c">${hist.length}</div></div>
+    <div class="fin-card"><div class="fin-lbl">📊 FCA Médio</div><div class="fin-val">${fcaMed}</div></div>
+    <div class="fin-card"><div class="fin-lbl">🥇 Melhor FCA</div><div class="fin-val fv-g">${melhor}</div></div>
+    <div class="fin-card"><div class="fin-lbl">💰 Lucro Acum.</div><div class="fin-val ${lucroTot>=0?"fv-g":"fv-r"}">${R(lucroTot)}</div></div>
   </div>
   <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:500px">
-  <thead><tr>${["Data","Dias","Biomassa","FCA","Custo/kg","Lucro","Lab."].map(h=>`<th style="padding:7px 10px;text-align:${h==="Data"||h==="Lab."?"left":"right"};font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2)">${h}</th>`).join("")}</tr></thead><tbody>`;
-  hist.slice().reverse().forEach((h,ri)=>{
+  <thead><tr>${["Data","Dias","Biomassa","FCA","Custo/kg","Lucro","Lab."].map(h=>`<th style="padding:7px 10px;text-align:${h==="Data"||h==="Lab."?"left":"right"};font-size:.57rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2)">${h}</th>`).join("")}</tr></thead><tbody>`;
+  hist.slice().reverse().forEach((h,ri2)=>{
     const fca=parseFloat(h.fca)||0;const cpkg=h.c_total>0&&h.kg>0?h.c_total/h.kg:0;const luc=h.lucro||0;
-    const fc=fca<=1.6?"var(--accent2)":fca<=1.8?"var(--warn)":"var(--danger)";
-    html+=`<tr style="border-bottom:1px solid rgba(26,48,80,.4);background:${ri%2?"rgba(0,0,0,.06)":"transparent"}">
-      <td style="padding:7px 10px;font-size:.72rem;font-family:'DM Mono',monospace">${h.data||"—"}</td>
-      <td style="padding:7px 10px;font-size:.72rem;font-family:'DM Mono',monospace;text-align:right">${h.dias||"—"}d</td>
-      <td style="padding:7px 10px;font-size:.72rem;font-family:'DM Mono',monospace;text-align:right">${Nf(h.kg)} kg</td>
-      <td style="padding:7px 10px;font-size:.78rem;font-family:'DM Mono',monospace;text-align:right;font-weight:700;color:${fc}">${fca>0?fca.toFixed(2):"—"}</td>
-      <td style="padding:7px 10px;font-size:.72rem;font-family:'DM Mono',monospace;text-align:right;color:var(--warn)">${cpkg>0?R(cpkg):"—"}</td>
-      <td style="padding:7px 10px;font-size:.78rem;font-family:'DM Mono',monospace;text-align:right;font-weight:700;color:${luc>=0?"var(--accent2)":"var(--danger)"}">${R(luc)}</td>
-      <td style="padding:7px 10px;font-size:.7rem">${h.laboratorio?`<span class="pill pill-blue">${h.laboratorio}</span>`:"—"}</td>
+    const fc=fca<=1.6?"var(--mint)":fca<=1.8?"var(--amber)":"var(--red)";
+    html+=`<tr style="border-bottom:1px solid rgba(30,48,80,.4);background:${ri2%2?"rgba(0,0,0,.06)":"transparent"}">
+      <td style="padding:7px 10px;font-size:.72rem;font-family:'JetBrains Mono',monospace">${h.data||"—"}</td>
+      <td style="padding:7px 10px;font-size:.72rem;font-family:'JetBrains Mono',monospace;text-align:right">${h.dias||"—"}d</td>
+      <td style="padding:7px 10px;font-size:.72rem;font-family:'JetBrains Mono',monospace;text-align:right">${Nf(h.kg)} kg</td>
+      <td style="padding:7px 10px;font-size:.78rem;font-family:'JetBrains Mono',monospace;text-align:right;font-weight:700;color:${fc}">${fca>0?fca.toFixed(2):"—"}</td>
+      <td style="padding:7px 10px;font-size:.72rem;font-family:'JetBrains Mono',monospace;text-align:right;color:var(--amber)">${cpkg>0?R(cpkg):"—"}</td>
+      <td style="padding:7px 10px;font-size:.78rem;font-family:'JetBrains Mono',monospace;text-align:right;font-weight:700;color:${luc>=0?"var(--mint)":"var(--red)"}">${R(luc)}</td>
+      <td style="padding:7px 10px;font-size:.7rem">${h.laboratorio?`<span class="pill pill-c">${h.laboratorio}</span>`:"—"}</td>
     </tr>`;
   });
   html+=`</tbody></table></div>`;
@@ -822,9 +1334,7 @@ function abrirBenchmark(ri){
   document.getElementById("modal-benchmark").style.display="flex";
 }
 
-// ═══════════════════════════════════════════════
-// MODAL PÓS-LARVA
-// ═══════════════════════════════════════════════
+// ── MODAL PL ──
 function abrirModalPL(ri){
   const v=DADOS.viveiros[ri];if(!v||v._erro||!v.povoado)return;
   _ctxModal={tipo:"pl",nome:v.nome,url:v.scriptUrlBase,ri};
@@ -840,263 +1350,144 @@ function abrirModalPL(ri){
   document.getElementById("modal-pl").style.display="flex";
 }
 function previewPL(){
-  const qtdTotal  = parseFloat(document.getElementById("pl-qtd-total").value)  || 0;
-  const valTotal  = parseFloat(document.getElementById("pl-valor-total").value) || 0;
-  const gram      = parseFloat(document.getElementById("pl-gramatura").value)   || 0;
-  const el        = document.getElementById("pl-preview");
-
-  if (qtdTotal <= 0) { el.style.display="none"; return; }
-
-  const milhar      = qtdTotal / 1000;
-  const vlrMilhar   = milhar > 0 ? valTotal / milhar : 0;
-  const biomassaIni = gram > 0 ? ((qtdTotal * gram) / 1000).toFixed(1) : null;
-
-  let html = `📦 ${qtdTotal.toLocaleString("pt-BR")} PLs (${milhar.toFixed(3)} milhares)`;
-  if (valTotal > 0)
-    html += `<br>💰 ${R(valTotal)} total · ${R(vlrMilhar)}/milhar → lançado nos custos automaticamente`;
-  if (biomassaIni)
-    html += `<br>⚖️ Gramatura ${gram}g · Biomassa inicial: ${biomassaIni} kg → Biometria Semana 0`;
-
-  el.innerHTML = html;
-  el.style.display = "block";
+  const qtdTotal=parseFloat(document.getElementById("pl-qtd-total").value)||0;
+  const valTotal=parseFloat(document.getElementById("pl-valor-total").value)||0;
+  const gram=parseFloat(document.getElementById("pl-gramatura").value)||0;
+  const el=document.getElementById("pl-preview");
+  if(qtdTotal<=0){el.style.display="none";return;}
+  const milhar=qtdTotal/1000;const vlrMilhar=milhar>0?valTotal/milhar:0;
+  const biomassaIni=gram>0?((qtdTotal*gram)/1000).toFixed(1):null;
+  let html=`📦 ${qtdTotal.toLocaleString("pt-BR")} PLs (${milhar.toFixed(3)} milhares)`;
+  if(valTotal>0)html+=`<br>💰 ${R(valTotal)} total · ${R(vlrMilhar)}/milhar → lançado nos custos automaticamente`;
+  if(biomassaIni)html+=`<br>⚖️ Gramatura ${gram}g · Biomassa inicial: ${biomassaIni} kg → Biometria Semana 0`;
+  el.innerHTML=html;el.style.display="block";
 }
-
 async function executarRegistrarPL(){
-  const lab      = document.getElementById("pl-lab").value.trim();
-  const lote     = document.getElementById("pl-lote").value.trim();
-  const qtdTotal = parseFloat(document.getElementById("pl-qtd-total").value)  || 0;
-  const valTotal = parseFloat(document.getElementById("pl-valor-total").value) || 0;
-  const gram     = parseFloat(document.getElementById("pl-gramatura").value)   || 0;
-  const obs      = document.getElementById("pl-obs").value.trim();
-
-  if (!lab)           { alert("Informe o laboratório."); return; }
-  if (qtdTotal <= 0)  { alert("Informe a quantidade de PLs."); return; }
-
+  const lab=document.getElementById("pl-lab").value.trim();
+  const lote=document.getElementById("pl-lote").value.trim();
+  const qtdTotal=parseFloat(document.getElementById("pl-qtd-total").value)||0;
+  const valTotal=parseFloat(document.getElementById("pl-valor-total").value)||0;
+  const gram=parseFloat(document.getElementById("pl-gramatura").value)||0;
+  const obs=document.getElementById("pl-obs").value.trim();
+  if(!lab){alert("Informe o laboratório.");return;}
+  if(qtdTotal<=0){alert("Informe a quantidade de PLs.");return;}
   fecharModais();
-
-  try {
-    const milhar = qtdTotal / 1000;
-    const url = _ctxModal.url
-      + "?tipo=registrar_pl"
-      + "&laboratorio="   + encodeURIComponent(lab)
-      + "&lote="          + encodeURIComponent(lote)
-      + "&qtd_milhar="    + milhar
-      + "&valor_total="   + valTotal       // ★ valor total (não por milhar)
-      + "&gramatura_ini=" + gram           // ★ gramatura inicial
-      + "&obs="           + encodeURIComponent(obs);
-
-    const r = await fetch(url).then(res => res.json());
-
-    if (r.status === "ok") {
-      let msg = `🦐 PL registrada!\n\n${lab}${lote ? " — Lote " + lote : ""}\n`
-              + `${qtdTotal.toLocaleString("pt-BR")} PLs`;
-      if (valTotal > 0)
-        msg += `\n💰 Custo R$${valTotal.toFixed(2)} lançado nos custos`;
-      if (gram > 0)
-        msg += `\n⚖️ Biometria Semana 0: ${gram}g`;
-      alert(msg);
-      carregarDados();
-    } else {
-      alert("Erro: " + r.msg);
-    }
-  } catch(e) {
-    alert("Falha de comunicação: " + e.message);
-  }
+  try{
+    const milhar=qtdTotal/1000;
+    const url=_ctxModal.url+"?tipo=registrar_pl&laboratorio="+encodeURIComponent(lab)+"&lote="+encodeURIComponent(lote)+"&qtd_milhar="+milhar+"&valor_total="+valTotal+"&gramatura_ini="+gram+"&obs="+encodeURIComponent(obs);
+    const r=await fetch(url).then(res=>res.json());
+    if(r.status==="ok"){
+      let msg=`🦐 PL registrada!\n\n${lab}${lote?" — Lote "+lote:""}\n${qtdTotal.toLocaleString("pt-BR")} PLs`;
+      if(valTotal>0)msg+=`\n💰 Custo R$${valTotal.toFixed(2)} lançado nos custos`;
+      if(gram>0)msg+=`\n⚖️ Biometria Semana 0: ${gram}g`;
+      alert(msg);carregarDados();
+    }else alert("Erro: "+r.msg);
+  }catch(e){alert("Falha de comunicação: "+e.message);}
 }
 
-// ═══════════════════════════════════════════════
-// BIOMETRIA
-// ═══════════════════════════════════════════════
-// ═══════════════════════════════════════════════
-// CURVAS DE CRESCIMENTO POR FAIXA DE DENSIDADE
-// Fonte: Wyban & Sweeney (1991), Boyd (2001),
-//        dados de campo Brasil — L. vannamei
-// Lógica: densidade atual do viveiro seleciona
-//         automaticamente a faixa de referência
-// ═══════════════════════════════════════════════
+// ── BIOMETRIA ──
 const CURVAS_DENS={
-  // ≤15 cam/m² — extensivo/semi-intensivo leve
   leve:[0,0.8,1.6,2.5,3.6,4.9,6.4,8.0,9.7,11.4,13.1,14.8,16.4,17.9,19.2,20.4,21.4,22.2,22.8],
-  // 16–30 cam/m² — semi-intensivo padrão (mais comum no Brasil)
   medio:[0,0.6,1.2,2.0,2.9,3.9,5.1,6.4,7.8,9.2,10.6,12.0,13.3,14.5,15.6,16.6,17.5,18.2,18.8],
-  // 31–60 cam/m² — intensivo
   intensivo:[0,0.5,0.9,1.5,2.2,3.0,3.9,4.9,6.0,7.1,8.2,9.3,10.3,11.2,12.1,12.9,13.6,14.2,14.7],
-  // >60 cam/m² — super-intensivo
   super:[0,0.4,0.7,1.1,1.6,2.2,2.9,3.6,4.4,5.2,6.0,6.8,7.6,8.3,9.0,9.6,10.1,10.5,10.9],
 };
-
-function getCurvaEsperada(densidadeCamM2){
-  const d=parseFloat(densidadeCamM2)||0;
-  if(d<=0)   return null; // sem densidade cadastrada — não exibe curva
-  if(d<=15)  return {curva:CURVAS_DENS.leve,     label:"Ref. ≤15 cam/m²",    cor:"rgba(0,255,163,.7)"};
-  if(d<=30)  return {curva:CURVAS_DENS.medio,     label:"Ref. 16–30 cam/m²",  cor:"rgba(0,229,255,.7)"};
-  if(d<=60)  return {curva:CURVAS_DENS.intensivo, label:"Ref. 31–60 cam/m²",  cor:"rgba(255,179,0,.7)"};
-  return       {curva:CURVAS_DENS.super,           label:"Ref. >60 cam/m²",    cor:"rgba(255,79,79,.7)"};
+function getCurvaEsperada(d){
+  d=parseFloat(d)||0;
+  if(d<=0)return null;
+  if(d<=15)return{curva:CURVAS_DENS.leve,label:"Ref. ≤15 cam/m²",cor:"rgba(0,240,160,.7)"};
+  if(d<=30)return{curva:CURVAS_DENS.medio,label:"Ref. 16–30 cam/m²",cor:"rgba(0,212,255,.7)"};
+  if(d<=60)return{curva:CURVAS_DENS.intensivo,label:"Ref. 31–60 cam/m²",cor:"rgba(255,184,48,.7)"};
+  return{curva:CURVAS_DENS.super,label:"Ref. >60 cam/m²",cor:"rgba(255,79,106,.7)"};
 }
-
-function getPesoEsperado(semana, densidadeCamM2){
-  const ref=getCurvaEsperada(densidadeCamM2);
-  if(!ref) return null;
-  const sem=parseInt(semana)||0;
-  return ref.curva[sem]||null;
+function getPesoEsperado(semana,dens){const ref=getCurvaEsperada(dens);if(!ref)return null;return ref.curva[parseInt(semana)||0]||null;}
+function getStatusPeso(pr,pe){
+  if(!pe)return{icon:"—",cor:"var(--muted)",diff:null};
+  const diff=+(pr-pe).toFixed(1);const pct=pr/pe;
+  if(pct>=0.85)return{icon:"✅",cor:"var(--mint)",diff};
+  if(pct>=0.70)return{icon:"⚠️",cor:"var(--amber)",diff};
+  return{icon:"🔴",cor:"var(--red)",diff};
 }
-
-// Tolerância de status: ±15% do esperado = ✅, -15 a -30% = ⚠️, <-30% = 🔴
-function getStatusPeso(pesoReal, pesoEsperado){
-  if(!pesoEsperado) return {icon:"—", cor:"var(--muted)", diff:null};
-  const diff=+(pesoReal-pesoEsperado).toFixed(1);
-  const pct=pesoReal/pesoEsperado;
-  if(pct>=0.85) return {icon:"✅", cor:"var(--accent2)", diff};
-  if(pct>=0.70) return {icon:"⚠️", cor:"var(--warn)",    diff};
-  return              {icon:"🔴", cor:"var(--danger)",   diff};
-}
-
 function renderBiometria(){
   const vivs=DADOS.viveiros.filter(v=>!v._erro&&v.biometria&&v.biometria.length>0);
   if(!vivs.length){
     document.getElementById("bio-thead").innerHTML="";
     document.getElementById("bio-tbody").innerHTML=`<tr><td colspan="8" style="padding:30px;text-align:center;color:var(--muted)">Sem registros de biometria.</td></tr>`;
-    if(_bioChart){_bioChart.destroy();_bioChart=null;}
-    return;
+    if(_bioChart){_bioChart.destroy();_bioChart=null;}return;
   }
-  const v=vivs[0];
-  const bio=v.biometria||[];
-  const dens=v.densidade||0;
-  const ref=getCurvaEsperada(dens);
-  const labels=bio.map(b=>"Sem."+b.semana);
-  const pesos=bio.map(b=>parseFloat(b.peso)||0);
+  const v=vivs[0];const bio=v.biometria||[];const dens=v.densidade||0;const ref=getCurvaEsperada(dens);
+  const labels=bio.map(b=>"Sem."+b.semana);const pesos=bio.map(b=>parseFloat(b.peso)||0);
   const mostrarCurva=document.getElementById("toggle-curva").checked;
-  const datasets=[{
-    label:"Peso Médio (g)",
-    data:pesos,
-    borderColor:"#00e5ff",
-    backgroundColor:"rgba(0,229,255,.1)",
-    tension:.4,
-    pointBackgroundColor:"#00e5ff",
-    pointRadius:5,
-    fill:true
-  }];
-  // Legenda da densidade no toggle
+  const datasets=[{label:"Peso Médio (g)",data:pesos,borderColor:"#00d4ff",backgroundColor:"rgba(0,212,255,.08)",tension:.4,pointBackgroundColor:"#00d4ff",pointRadius:5,fill:true}];
   const toggleLbl=document.getElementById("toggle-curva-lbl");
-  if(toggleLbl){
-    if(ref&&dens>0) toggleLbl.textContent=`Curva esperada L. vannamei (${ref.label} — ${dens.toFixed(0)} cam/m²)`;
-    else toggleLbl.textContent="Curva esperada L. vannamei (sem densidade cadastrada)";
-  }
+  if(toggleLbl)toggleLbl.textContent=ref&&dens>0?`Curva esperada L. vannamei (${ref.label} — ${dens.toFixed(0)} cam/m²)`:"Curva esperada L. vannamei (sem densidade cadastrada)";
   if(mostrarCurva&&ref){
     const curva=bio.map(b=>ref.curva[parseInt(b.semana)]||null);
-    datasets.push({
-      label:ref.label,
-      data:curva,
-      borderColor:ref.cor,
-      backgroundColor:"transparent",
-      borderDash:[6,4],
-      tension:.4,
-      pointRadius:3,
-      pointBackgroundColor:ref.cor
-    });
+    datasets.push({label:ref.label,data:curva,borderColor:ref.cor,backgroundColor:"transparent",borderDash:[6,4],tension:.4,pointRadius:3,pointBackgroundColor:ref.cor});
   }
   const ctx=document.getElementById("bioChart").getContext("2d");
   if(_bioChart){_bioChart.destroy();_bioChart=null;}
-  _bioChart=new Chart(ctx,{
-    type:"line",
-    data:{labels,datasets},
-    options:{
-      responsive:true,
-      maintainAspectRatio:true,
-      plugins:{legend:{labels:{color:"#5a7a95",font:{family:"'DM Mono',monospace",size:11}}}},
-      scales:{
-        x:{ticks:{color:"#5a7a95"},grid:{color:"rgba(26,48,80,.5)"}},
-        y:{ticks:{color:"#5a7a95"},grid:{color:"rgba(26,48,80,.5)"},title:{display:true,text:"Peso (g)",color:"#5a7a95"}}
-      }
-    }
-  });
-  // Tabela
-  const thead=document.getElementById("bio-thead");
-  const tbody=document.getElementById("bio-tbody");
+  _bioChart=new Chart(ctx,{type:"line",data:{labels,datasets},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:"#5a7a9e",font:{family:"'JetBrains Mono',monospace",size:11}}}},scales:{x:{ticks:{color:"#5a7a9e"},grid:{color:"rgba(30,48,80,.5)"}},y:{ticks:{color:"#5a7a9e"},grid:{color:"rgba(30,48,80,.5)"},title:{display:true,text:"Peso (g)",color:"#5a7a9e"}}}}});
+  const thead=document.getElementById("bio-thead");const tbody=document.getElementById("bio-tbody");
   const densLabel=dens>0?` <span style="font-size:.58rem;color:var(--muted);font-weight:400">(${dens.toFixed(0)} cam/m²)</span>`:"";
-  thead.innerHTML=`<tr>
-    <th>Semana</th><th>Data</th><th>Peso (g)</th>
-    <th>Esperado${densLabel}</th><th>Status</th>
-    <th>CCMT</th><th>Biomassa Real</th>
-  </tr>`;
+  thead.innerHTML=`<tr><th>Semana</th><th>Data</th><th>Peso (g)</th><th>Esperado${densLabel}</th><th>Status</th><th>CCMT</th><th>Biomassa Real</th></tr>`;
   tbody.innerHTML=bio.slice().reverse().map(b=>{
-    const p=parseFloat(b.peso)||0;
-    const sem=parseInt(b.semana)||0;
-    const esp=getPesoEsperado(sem,dens);
-    const st=getStatusPeso(p,esp);
+    const p=parseFloat(b.peso)||0;const sem=parseInt(b.semana)||0;const esp=getPesoEsperado(sem,dens);const st=getStatusPeso(p,esp);
     const diffStr=st.diff!==null?(st.diff>=0?"+":"")+st.diff+"g":"";
-    const statusEl=!esp?"<span style='color:var(--muted)'>Sem ref.</span>"
-      :`<span style="color:${st.cor};font-weight:600">${st.icon} ${diffStr}</span>`;
-    return`<tr>
-      <td>Sem. ${b.semana}</td>
-      <td>${fmtData(b.data)}</td>
-      <td><strong>${p}g</strong></td>
-      <td style="color:var(--muted)">${esp?esp+"g":"—"}</td>
-      <td>${statusEl}</td>
-      <td>${b.ccmt>0?`<span style="color:var(--accent)">+${parseFloat(b.ccmt).toFixed(1)}g</span>`:"—"}</td>
-      <td>${Nf(Math.round(parseFloat(b.biomassa)||0))} kg</td>
-    </tr>`;
+    const statusEl=!esp?`<span style='color:var(--muted)'>Sem ref.</span>`:`<span style="color:${st.cor};font-weight:600">${st.icon} ${diffStr}</span>`;
+    return`<tr><td>Sem. ${b.semana}</td><td>${fmtData(b.data)}</td><td><strong>${p}g</strong></td><td style="color:var(--muted)">${esp?esp+"g":"—"}</td><td>${statusEl}</td><td>${b.ccmt>0?`<span style="color:var(--cyan)">+${parseFloat(b.ccmt).toFixed(1)}g</span>`:"—"}</td><td>${Nf(Math.round(parseFloat(b.biomassa)||0))} kg</td></tr>`;
   }).join("");
 }
 
-// ═══════════════════════════════════════════════
-// HISTÓRICO
-// ═══════════════════════════════════════════════
+// ── HISTÓRICO ──
 function renderHistorico(){
   const vivs=DADOS.viveiros.filter(v=>!v._erro);
-  const container=document.getElementById("hist-container");
-  if(!container)return;
+  const container=document.getElementById("hist-container");if(!container)return;
   const todo=vivs.flatMap(v=>(v.historico||[]).filter(h=>h.tipo==="DESPESCA").map(h=>({...h,_viv:v.nome})));
-  if(!todo.length){container.innerHTML=`<div style="text-align:center;padding:40px;color:var(--muted)">Nenhum ciclo finalizado ainda.</div>`;document.getElementById("hist-titulo").textContent="";document.getElementById("lucro-acum").textContent="";return;}
+  if(!todo.length){container.innerHTML=`<div style="text-align:center;padding:40px;color:var(--muted)">🎣 Nenhum ciclo finalizado ainda.</div>`;document.getElementById("hist-titulo").textContent="";document.getElementById("lucro-acum").textContent="";return;}
   const lucroTot=todo.reduce((s,h)=>s+(h.lucro||0),0);
-  document.getElementById("hist-titulo").textContent=`${todo.length} ciclo(s) finalizado(s)`;
+  document.getElementById("hist-titulo").textContent=`🏆 ${todo.length} ciclo(s) finalizado(s)`;
   const span=document.getElementById("lucro-acum");
-  span.textContent=`Lucro total: ${R(lucroTot)}`;span.className=`pill ${lucroTot>=0?"pill-green":"pill-red"}`;
+  span.textContent=`💰 Lucro total: ${R(lucroTot)}`;span.className=`pill ${lucroTot>=0?"pill-g":"pill-r"}`;
   container.innerHTML=`<div class="table-wrap"><div class="table-scroll"><table><thead><tr><th>Viveiro</th><th>Data</th><th>Dias</th><th>Biomassa</th><th>Receita</th><th>Custo Ração</th><th>C. Adicional</th><th>Lucro</th><th>FCA</th><th>Lab.</th></tr></thead><tbody>${
-    todo.slice().reverse().map((h,ri)=>{
-      const luc=h.lucro||0;
-      return`<tr style="background:${ri%2?"rgba(0,0,0,.06)":"transparent"}"><td>${esc(h._viv)}</td><td>${h.data||"—"}</td><td>${h.dias||"—"}d</td><td>${Nf(h.kg)} kg</td><td style="color:var(--accent2)">${R(h.receita)}</td><td style="color:var(--warn)">${R(h.c_racao)}</td><td style="color:var(--warn)">${R(h.c_insumos)}</td><td style="font-weight:700;color:${luc>=0?"var(--accent2)":"var(--danger)"}">${R(luc)}</td><td>${h.fca||"—"}</td><td>${h.laboratorio?`<span class="pill pill-blue">${h.laboratorio}</span>`:"—"}</td></tr>`;
-    }).join("")
+    todo.slice().reverse().map((h,ri)=>{const luc=h.lucro||0;return`<tr style="background:${ri%2?"rgba(0,0,0,.06)":"transparent"}"><td>${esc(h._viv)}</td><td>${h.data||"—"}</td><td>${h.dias||"—"}d</td><td>${Nf(h.kg)} kg</td><td style="color:var(--mint)">${R(h.receita)}</td><td style="color:var(--amber)">${R(h.c_racao)}</td><td style="color:var(--amber)">${R(h.c_insumos)}</td><td style="font-weight:700;color:${luc>=0?"var(--mint)":"var(--red)"}">${R(luc)}</td><td>${h.fca||"—"}</td><td>${h.laboratorio?`<span class="pill pill-c">${h.laboratorio}</span>`:"—"}</td></tr>`;}).join("")
   }</tbody></table></div></div>`;
 }
 
-// ═══════════════════════════════════════════════
-// ESTOQUE
-// ═══════════════════════════════════════════════
+// ── ESTOQUE ──
 function renderEstoque(){
   const e=DADOS.estoque.filter(x=>x.produto);
-  const kpiEl=document.getElementById("kpi-estoque");
-  const grid=document.getElementById("estoque-grid");
-  if(!e.length){kpiEl.innerHTML="";grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">Estoque vazio ou offline.</div>`;return;}
+  const kpiEl=document.getElementById("kpi-estoque");const grid=document.getElementById("estoque-grid");
+  if(!e.length){kpiEl.innerHTML="";grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">🏭 Estoque vazio ou offline.</div>`;return;}
   const totVal=e.reduce((s,x)=>s+(parseFloat(x.total)||parseFloat(x.valor_total)||0),0);
   const crit=e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("CRITICO")||s.includes("SEM ESTOQUE");}).length;
   const baix=e.filter(x=>{const s=String(x.situacao||"").toUpperCase();return s.includes("BAIXO")||s.includes("MINIMO")||s.includes("MÍNIMO");}).length;
   kpiEl.innerHTML=[
-    {label:"Valor em Estoque",value:R(totVal),cls:"accent"},
-    {label:"Itens Críticos",value:crit,cls:crit>0?"danger":"green"},
-    {label:"Estoque Baixo",value:baix,cls:baix>0?"warn":"green"},
-    {label:"Total Insumos",value:e.length,cls:""},
-  ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div></div>`).join("");
+    {emoji:"💎",label:"Valor em Estoque",value:R(totVal),cls:"c"},
+    {emoji:"🚨",label:"Itens Críticos",value:crit,cls:crit>0?"r":"g"},
+    {emoji:"⚠️",label:"Estoque Baixo",value:baix,cls:baix>0?"w":"g"},
+    {emoji:"📦",label:"Total Insumos",value:e.length,cls:""},
+  ].map(k=>`<div class="kpi-card ${k.cls}"><span class="kpi-emoji">${k.emoji}</span><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.value}</div></div>`).join("");
   const maxQ=Math.max(...e.map(x=>parseFloat(x.qtd)||parseFloat(x.estoque_atual)||0),1);
   grid.innerHTML=e.map((x,idx)=>{
     const raw=String(x.situacao||"").toLowerCase();
     const sit=raw.includes("critico")||raw.includes("sem estoque")?"critico":raw.includes("baixo")||raw.includes("minimo")||raw.includes("mínimo")?"baixo":"ok";
-    const sl=sit==="ok"?"✅ OK":sit==="baixo"?"⚠ Baixo":"🔴 Crítico";
-    const sc=sit==="ok"?"pill-green":sit==="baixo"?"pill-warn":"pill-red";
+    const sl=sit==="ok"?"✅ OK":sit==="baixo"?"⚠️ Baixo":"🚨 Crítico";
+    const sc=sit==="ok"?"pill-g":sit==="baixo"?"pill-w":"pill-r";
     const qtd=parseFloat(x.qtd)||parseFloat(x.estoque_atual)||0;
     const custo=parseFloat(x.custo)||parseFloat(x.custo_unitario)||0;
     const total=parseFloat(x.total)||parseFloat(x.valor_total)||0;
     const pct=Math.round(qtd/maxQ*100);
     return`<div class="est-card ${sit}">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
         <div class="est-name">${esc(x.produto)}</div>
         <span class="pill ${sc}">${sl}</span>
       </div>
-      <div class="est-row"><span>Quantidade</span><span>${Nf(qtd)} ${esc(x.unidade||"")}</span></div>
-      <div class="est-row"><span>Custo Unit.</span><span>${R(custo)}</span></div>
-      <div class="est-row"><span>Valor Total</span><span>${R(total)}</span></div>
+      <div class="est-row"><span>📦 Quantidade</span><span>${Nf(qtd)} ${esc(x.unidade||"")}</span></div>
+      <div class="est-row"><span>💲 Custo Unit.</span><span>${R(custo)}</span></div>
+      <div class="est-row"><span>💰 Valor Total</span><span>${R(total)}</span></div>
       <div class="est-bar-wrap"><div class="est-bar ${sit}" style="width:${pct}%"></div></div>
-      <button class="est-btn-add" onclick="abrirModalEntrada(${idx})">+ Entrada</button>
+      <button class="est-btn-add" onclick="abrirModalEntrada(${idx})">➕ Registrar Entrada</button>
     </div>`;
   }).join("");
 }
@@ -1117,8 +1508,7 @@ async function executarEntradaEstoque(){
     const item=_ctxModal.item;
     const url=CLIENTE.estoqueUrl+"?tipo=entrada&produto="+encodeURIComponent(item.produto)+"&quantidade="+qtd+"&valor_total="+valor;
     const r=await fetch(url).then(res=>res.json());
-    if(r.status==="ok"){alert("✅ Entrada registrada!");carregarDados();}
-    else alert("Erro: "+r.msg);
+    if(r.status==="ok"){alert("✅ Entrada registrada!");carregarDados();}else alert("Erro: "+r.msg);
   }catch(e){alert("Falha: "+e.message);}
 }
 function abrirModalNovoInsumo(){
@@ -1133,17 +1523,13 @@ async function executarCriarNovoInsumo(){
     const min=parseFloat(document.getElementById("novo-min").value)||0;const qtd=parseFloat(document.getElementById("novo-qtd").value)||0;const valor=parseFloat(document.getElementById("novo-valor").value)||0;
     const url=CLIENTE.estoqueUrl+"?tipo=novo_insumo&produto="+encodeURIComponent(nome)+"&categoria="+encodeURIComponent(cat)+"&unidade="+encodeURIComponent(un)+"&estoque_minimo="+min+"&quantidade="+qtd+"&valor_total="+valor;
     const r=await fetch(url).then(res=>res.json());
-    if(r.status==="ok"){alert("✅ Item cadastrado!");carregarDados();}
-    else alert("Erro: "+r.msg);
+    if(r.status==="ok"){alert("✅ Item cadastrado!");carregarDados();}else alert("Erro: "+r.msg);
   }catch(e){alert("Falha: "+e.message);}
 }
 
-// ═══════════════════════════════════════════════
-// CUSTOS
-// ═══════════════════════════════════════════════
+// ── CUSTOS ──
 function renderCustos(){
-  const vivs=DADOS.viveiros.filter(v=>!v._erro);
-  const grid=document.getElementById("custos-grid");if(!grid)return;
+  const vivs=DADOS.viveiros.filter(v=>!v._erro);const grid=document.getElementById("custos-grid");if(!grid)return;
   if(!vivs.length){grid.innerHTML=`<div class="error-msg">Nenhum viveiro.</div>`;return;}
   const totC=vivs.reduce((s,v)=>s+(v.custoCiclo||0),0);
   const totB=vivs.reduce((s,v)=>s+(v.biomassaReal||v.biomassa||0),0);
@@ -1156,21 +1542,20 @@ function renderCustos(){
     const c=v.custoCiclo||0;const bioR=v.biomassaReal||v.biomassa||0;const cpkgV=bioR>0?c/bioR:0;
     const ri=DADOS.viveiros.indexOf(v);const dias=v.diasCiclo??diasDesde(v.dataInicio)??0;
     return`<div class="custo-viv-card" onclick="abrirDetalhesCusto(${ri})" style="animation-delay:${i*.06}s">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div style="font-family:'Syne',sans-serif;font-size:.85rem;font-weight:800">${v.nome}</div>
-        <span class="pill pill-warn">${R(c)}</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="font-size:.88rem;font-weight:800">💸 ${v.nome}</div>
+        <span class="pill pill-w">${R(c)}</span>
       </div>
       <div class="cvr-grid">
-        <div class="cvr"><div class="cvr-lbl">Custo/kg</div><div class="cvr-val" style="color:var(--warn)">${R(cpkgV)}</div></div>
-        <div class="cvr"><div class="cvr-lbl">Ração total</div><div class="cvr-val">${Nf(Math.round(v.racaoTotal||0))} kg</div></div>
-        <div class="cvr"><div class="cvr-lbl">Dias de ciclo</div><div class="cvr-val">${dias>0?dias+"d":"—"}</div></div>
-        <div class="cvr"><div class="cvr-lbl">Biomassa real</div><div class="cvr-val accent">${Nf(Math.round(bioR))} kg</div></div>
+        <div class="cvr"><div class="cvr-lbl">⚖️ Custo/kg</div><div class="cvr-val" style="color:var(--amber)">${R(cpkgV)}</div></div>
+        <div class="cvr"><div class="cvr-lbl">🍽️ Ração total</div><div class="cvr-val">${Nf(Math.round(v.racaoTotal||0))} kg</div></div>
+        <div class="cvr"><div class="cvr-lbl">🗓 Dias de ciclo</div><div class="cvr-val">${dias>0?dias+"d":"—"}</div></div>
+        <div class="cvr"><div class="cvr-lbl">🌊 Biomassa real</div><div class="cvr-val" style="color:var(--cyan)">${Nf(Math.round(bioR))} kg</div></div>
       </div>
-      <div style="margin-top:10px;font-size:.62rem;color:var(--warn)">🔍 Clique para ver o detalhamento completo</div>
+      <div style="margin-top:10px;font-size:.62rem;color:var(--amber)">🔍 Clique para ver o detalhamento completo</div>
     </div>`;
   }).join("");
 }
-
 async function abrirDetalhesCusto(ri){
   const v=DADOS.viveiros[ri];if(!v||v._erro)return;
   document.getElementById("det-titulo").textContent=`💸 Custos — ${v.nome}`;
@@ -1179,199 +1564,70 @@ async function abrirDetalhesCusto(ri){
   try{
     const data=await fetch(v.scriptUrlBase+"?tipo=custos_detalhados").then(r=>r.json());
     if(data.status!=="ok")throw new Error(data.msg||"Erro");
-
     const R2=n=>isNaN(n)||n==null?"—":"R$ "+Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
-    const pct=(n,t)=>t>0?((n/t)*100).toFixed(1)+"%" :"0%";
-
-    // ★ Valores de cada bloco — fontes separadas, sem cruzamento
-    const valPL     = v.pl_ciclo_atual?.valor_total || 0;
-    const custoKg   = v.custoKgRacao || 4.6;
-    const valRacao  = Math.round(v.racaoTotal * custoKg * 100) / 100;
-    const valOutros = data.total_geral || 0;
-    const totalReal = Math.round((valPL + valRacao + valOutros) * 100) / 100;
-
-    const lancs = data.lancamentos || [];
-
-    // ── Cards de resumo ───────────────────────────────────
-    let html=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin-bottom:18px">`;
-
-    const cards=[
-      {label:"Pós-larva", icon:"ti-fish",    val:valPL,     cor:"var(--accent)"},
-      {label:"Ração",     icon:"ti-bowl",     val:valRacao,  cor:"var(--accent2)"},
-      {label:"Outros",    icon:"ti-package",  val:valOutros, cor:"var(--warn)"},
-    ];
-    cards.forEach(c=>{
-      html+=`<div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 15px">
-        <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;display:flex;align-items:center;gap:5px">
-          <i class="ti ${c.icon}" style="font-size:13px"></i>${c.label}
-        </div>
-        <div style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:${c.cor}">${R2(c.val)}</div>
-        <div style="margin-top:6px;background:var(--border);border-radius:2px;height:3px">
-          <div style="width:${Math.min(100,totalReal>0?(c.val/totalReal*100):0).toFixed(1)}%;height:100%;background:${c.cor};border-radius:2px"></div>
-        </div>
+    const pct=(n,t)=>t>0?((n/t)*100).toFixed(1)+"%":"0%";
+    const valPL=v.pl_ciclo_atual?.valor_total||0;
+    const custoKg=v.custoKgRacao||4.6;
+    const valRacao=Math.round(v.racaoTotal*custoKg*100)/100;
+    const valOutros=data.total_geral||0;
+    const totalReal=Math.round((valPL+valRacao+valOutros)*100)/100;
+    const lancs=data.lancamentos||[];
+    let html=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px">`;
+    [{label:"🦐 Pós-larva",val:valPL,cor:"var(--cyan)"},{label:"🍽️ Ração",val:valRacao,cor:"var(--mint)"},{label:"📦 Outros",val:valOutros,cor:"var(--amber)"}].forEach(c=>{
+      html+=`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px">
+        <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">${c.label}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;color:${c.cor}">${R2(c.val)}</div>
+        <div style="margin-top:7px;background:var(--border);border-radius:2px;height:3px"><div style="width:${Math.min(100,totalReal>0?(c.val/totalReal*100):0).toFixed(1)}%;height:100%;background:${c.cor};border-radius:2px"></div></div>
         <div style="font-size:.57rem;color:var(--muted);margin-top:3px">${pct(c.val,totalReal)} do total</div>
       </div>`;
     });
-    html+=`<div style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);border-radius:11px;padding:13px 15px;display:flex;flex-direction:column;justify-content:center">
-      <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Total geral</div>
-      <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--accent)">${R2(totalReal)}</div>
+    html+=`<div style="background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:var(--radius-sm);padding:14px 16px;display:flex;flex-direction:column;justify-content:center">
+      <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">💰 Total geral</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--cyan)">${R2(totalReal)}</div>
     </div></div>`;
-
-    // ── Bloco Pós-larva ───────────────────────────────────
     const pl=v.pl_ciclo_atual;
-    html+=`<div style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:rgba(0,229,255,.05);border:1px solid var(--border);border-bottom:none;border-radius:9px 9px 0 0">
-        <span style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;display:flex;align-items:center;gap:6px">
-          <i class="ti ti-fish" style="color:var(--accent)"></i>Pós-larva
-        </span>
-        <span style="font-family:'DM Mono',monospace;font-size:.82rem;font-weight:700;color:var(--accent)">${R2(valPL)}</span>
-      </div>
-      <div style="border:1px solid var(--border);border-radius:0 0 9px 9px;overflow:hidden">`;
-
-    if(pl){
-      html+=`<table style="width:100%;border-collapse:collapse">
-        <thead><tr style="background:rgba(0,0,0,.2)">
-          <th style="padding:7px 13px;text-align:left;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Produto</th>
-          <th style="padding:7px 13px;text-align:center;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Qtd</th>
-          <th style="padding:7px 13px;text-align:right;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Total</th>
-        </tr></thead>
-        <tbody><tr>
-          <td style="padding:10px 13px;font-size:.75rem">
-            <div style="font-weight:600">PL — ${esc(pl.laboratorio)}</div>
-            <div style="font-size:.63rem;color:var(--muted);margin-top:2px">${(pl.qtd_milhar*1000).toLocaleString("pt-BR")} PLs · Lançamento automático</div>
-          </td>
-          <td style="padding:10px 13px;font-size:.73rem;font-family:'DM Mono',monospace;text-align:center">1 un</td>
-          <td style="padding:10px 13px;font-size:.78rem;font-family:'DM Mono',monospace;font-weight:700;text-align:right;color:var(--accent)">${R2(valPL)}</td>
-        </tr></tbody>
-      </table>`;
-    } else {
-      html+=`<div style="padding:14px;text-align:center;color:var(--muted);font-size:.76rem">Sem PL registrada neste ciclo</div>`;
-    }
+    html+=`<div style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,212,255,.05);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius-sm) var(--radius-sm) 0 0"><span style="font-size:.8rem;font-weight:800">🦐 Pós-larva</span><span style="font-family:'JetBrains Mono',monospace;font-size:.84rem;font-weight:700;color:var(--cyan)">${R2(valPL)}</span></div><div style="border:1px solid var(--border);border-radius:0 0 var(--radius-sm) var(--radius-sm);overflow:hidden">`;
+    if(pl){html+=`<table style="width:100%;border-collapse:collapse"><thead><tr style="background:rgba(0,0,0,.2)"><th style="padding:7px 14px;text-align:left;font-size:.57rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Produto</th><th style="padding:7px 14px;text-align:center;font-size:.57rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Qtd</th><th style="padding:7px 14px;text-align:right;font-size:.57rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Total</th></tr></thead><tbody><tr><td style="padding:11px 14px;font-size:.75rem"><div style="font-weight:600">PL — ${esc(pl.laboratorio)}</div><div style="font-size:.63rem;color:var(--muted);margin-top:2px">${(pl.qtd_milhar*1000).toLocaleString("pt-BR")} PLs · Lançamento automático</div></td><td style="padding:11px 14px;font-size:.73rem;font-family:'JetBrains Mono',monospace;text-align:center">1 un</td><td style="padding:11px 14px;font-size:.78rem;font-family:'JetBrains Mono',monospace;font-weight:700;text-align:right;color:var(--cyan)">${R2(valPL)}</td></tr></tbody></table>`;}
+    else html+=`<div style="padding:16px;text-align:center;color:var(--muted);font-size:.76rem">Sem PL registrada neste ciclo</div>`;
     html+=`</div></div>`;
-
-    // ── Bloco Ração ───────────────────────────────────────
-    html+=`<div style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:rgba(0,255,163,.04);border:1px solid var(--border);border-bottom:none;border-radius:9px 9px 0 0">
-        <span style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;display:flex;align-items:center;gap:6px">
-          <i class="ti ti-bowl" style="color:var(--accent2)"></i>Ração
-        </span>
-        <span style="font-family:'DM Mono',monospace;font-size:.82rem;font-weight:700;color:var(--accent2)">${R2(valRacao)}</span>
-      </div>
-      <div style="border:1px solid var(--border);border-radius:0 0 9px 9px;padding:12px 13px">
-        <div style="display:flex;justify-content:space-between;align-items:center;font-size:.73rem;font-family:'DM Mono',monospace">
-          <span style="color:var(--muted)">Total acumulado no ciclo</span>
-          <span>${Nf(Math.round(v.racaoTotal))} kg × ${R2(custoKg)}/kg</span>
-        </div>
-        <div style="font-size:.63rem;color:var(--muted);margin-top:5px">Registros automáticos por arraçoamento via Telegram</div>
-      </div>
-    </div>`;
-
-    // ── Bloco Outros custos ───────────────────────────────
-    html+=`<div style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:rgba(255,179,0,.04);border:1px solid var(--border);border-bottom:none;border-radius:9px 9px 0 0">
-        <span style="font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;display:flex;align-items:center;gap:6px">
-          <i class="ti ti-package" style="color:var(--warn)"></i>Outros custos
-        </span>
-        <span style="font-family:'DM Mono',monospace;font-size:.82rem;font-weight:700;color:var(--warn)">${R2(valOutros)}</span>
-      </div>`;
-
-    if(lancs.length>0){
-      html+=`<div style="border:1px solid var(--border);border-radius:0 0 9px 9px;overflow:hidden">
-        <table style="width:100%;border-collapse:collapse">
-          <thead><tr style="background:rgba(0,0,0,.2)">
-            <th style="padding:7px 13px;text-align:left;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Produto</th>
-            <th style="padding:7px 13px;text-align:center;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Categoria</th>
-            <th style="padding:7px 13px;text-align:right;font-size:.57rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Total</th>
-          </tr></thead><tbody>
-          ${lancs.map((l,i)=>`<tr style="border-bottom:1px solid rgba(26,48,80,.4);background:${i%2?"rgba(0,0,0,.06)":"transparent"}">
-            <td style="padding:9px 13px;font-size:.74rem">
-              <div>${esc(l.produto)}</div>
-              ${l.obs?`<div style="font-size:.62rem;color:var(--muted);margin-top:1px">${esc(l.obs)}</div>`:""}
-            </td>
-            <td style="padding:9px 13px;text-align:center">
-              <span style="font-size:.62rem;padding:2px 8px;border-radius:20px;background:rgba(255,179,0,.1);color:var(--warn)">${esc(l.categoria)}</span>
-            </td>
-            <td style="padding:9px 13px;font-size:.78rem;font-family:'DM Mono',monospace;font-weight:700;text-align:right;color:var(--warn)">${R2(l.total)}</td>
-          </tr>`).join("")}
-          </tbody>
-        </table>
-      </div>`;
-    } else {
-      html+=`<div style="border:1px solid var(--border);border-radius:0 0 9px 9px;padding:16px;text-align:center;color:var(--muted);font-size:.76rem">
-        Nenhum custo adicional lançado neste ciclo
-      </div>`;
-    }
-    html+=`</div>`;
-
-    // ── Rodapé total ──────────────────────────────────────
-    html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.15);border-radius:11px;margin-top:4px">
-      <span style="font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800">Total geral do ciclo</span>
-      <span style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--accent)">${R2(totalReal)}</span>
-    </div>`;
-
+    html+=`<div style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,240,160,.04);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius-sm) var(--radius-sm) 0 0"><span style="font-size:.8rem;font-weight:800">🍽️ Ração</span><span style="font-family:'JetBrains Mono',monospace;font-size:.84rem;font-weight:700;color:var(--mint)">${R2(valRacao)}</span></div><div style="border:1px solid var(--border);border-radius:0 0 var(--radius-sm) var(--radius-sm);padding:14px"><div style="display:flex;justify-content:space-between;align-items:center;font-size:.73rem;font-family:'JetBrains Mono',monospace"><span style="color:var(--muted)">Total acumulado no ciclo</span><span>${Nf(Math.round(v.racaoTotal))} kg × ${R2(custoKg)}/kg</span></div><div style="font-size:.63rem;color:var(--muted);margin-top:5px">Registros automáticos por arraçoamento via Telegram</div></div></div>`;
+    html+=`<div style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,184,48,.04);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius-sm) var(--radius-sm) 0 0"><span style="font-size:.8rem;font-weight:800">📦 Outros custos</span><span style="font-family:'JetBrains Mono',monospace;font-size:.84rem;font-weight:700;color:var(--amber)">${R2(valOutros)}</span></div>`;
+    if(lancs.length>0){html+=`<div style="border:1px solid var(--border);border-radius:0 0 var(--radius-sm) var(--radius-sm);overflow:hidden"><table style="width:100%;border-collapse:collapse"><thead><tr style="background:rgba(0,0,0,.2)"><th style="padding:7px 14px;text-align:left;font-size:.57rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Produto</th><th style="padding:7px 14px;text-align:center;font-size:.57rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Categoria</th><th style="padding:7px 14px;text-align:right;font-size:.57rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border)">Total</th></tr></thead><tbody>${lancs.map((l,ii)=>`<tr style="border-bottom:1px solid rgba(30,48,80,.4);background:${ii%2?"rgba(0,0,0,.06)":"transparent"}"><td style="padding:9px 14px;font-size:.74rem"><div>${esc(l.produto)}</div>${l.obs?`<div style="font-size:.62rem;color:var(--muted);margin-top:1px">${esc(l.obs)}</div>`:""}</td><td style="padding:9px 14px;text-align:center"><span style="font-size:.62rem;padding:2px 8px;border-radius:20px;background:rgba(255,184,48,.1);color:var(--amber)">${esc(l.categoria)}</span></td><td style="padding:9px 14px;font-size:.78rem;font-family:'JetBrains Mono',monospace;font-weight:700;text-align:right;color:var(--amber)">${R2(l.total)}</td></tr>`).join("")}</tbody></table></div>`;}
+    else html+=`<div style="border:1px solid var(--border);border-radius:0 0 var(--radius-sm) var(--radius-sm);padding:18px;text-align:center;color:var(--muted);font-size:.76rem">Nenhum custo adicional lançado neste ciclo</div>`;
+    html+=`</div><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:rgba(0,212,255,.04);border:1.5px solid rgba(0,212,255,.2);border-radius:var(--radius-sm)"><span style="font-size:.84rem;font-weight:800">💰 Total geral do ciclo</span><span style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:800;color:var(--cyan)">${R2(totalReal)}</span></div>`;
     document.getElementById("det-corpo").innerHTML=html;
-  }catch(e){
-    document.getElementById("det-corpo").innerHTML=`<div class="error-msg">Erro: ${esc(e.message)}</div>`;
-  }
+  }catch(e){document.getElementById("det-corpo").innerHTML=`<div class="error-msg">Erro: ${esc(e.message)}</div>`;}
 }
 
-// ═══════════════════════════════════════════════
-// CUSTO RATEADO
-// ═══════════════════════════════════════════════
+// ── CUSTO RATEADO ──
 let _selVivRateio=[];
 function abrirModalCustoRateado(){
   _selVivRateio=[];
   const lista=document.getElementById("rat-viveiros-lista");
   const vivs=DADOS.viveiros.filter(v=>!v._erro);
-  lista.innerHTML=vivs.map(v=>{const ri=DADOS.viveiros.indexOf(v);return`<label class="rat-check-lbl" id="rat-lbl-${ri}"><input type="checkbox" class="rat-chk" data-idx="${ri}" data-url="${v.scriptUrlBase}" onchange="toggleVivRateio(${ri},this)"><span style="font-size:.78rem;font-weight:600">${v.nome}</span><span style="font-size:.65rem;color:var(--muted);margin-left:auto">${R(v.custoCiclo)}</span></label>`;}).join("");
+  lista.innerHTML=vivs.map(v=>{const ri=DADOS.viveiros.indexOf(v);return`<label class="rat-check-lbl" id="rat-lbl-${ri}"><input type="checkbox" class="rat-chk" data-idx="${ri}" data-url="${v.scriptUrlBase}" onchange="toggleVivRateio(${ri},this)" style="accent-color:var(--cyan)"><span style="font-size:.78rem;font-weight:600">${v.nome}</span><span style="font-size:.65rem;color:var(--muted);margin-left:auto">${R(v.custoCiclo)}</span></label>`;}).join("");
   document.getElementById("rat-preview").style.display="none";
   document.getElementById("rat-valor").value="";
   document.getElementById("modal-custo-rateado").style.display="flex";
 }
-function toggleVivRateio(ri,cb){
-  const url=cb.dataset.url;
-  if(cb.checked)_selVivRateio.push({ri,url});
-  else _selVivRateio=_selVivRateio.filter(x=>x.ri!==ri);
-  atualizarPreviewRateio();
-}
-function selecionarTodosViveiros(){
-  const vivs=DADOS.viveiros.filter(v=>!v._erro);_selVivRateio=[];
-  document.querySelectorAll(".rat-chk").forEach(cb=>{cb.checked=true;_selVivRateio.push({ri:parseInt(cb.dataset.idx),url:cb.dataset.url});});
-  atualizarPreviewRateio();
-}
+function toggleVivRateio(ri,cb){const url=cb.dataset.url;if(cb.checked)_selVivRateio.push({ri,url});else _selVivRateio=_selVivRateio.filter(x=>x.ri!==ri);atualizarPreviewRateio();}
+function selecionarTodosViveiros(){const vivs=DADOS.viveiros.filter(v=>!v._erro);_selVivRateio=[];document.querySelectorAll(".rat-chk").forEach(cb=>{cb.checked=true;_selVivRateio.push({ri:parseInt(cb.dataset.idx),url:cb.dataset.url});});atualizarPreviewRateio();}
 function atualizarPreviewRateio(){
-  const val=parseFloat(document.getElementById("rat-valor").value)||0;
-  const el=document.getElementById("rat-preview");
-  if(val>0&&_selVivRateio.length>0){
-    const rat=Math.round(val/_selVivRateio.length*100)/100;
-    el.innerHTML=`<div style="font-size:.72rem;color:var(--accent2);font-weight:700">Valor rateado por viveiro: ${R(rat)}</div><div style="font-size:.66rem;color:var(--muted);margin-top:4px">${_selVivRateio.length} viveiro(s) selecionado(s) · Total: ${R(val)}</div>`;
-    el.style.display="block";
-  }else el.style.display="none";
+  const val=parseFloat(document.getElementById("rat-valor").value)||0;const el=document.getElementById("rat-preview");
+  if(val>0&&_selVivRateio.length>0){const rat=Math.round(val/_selVivRateio.length*100)/100;el.innerHTML=`<div style="font-size:.72rem;color:var(--mint);font-weight:700">Valor rateado por viveiro: ${R(rat)}</div><div style="font-size:.66rem;color:var(--muted);margin-top:4px">${_selVivRateio.length} viveiro(s) selecionado(s) · Total: ${R(val)}</div>`;el.style.display="block";}
+  else el.style.display="none";
 }
 async function confirmarCustoRateado(){
-  const cat=document.getElementById("rat-cat").value;
-  const desc=document.getElementById("rat-desc").value.trim();
-  const val=parseFloat(document.getElementById("rat-valor").value)||0;
-  if(!desc){alert("Informe a descrição.");return;}
-  if(val<=0){alert("Informe o valor.");return;}
-  if(!_selVivRateio.length){alert("Selecione ao menos um viveiro.");return;}
+  const cat=document.getElementById("rat-cat").value;const desc=document.getElementById("rat-desc").value.trim();const val=parseFloat(document.getElementById("rat-valor").value)||0;
+  if(!desc){alert("Informe a descrição.");return;}if(val<=0){alert("Informe o valor.");return;}if(!_selVivRateio.length){alert("Selecione ao menos um viveiro.");return;}
   fecharModais();
-  try{
-    const urls=_selVivRateio.map(x=>x.url).join("|");
-    const url=ADM_URL+"?acao=custo_rateado&categoria="+encodeURIComponent(cat)+"&descricao="+encodeURIComponent(desc)+"&valor_total="+val.toFixed(2)+"&urls="+encodeURIComponent(urls);
-    const r=await fetch(url).then(res=>res.json());
-    if(r.status==="ok"||r.status==="parcial")alert(`✅ ${r.msg}`);
-    else alert("Erro: "+r.msg);
-    carregarDados();
-  }catch(e){alert("Falha: "+e.message);}
+  try{const urls=_selVivRateio.map(x=>x.url).join("|");const url=ADM_URL+"?acao=custo_rateado&categoria="+encodeURIComponent(cat)+"&descricao="+encodeURIComponent(desc)+"&valor_total="+val.toFixed(2)+"&urls="+encodeURIComponent(urls);const r=await fetch(url).then(res=>res.json());if(r.status==="ok"||r.status==="parcial")alert(`✅ ${r.msg}`);else alert("Erro: "+r.msg);carregarDados();}
+  catch(e){alert("Falha: "+e.message);}
 }
 
-// ═══════════════════════════════════════════════
-// MODAIS OPERACIONAIS (desbaste, despesca, limpar)
-// ═══════════════════════════════════════════════
+// ── MODAIS OPERACIONAIS ──
 function fecharModais(){document.querySelectorAll(".modal-overlay").forEach(m=>m.style.display="none");}
 document.querySelectorAll(".modal-overlay").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)fecharModais();}));
-
 function abrirModalOp(tipo,nome,url,dias,custoCiclo,ri){
   _ctxModal={tipo,nome,url,dias:dias||0,custoCiclo:custoCiclo||0,ri};
   document.querySelectorAll(".mvn").forEach(el=>el.textContent=nome);
@@ -1380,81 +1636,55 @@ function abrirModalOp(tipo,nome,url,dias,custoCiclo,ri){
   else if(tipo==="limpar"){document.getElementById("limpar-senha").value="";document.getElementById("modal-limpar").style.display="flex";}
 }
 function validarSenha(inputId){return document.getElementById(inputId).value===CLIENTE.senha;}
-
 async function executarDesbaste(){
   if(!validarSenha("desb-senha")){alert("Senha incorreta.");return;}
-  const kg=parseFloat(document.getElementById("desb-kg").value)||0;
-  const valor=parseFloat(document.getElementById("desb-valor").value)||0;
-  const dias=parseInt(document.getElementById("desb-dias").value)||0;
-  if(kg<=0){alert("Informe o kg.");return;}
-  fecharModais();
-  try{
-    const url=_ctxModal.url+"?tipo=desbaste&kg="+kg+"&valor="+valor+"&dias="+dias;
-    const r=await fetch(url).then(res=>res.json());
-    alert(r.status==="ok"?"✅ "+r.msg:"Erro: "+r.msg);carregarDados();
-  }catch(e){alert("Falha: "+e.message);}
+  const kg=parseFloat(document.getElementById("desb-kg").value)||0;const valor=parseFloat(document.getElementById("desb-valor").value)||0;const dias=parseInt(document.getElementById("desb-dias").value)||0;
+  if(kg<=0){alert("Informe o kg.");return;}fecharModais();
+  try{const url=_ctxModal.url+"?tipo=desbaste&kg="+kg+"&valor="+valor+"&dias="+dias;const r=await fetch(url).then(res=>res.json());alert(r.status==="ok"?"✅ "+r.msg:"Erro: "+r.msg);carregarDados();}catch(e){alert("Falha: "+e.message);}
 }
-
 async function executarDespesca(){
   if(!validarSenha("desp-senha")){alert("Senha incorreta.");return;}
-  const kg=parseFloat(document.getElementById("desp-kg").value)||0;
-  const valor=parseFloat(document.getElementById("desp-valor").value)||0;
-  const cracao=parseFloat(document.getElementById("desp-cracao").value)||0;
-  const cadic=parseFloat(document.getElementById("desp-cadic").value)||0;
-  const dias=parseInt(document.getElementById("desp-dias").value)||0;
-  if(kg<=0){alert("Informe o kg.");return;}
-  fecharModais();
+  const kg=parseFloat(document.getElementById("desp-kg").value)||0;const valor=parseFloat(document.getElementById("desp-valor").value)||0;const cracao=parseFloat(document.getElementById("desp-cracao").value)||0;const cadic=parseFloat(document.getElementById("desp-cadic").value)||0;const dias=parseInt(document.getElementById("desp-dias").value)||0;
+  if(kg<=0){alert("Informe o kg.");return;}fecharModais();
   try{
     const url=_ctxModal.url+"?tipo=despesca&kg="+kg+"&valor="+valor+"&custoracao="+cracao+"&custoadicional="+cadic+"&dias="+dias;
     const r=await fetch(url).then(res=>res.json());
     if(r.status==="ok"){
-      // Gerar PDF de despesca
-      const lucro=valor-(cracao+cadic);
-      const fca=kg>0?((cracao/(4.6||1))/kg).toFixed(2):"—";
+      const lucro=valor-(cracao+cadic);const fca=kg>0?((cracao/4.6)/kg).toFixed(2):"—";
       document.getElementById("pdf-wrap").innerHTML=`<div class="pdf-logo">🦐 AquaShrimpTech</div><div class="pdf-sub">Sistema de Gestão de Carcinicultura</div><div class="pdf-titulo">📋 Relatório de Despesca — ${_ctxModal.nome}</div><div class="pdf-grid"><div class="pdf-cell"><div class="pdf-cell-lbl">Data</div><div class="pdf-cell-val">${new Date().toLocaleDateString("pt-BR")}</div></div><div class="pdf-cell"><div class="pdf-cell-lbl">Biomassa Vendida</div><div class="pdf-cell-val">${kg.toLocaleString("pt-BR")} kg</div></div><div class="pdf-cell"><div class="pdf-cell-lbl">Dias de Ciclo</div><div class="pdf-cell-val">${dias}d</div></div><div class="pdf-cell"><div class="pdf-cell-lbl">Receita Total</div><div class="pdf-cell-val verde">${R(valor)}</div></div><div class="pdf-cell"><div class="pdf-cell-lbl">Custo Ração</div><div class="pdf-cell-val">${R(cracao)}</div></div><div class="pdf-cell"><div class="pdf-cell-lbl">Custos Adicionais</div><div class="pdf-cell-val">${R(cadic)}</div></div><div class="pdf-cell"><div class="pdf-cell-lbl">Custo Total</div><div class="pdf-cell-val">${R(cracao+cadic)}</div></div><div class="pdf-cell"><div class="pdf-cell-lbl">Lucro Líquido</div><div class="pdf-cell-val ${lucro>=0?"verde":"vermelho"}">${R(lucro)}</div></div><div class="pdf-cell"><div class="pdf-cell-lbl">FCA Estimado</div><div class="pdf-cell-val">${fca}</div></div></div><div class="pdf-footer">Gerado por AquaShrimpTech · ${new Date().toLocaleString("pt-BR")}</div>`;
       setTimeout(()=>{window.print();carregarDados();},300);
     }else alert("Erro: "+r.msg);
   }catch(e){alert("Falha: "+e.message);}
 }
-
 async function executarLimparCiclo(){
   if(!validarSenha("limpar-senha")){alert("Senha incorreta.");return;}
-  if(!confirm("ATENÇÃO: Esta ação é irreversível. Confirma a limpeza do ciclo?"))return;
+  if(!confirm("⚠️ ATENÇÃO: Esta ação é irreversível. Confirma a limpeza do ciclo?"))return;
   fecharModais();
-  try{
-    const r=await fetch(_ctxModal.url+"?tipo=limpar_ciclo").then(res=>res.json());
-    alert(r.status==="ok"?"✅ Ciclo limpo!":"Erro: "+r.msg);carregarDados();
-  }catch(e){alert("Falha: "+e.message);}
+  try{const r=await fetch(_ctxModal.url+"?tipo=limpar_ciclo").then(res=>res.json());alert(r.status==="ok"?"✅ Ciclo limpo!":"Erro: "+r.msg);carregarDados();}catch(e){alert("Falha: "+e.message);}
 }
 
-// ═══════════════════════════════════════════════
-// AGENTES IA LOCAL
-// ═══════════════════════════════════════════════
+// ── AGENTES IA ──
 const AGENTES_DEF=[
-  {id:"nutricao",icon:"🍽️",name:"Agente de Nutrição",spec:"Arraçoamento e FCA",cor:"rgba(0,229,255,.1)"},
-  {id:"agua",icon:"💧",name:"Agente de Qualidade da Água",spec:"Parâmetros físico-químicos",cor:"rgba(56,189,248,.1)"},
-  {id:"producao",icon:"📊",name:"Agente de Produção",spec:"Biomassa e crescimento",cor:"rgba(0,255,163,.1)"},
-  {id:"financeiro",icon:"💰",name:"Agente Financeiro",spec:"Custos e projeções",cor:"rgba(255,179,0,.1)"},
+  {id:"nutricao",icon:"🍽️",name:"Agente de Nutrição",spec:"Arraçoamento e FCA",cor:"rgba(0,212,255,.1)"},
+  {id:"agua",icon:"💧",name:"Agente da Água",spec:"Parâmetros físico-químicos",cor:"rgba(56,189,248,.1)"},
+  {id:"producao",icon:"📊",name:"Agente de Produção",spec:"Biomassa e crescimento",cor:"rgba(0,240,160,.1)"},
+  {id:"financeiro",icon:"💰",name:"Agente Financeiro",spec:"Custos e projeções",cor:"rgba(255,184,48,.1)"},
   {id:"estoque",icon:"🏭",name:"Agente de Estoque",spec:"Insumos e abastecimento",cor:"rgba(167,139,250,.1)"},
-  {id:"master",icon:"🎯",name:"Agente Master",spec:"Análise integrada e recomendações",cor:"rgba(255,79,79,.1)"},
+  {id:"master",icon:"🎯",name:"Agente Master",spec:"Análise integrada",cor:"rgba(255,79,106,.1)"},
 ];
-
 function iaTab(name,btn){
   document.querySelectorAll(".ia-tab-panel").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".ia-tab-btn").forEach(b=>b.classList.remove("active"));
   document.getElementById("ia-tab-"+name).classList.add("active");btn.classList.add("active");
 }
-
 function renderAgentesVazios(){
   document.getElementById("ia-tab-agentes").innerHTML=`<div class="agents-grid">${AGENTES_DEF.map(a=>`<div class="agent-card"><div class="agent-hd"><div class="agent-icon" style="background:${a.cor}">${a.icon}</div><div class="agent-meta"><div class="agent-name">${a.name}</div><div class="agent-spec">${a.spec}</div></div><span class="agent-status st-idle">AGUARDANDO</span></div><div class="agent-body"><div class="shim"></div><div class="shim" style="width:70%"></div><div class="shim" style="width:85%"></div></div></div>`).join("")}</div>`;
 }
-
 async function executarAnaliseLocal(){
   const vivs=DADOS.viveiros.filter(v=>!v._erro&&v.biometria);
   if(!vivs.length){alert("Nenhum viveiro com dados disponíveis.");return;}
   const btn=document.getElementById("btn-analisar");btn.disabled=true;document.getElementById("ia-btn-txt").textContent="Analisando...";document.getElementById("ia-btn-icon").textContent="⏳";
   renderAgentesVazios();
-  // ativa aba agentes
   document.querySelectorAll(".ia-tab-panel").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".ia-tab-btn").forEach(b=>b.classList.remove("active"));
   document.getElementById("ia-tab-agentes").classList.add("active");
@@ -1465,15 +1695,13 @@ async function executarAnaliseLocal(){
   const fcas=vivs.filter(v=>v.fca>0);const fcaMed=fcas.length?fcas.reduce((s,v)=>s+v.fca,0)/fcas.length:0;
   const est=DADOS.estoque;const crit=est.filter(i=>String(i.situacao||"").toLowerCase().includes("crit"));
   const resumo=vivs.map(v=>{
-    const dias=v.diasCiclo??diasDesde(v.dataInicio)??0;
-    const bio=v.biometria?.slice(-3)||[];const bioStr=bio.map(b=>`Sem${b.semana}:${b.peso}g`).join(", ");
+    const dias=v.diasCiclo??diasDesde(v.dataInicio)??0;const bio=v.biometria?.slice(-3)||[];const bioStr=bio.map(b=>`Sem${b.semana}:${b.peso}g`).join(", ");
     const pl=v.pl_ciclo_atual;const plStr=pl?`Lab:${pl.laboratorio} ${pl.qtd_milhar}mil PLs`:"Sem PL registrada";
     return`${v.nome}: ${dias}d ciclo, Peso:${v.pesoMedio||0}g, CCMT:${v.ccmt>0?"+"+v.ccmt.toFixed(1):"—"}, Bio:${Math.round(v.biomassaReal||0)}kg, FCA:${v.fca>0?v.fca.toFixed(2):"—"}, Sobrev:${v.sobrevivencia>0?v.sobrevivencia.toFixed(1)+"%":"—"}, Rac:${v.racaoAtual||0}kg/dia, Custo:R$${(v.custoCiclo||0).toFixed(0)}, PL:{${plStr}}, Bio últimas semanas:[${bioStr}]`;
   }).join("\n");
   const promptBase=`Dados da fazenda ${CLIENTE.nome} — ${new Date().toLocaleDateString("pt-BR")}:\nTabela de preços: R$${tabPreco}/kg base 10g (+R$1/kg por grama acima de 10g)\nBiomassa real total: ${totBioReal.toFixed(0)}kg | Custo total: R$${totCusto.toFixed(0)} | FCA médio: ${fcaMed.toFixed(2)}\nEstoque: ${est.length} itens, ${crit.length} críticos${crit.length?": "+crit.map(i=>i.produto).join(", "):""}\n\nViveiros:\n${resumo}\n\nResponda APENAS com dados presentes. Não invente valores. Seja técnico e direto. Máx 120 palavras por agente.`;
   _IA={};
   for(const agente of AGENTES_DEF){
-    const card=document.querySelector(`[data-agent="${agente.id}"]`);
     const prompts={
       nutricao:`${promptBase}\n\nVocê é o Agente de Nutrição. Avalie: ração hoje vs ideal, FCA de cada viveiro, eficiência alimentar, ajustes recomendados.`,
       agua:`${promptBase}\n\nVocê é o Agente de Qualidade da Água. Se não houver parâmetros no sumário, diga "Dados técnicos não registrados esta semana — atualize a aba Dados Técnicos". Avalie o que estiver disponível.`,
@@ -1486,15 +1714,13 @@ async function executarAnaliseLocal(){
     try{
       const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompts[agente.id]||promptBase}]})});
       const data=await resp.json();const txt=(data.content?.[0]?.text||"Sem resposta.").trim();
-      _IA[agente.id]=txt;
-      const score=agente.id==="master"?extrairScore(txt):null;
+      _IA[agente.id]=txt;const score=agente.id==="master"?extrairScore(txt):null;
       updateAgentCard(agente.id,"ok","ANÁLISE OK",txt,score);
     }catch(e){updateAgentCard(agente.id,"err","ERRO","Falha na análise: "+e.message);}
   }
   renderConsolidado();renderFinanceiro();
   btn.disabled=false;document.getElementById("ia-btn-txt").textContent="Analisar Fazenda";document.getElementById("ia-btn-icon").textContent="⚡";
 }
-
 function extrairScore(txt){const m=txt.match(/(\d{1,3})\/100/);return m?parseInt(m[1]):null;}
 function updateAgentCard(id,status,statusLbl,txt,score){
   const a=AGENTES_DEF.find(x=>x.id===id);if(!a)return;
@@ -1502,42 +1728,36 @@ function updateAgentCard(id,status,statusLbl,txt,score){
   let card=grid.querySelector(`[data-agent="${id}"]`);
   const stCls={run:"st-run",ok:"st-ok",err:"st-crit",warn:"st-warn"}[status]||"st-idle";
   const bodyHtml=txt?`<div class="agent-output">${esc(txt)}</div>`:`<div class="shim"></div><div class="shim" style="width:70%"></div>`;
-  const scoreHtml=score!=null?`<div class="agent-score"><span class="score-lbl">Índice de Saúde</span><span class="score-val" style="color:${score>=70?"var(--accent2)":score>=50?"var(--warn)":"var(--danger)"}">${score}/100</span></div>`:"";
-  if(!card){
-    card=document.createElement("div");card.className="agent-card";card.setAttribute("data-agent",id);grid.querySelector(".agents-grid").appendChild(card);
-  }
+  const scoreHtml=score!=null?`<div class="agent-score"><span class="score-lbl">🏥 Índice de Saúde</span><span class="score-val" style="color:${score>=70?"var(--mint)":score>=50?"var(--amber)":"var(--red)"}">${score}/100</span></div>`:"";
+  if(!card){card=document.createElement("div");card.className="agent-card";card.setAttribute("data-agent",id);grid.querySelector(".agents-grid").appendChild(card);}
   card.innerHTML=`<div class="agent-hd"><div class="agent-icon" style="background:${a.cor}">${a.icon}</div><div class="agent-meta"><div class="agent-name">${a.name}</div><div class="agent-spec">${a.spec}</div></div><span class="agent-status ${stCls}">${statusLbl}</span></div><div class="agent-body">${bodyHtml}${scoreHtml}</div>`;
 }
-
 function renderConsolidado(){
   const vivs=DADOS.viveiros.filter(v=>!v._erro);
-  const tabPreco=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
-  const totBio=vivs.reduce((s,v)=>s+(v.biomassaReal||v.biomassa||0),0);
-  const totCusto=vivs.reduce((s,v)=>s+(v.custoCiclo||0),0);
   const score=_IA.master?extrairScore(_IA.master):null;
-  const scoreHtml=score!=null?`<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:11px;padding:14px 18px;margin-bottom:16px"><div><div style="font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Índice de Saúde da Fazenda</div><div style="font-size:.74rem;color:var(--muted);margin-top:2px">Calculado pelo Agente Master</div></div><div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:${score>=70?"var(--accent2)":score>=50?"var(--warn)":"var(--danger)"}">${score}<span style="font-size:1rem;color:var(--muted)">/100</span></div></div>`:"";
+  const scoreHtml=score!=null?`<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:18px"><div><div style="font-size:.64rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">🏥 Índice de Saúde da Fazenda</div><div style="font-size:.74rem;color:var(--muted);margin-top:2px">Calculado pelo Agente Master</div></div><div style="font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:${score>=70?"var(--mint)":score>=50?"var(--amber)":"var(--red)"}">${score}<span style="font-size:1rem;color:var(--muted)">/100</span></div></div>`:"";
   const recProj=vivs.reduce((s,v)=>{const p=calcPrecoKg(v.pesoMedio||10);return s+(v.biomassaReal||v.biomassa||0)*p;},0);
-  const lucroProj=recProj-totCusto;
+  const totCusto=vivs.reduce((s,v)=>s+(v.custoCiclo||0),0);const lucroProj=recProj-totCusto;
+  const totBio=vivs.reduce((s,v)=>s+(v.biomassaReal||v.biomassa||0),0);
   document.getElementById("ia-tab-consolidado").innerHTML=`${scoreHtml}<div class="fazenda-kpis">${[
-    {l:"Biomassa Real Total",v:Nf(Math.round(totBio))+" kg",c:"a"},
-    {l:"Custo Total Ciclos",v:R(totCusto),c:"w"},
-    {l:"Receita Projetada",v:R(recProj),c:"g"},
-    {l:"Lucro Projetado",v:R(lucroProj),c:lucroProj>=0?"g":""},
-    {l:"Viveiros Ativos",v:vivs.length,c:"a"},
-    {l:"FCA Médio",v:vivs.filter(v=>v.fca>0).length?((vivs.filter(v=>v.fca>0).reduce((s,v)=>s+v.fca,0)/vivs.filter(v=>v.fca>0).length).toFixed(2)):"—",c:""},
+    {l:"🌊 Biomassa Real Total",v:Nf(Math.round(totBio))+" kg",c:"c"},
+    {l:"💸 Custo Total",v:R(totCusto),c:"w"},
+    {l:"💵 Receita Projetada",v:R(recProj),c:"g"},
+    {l:"💰 Lucro Projetado",v:R(lucroProj),c:lucroProj>=0?"g":""},
+    {l:"🦐 Viveiros Ativos",v:vivs.length,c:"c"},
+    {l:"📊 FCA Médio",v:vivs.filter(v=>v.fca>0).length?((vivs.filter(v=>v.fca>0).reduce((s,v)=>s+v.fca,0)/vivs.filter(v=>v.fca>0).length).toFixed(2)):"—",c:""},
   ].map(k=>`<div class="fkpi ${k.c}"><div class="fkpi-lbl">${k.l}</div><div class="fkpi-val ${k.c}">${k.v}</div></div>`).join("")}</div>
   ${_IA.master?`<div class="master-card"><div class="master-hd"><div><div class="master-title">🎯 Análise Master — ${CLIENTE.nome}</div><div class="master-meta">${new Date().toLocaleDateString("pt-BR")} · claude-sonnet-4 · local</div></div></div><div class="master-body"><div class="master-output">${esc(_IA.master)}</div></div></div>`:""}
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:11px">${vivs.map(v=>`<div class="viv-sum"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800">${v.nome}</div><span style="font-size:.6rem;color:var(--accent)">📊 ${v.diasCiclo??diasDesde(v.dataInicio)??0}d</span></div><div class="viv-sum-rows"><div class="vsr"><div class="vsr-lbl">Biomassa</div><div class="vsr-val">${Nf(Math.round(v.biomassaReal||v.biomassa||0))} kg</div></div><div class="vsr"><div class="vsr-lbl">FCA</div><div class="vsr-val">${v.fca>0?v.fca.toFixed(2):"—"}</div></div><div class="vsr"><div class="vsr-lbl">Sobrevivência</div><div class="vsr-val">${v.sobrevivencia>0?v.sobrevivencia.toFixed(1)+"%":"—"}</div></div><div class="vsr"><div class="vsr-lbl">Rec. Proj.</div><div class="vsr-val" style="color:var(--accent2)">${R(Math.round((v.biomassaReal||v.biomassa||0)*calcPrecoKg(v.pesoMedio||10)))}</div></div></div></div>`).join("")}</div>`;
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px">${vivs.map(v=>`<div class="viv-sum"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:.85rem;font-weight:800">🦐 ${v.nome}</div><span style="font-size:.62rem;color:var(--cyan)">📊 ${v.diasCiclo??diasDesde(v.dataInicio)??0}d</span></div><div class="viv-sum-rows"><div class="vsr"><div class="vsr-lbl">🌊 Biomassa</div><div class="vsr-val">${Nf(Math.round(v.biomassaReal||v.biomassa||0))} kg</div></div><div class="vsr"><div class="vsr-lbl">📊 FCA</div><div class="vsr-val">${v.fca>0?v.fca.toFixed(2):"—"}</div></div><div class="vsr"><div class="vsr-lbl">💪 Sobrevivência</div><div class="vsr-val">${v.sobrevivencia>0?v.sobrevivencia.toFixed(1)+"%":"—"}</div></div><div class="vsr"><div class="vsr-lbl">💵 Rec. Proj.</div><div class="vsr-val" style="color:var(--mint)">${R(Math.round((v.biomassaReal||v.biomassa||0)*calcPrecoKg(v.pesoMedio||10)))}</div></div></div></div>`).join("")}</div>`;
 }
-
 function renderFinanceiro(){
   const vivs=DADOS.viveiros.filter(v=>!v._erro);
   const tabPreco=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
   const rows=vivs.map(v=>{const p=calcPrecoKg(v.pesoMedio||10);const bio=v.biomassaReal||v.biomassa||0;const rec=bio*p;const luc=rec-(v.custoCiclo||0);return{nome:v.nome,peso:v.pesoMedio||0,preco:p,bio,custo:v.custoCiclo||0,rec,luc};});
-  const totRec=rows.reduce((s,r)=>s+r.rec,0);const totCusto=rows.reduce((s,r)=>s+r.custo,0);const totLuc=rows.reduce((s,r)=>s+r.luc,0);const totBio=rows.reduce((s,r)=>s+r.bio,0);
-  document.getElementById("ia-tab-financeiro").innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px"><div class="fin-card"><div class="fin-lbl">Receita Projetada Total</div><div class="fin-val fv-g">${R(totRec)}</div></div><div class="fin-card"><div class="fin-lbl">Custo Total Ciclos</div><div class="fin-val fv-w">${R(totCusto)}</div></div><div class="fin-card"><div class="fin-lbl">Lucro Projetado</div><div class="fin-val ${totLuc>=0?"fv-g":"fv-d"}">${R(totLuc)}</div></div></div>
-  <div class="table-wrap"><div class="table-head"><span class="table-title">Projeção por Viveiro — Tabela R$${tabPreco}/kg base 10g</span></div><div class="table-scroll"><table><thead><tr><th>Viveiro</th><th>Peso Méd.</th><th>Preço/kg</th><th>Biomassa</th><th>Receita Proj.</th><th>Custo Ciclo</th><th>Lucro Proj.</th><th>Margem</th></tr></thead><tbody>${rows.map((r,i)=>{const marg=r.rec>0?(r.luc/r.rec*100).toFixed(1):"—";return`<tr style="background:${i%2?"rgba(0,0,0,.06)":"transparent"}"><td>${esc(r.nome)}</td><td>${r.peso}g</td><td>${R(r.preco)}</td><td>${Nf(Math.round(r.bio))} kg</td><td style="color:var(--accent2)">${R(Math.round(r.rec))}</td><td style="color:var(--warn)">${R(Math.round(r.custo))}</td><td style="font-weight:700;color:${r.luc>=0?"var(--accent2)":"var(--danger)"}">${R(Math.round(r.luc))}</td><td>${marg!=="—"?marg+"%":"—"}</td></tr>`;}).join("")}</tbody></table></div></div>
-  ${_IA.financeiro?`<div style="margin-top:18px"><div class="section-title">Análise Financeira Claude</div><div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px"><div class="agent-output">${esc(_IA.financeiro)}</div></div></div>`:""}`;
+  const totRec=rows.reduce((s,r)=>s+r.rec,0);const totCusto=rows.reduce((s,r)=>s+r.custo,0);const totLuc=rows.reduce((s,r)=>s+r.luc,0);
+  document.getElementById("ia-tab-financeiro").innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px"><div class="fin-card"><div class="fin-lbl">💵 Receita Projetada Total</div><div class="fin-val fv-g">${R(totRec)}</div></div><div class="fin-card"><div class="fin-lbl">💸 Custo Total Ciclos</div><div class="fin-val fv-w">${R(totCusto)}</div></div><div class="fin-card"><div class="fin-lbl">💰 Lucro Projetado</div><div class="fin-val ${totLuc>=0?"fv-g":"fv-r"}">${R(totLuc)}</div></div></div>
+  <div class="table-wrap"><div class="table-head"><span class="table-title">📊 Projeção por Viveiro — Tabela R$${tabPreco}/kg base 10g</span></div><div class="table-scroll"><table><thead><tr><th>Viveiro</th><th>Peso Méd.</th><th>Preço/kg</th><th>Biomassa</th><th>Receita Proj.</th><th>Custo Ciclo</th><th>Lucro Proj.</th><th>Margem</th></tr></thead><tbody>${rows.map((r,i)=>{const marg=r.rec>0?(r.luc/r.rec*100).toFixed(1):"—";return`<tr style="background:${i%2?"rgba(0,0,0,.06)":"transparent"}"><td>${esc(r.nome)}</td><td>${r.peso}g</td><td>${R(r.preco)}</td><td>${Nf(Math.round(r.bio))} kg</td><td style="color:var(--mint)">${R(Math.round(r.rec))}</td><td style="color:var(--amber)">${R(Math.round(r.custo))}</td><td style="font-weight:700;color:${r.luc>=0?"var(--mint)":"var(--red)"}">${R(Math.round(r.luc))}</td><td>${marg!=="—"?marg+"%":"—"}</td></tr>`;}).join("")}</tbody></table></div></div>
+  ${_IA.financeiro?`<div style="margin-top:20px"><div class="section-title">💡 Análise Financeira Claude</div><div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px"><div class="agent-output">${esc(_IA.financeiro)}</div></div></div>`:""}`;
 }
 </script>
 </body>
