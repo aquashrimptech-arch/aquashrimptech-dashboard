@@ -458,13 +458,35 @@ footer{position:relative;z-index:5;text-align:center;padding:13px;font-size:.62r
 <div id="modal-pl" class="modal-overlay"><div class="modal-box" style="max-width:460px">
   <div class="modal-title">🦐 Registrar Pós-Larva — <span class="mvn"></span></div>
   <p style="font-size:.74rem;color:var(--muted);margin-bottom:14px;line-height:1.5">Dados das PLs para análise comparativa entre laboratórios pela IA.</p>
-  <div class="login-field"><label>Laboratório</label><input type="text" id="pl-lab" placeholder="Ex: Larvifort, INVE, Aquatec..."></div>
-  <div class="login-field"><label>Lote / Código (opcional)</label><input type="text" id="pl-lote" placeholder="Ex: L2026-042"></div>
-  <div class="login-field"><label>Quantidade (milhares de PLs)</label><input type="number" id="pl-qtd" step="0.001" placeholder="Ex: 350" oninput="previewPL()"></div>
-  <div class="login-field"><label>Valor por Milhar (R$)</label><input type="number" id="pl-valor" step="0.01" placeholder="Ex: 28.50" oninput="previewPL()"></div>
-  <div id="pl-preview" style="background:rgba(0,255,163,.06);border:1px solid rgba(0,255,163,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.72rem;color:var(--accent2);display:none"></div>
-  <div class="login-field"><label>Observações (opcional)</label><input type="text" id="pl-obs" placeholder="Ex: PL12, livre de WSSV..."></div>
-  <div class="modal-buttons"><button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button><button class="btn-modal confirm" style="background:var(--accent2);color:#080f1a" onclick="executarRegistrarPL()">Salvar PL</button></div>
+
+  <div class="login-field"><label>Laboratório</label>
+    <input type="text" id="pl-lab" placeholder="Ex: Larvifort, INVE, Aquatec...">
+  </div>
+  <div class="login-field"><label>Lote / Código (opcional)</label>
+    <input type="text" id="pl-lote" placeholder="Ex: L2026-042">
+  </div>
+  <div class="login-field"><label>Quantidade total de PLs</label>
+    <input type="number" id="pl-qtd-total" step="1000" placeholder="Ex: 250000" oninput="previewPL()">
+    <div style="font-size:.62rem;color:var(--muted);margin-top:4px">Informe o total de larvas (ex: 250000)</div>
+  </div>
+  <div class="login-field"><label>Valor total pago no povoamento (R$)</label>
+    <input type="number" id="pl-valor-total" step="0.01" placeholder="Ex: 3500.00" oninput="previewPL()">
+    <div style="font-size:.62rem;color:var(--muted);margin-top:4px">Será lançado automaticamente nos custos</div>
+  </div>
+  <div class="login-field"><label>Gramatura inicial das PLs (g)</label>
+    <input type="number" id="pl-gramatura" step="0.01" placeholder="Ex: 0.053" oninput="previewPL()">
+    <div style="font-size:.62rem;color:var(--muted);margin-top:4px">Será registrado como Biometria Semana 0</div>
+  </div>
+  <div class="login-field"><label>Observações (opcional)</label>
+    <input type="text" id="pl-obs" placeholder="Ex: PL12, livre de WSSV...">
+  </div>
+
+  <div id="pl-preview" style="background:rgba(0,255,163,.06);border:1px solid rgba(0,255,163,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.72rem;color:var(--accent2);display:none;line-height:1.7"></div>
+
+  <div class="modal-buttons">
+    <button class="btn-modal cancel" onclick="fecharModais()">Cancelar</button>
+    <button class="btn-modal confirm" style="background:var(--accent2);color:#080f1a" onclick="executarRegistrarPL()">Salvar PL</button>
+  </div>
 </div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -817,27 +839,68 @@ function abrirModalPL(ri){
   document.getElementById("modal-pl").style.display="flex";
 }
 function previewPL(){
-  const q=parseFloat(document.getElementById("pl-qtd").value)||0;
-  const v=parseFloat(document.getElementById("pl-valor").value)||0;
-  const el=document.getElementById("pl-preview");
-  if(q>0&&v>0){el.textContent=`Total: ${q.toLocaleString("pt-BR")} mil PLs × R$${v.toFixed(2)}/milhar = R$${(q*v).toFixed(2)}`;el.style.display="block";}
-  else el.style.display="none";
+  const qtdTotal  = parseFloat(document.getElementById("pl-qtd-total").value)  || 0;
+  const valTotal  = parseFloat(document.getElementById("pl-valor-total").value) || 0;
+  const gram      = parseFloat(document.getElementById("pl-gramatura").value)   || 0;
+  const el        = document.getElementById("pl-preview");
+
+  if (qtdTotal <= 0) { el.style.display="none"; return; }
+
+  const milhar      = qtdTotal / 1000;
+  const vlrMilhar   = milhar > 0 ? valTotal / milhar : 0;
+  const biomassaIni = gram > 0 ? ((qtdTotal * gram) / 1000).toFixed(1) : null;
+
+  let html = `📦 ${qtdTotal.toLocaleString("pt-BR")} PLs (${milhar.toFixed(3)} milhares)`;
+  if (valTotal > 0)
+    html += `<br>💰 ${R(valTotal)} total · ${R(vlrMilhar)}/milhar → lançado nos custos automaticamente`;
+  if (biomassaIni)
+    html += `<br>⚖️ Gramatura ${gram}g · Biomassa inicial: ${biomassaIni} kg → Biometria Semana 0`;
+
+  el.innerHTML = html;
+  el.style.display = "block";
 }
+
 async function executarRegistrarPL(){
-  const lab=document.getElementById("pl-lab").value.trim();
-  const lote=document.getElementById("pl-lote").value.trim();
-  const qtd=document.getElementById("pl-qtd").value;
-  const valor=document.getElementById("pl-valor").value;
-  const obs=document.getElementById("pl-obs").value.trim();
-  if(!lab){alert("Informe o laboratório.");return;}
-  if(!qtd||parseFloat(qtd)<=0){alert("Informe a quantidade de PLs.");return;}
+  const lab      = document.getElementById("pl-lab").value.trim();
+  const lote     = document.getElementById("pl-lote").value.trim();
+  const qtdTotal = parseFloat(document.getElementById("pl-qtd-total").value)  || 0;
+  const valTotal = parseFloat(document.getElementById("pl-valor-total").value) || 0;
+  const gram     = parseFloat(document.getElementById("pl-gramatura").value)   || 0;
+  const obs      = document.getElementById("pl-obs").value.trim();
+
+  if (!lab)           { alert("Informe o laboratório."); return; }
+  if (qtdTotal <= 0)  { alert("Informe a quantidade de PLs."); return; }
+
   fecharModais();
-  try{
-    const url=_ctxModal.url+"?tipo=registrar_pl&laboratorio="+encodeURIComponent(lab)+"&lote="+encodeURIComponent(lote)+"&qtd_milhar="+parseFloat(qtd)+"&valor_milhar="+(parseFloat(valor)||0)+"&obs="+encodeURIComponent(obs);
-    const r=await fetch(url).then(res=>res.json());
-    if(r.status==="ok"){alert(`🦐 PL registrada!\n\n${lab}${lote?" — Lote "+lote:""}\n${parseFloat(qtd).toLocaleString("pt-BR")} mil PLs`);carregarDados();}
-    else alert("Erro: "+r.msg);
-  }catch(e){alert("Falha de comunicação: "+e.message);}
+
+  try {
+    const milhar = qtdTotal / 1000;
+    const url = _ctxModal.url
+      + "?tipo=registrar_pl"
+      + "&laboratorio="   + encodeURIComponent(lab)
+      + "&lote="          + encodeURIComponent(lote)
+      + "&qtd_milhar="    + milhar
+      + "&valor_total="   + valTotal       // ★ valor total (não por milhar)
+      + "&gramatura_ini=" + gram           // ★ gramatura inicial
+      + "&obs="           + encodeURIComponent(obs);
+
+    const r = await fetch(url).then(res => res.json());
+
+    if (r.status === "ok") {
+      let msg = `🦐 PL registrada!\n\n${lab}${lote ? " — Lote " + lote : ""}\n`
+              + `${qtdTotal.toLocaleString("pt-BR")} PLs`;
+      if (valTotal > 0)
+        msg += `\n💰 Custo R$${valTotal.toFixed(2)} lançado nos custos`;
+      if (gram > 0)
+        msg += `\n⚖️ Biometria Semana 0: ${gram}g`;
+      alert(msg);
+      carregarDados();
+    } else {
+      alert("Erro: " + r.msg);
+    }
+  } catch(e) {
+    alert("Falha de comunicação: " + e.message);
+  }
 }
 
 // ═══════════════════════════════════════════════
