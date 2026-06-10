@@ -150,6 +150,56 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
 .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer}
 .sb-ov{display:none;position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.5)}
 .sb-ov.open{display:block}
+
+/* ── BOTS PAGE ── */
+.bot-cli-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px}
+.bot-cli-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;position:relative}
+.bot-cli-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,229,255,.08)}
+.bot-cli-card.selected{border-color:var(--accent2);background:rgba(0,255,163,.04)}
+.bot-cli-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;flex-shrink:0;margin-bottom:10px}
+.bot-cli-nome{font-size:.84rem;font-weight:700;margin-bottom:3px}
+.bot-cli-info{font-size:.66rem;color:var(--text3)}
+.bot-status{position:absolute;top:12px;right:12px}
+
+.bot-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.bot-panel-hd{padding:14px 18px;border-bottom:1px solid var(--border);background:rgba(0,229,255,.03);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.bot-panel-title{font-size:.88rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.bot-panel-body{padding:18px}
+
+.bot-cfg-bar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.bot-cfg-item{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:11px 13px}
+.bot-cfg-lbl{font-size:.58rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.bot-cfg-val{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--accent);word-break:break-all;display:flex;align-items:center;gap:6px}
+.bot-cfg-val.masked{color:var(--text3);letter-spacing:.15em}
+.btn-reveal{background:none;border:none;color:var(--text3);cursor:pointer;font-size:.72rem;padding:0;transition:color .2s}
+.btn-reveal:hover{color:var(--accent)}
+
+.viv-bot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:16px}
+.viv-bot-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:11px;padding:14px;transition:border-color .2s}
+.viv-bot-card:hover{border-color:var(--border2)}
+.viv-bot-name{font-size:.8rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.viv-bot-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+
+.bot-log{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text2);max-height:260px;overflow-y:auto;line-height:1.7}
+.log-line{padding:2px 0;border-bottom:1px solid rgba(21,32,56,.4)}
+.log-line:last-child{border-bottom:none}
+.log-ok{color:var(--accent2)}.log-err{color:var(--danger)}.log-info{color:var(--accent)}.log-warn{color:var(--warn)}
+
+.token-edit-bar{display:flex;gap:8px;align-items:flex-end;margin-bottom:16px;background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.15);border-radius:10px;padding:13px 15px}
+.token-edit-bar .fg{margin-bottom:0;flex:1}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.action-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;display:flex;flex-direction:column;gap:8px;transition:all .2s;cursor:pointer}
+.action-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.action-card.danger:hover{border-color:var(--danger)}
+.action-card.warn:hover{border-color:var(--warn)}
+.action-card.green:hover{border-color:var(--accent2)}
+.action-ic{font-size:1.3rem}
+.action-title{font-size:.76rem;font-weight:700}
+.action-desc{font-size:.62rem;color:var(--text3);line-height:1.4}
+
+.resp-box{background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:11px 13px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text2);white-space:pre-wrap;word-break:break-all;max-height:180px;overflow-y:auto}
+
 @media(max-width:860px){
   .sb{position:fixed;top:0;bottom:0;left:0;z-index:100;transform:translateX(-100%)}
   .sb.open{transform:translateX(0)}
@@ -158,8 +208,10 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   .fr.c2,.fr.c3{grid-template-columns:1fr}
   .kr{grid-template-columns:1fr 1fr}
   .pg{padding:14px}
+  .bot-cfg-bar{grid-template-columns:1fr}
+  .action-grid{grid-template-columns:1fr 1fr}
 }
-@media(max-width:480px){.kr{grid-template-columns:1fr}}
+@media(max-width:480px){.kr{grid-template-columns:1fr}.action-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -198,6 +250,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div class="nav-sec" style="margin-top:10px">Operacional</div>
       <div class="ni" onclick="go('alertas',this)"><span class="ni-ic">🔔</span>Alertas<span class="ni-bdg" id="bdg-al">0</span></div>
       <div class="ni" onclick="go('mensagens',this)"><span class="ni-ic">💬</span>Mensagens</div>
+      <div class="ni" onclick="go('bots',this)"><span class="ni-ic">🤖</span>Gerenciar Bots</div>
       <div class="nav-sec" style="margin-top:10px">Financeiro ADM</div>
       <div class="ni" onclick="go('fin',this)"><span class="ni-ic">📈</span>Unit Economics</div>
       <div class="nav-sec" style="margin-top:10px">Sistema</div>
@@ -255,7 +308,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </tr></thead><tbody id="tbl-cli"></tbody></table></div></div>
     </div>
 
-    <!-- FINANCEIRO (existente) -->
+    <!-- FINANCEIRO -->
     <div class="pg" id="pg-financeiro">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Financeiro</div><div style="font-size:.7rem;color:var(--text3)">Asaas · PIX recorrente</div></div>
@@ -327,7 +380,147 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
-    <!-- ████ UNIT ECONOMICS — FINANCEIRO ADM ████ -->
+    <!-- ████ GERENCIAR BOTS ████ -->
+    <div class="pg" id="pg-bots">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-size:1.05rem;font-weight:700">🤖 Gerenciar Bots Telegram</div>
+          <div style="font-size:.7rem;color:var(--text3)">Selecione um cliente para gerenciar os bots dos viveiros</div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-sm bol" onclick="carregarBots()">🔄 Atualizar</button>
+          <button class="btn btn-sm bac" onclick="abrirModalEditarToken()">🔑 Editar Token/ChatID</button>
+        </div>
+      </div>
+
+      <!-- Info bar -->
+      <div style="background:rgba(155,93,229,.06);border:1px solid rgba(155,93,229,.2);border-radius:10px;padding:12px 15px;margin-bottom:18px;font-size:.74rem;display:flex;align-items:flex-start;gap:10px">
+        <span style="font-size:1rem">💡</span>
+        <div style="color:var(--text2)">
+          <b style="color:var(--purple)">Como funciona:</b> cada cliente tem um Bot Token e Chat ID cadastrados aqui.
+          As ações abaixo chamam a API do Telegram diretamente pelo navegador — sem depender do ESP32 estar online.
+          <span style="color:var(--text3)">· Token e ChatID são salvos na aba Config de cada cliente na planilha ADM.</span>
+        </div>
+      </div>
+
+      <!-- Seleção de cliente -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">Selecione o Cliente</div>
+        <div class="bot-cli-grid" id="bot-cli-grid">
+          <div style="color:var(--text3);font-size:.8rem;padding:20px">Carregando clientes...</div>
+        </div>
+      </div>
+
+      <!-- Painel do cliente selecionado -->
+      <div id="bot-painel" style="display:none">
+
+        <!-- Token/ChatID config -->
+        <div class="bot-panel">
+          <div class="bot-panel-hd">
+            <div class="bot-panel-title">
+              <span id="bp-nome-ico">🦐</span>
+              <span id="bp-nome">Cliente</span>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm bol" onclick="verificarBot()">🔍 Verificar bot</button>
+              <button class="btn btn-sm bac" onclick="abrirModalEditarToken()">🔑 Editar Config</button>
+            </div>
+          </div>
+          <div class="bot-panel-body">
+            <div class="bot-cfg-bar">
+              <div class="bot-cfg-item">
+                <div class="bot-cfg-lbl">🤖 Bot Token</div>
+                <div class="bot-cfg-val masked" id="bp-token-display">
+                  <span id="bp-token-val">Não configurado</span>
+                  <button class="btn-reveal" onclick="toggleToken()" title="Revelar">👁</button>
+                </div>
+              </div>
+              <div class="bot-cfg-item">
+                <div class="bot-cfg-lbl">💬 Chat ID</div>
+                <div class="bot-cfg-val" id="bp-chatid-val" style="color:var(--accent2)">Não configurado</div>
+              </div>
+            </div>
+
+            <!-- Ações principais -->
+            <div style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">Ações Rápidas</div>
+            <div class="action-grid">
+              <div class="action-card danger" onclick="botAcao('limpar_fila')">
+                <div class="action-ic">🧹</div>
+                <div class="action-title">Limpar Fila</div>
+                <div class="action-desc">Descarta todas as mensagens acumuladas. Use quando o bot não responde.</div>
+              </div>
+              <div class="action-card" onclick="botAcao('menu')">
+                <div class="action-ic">📋</div>
+                <div class="action-title">Enviar /menu</div>
+                <div class="action-desc">Reenvia o menu principal para o grupo do viveiro.</div>
+              </div>
+              <div class="action-card green" onclick="botAcao('status')">
+                <div class="action-ic">📊</div>
+                <div class="action-title">Solicitar Status</div>
+                <div class="action-desc">Envia "📊 Status" para o bot exibir status atual dos aeradores.</div>
+              </div>
+              <div class="action-card warn" onclick="botAcao('simulacao')">
+                <div class="action-ic">🔧</div>
+                <div class="action-title">Toggle Simulação</div>
+                <div class="action-desc">Ativa/desativa modo simulação no ESP32 (/simulacao).</div>
+              </div>
+              <div class="action-card" onclick="botAcao('versao')">
+                <div class="action-ic">ℹ️</div>
+                <div class="action-title">Ver Versão</div>
+                <div class="action-desc">Solicita a versão atual do firmware (/versao).</div>
+              </div>
+              <div class="action-card" onclick="botAcao('atualizar')">
+                <div class="action-ic">🔄</div>
+                <div class="action-title">Forçar OTA</div>
+                <div class="action-desc">Força verificação de atualização OTA (/atualizar).</div>
+              </div>
+            </div>
+
+            <!-- Enviar mensagem customizada -->
+            <div style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin:16px 0 10px">Mensagem Customizada</div>
+            <div style="display:flex;gap:8px;margin-bottom:14px">
+              <input id="bot-msg-custom" type="text" placeholder="Ex: /limpafila  ou  qualquer texto..."
+                style="flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none"
+                onkeydown="if(event.key==='Enter')botAcaoCustom()">
+              <button class="btn bor" onclick="botAcaoCustom()">📤 Enviar</button>
+            </div>
+
+            <!-- Log de operações -->
+            <div style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
+              <span>Log de Operações</span>
+              <button class="btn btn-xs bol" onclick="limparLog()">✕ Limpar</button>
+            </div>
+            <div class="bot-log" id="bot-log"><div class="log-line log-info">Aguardando ação...</div></div>
+          </div>
+        </div>
+
+        <!-- Viveiros do cliente -->
+        <div class="bot-panel">
+          <div class="bot-panel-hd">
+            <div class="bot-panel-title">🦐 Viveiros</div>
+            <button class="btn btn-sm bol" onclick="limparFilaTodos()">🧹 Limpar fila de TODOS</button>
+          </div>
+          <div class="bot-panel-body">
+            <div style="font-size:.72rem;color:var(--text3);margin-bottom:12px">
+              Cada viveiro tem seu próprio ESP32. As ações são enviadas para o Chat ID do cliente.
+            </div>
+            <div class="viv-bot-grid" id="viv-bot-grid">
+              <div style="color:var(--text3);font-size:.8rem">Selecione um cliente para ver os viveiros.</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /bot-painel -->
+
+      <!-- Estado inicial -->
+      <div id="bot-empty" style="text-align:center;padding:60px 20px;color:var(--text3)">
+        <div style="font-size:2.5rem;margin-bottom:14px">🤖</div>
+        <div style="font-size:.9rem;font-weight:600;margin-bottom:6px;color:var(--text2)">Selecione um cliente acima</div>
+        <div style="font-size:.75rem">Clique em um card de cliente para gerenciar os bots dos viveiros</div>
+      </div>
+    </div>
+
+    <!-- UNIT ECONOMICS -->
     <div class="pg" id="pg-fin">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
         <div>
@@ -445,6 +638,14 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div id="viv-ct"><div class="viv-row"><div class="viv-n">V1</div><input type="text" placeholder="https://script.google.com/macros/s/.../exec"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button></div></div>
       <div class="fsec">🏭 Estoque</div>
       <div class="fg"><label>URL Apps Script — Estoque</label><input id="c-est" type="text" placeholder="https://script.google.com/macros/s/.../exec"></div>
+      <div class="fsec">🤖 Bot Telegram</div>
+      <div class="fr c2">
+        <div class="fg"><label>Bot Token</label><input id="c-bot-token" type="text" placeholder="123456789:AABBcc..."></div>
+        <div class="fg"><label>Chat ID do Grupo</label><input id="c-chat-id" type="text" placeholder="-100123456789"></div>
+      </div>
+      <div style="background:rgba(155,93,229,.05);border:1px solid rgba(155,93,229,.15);border-radius:8px;padding:10px 13px;font-size:.7rem;color:var(--text3)">
+        💡 Token e ChatID são usados pelo Painel ADM para gerenciar os bots diretamente (limpar fila, enviar comandos, etc.)
+      </div>
       <div class="fsec">📝 Observações</div>
       <div class="fg"><textarea id="c-obs" rows="3" placeholder="Negociação especial, condições acordadas..."></textarea></div>
       <input type="hidden" id="c-id">
@@ -476,6 +677,38 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
+<!-- MODAL EDITAR TOKEN BOT -->
+<div class="ov" id="m-bot-token">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hd">
+      <div class="modal-title">🔑 Configurar Bot — <span id="mbt-nome">Cliente</span></div>
+      <button class="modal-x" onclick="closeM('m-bot-token')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:rgba(155,93,229,.06);border:1px solid rgba(155,93,229,.2);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:.74rem;color:var(--text2);line-height:1.6">
+        <b style="color:var(--purple)">📍 Onde encontrar:</b><br>
+        • <b>Bot Token:</b> @BotFather no Telegram → /mybots → selecione o bot → API Token<br>
+        • <b>Chat ID:</b> adicione @userinfobot ao grupo e ele envia o ID (começa com -100)
+      </div>
+      <div class="fg"><label>🤖 Bot Token</label>
+        <input id="mbt-token" type="text" placeholder="Ex: 7526118744:AAHVpnA6yYS0DjDUOmqIcwVrDMgf3fF0dCo">
+      </div>
+      <div class="fg"><label>💬 Chat ID do Grupo</label>
+        <input id="mbt-chatid" type="text" placeholder="Ex: -1002097483712">
+      </div>
+      <div style="background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:11px;margin-top:6px">
+        <div style="font-size:.62rem;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">🔍 Teste rápido</div>
+        <button class="btn btn-sm bac" onclick="testarTokenModal()" style="width:100%">Testar conexão com este token</button>
+        <div id="mbt-teste-result" style="margin-top:8px;font-size:.72rem;color:var(--text3);font-family:'JetBrains Mono',monospace;min-height:20px"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="closeM('m-bot-token')">Cancelar</button>
+      <button class="btn bac" onclick="salvarTokenBot()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL LANÇAR CUSTO (Unit Economics) -->
 <div class="ov" id="m-lancar">
   <div class="modal" style="max-width:560px">
@@ -486,7 +719,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
         <button id="tab-opex"  class="btn bol btn-sm" onclick="switchTab('opex')"  style="flex:1">💸 OPEX</button>
         <button id="tab-cogs"  class="btn bol btn-sm" onclick="switchTab('cogs')"  style="flex:1">📦 COGS</button>
       </div>
-      <!-- CAPEX -->
       <div id="form-capex">
         <div class="fsec" style="margin-top:0">🔧 Investimento (CAPEX)</div>
         <div style="background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.72rem;color:var(--text3)"><b style="color:var(--accent)">CAPEX</b> = Ativo físico amortizado ao longo do tempo. Ex: ESP32, ferramentas, equipamentos.</div>
@@ -503,7 +735,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
         <div style="background:rgba(0,255,163,.04);border:1px solid rgba(0,255,163,.15);border-radius:8px;padding:10px;font-size:.74rem;color:var(--text3);margin-bottom:12px" id="cap-preview">Preencha os valores para ver a amortização mensal.</div>
         <div class="fg"><label>Observação</label><input id="cap-obs" type="text" placeholder="Ex: Lote inicial — Viveiros piloto Vale do Jaguaribe"></div>
       </div>
-      <!-- OPEX -->
       <div id="form-opex" style="display:none">
         <div class="fsec" style="margin-top:0">💸 Despesa Operacional (OPEX)</div>
         <div style="background:rgba(255,179,0,.05);border:1px solid rgba(255,179,0,.15);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.72rem;color:var(--text3)"><b style="color:var(--warn)">OPEX</b> = Despesa do mês corrente. Ex: combustível, hotel, almoço, Claude API, marketing.</div>
@@ -529,7 +760,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
         </div>
         <div class="fg"><label>Observação</label><input id="opx-obs" type="text" placeholder="Ex: NF, foto do comprovante..."></div>
       </div>
-      <!-- COGS -->
       <div id="form-cogs" style="display:none">
         <div class="fsec" style="margin-top:0">📦 Custo de Serviço Prestado (COGS)</div>
         <div style="background:rgba(255,64,96,.05);border:1px solid rgba(255,64,96,.15);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.72rem;color:var(--text3)"><b style="color:var(--danger)">COGS</b> = Custo direto para instalar/entregar o serviço a um cliente. Ex: ESP32 instalado, deslocamento de instalação.</div>
@@ -559,6 +789,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
 const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
 const ADM_USER = "Maycon";
 const ADM_PASS = "328909";
+const CORES = ["#00e5ff","#00ffa3","#ff6b35","#ffb300","#9b5de5","#ff4060","#60efff","#f72585"];
 
 // ══════════════════════════════════════════════════════
 // ESTADO GLOBAL
@@ -567,6 +798,34 @@ let CLIENTES = [];
 let mrr_chart = null, status_chart = null;
 let ch_custos_ref = null, ch_evol_ref = null;
 let FIN_TAB_ATUAL = "capex";
+
+// Estado da página de Bots
+let BOT_CLI_SEL = null;   // cliente selecionado
+let BOT_TOKENS = {};      // { clienteId: { token, chatId } } — salvo em localStorage
+let BOT_TOKEN_VISIBLE = false;
+
+// ══════════════════════════════════════════════════════
+// STORAGE DE TOKENS (localStorage — só no navegador do ADM)
+// ══════════════════════════════════════════════════════
+function salvarTokenLocal(clienteId, token, chatId) {
+  try {
+    const data = JSON.parse(localStorage.getItem('ast_bot_tokens') || '{}');
+    data[clienteId] = { token, chatId };
+    localStorage.setItem('ast_bot_tokens', JSON.stringify(data));
+    BOT_TOKENS = data;
+  } catch(e) {}
+}
+function carregarTokensLocais() {
+  try {
+    BOT_TOKENS = JSON.parse(localStorage.getItem('ast_bot_tokens') || '{}');
+  } catch(e) { BOT_TOKENS = {}; }
+}
+function getToken(clienteId) {
+  return (BOT_TOKENS[clienteId] || {}).token || '';
+}
+function getChatId(clienteId) {
+  return (BOT_TOKENS[clienteId] || {}).chatId || '';
+}
 
 // ══════════════════════════════════════════════════════
 // LOGIN
@@ -597,6 +856,7 @@ document.getElementById("au").onkeydown = e => { if (e.key==="Enter") document.g
 function init() {
   setInterval(tick, 1000); tick();
   initFinMeses();
+  carregarTokensLocais();
   carregarDados();
 }
 function tick() {
@@ -635,19 +895,15 @@ async function carregarDados() {
   setTimeout(() => document.getElementById("sync-status").textContent = "", 3000);
 }
 
-// ══════════════════════════════════════════════════════
-// DEMO DATA
-// ══════════════════════════════════════════════════════
 const CLIENTES_DEMO = [
-  {ID:1,Nome:"Cleudo Dias",Telefone:"85987777108",Usuario:"cleudo",QtdViveiros:5,ValorPorViveiro:50,TotalMensal:250,DiaVencimento:10,Status:"ativo",UltimoPagamento:"18/05/2026",ProxVencimento:"18/06/2026",AsaasCustomerId:"cus_demo1",Observacoes:"Cliente fundador"},
-  {ID:2,Nome:"Bruno Adamis",Telefone:"88992329708",Usuario:"Bruno",QtdViveiros:9,ValorPorViveiro:50,TotalMensal:450,DiaVencimento:10,Status:"ativo",UltimoPagamento:"",ProxVencimento:"10/06/2026",AsaasCustomerId:"",Observacoes:""},
-  {ID:3,Nome:"Elieudo Nobre",Telefone:"",Usuario:"",QtdViveiros:6,ValorPorViveiro:50,TotalMensal:300,DiaVencimento:10,Status:"ativo",UltimoPagamento:"",ProxVencimento:"10/06/2026",AsaasCustomerId:"",Observacoes:""},
+  {ID:1,Nome:"Cleudo Dias",Telefone:"85987777108",Usuario:"cleudo",QtdViveiros:5,ValorPorViveiro:50,TotalMensal:250,DiaVencimento:10,Status:"ativo",UltimoPagamento:"18/05/2026",ProxVencimento:"18/06/2026",AsaasCustomerId:"cus_demo1",Observacoes:"Cliente fundador",UrlsViveiros:"https://script.google.com/macros/s/demo1/exec"},
+  {ID:2,Nome:"Bruno Adamis",Telefone:"88992329708",Usuario:"Bruno",QtdViveiros:9,ValorPorViveiro:50,TotalMensal:450,DiaVencimento:10,Status:"ativo",UltimoPagamento:"",ProxVencimento:"10/06/2026",AsaasCustomerId:"",Observacoes:"",UrlsViveiros:""},
+  {ID:3,Nome:"Elieudo Nobre",Telefone:"",Usuario:"",QtdViveiros:6,ValorPorViveiro:50,TotalMensal:300,DiaVencimento:10,Status:"ativo",UltimoPagamento:"",ProxVencimento:"10/06/2026",AsaasCustomerId:"",Observacoes:"",UrlsViveiros:""},
 ];
 
 // ══════════════════════════════════════════════════════
-// RENDERS
+// RENDERS EXISTENTES
 // ══════════════════════════════════════════════════════
-const CORES = ["#00e5ff","#00ffa3","#ff6b35","#ffb300","#9b5de5","#ff4060","#60efff","#f72585"];
 const SB = {
   ativo:        '<span class="bdg bg">● Ativo</span>',
   inadimplente: '<span class="bdg br">⚠ Inadimplente</span>',
@@ -687,6 +943,7 @@ function renderTabela(filtro="") {
   const lista = filtro ? CLIENTES.filter(c=>c.Nome.toLowerCase().includes(filtro.toLowerCase())||(c.Telefone||"").includes(filtro)) : CLIENTES;
   document.getElementById("tbl-cli").innerHTML = lista.map((c,i) => {
     const total = (parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50);
+    const temToken = !!getToken(c.ID);
     return `<tr>
       <td><div style="display:flex;align-items:center;gap:8px">
         <div style="width:28px;height:28px;border-radius:50%;background:${CORES[i%CORES.length]};display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:#05080f;flex-shrink:0">${(c.Nome||"?")[0]}</div>
@@ -703,6 +960,7 @@ function renderTabela(filtro="") {
         <button class="btn btn-xs bol" onclick="verDetalhe(${c.ID})">👁</button>
         <button class="btn btn-xs bol" onclick="editarCliente(${c.ID})">✏️</button>
         <button class="btn btn-xs bwa" onclick="wpp(${c.ID})">🟢</button>
+        <button class="btn btn-xs ${temToken?'bpp':'bol'}" onclick="irParaBot(${c.ID})" title="${temToken?'Bot configurado':'Configurar bot'}">🤖</button>
         ${c.Status!=="ativo"?`<button class="btn btn-xs bdn" onclick="gerarPix(${c.ID})">⚡</button>`:""}
       </div></td>
     </tr>`;
@@ -756,6 +1014,333 @@ function renderCharts() {
   const ctx2 = document.getElementById("ch-status");
   const ativ=CLIENTES.filter(c=>c.Status==="ativo").length, inad=CLIENTES.filter(c=>c.Status==="inadimplente").length, pend=CLIENTES.filter(c=>c.Status==="pendente").length;
   if (ctx2) { status_chart = new Chart(ctx2, { type:"doughnut", data:{labels:["Ativo","Inadimplente","Pendente"],datasets:[{data:[ativ,inad,pend],backgroundColor:["rgba(0,255,163,.7)","rgba(255,64,96,.7)","rgba(255,179,0,.7)"],borderColor:"#0b1221",borderWidth:3}]}, options:{responsive:true,cutout:"65%",plugins:{legend:{position:"bottom",labels:{color:"#8ba4c0",font:{family:"'JetBrains Mono'",size:10},padding:12}},tooltip:{backgroundColor:"#0b1221",borderColor:"#152038",borderWidth:1}}}}); }
+}
+
+// ══════════════════════════════════════════════════════
+// ████ BOTS — LÓGICA COMPLETA ████
+// ══════════════════════════════════════════════════════
+
+function carregarBots() {
+  const grid = document.getElementById("bot-cli-grid");
+  if (!CLIENTES.length) { grid.innerHTML = '<div style="color:var(--text3);font-size:.8rem;padding:20px">Nenhum cliente carregado.</div>'; return; }
+  grid.innerHTML = CLIENTES.map((c, i) => {
+    const temToken = !!getToken(c.ID);
+    return `<div class="bot-cli-card${BOT_CLI_SEL?.ID==c.ID?' selected':''}" onclick="selecionarClienteBot(${c.ID})" id="bcc-${c.ID}">
+      <div class="bot-status">
+        <span class="bdg ${temToken?'bg':'bw'}">${temToken?'🤖 Config':'⚠ Sem token'}</span>
+      </div>
+      <div class="bot-cli-av" style="background:${CORES[i%CORES.length]}">${(c.Nome||"?")[0]}</div>
+      <div class="bot-cli-nome">${c.Nome}</div>
+      <div class="bot-cli-info">${c.QtdViveiros||0} viveiro(s) · ${c.Status}</div>
+    </div>`;
+  }).join("");
+}
+
+function selecionarClienteBot(id) {
+  BOT_CLI_SEL = CLIENTES.find(c => c.ID == id);
+  if (!BOT_CLI_SEL) return;
+  BOT_TOKEN_VISIBLE = false;
+
+  // Atualiza cards
+  document.querySelectorAll('.bot-cli-card').forEach(el => el.classList.remove('selected'));
+  const card = document.getElementById('bcc-' + id);
+  if (card) card.classList.add('selected');
+
+  // Mostra painel
+  document.getElementById('bot-empty').style.display = 'none';
+  document.getElementById('bot-painel').style.display = 'block';
+
+  // Preenche info
+  document.getElementById('bp-nome').textContent = BOT_CLI_SEL.Nome;
+  document.getElementById('bp-nome-ico').textContent = CORES[CLIENTES.indexOf(BOT_CLI_SEL) % CORES.length] ? '🦐' : '🦐';
+
+  const token = getToken(id);
+  const chatId = getChatId(id);
+  atualizarDisplayToken(token, chatId);
+
+  // Viveiros
+  renderViveirosBotPanel();
+
+  // Limpa log
+  logBot('info', `Cliente selecionado: ${BOT_CLI_SEL.Nome}`);
+}
+
+function atualizarDisplayToken(token, chatId) {
+  const elToken = document.getElementById('bp-token-val');
+  const elChatId = document.getElementById('bp-chatid-val');
+  const elWrap = document.getElementById('bp-token-display');
+
+  if (token) {
+    elToken.textContent = BOT_TOKEN_VISIBLE ? token : token.substring(0, 8) + '...' + token.substring(token.length - 4);
+    elWrap.classList.remove('masked');
+    elWrap.style.color = 'var(--accent)';
+  } else {
+    elToken.textContent = 'Não configurado — clique em Editar Config';
+    elWrap.classList.add('masked');
+    elWrap.style.color = 'var(--text3)';
+  }
+  elChatId.textContent = chatId || 'Não configurado';
+  elChatId.style.color = chatId ? 'var(--accent2)' : 'var(--text3)';
+}
+
+function toggleToken() {
+  BOT_TOKEN_VISIBLE = !BOT_TOKEN_VISIBLE;
+  if (!BOT_CLI_SEL) return;
+  atualizarDisplayToken(getToken(BOT_CLI_SEL.ID), getChatId(BOT_CLI_SEL.ID));
+}
+
+function renderViveirosBotPanel() {
+  const grid = document.getElementById('viv-bot-grid');
+  if (!BOT_CLI_SEL) return;
+  const urls = String(BOT_CLI_SEL.UrlsViveiros || '').split('|').filter(u => u.trim().startsWith('http'));
+  const qtd = parseInt(BOT_CLI_SEL.QtdViveiros) || urls.length || 1;
+  const viveiros = Array.from({ length: Math.max(qtd, urls.length) }, (_, i) => ({
+    nome: `Viveiro ${String(i+1).padStart(2,'0')}`,
+    url: urls[i] || ''
+  }));
+
+  grid.innerHTML = viveiros.map((v, i) => `
+    <div class="viv-bot-card">
+      <div class="viv-bot-name">
+        <span style="width:24px;height:24px;border-radius:50%;background:${CORES[i%CORES.length]};display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#05080f">${i+1}</span>
+        ${v.nome}
+        ${v.url ? '<span class="bdg bg" style="font-size:.55rem">🔗 URL</span>' : '<span class="bdg bw" style="font-size:.55rem">⚠ sem URL</span>'}
+      </div>
+      <div style="font-size:.65rem;color:var(--text3);font-family:\'JetBrains Mono\',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">
+        ${v.url ? v.url.substring(0,50)+'...' : 'URL não configurada'}
+      </div>
+      <div class="viv-bot-actions">
+        <button class="btn btn-xs bol" onclick="botAcaoViveiro('limpar_fila','${v.nome}')">🧹 Fila</button>
+        <button class="btn btn-xs bol" onclick="botAcaoViveiro('menu','${v.nome}')">📋 Menu</button>
+        <button class="btn btn-xs bol" onclick="botAcaoViveiro('status','${v.nome}')">📊 Status</button>
+        <button class="btn btn-xs bol" onclick="botAcaoViveiro('versao','${v.nome}')">ℹ️ Versão</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── LOG ──────────────────────────────────────────────
+function logBot(tipo, msg) {
+  const el = document.getElementById('bot-log');
+  const agora = new Date().toLocaleTimeString('pt-BR');
+  const cls = { ok: 'log-ok', err: 'log-err', info: 'log-info', warn: 'log-warn' }[tipo] || 'log-info';
+  const ic  = { ok: '✅', err: '❌', info: '🔵', warn: '⚠️' }[tipo] || 'ℹ️';
+  const linha = document.createElement('div');
+  linha.className = `log-line ${cls}`;
+  linha.textContent = `[${agora}] ${ic} ${msg}`;
+  el.appendChild(linha);
+  el.scrollTop = el.scrollHeight;
+}
+function limparLog() {
+  document.getElementById('bot-log').innerHTML = '<div class="log-line log-info">Log limpo.</div>';
+}
+
+// ── CHAMADA API TELEGRAM ─────────────────────────────
+async function telegramCall(token, endpoint, params = {}) {
+  const url = `https://api.telegram.org/bot${token}/${endpoint}`;
+  const qs = new URLSearchParams(params).toString();
+  const resp = await fetch(qs ? url + '?' + qs : url);
+  return resp.json();
+}
+
+// ── VERIFICAR BOT ────────────────────────────────────
+async function verificarBot() {
+  if (!BOT_CLI_SEL) { toast('Selecione um cliente', 'e'); return; }
+  const token = getToken(BOT_CLI_SEL.ID);
+  if (!token) { toast('Configure o token primeiro', 'e'); logBot('err', 'Token não configurado'); return; }
+  logBot('info', `Verificando bot do cliente ${BOT_CLI_SEL.Nome}...`);
+  try {
+    const data = await telegramCall(token, 'getMe');
+    if (data.ok) {
+      logBot('ok', `Bot: @${data.result.username} (${data.result.first_name}) — ID: ${data.result.id}`);
+      toast(`✅ Bot @${data.result.username} online!`, 's');
+    } else {
+      logBot('err', `Erro: ${data.description || 'Resposta inválida'}`);
+      toast('Bot com erro: ' + (data.description || '?'), 'e');
+    }
+  } catch(e) {
+    logBot('err', 'Falha de rede: ' + e.message);
+    toast('Erro de rede', 'e');
+  }
+}
+
+// ── AÇÕES PRINCIPAIS ─────────────────────────────────
+async function botAcao(acao) {
+  if (!BOT_CLI_SEL) { toast('Selecione um cliente', 'e'); return; }
+  const token  = getToken(BOT_CLI_SEL.ID);
+  const chatId = getChatId(BOT_CLI_SEL.ID);
+  if (!token)  { toast('Configure o token primeiro — clique em Editar Config', 'e'); return; }
+  if (!chatId && acao !== 'limpar_fila') { toast('Configure o Chat ID primeiro', 'e'); return; }
+
+  if (acao === 'limpar_fila') {
+    await executarLimparFila(token, `cliente ${BOT_CLI_SEL.Nome}`);
+    return;
+  }
+
+  const comandos = {
+    menu:       '/menu',
+    status:     '📊 Status',
+    simulacao:  '/simulacao',
+    versao:     '/versao',
+    atualizar:  '/atualizar',
+  };
+  const texto = comandos[acao] || acao;
+  logBot('info', `Enviando "${texto}" para ${BOT_CLI_SEL.Nome} (chat ${chatId})`);
+  try {
+    const data = await telegramCall(token, 'sendMessage', { chat_id: chatId, text: texto });
+    if (data.ok) {
+      logBot('ok', `"${texto}" enviado! msg_id: ${data.result.message_id}`);
+      toast(`✅ "${texto}" enviado!`, 's');
+    } else {
+      logBot('err', `Erro: ${data.description}`);
+      toast('Erro Telegram: ' + data.description, 'e');
+    }
+  } catch(e) {
+    logBot('err', 'Falha: ' + e.message);
+    toast('Erro de rede', 'e');
+  }
+}
+
+async function botAcaoViveiro(acao, nomeViveiro) {
+  if (!BOT_CLI_SEL) return;
+  const token  = getToken(BOT_CLI_SEL.ID);
+  const chatId = getChatId(BOT_CLI_SEL.ID);
+  if (!token || !chatId) {
+    toast(`Configure token/chatId para ${BOT_CLI_SEL.Nome}`, 'e');
+    return;
+  }
+  if (acao === 'limpar_fila') {
+    await executarLimparFila(token, nomeViveiro);
+    return;
+  }
+  const comandos = { menu: '/menu', status: '📊 Status', versao: '/versao' };
+  const texto = comandos[acao] || acao;
+  logBot('info', `[${nomeViveiro}] Enviando "${texto}"...`);
+  try {
+    const data = await telegramCall(token, 'sendMessage', { chat_id: chatId, text: texto });
+    if (data.ok) logBot('ok', `[${nomeViveiro}] "${texto}" enviado!`);
+    else logBot('err', `[${nomeViveiro}] Erro: ${data.description}`);
+  } catch(e) { logBot('err', `[${nomeViveiro}] Falha: ` + e.message); }
+}
+
+async function botAcaoCustom() {
+  const txt = document.getElementById('bot-msg-custom').value.trim();
+  if (!txt) return;
+  if (!BOT_CLI_SEL) { toast('Selecione um cliente', 'e'); return; }
+  const token  = getToken(BOT_CLI_SEL.ID);
+  const chatId = getChatId(BOT_CLI_SEL.ID);
+  if (!token || !chatId) { toast('Configure token e ChatID', 'e'); return; }
+  logBot('info', `Enviando mensagem customizada: "${txt}"`);
+  try {
+    const data = await telegramCall(token, 'sendMessage', { chat_id: chatId, text: txt, parse_mode: 'Markdown' });
+    if (data.ok) { logBot('ok', `Enviado! msg_id: ${data.result.message_id}`); document.getElementById('bot-msg-custom').value = ''; }
+    else logBot('err', `Erro: ${data.description}`);
+  } catch(e) { logBot('err', 'Falha: ' + e.message); }
+}
+
+// ── LIMPAR FILA (lógica robusta) ─────────────────────
+async function executarLimparFila(token, contexto) {
+  logBot('info', `[${contexto}] Buscando última mensagem da fila...`);
+  try {
+    // Passo 1: pega último update_id
+    const r1 = await telegramCall(token, 'getUpdates', { offset: -1, limit: 1, timeout: 0 });
+    if (!r1.ok) {
+      logBot('err', `[${contexto}] Erro getUpdates: ${r1.description}`);
+      return;
+    }
+    if (!r1.result || r1.result.length === 0) {
+      logBot('ok', `[${contexto}] Fila já está vazia! Nenhuma mensagem pendente.`);
+      toast('Fila já estava vazia', 's');
+      return;
+    }
+    const lastId   = r1.result[0].update_id;
+    const nextOffset = lastId + 1;
+    const msgDate  = r1.result[0].message?.date || r1.result[0].callback_query?.message?.date || 0;
+    const agora    = Math.floor(Date.now() / 1000);
+    const idadeMin = msgDate > 0 ? Math.floor((agora - msgDate) / 60) : '?';
+
+    logBot('warn', `[${contexto}] Encontrado update_id: ${lastId} (idade: ${idadeMin}min)`);
+
+    // Passo 2: confirma descarte via offset
+    const r2 = await telegramCall(token, 'getUpdates', { offset: nextOffset, limit: 1, timeout: 0 });
+    if (r2.ok) {
+      logBot('ok', `[${contexto}] ✅ Fila limpa! Offset avançado para ${nextOffset}. Mensagens descartadas.`);
+      toast(`✅ Fila limpa! ${contexto}`, 's');
+    } else {
+      logBot('err', `[${contexto}] Erro ao confirmar descarte: ${r2.description}`);
+    }
+  } catch(e) {
+    logBot('err', `[${contexto}] Falha: ${e.message}`);
+    toast('Erro de rede ao limpar fila', 'e');
+  }
+}
+
+async function limparFilaTodos() {
+  if (!BOT_CLI_SEL) { toast('Selecione um cliente', 'e'); return; }
+  const token = getToken(BOT_CLI_SEL.ID);
+  if (!token) { toast('Configure o token primeiro', 'e'); return; }
+  logBot('warn', `Limpando fila de TODOS os viveiros de ${BOT_CLI_SEL.Nome}...`);
+  await executarLimparFila(token, `${BOT_CLI_SEL.Nome} — todos os viveiros`);
+}
+
+// ── MODAL EDITAR TOKEN ───────────────────────────────
+function abrirModalEditarToken() {
+  if (!BOT_CLI_SEL) {
+    // Se não tem cliente selecionado, abre modal genérico
+    document.getElementById('mbt-nome').textContent = 'Selecione um cliente primeiro';
+    document.getElementById('mbt-token').value = '';
+    document.getElementById('mbt-chatid').value = '';
+    document.getElementById('mbt-teste-result').textContent = '';
+    openM('m-bot-token');
+    return;
+  }
+  document.getElementById('mbt-nome').textContent = BOT_CLI_SEL.Nome;
+  document.getElementById('mbt-token').value = getToken(BOT_CLI_SEL.ID) || '';
+  document.getElementById('mbt-chatid').value = getChatId(BOT_CLI_SEL.ID) || '';
+  document.getElementById('mbt-teste-result').textContent = '';
+  openM('m-bot-token');
+}
+
+async function testarTokenModal() {
+  const token = document.getElementById('mbt-token').value.trim();
+  const el = document.getElementById('mbt-teste-result');
+  if (!token) { el.textContent = '⚠ Digite o token primeiro'; el.style.color = 'var(--warn)'; return; }
+  el.textContent = '⏳ Testando...'; el.style.color = 'var(--text3)';
+  try {
+    const data = await telegramCall(token, 'getMe');
+    if (data.ok) {
+      el.textContent = `✅ @${data.result.username} — ${data.result.first_name} (ID: ${data.result.id})`;
+      el.style.color = 'var(--accent2)';
+    } else {
+      el.textContent = `❌ ${data.description}`;
+      el.style.color = 'var(--danger)';
+    }
+  } catch(e) {
+    el.textContent = '❌ Erro de rede: ' + e.message;
+    el.style.color = 'var(--danger)';
+  }
+}
+
+function salvarTokenBot() {
+  if (!BOT_CLI_SEL) { toast('Selecione um cliente primeiro', 'e'); return; }
+  const token  = document.getElementById('mbt-token').value.trim();
+  const chatId = document.getElementById('mbt-chatid').value.trim();
+  if (!token)  { toast('Informe o token', 'e'); return; }
+  if (!chatId) { toast('Informe o Chat ID', 'e'); return; }
+
+  salvarTokenLocal(BOT_CLI_SEL.ID, token, chatId);
+  atualizarDisplayToken(token, chatId);
+  carregarBots();
+  renderTabela();
+  closeM('m-bot-token');
+  logBot('ok', `Token e ChatID salvos para ${BOT_CLI_SEL.Nome}`);
+  toast(`✅ Bot configurado para ${BOT_CLI_SEL.Nome}`, 's');
+}
+
+// ── IR PARA BOT (da tabela de clientes) ──────────────
+function irParaBot(id) {
+  go('bots', document.querySelector('.ni[onclick*="bots"]'));
+  setTimeout(() => selecionarClienteBot(id), 100);
 }
 
 // ══════════════════════════════════════════════════════
@@ -820,23 +1405,52 @@ function addViv() { const ct=document.getElementById("viv-ct"),n=ct.children.len
 function editarCliente(id) {
   const c=CLIENTES.find(x=>x.ID==id); if(!c) return;
   document.getElementById("m-cli-title").textContent=`✏️ Editar — ${c.Nome}`;
-  document.getElementById("c-id").value=c.ID; document.getElementById("c-nome").value=c.Nome||""; document.getElementById("c-tel").value=c.Telefone||""; document.getElementById("c-usr").value=c.Usuario||""; document.getElementById("c-email").value=c.Email||""; document.getElementById("c-vivs").value=c.QtdViveiros||1; document.getElementById("c-valviv").value=c.ValorPorViveiro||50; document.getElementById("c-obs").value=c.Observacoes||"";
+  document.getElementById("c-id").value=c.ID;
+  document.getElementById("c-nome").value=c.Nome||"";
+  document.getElementById("c-tel").value=c.Telefone||"";
+  document.getElementById("c-usr").value=c.Usuario||"";
+  document.getElementById("c-email").value=c.Email||"";
+  document.getElementById("c-vivs").value=c.QtdViveiros||1;
+  document.getElementById("c-valviv").value=c.ValorPorViveiro||50;
+  document.getElementById("c-obs").value=c.Observacoes||"";
+  // Preenche token/chatid se existir no storage local
+  document.getElementById("c-bot-token").value=getToken(c.ID)||"";
+  document.getElementById("c-chat-id").value=getChatId(c.ID)||"";
   document.getElementById("viv-ct").innerHTML=Array.from({length:parseInt(c.QtdViveiros)||1},(_,n)=>`<div class="viv-row"><div class="viv-n">V${n+1}</div><input type="text" placeholder="URL Viveiro ${n+1}"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button></div>`).join("");
   calcTotal(); openM("m-cli");
 }
 async function salvarCliente() {
   const nome=document.getElementById("c-nome").value.trim(); if(!nome){toast("Preencha o nome","e");return;}
-  const params={acao:"salvar",id:document.getElementById("c-id").value,nome,tel:document.getElementById("c-tel").value,usuario:document.getElementById("c-usr").value,senha:document.getElementById("c-pwd").value,email:document.getElementById("c-email").value,qtd_viveiros:document.getElementById("c-vivs").value,valor_viveiro:document.getElementById("c-valviv").value,dia_vencimento:document.getElementById("c-venc").value,forma_pagamento:document.getElementById("c-cob").value,observacoes:document.getElementById("c-obs").value,urls_viveiros:[...document.querySelectorAll("#viv-ct input")].map(i=>i.value).join("|"),url_estoque:document.getElementById("c-est").value};
+  const botToken=document.getElementById("c-bot-token").value.trim();
+  const chatId=document.getElementById("c-chat-id").value.trim();
+  const clienteId=document.getElementById("c-id").value;
+  const params={acao:"salvar",id:clienteId,nome,tel:document.getElementById("c-tel").value,usuario:document.getElementById("c-usr").value,senha:document.getElementById("c-pwd").value,email:document.getElementById("c-email").value,qtd_viveiros:document.getElementById("c-vivs").value,valor_viveiro:document.getElementById("c-valviv").value,dia_vencimento:document.getElementById("c-venc").value,forma_pagamento:document.getElementById("c-cob").value,observacoes:document.getElementById("c-obs").value,urls_viveiros:[...document.querySelectorAll("#viv-ct input")].map(i=>i.value).join("|"),url_estoque:document.getElementById("c-est").value};
   toast("Salvando...","i");
-  try { const data=await api(params); if(data.status==="ok"){toast(`✅ ${nome} salvo!`,"s");if(data.id&&!params.id)document.getElementById("c-id").value=data.id;closeM("m-cli");await carregarDados();}else toast("Erro: "+data.msg,"e"); }
-  catch { const vivs=parseInt(params.qtd_viveiros)||1,val=parseFloat(params.valor_viveiro)||50; if(!params.id)CLIENTES.push({ID:Date.now(),Nome:nome,Telefone:params.tel,Usuario:params.usuario,QtdViveiros:vivs,ValorPorViveiro:val,TotalMensal:vivs*val,DiaVencimento:parseInt(params.dia_vencimento)||10,Status:"ativo",UltimoPagamento:"",ProxVencimento:"",AsaasCustomerId:"",Observacoes:params.observacoes}); toast(`✅ ${nome} salvo (modo local)`,"s"); closeM("m-cli"); renderDash();renderTabela();renderAlertas();renderCobrancas();renderFinanceiro();renderCharts(); }
+  try {
+    const data=await api(params);
+    if(data.status==="ok"){
+      toast(`✅ ${nome} salvo!`,"s");
+      const savedId=data.id||clienteId;
+      if(savedId&&(botToken||chatId)) salvarTokenLocal(savedId, botToken, chatId);
+      if(data.id&&!clienteId)document.getElementById("c-id").value=data.id;
+      closeM("m-cli");await carregarDados();
+    } else toast("Erro: "+data.msg,"e");
+  } catch {
+    const vivs=parseInt(params.qtd_viveiros)||1,val=parseFloat(params.valor_viveiro)||50;
+    const novoId=clienteId||Date.now();
+    if(!clienteId)CLIENTES.push({ID:novoId,Nome:nome,Telefone:params.tel,Usuario:params.usuario,QtdViveiros:vivs,ValorPorViveiro:val,TotalMensal:vivs*val,DiaVencimento:parseInt(params.dia_vencimento)||10,Status:"ativo",UltimoPagamento:"",ProxVencimento:"",AsaasCustomerId:"",Observacoes:params.observacoes,UrlsViveiros:params.urls_viveiros});
+    if(botToken||chatId) salvarTokenLocal(novoId, botToken, chatId);
+    toast(`✅ ${nome} salvo (modo local)`,"s");
+    closeM("m-cli");renderDash();renderTabela();renderAlertas();renderCobrancas();renderFinanceiro();renderCharts();
+  }
 }
 function verDetalhe(id) {
   const c=CLIENTES.find(x=>x.ID==id); if(!c) return;
   const total=(parseInt(c.QtdViveiros)||0)*(parseFloat(c.ValorPorViveiro)||50);
+  const temToken=!!getToken(c.ID);
   document.getElementById("m-det-title").textContent=`👤 ${c.Nome}`;
-  document.getElementById("m-det-body").innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div><div class="fsec" style="margin-top:0">Dados</div>${[["Nome",c.Nome],["Telefone",`<span class="mono">${c.Telefone||"—"}</span>`],["Status",SB[c.Status]||SB.inativo]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;align-items:center"><span style="color:var(--text3);font-size:.74rem">${l}</span><span>${v}</span></div>`).join("")}<div class="fsec" style="margin-top:14px">Financeiro</div>${[["Viveiros",`<span style="color:var(--accent);font-weight:700;font-family:'JetBrains Mono',monospace">${c.QtdViveiros||0}</span>`],["Total Mensal",`<span class="mono" style="color:var(--accent2);font-weight:700">${R(total)}</span>`],["Último Pag.",`<span class="mono" style="font-size:.74rem">${c.UltimoPagamento||"—"}</span>`]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;align-items:center"><span style="color:var(--text3);font-size:.74rem">${l}</span><span>${v}</span></div>`).join("")}</div><div><div class="fsec" style="margin-top:0">Observações</div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.75rem;color:var(--text3)">${c.Observacoes||"Nenhuma observação."}</div></div></div>`;
-  document.getElementById("m-det-ft").innerHTML=`<button class="btn bol" onclick="closeM('m-det')">Fechar</button><button class="btn bwa" onclick="wpp(${c.ID});closeM('m-det')">🟢 WhatsApp</button>${!c.AsaasCustomerId?`<button class="btn bor" onclick="criarAsaas(${c.ID})">🏦 Criar Asaas</button>`:`<button class="btn bdn" onclick="gerarPix(${c.ID})">⚡ Gerar PIX</button>`}<button class="btn bac" onclick="editarCliente(${c.ID});closeM('m-det')">✏️ Editar</button>`;
+  document.getElementById("m-det-body").innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div><div class="fsec" style="margin-top:0">Dados</div>${[["Nome",c.Nome],["Telefone",`<span class="mono">${c.Telefone||"—"}</span>`],["Status",SB[c.Status]||SB.inativo],["Bot",`<span class="bdg ${temToken?'bg':'bw'}">${temToken?'🤖 Configurado':'⚠ Sem token'}</span>`]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;align-items:center"><span style="color:var(--text3);font-size:.74rem">${l}</span><span>${v}</span></div>`).join("")}<div class="fsec" style="margin-top:14px">Financeiro</div>${[["Viveiros",`<span style="color:var(--accent);font-weight:700;font-family:'JetBrains Mono',monospace">${c.QtdViveiros||0}</span>`],["Total Mensal",`<span class="mono" style="color:var(--accent2);font-weight:700">${R(total)}</span>`],["Último Pag.",`<span class="mono" style="font-size:.74rem">${c.UltimoPagamento||"—"}</span>`]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;align-items:center"><span style="color:var(--text3);font-size:.74rem">${l}</span><span>${v}</span></div>`).join("")}</div><div><div class="fsec" style="margin-top:0">Observações</div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.75rem;color:var(--text3)">${c.Observacoes||"Nenhuma observação."}</div></div></div>`;
+  document.getElementById("m-det-ft").innerHTML=`<button class="btn bol" onclick="closeM('m-det')">Fechar</button><button class="btn bwa" onclick="wpp(${c.ID});closeM('m-det')">🟢 WhatsApp</button>${!c.AsaasCustomerId?`<button class="btn bor" onclick="criarAsaas(${c.ID})">🏦 Criar Asaas</button>`:`<button class="btn bdn" onclick="gerarPix(${c.ID})">⚡ Gerar PIX</button>`}<button class="btn bpp" onclick="irParaBot(${c.ID});closeM('m-det')">🤖 Gerenciar Bot</button><button class="btn bac" onclick="editarCliente(${c.ID});closeM('m-det')">✏️ Editar</button>`;
   openM("m-det");
 }
 
@@ -860,7 +1474,7 @@ function fillTpl() {
 function prvWpp() { const txt=document.getElementById("msg-txt").value; document.getElementById("wa-txt").innerHTML=txt.replace(/\*(.*?)\*/g,"<b>$1</b>").replace(/_(.*?)_/g,"<i>$1</i>").replace(/\n/g,"<br>")||"Escreva sua mensagem..."; }
 
 // ══════════════════════════════════════════════════════
-// ★ UNIT ECONOMICS — FINANCEIRO ADM
+// UNIT ECONOMICS
 // ══════════════════════════════════════════════════════
 function initFinMeses() {
   const sel=document.getElementById("fin-mes"); if(!sel) return;
@@ -873,7 +1487,6 @@ function initFinMeses() {
     const opt=document.createElement("option"); opt.value=val; opt.textContent=lbl; if(i===0)opt.selected=true; sel.appendChild(opt);
   }
 }
-
 async function carregarDRE() {
   const ma=document.getElementById("fin-mes")?.value; if(!ma) return;
   document.getElementById("fin-updated").textContent="Calculando DRE...";
@@ -896,7 +1509,6 @@ async function carregarDRE() {
     console.error(err);
   }
 }
-
 function renderKPIsFin(d) {
   const paybackStr=d.payback_meses===null?(d.lucro_liquido<0?'<span class="cd">Negativo</span>':'<span class="cg">< 1 mês</span>'):'<span class="cw">'+d.payback_meses+' meses</span>';
   const ltvCacColor=d.ltv_cac>=5?'cg':d.ltv_cac>=3?'cw':'cd';
@@ -913,7 +1525,6 @@ function renderKPIsFin(d) {
     {ic:"🔧",lb:"CAPEX Amort.",vl:R(d.amort_mensal),tr:"Total investido: "+R(d.total_investido),cls:"",clv:"ca"},
   ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-ic">${k.ic}</div><div class="kpi-lb">${k.lb}</div><div class="kpi-vl ${k.clv}">${k.vl}</div><div class="kpi-tr">${k.tr}</div></div>`).join("");
 }
-
 function renderDRE(d) {
   const label=document.getElementById("fin-mes-label");
   if(label)label.textContent=document.getElementById("fin-mes")?.options[document.getElementById("fin-mes")?.selectedIndex]?.text||"";
@@ -930,7 +1541,6 @@ function renderDRE(d) {
     linha("💰","Lucro Líquido",d.lucro_liquido,true,d.lucro_liquido>=0?"var(--accent2)":"var(--danger)")+
     `<div style="padding:3px 5px;font-size:.68rem;color:var(--text3)">${d.lucro_liquido_pct.toFixed(1)}% margem líquida</div>`;
 }
-
 function renderUnitEconomics(d) {
   const metrica=(ic,lb,vl,desc,color)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">${ic}</span><div><div style="font-size:.76rem;font-weight:600">${lb}</div><div style="font-size:.62rem;color:var(--text3)">${desc}</div></div></div><div style="font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;color:${color}">${vl}</div></div>`;
   const ltvCacColor=d.ltv_cac>=5?"var(--accent2)":d.ltv_cac>=3?"var(--warn)":"var(--danger)";
@@ -944,19 +1554,16 @@ function renderUnitEconomics(d) {
     metrica("⏱️","Payback Total",paybackStr,"Retorno do investimento total",paybackColor)+
     metrica("🦐","Viveiros Ativos",d.total_viveiros,"Total de viveiros monitorados","var(--accent)");
 }
-
 function renderChartCustos(d) {
   if(ch_custos_ref)ch_custos_ref.destroy();
   const ctx=document.getElementById("ch-custos"); if(!ctx)return;
   ch_custos_ref=new Chart(ctx,{type:"doughnut",data:{labels:["COGS","OPEX","Amort. CAPEX"],datasets:[{data:[d.cogs,d.opex,d.amort_mensal],backgroundColor:["rgba(255,64,96,.8)","rgba(255,179,0,.8)","rgba(0,229,255,.8)"],borderColor:"#0b1221",borderWidth:3}]},options:{responsive:true,cutout:"60%",plugins:{legend:{position:"bottom",labels:{color:"#8ba4c0",font:{family:"'JetBrains Mono'",size:10},padding:10}},tooltip:{backgroundColor:"#0b1221",borderColor:"#152038",borderWidth:1,callbacks:{label:c=>c.label+": "+R(c.parsed)+" ("+(d.opex+d.cogs+d.amort_mensal>0?(c.parsed/(d.opex+d.cogs+d.amort_mensal)*100).toFixed(1):0)+"%)"}}}}});
 }
-
 function renderChartEvolucao(historico) {
   if(ch_evol_ref)ch_evol_ref.destroy();
   const ctx=document.getElementById("ch-evolucao"); if(!ctx||!historico.length)return;
   ch_evol_ref=new Chart(ctx,{type:"line",data:{labels:historico.map(h=>h.mes_ano),datasets:[{label:"MRR",data:historico.map(h=>h.mrr||0),borderColor:"#00ffa3",backgroundColor:"rgba(0,255,163,.1)",fill:true,tension:.3,borderWidth:2,pointRadius:4},{label:"OPEX",data:historico.map(h=>h.opex||0),borderColor:"#ffb300",fill:false,tension:.3,borderWidth:2,pointRadius:3,borderDash:[4,4]},{label:"EBITDA",data:historico.map(h=>h.ebitda||0),borderColor:"#00e5ff",backgroundColor:"rgba(0,229,255,.08)",fill:true,tension:.3,borderWidth:2,pointRadius:4}]},options:{responsive:true,plugins:{legend:{position:"top",labels:{color:"#8ba4c0",font:{family:"'JetBrains Mono'",size:10}}},tooltip:{backgroundColor:"#0b1221",borderColor:"#152038",borderWidth:1,callbacks:{label:c=>c.dataset.label+": "+R(c.parsed.y)}}},scales:{x:{grid:{color:"rgba(21,32,56,.6)"},ticks:{color:"#4a6080",font:{family:"'JetBrains Mono'",size:9}}},y:{grid:{color:"rgba(21,32,56,.6)"},ticks:{color:"#4a6080",font:{family:"'JetBrains Mono'",size:9},callback:v=>"R$"+v}}}}});
 }
-
 function renderTabelaCAPEX(itens) {
   document.getElementById("tbl-capex").innerHTML=(itens||[]).filter(i=>i.status!=="inativo").map(i=>`<tr><td><div style="font-weight:600;font-size:.76rem">${i.descricao}</div><div style="font-size:.62rem;color:var(--text3)">${i.categoria} · ${i.quantidade}x R$${parseFloat(i.valor_unit||0).toFixed(2)}</div></td><td class="mono" style="color:var(--accent3)">${R(i.valor_total)}</td><td class="mono" style="color:var(--warn)">${R(i.amort_mensal)}/mês</td><td class="mono" style="font-size:.7rem;color:var(--text3)">${i.meses_rest} meses</td><td><span class="bdg bg">● ativo</span></td></tr>`).join("")||'<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Nenhum investimento lançado</td></tr>';
 }
@@ -966,7 +1573,6 @@ function renderTabelaOPEX(itens) {
 function renderTabelaCOGS(itens) {
   document.getElementById("tbl-cogs").innerHTML=(itens||[]).map(i=>`<tr><td style="font-weight:600;font-size:.76rem">${i.cliente||"—"}</td><td style="font-size:.72rem;color:var(--accent)">${i.viveiro||"—"}</td><td><span class="bdg br" style="font-size:.56rem">${i.categoria}</span></td><td style="font-size:.74rem">${i.descricao}</td><td class="mono" style="color:var(--danger)">${R(i.valor)}</td></tr>`).join("")||'<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Nenhum custo por cliente lançado</td></tr>';
 }
-
 function switchTab(tab) {
   FIN_TAB_ATUAL=tab;
   ["capex","opex","cogs"].forEach(t=>{document.getElementById("form-"+t).style.display=t===tab?"block":"none";document.getElementById("tab-"+t).className="btn btn-sm "+(t===tab?"bac":"bol");});
@@ -1001,7 +1607,7 @@ async function salvarLancamento() {
 const PG_TITLES = {
   dash:"Dashboard", clientes:"Clientes", financeiro:"Financeiro",
   cobrancas:"Cobranças", alertas:"Alertas", mensagens:"Mensagens",
-  fin:"Financeiro ADM — Unit Economics", config:"Configurações"
+  bots:"🤖 Gerenciar Bots", fin:"Financeiro ADM — Unit Economics", config:"Configurações"
 };
 function go(nm,el) {
   document.querySelectorAll(".pg").forEach(p=>p.classList.remove("act"));
@@ -1011,6 +1617,7 @@ function go(nm,el) {
   else document.querySelectorAll(".ni").forEach(n=>{if(n.getAttribute("onclick")?.includes("'"+nm+"'"))n.classList.add("act");});
   document.getElementById("pg-title").textContent=PG_TITLES[nm]||nm;
   if(nm==="fin"){initFinMeses();carregarDRE();}
+  if(nm==="bots"){carregarBots();}
   if(window.innerWidth<860)closeSB();
 }
 function toggleSB(){document.getElementById("sb").classList.toggle("open");document.getElementById("sb-ov").classList.toggle("open");}
