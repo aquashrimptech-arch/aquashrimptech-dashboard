@@ -989,3 +989,577 @@ function toast(msg,tipo="i"){const ic={s:"✅",e:"❌",i:"ℹ️"}[tipo];const e
 </script>
 </body>
 </html>
+<!--
+  ════════════════════════════════════════════════════════════
+  SEÇÃO FINANCEIRO — adicionar ao adm.html existente
+  
+  PASSOS DE INTEGRAÇÃO:
+  1. No <nav class="sb-nav"> adicionar o item de menu abaixo
+  2. Antes do </div><!--/main--> adicionar a página financeiro
+  3. No JS, adicionar os cases ao objeto PG_TITLES
+  4. Atualizar o doGet() do Apps Script com os novos cases
+  ════════════════════════════════════════════════════════════
+
+  ── 1. ITEM DE MENU (adicionar após o item "financeiro" existente) ──
+  <div class="ni" onclick="go('fin',this)"><span class="ni-ic">📈</span>Financeiro ADM</div>
+
+  ── 2. PG_TITLES (adicionar no objeto JS) ──
+  fin: "Financeiro ADM — Unit Economics"
+
+  ── 3. PÁGINA COMPLETA (colar antes de </div> do /main) ──
+-->
+
+<!-- ████████████████████████████████████████████████████████
+     PÁGINA: FINANCEIRO ADM
+     ████████████████████████████████████████████████████████ -->
+<div class="pg" id="pg-fin">
+
+  <!-- Cabeçalho -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:1.05rem;font-weight:700">Financeiro ADM — Unit Economics</div>
+      <div style="font-size:.7rem;color:var(--text3)" id="fin-updated">Carregando DRE...</div>
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <select id="fin-mes" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:.74rem;outline:none" onchange="carregarDRE()"></select>
+      <button class="btn btn-sm bol" onclick="carregarDRE()">🔄 Atualizar</button>
+      <button class="btn btn-sm bac" onclick="openM('m-lancar')">+ Lançar Custo</button>
+    </div>
+  </div>
+
+  <!-- KPIs financeiros principais -->
+  <div class="kr" id="kpi-fin-adm" style="grid-template-columns:repeat(auto-fit,minmax(145px,1fr))">
+    <div class="kpi"><div class="kpi-ic">⏳</div><div class="kpi-lb">Carregando</div><div class="kpi-vl ca">...</div></div>
+  </div>
+
+  <!-- Linha 1: P&L + Composição de Custos -->
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:16px">
+    
+    <!-- DRE Simplificado -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">📊 DRE — Demonstrativo de Resultado</div>
+        <span class="bdg bb" id="fin-mes-label">...</span>
+      </div>
+      <div class="card-body" id="fin-dre-body" style="font-size:.82rem">
+        <div style="color:var(--text3);text-align:center;padding:20px">Carregando...</div>
+      </div>
+    </div>
+
+    <!-- Composição de custos -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title">🥧 Composição de Custos</div></div>
+      <div class="card-body"><canvas id="ch-custos" height="220"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Linha 2: Unit Economics + Evolução MRR -->
+  <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px;margin-bottom:16px">
+    
+    <!-- Unit Economics -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title">⚗️ Unit Economics</div></div>
+      <div class="card-body" id="fin-unit-body">
+        <div style="color:var(--text3);text-align:center;padding:20px">Carregando...</div>
+      </div>
+    </div>
+
+    <!-- Evolução mensal -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title">📈 Evolução: MRR vs OPEX vs EBITDA</div></div>
+      <div class="card-body"><canvas id="ch-evolucao" height="190"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Linha 3: CAPEX + OPEX detalhado -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+    
+    <!-- CAPEX -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">🔧 CAPEX — Investimentos</div>
+        <button class="btn btn-xs bac" onclick="abrirLancar('capex')">+ Novo</button>
+      </div>
+      <div class="tw"><table><thead><tr>
+        <th>Descrição</th><th>Total</th><th>Amort/mês</th><th>Meses</th><th>Status</th>
+      </tr></thead><tbody id="tbl-capex"></tbody></table></div>
+    </div>
+
+    <!-- OPEX -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">💸 OPEX — Despesas do Mês</div>
+        <button class="btn btn-xs bwn" onclick="abrirLancar('opex')">+ Nova</button>
+      </div>
+      <div class="tw"><table><thead><tr>
+        <th>Categoria</th><th>Descrição</th><th>Valor</th><th>Recorr.</th>
+      </tr></thead><tbody id="tbl-opex"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- COGS por cliente -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-hd">
+      <div class="card-title">📦 COGS — Custo por Cliente Instalado</div>
+      <button class="btn btn-xs bdn" onclick="abrirLancar('cogs')">+ Lançar</button>
+    </div>
+    <div class="tw"><table><thead><tr>
+      <th>Cliente</th><th>Viveiro</th><th>Categoria</th><th>Descrição</th><th>Valor</th>
+    </tr></thead><tbody id="tbl-cogs"></tbody></table></div>
+  </div>
+
+</div><!-- /pg-fin -->
+
+<!-- ████████████████████████████████████████████████████████
+     MODAL: LANÇAR CUSTO
+     ████████████████████████████████████████████████████████ -->
+<div class="ov" id="m-lancar">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-hd">
+      <div class="modal-title" id="m-lancar-title">+ Lançar Custo</div>
+      <button class="modal-x" onclick="closeM('m-lancar')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Tipo de lançamento -->
+      <div style="display:flex;gap:8px;margin-bottom:18px">
+        <button id="tab-capex" class="btn bac btn-sm" onclick="switchTab('capex')" style="flex:1">🔧 CAPEX</button>
+        <button id="tab-opex"  class="btn bol btn-sm" onclick="switchTab('opex')"  style="flex:1">💸 OPEX</button>
+        <button id="tab-cogs"  class="btn bol btn-sm" onclick="switchTab('cogs')"  style="flex:1">📦 COGS</button>
+      </div>
+
+      <!-- CAPEX Form -->
+      <div id="form-capex">
+        <div class="fsec" style="margin-top:0">🔧 Investimento (CAPEX)</div>
+        <div style="background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.72rem;color:var(--text3)">
+          <b style="color:var(--accent)">CAPEX</b> = Compra de ativo físico. Será amortizado mensalmente pelo período de vida útil. Ex: ESP32, ferramentas, equipamentos.
+        </div>
+        <div class="fr c2">
+          <div class="fg"><label>Categoria</label>
+            <select id="cap-cat">
+              <option>Hardware</option>
+              <option>Equipamento</option>
+              <option>Veículo</option>
+              <option>Desenvolvimento</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="fg"><label>Vida Útil (meses)</label>
+            <select id="cap-vida">
+              <option value="12">12 meses (1 ano)</option>
+              <option value="24" selected>24 meses (2 anos)</option>
+              <option value="36">36 meses (3 anos)</option>
+              <option value="48">48 meses (4 anos)</option>
+              <option value="60">60 meses (5 anos)</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Descrição</label><input id="cap-desc" type="text" placeholder="Ex: ESP32-S3 Dev Module — Lote 2"></div>
+        <div class="fr c3">
+          <div class="fg"><label>Quantidade</label><input id="cap-qtd" type="number" value="1" min="1" oninput="calcCAPEX()"></div>
+          <div class="fg"><label>Valor Unitário (R$)</label><input id="cap-vunit" type="number" placeholder="0,00" step="0.01" oninput="calcCAPEX()"></div>
+          <div class="fg"><label>Total</label>
+            <div id="cap-total" style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;color:var(--accent2)">R$ 0,00</div>
+          </div>
+        </div>
+        <div style="background:rgba(0,255,163,.04);border:1px solid rgba(0,255,163,.15);border-radius:8px;padding:10px;font-size:.74rem;color:var(--text3);margin-bottom:12px" id="cap-preview">
+          Preencha os valores para ver a amortização mensal.
+        </div>
+        <div class="fg"><label>Observação</label><input id="cap-obs" type="text" placeholder="Ex: Lote inicial — Viveiros piloto Vale do Jaguaribe"></div>
+      </div>
+
+      <!-- OPEX Form -->
+      <div id="form-opex" style="display:none">
+        <div class="fsec" style="margin-top:0">💸 Despesa Operacional (OPEX)</div>
+        <div style="background:rgba(255,179,0,.05);border:1px solid rgba(255,179,0,.15);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.72rem;color:var(--text3)">
+          <b style="color:var(--warn)">OPEX</b> = Despesa do mês corrente. Entra diretamente no resultado. Ex: combustível, Claude API, almoço, hotel, marketing.
+        </div>
+        <div class="fr c2">
+          <div class="fg"><label>Categoria</label>
+            <select id="opx-cat" onchange="updateSubcat()">
+              <option value="Infraestrutura Cloud">☁️ Infraestrutura Cloud</option>
+              <option value="Deslocamento">🚗 Deslocamento</option>
+              <option value="Alimentação">🍽️ Alimentação</option>
+              <option value="Hospedagem">🏨 Hospedagem</option>
+              <option value="Marketing">📱 Marketing</option>
+              <option value="Administrativo">💼 Administrativo</option>
+              <option value="Salários">👤 Salários</option>
+              <option value="Outros">📦 Outros</option>
+            </select>
+          </div>
+          <div class="fg"><label>Subcategoria</label>
+            <input id="opx-subcat" type="text" placeholder="Ex: Claude API, Combustível...">
+          </div>
+        </div>
+        <div class="fg"><label>Descrição</label><input id="opx-desc" type="text" placeholder="Ex: Abastecimento — visita cliente Jaguaribe"></div>
+        <div class="fr c2">
+          <div class="fg"><label>Valor (R$)</label><input id="opx-val" type="number" placeholder="0,00" step="0.01"></div>
+          <div class="fg"><label>Recorrente?</label>
+            <select id="opx-rec">
+              <option value="Não">Não (pontual)</option>
+              <option value="Sim">Sim (todo mês)</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Comprovante / Observação</label><input id="opx-obs" type="text" placeholder="Ex: Nota fiscal, foto, link..."></div>
+      </div>
+
+      <!-- COGS Form -->
+      <div id="form-cogs" style="display:none">
+        <div class="fsec" style="margin-top:0">📦 Custo de Serviço Prestado (COGS)</div>
+        <div style="background:rgba(255,64,96,.05);border:1px solid rgba(255,64,96,.15);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.72rem;color:var(--text3)">
+          <b style="color:var(--danger)">COGS</b> = Custo direto para entregar o serviço a um cliente específico. Ex: ESP32 instalado, deslocamento de instalação, material do viveiro.
+        </div>
+        <div class="fr c2">
+          <div class="fg"><label>Cliente</label>
+            <select id="cog-cli"><option value="">Selecionar...</option></select>
+          </div>
+          <div class="fg"><label>Viveiro</label><input id="cog-viv" type="text" placeholder="Ex: Viveiro 01"></div>
+        </div>
+        <div class="fg"><label>Categoria</label>
+          <select id="cog-cat">
+            <option>Hardware</option>
+            <option>Mão de Obra</option>
+            <option>Deslocamento</option>
+            <option>Material</option>
+            <option>Outros</option>
+          </select>
+        </div>
+        <div class="fg"><label>Descrição</label><input id="cog-desc" type="text" placeholder="Ex: ESP32-S3 + carcaça IP65 + cabos"></div>
+        <div class="fg"><label>Valor (R$)</label><input id="cog-val" type="number" placeholder="0,00" step="0.01"></div>
+        <div class="fg"><label>Observação</label><input id="cog-obs" type="text" placeholder="Ex: Instalação realizada em 08/06/2026"></div>
+      </div>
+
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="closeM('m-lancar')">Cancelar</button>
+      <button class="btn bac" id="btn-lancar-salvar" onclick="salvarLancamento()">💾 Salvar Lançamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- ████████████████████████████████████████████████████████
+     JAVASCRIPT DO MÓDULO FINANCEIRO
+     (adicionar ao final do bloco <script> existente)
+     ████████████████████████████████████████████████████████ -->
+<script>
+// ══════════════════════════════════════════════════════
+// ESTADO FINANCEIRO
+// ══════════════════════════════════════════════════════
+let FIN_DRE       = null;
+let FIN_TAB_ATUAL = "capex";
+let ch_custos_ref = null;
+let ch_evol_ref   = null;
+
+// ── Inicializa o seletor de mês ──────────────────────
+function initFinMeses() {
+  const sel = document.getElementById("fin-mes");
+  if (!sel) return;
+  sel.innerHTML = "";
+  const hoje = new Date();
+  for (let i = 0; i < 12; i++) {
+    const d   = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+    const val = String(d.getMonth()+1).padStart(2,"0") + "/" + d.getFullYear();
+    const lbl = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"][d.getMonth()] + "/" + d.getFullYear();
+    const opt = document.createElement("option");
+    opt.value = val; opt.textContent = lbl;
+    if (i === 0) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+// ── Carrega DRE completo ──────────────────────────────
+async function carregarDRE() {
+  const ma = document.getElementById("fin-mes")?.value;
+  if (!ma) return;
+  document.getElementById("fin-updated").textContent = "Calculando DRE...";
+  try {
+    const [dreResp, histResp, capexResp, opexResp, cogsResp] = await Promise.all([
+      api({ acao: "fin_dre",      mes_ano: ma }),
+      api({ acao: "fin_dre_hist", n: 6 }),
+      api({ acao: "fin_capex" }),
+      api({ acao: "fin_opex",     mes_ano: ma }),
+      api({ acao: "fin_cogs" }),
+    ]);
+
+    if (dreResp.status === "ok") {
+      FIN_DRE = dreResp;
+      renderKPIsFin(dreResp);
+      renderDRE(dreResp);
+      renderUnitEconomics(dreResp);
+      renderChartCustos(dreResp);
+    }
+    if (histResp.status === "ok") renderChartEvolucao(histResp.historico);
+    if (capexResp.status === "ok") renderTabelaCAPEX(capexResp.itens);
+    if (opexResp.status === "ok")  renderTabelaOPEX(opexResp.itens);
+    if (cogsResp.status === "ok")  renderTabelaCOGS(cogsResp.itens);
+
+    document.getElementById("fin-updated").textContent = "DRE atualizado: " + new Date().toLocaleTimeString("pt-BR");
+  } catch(err) {
+    document.getElementById("fin-updated").textContent = "⚠ Erro ao carregar — configure os novos cases no doGet()";
+    console.error(err);
+  }
+}
+
+// ── KPIs financeiros ──────────────────────────────────
+function renderKPIsFin(d) {
+  const sinal = v => v >= 0
+    ? '<span style="color:var(--accent2)">▲</span>'
+    : '<span style="color:var(--danger)">▼</span>';
+
+  const paybackStr = d.payback_meses === null
+    ? (d.lucro_liquido < 0 ? '<span class="cd">Negativo</span>' : '<span class="cg">< 1 mês</span>')
+    : '<span class="cw">' + d.payback_meses + ' meses</span>';
+
+  const ltvCacColor = d.ltv_cac >= 5 ? 'cg' : d.ltv_cac >= 3 ? 'cw' : 'cd';
+  const margemColor = d.margem_bruta_pct >= 70 ? 'cg' : d.margem_bruta_pct >= 50 ? 'cw' : 'cd';
+  const ebitdaColor = d.ebitda >= 0 ? 'cg' : 'cd';
+
+  document.getElementById("kpi-fin-adm").innerHTML = [
+    {ic:"💰",lb:"MRR",vl:R(d.mrr),tr:"ARR: "+R(d.arr),cls:"g"},
+    {ic:"📊",lb:"Margem Bruta",vl:d.margem_bruta_pct.toFixed(1)+"%",tr:"Meta SaaS: >70%",cls:d.margem_bruta_pct>=70?"g":"w",clv:margemColor},
+    {ic:"📈",lb:"EBITDA",vl:R(d.ebitda),tr:d.ebitda_pct.toFixed(1)+"% da receita",cls:d.ebitda>=0?"g":"d",clv:ebitdaColor},
+    {ic:"💵",lb:"Lucro Líquido",vl:R(d.lucro_liquido),tr:"Após amort. CAPEX",cls:d.lucro_liquido>=0?"g":"d"},
+    {ic:"🔁",lb:"LTV/CAC",vl:d.ltv_cac.toFixed(1)+"x",tr:"Meta: >3x | Ideal: >5x",cls:"p",clv:ltvCacColor},
+    {ic:"⏱️",lb:"Payback",vl:paybackStr,tr:"Retorno do investimento",cls:"w"},
+    {ic:"💸",lb:"OPEX Total",vl:R(d.opex),tr:"Despesas do mês",cls:"o"},
+    {ic:"🔧",lb:"CAPEX Amort.",vl:R(d.amort_mensal),tr:"Total investido: "+R(d.total_investido),cls:""},
+  ].map(k=>`<div class="kpi ${k.cls}">
+    <div class="kpi-ic">${k.ic}</div>
+    <div class="kpi-lb">${k.lb}</div>
+    <div class="kpi-vl ${k.clv||('c'+(k.cls||'a'))}">${k.vl}</div>
+    <div class="kpi-tr">${k.tr}</div>
+  </div>`).join("");
+}
+
+// ── DRE Simplificado ──────────────────────────────────
+function renderDRE(d) {
+  const label = document.getElementById("fin-mes-label");
+  if (label) label.textContent = document.getElementById("fin-mes")?.options[document.getElementById("fin-mes")?.selectedIndex]?.text || "";
+
+  const linha = (emoji, label, valor, bold, cor, indent) =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:${indent?'5px 5px 5px 20px':'7px 5px'};${bold?'font-weight:700;border-top:1px solid var(--border);margin-top:4px;padding-top:8px':''}">
+      <span style="color:${cor||'var(--text)'};font-size:${bold?'.82':'.78'}rem">${emoji} ${label}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:${bold?'.88':'.8'}rem;color:${cor||'var(--text)'}">${typeof valor==='number'?R(valor):valor}</span>
+    </div>`;
+
+  document.getElementById("fin-dre-body").innerHTML =
+    linha("📥","Receita (MRR)", d.mrr, true, "var(--accent2)") +
+    linha("📦","(-) COGS", -d.cogs, false, "var(--danger)", true) +
+    linha("✅","Margem Bruta", d.margem_bruta, true, d.margem_bruta>=0?"var(--accent2)":"var(--danger)") +
+    `<div style="padding:3px 5px;font-size:.68rem;color:var(--text3)">${d.margem_bruta_pct.toFixed(1)}% — Meta SaaS: >70%</div>` +
+    linha("💸","(-) OPEX", -d.opex, false, "var(--warn)", true) +
+    linha("📈","EBITDA", d.ebitda, true, d.ebitda>=0?"var(--accent2)":"var(--danger)") +
+    `<div style="padding:3px 5px;font-size:.68rem;color:var(--text3)">${d.ebitda_pct.toFixed(1)}% da receita</div>` +
+    linha("🔧","(-) Amort. CAPEX", -d.amort_mensal, false, "var(--text3)", true) +
+    linha("💰","Lucro Líquido", d.lucro_liquido, true, d.lucro_liquido>=0?"var(--accent2)":"var(--danger)") +
+    `<div style="padding:3px 5px;font-size:.68rem;color:var(--text3)">${d.lucro_liquido_pct.toFixed(1)}% margem líquida</div>`;
+}
+
+// ── Unit Economics ────────────────────────────────────
+function renderUnitEconomics(d) {
+  const metrica = (ic, lb, vl, desc, color) =>
+    `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:1.1rem">${ic}</span>
+        <div><div style="font-size:.76rem;font-weight:600">${lb}</div><div style="font-size:.62rem;color:var(--text3)">${desc}</div></div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;color:${color}">${vl}</div>
+    </div>`;
+
+  const ltvCacColor = d.ltv_cac >= 5 ? "var(--accent2)" : d.ltv_cac >= 3 ? "var(--warn)" : "var(--danger)";
+  const paybackStr  = d.payback_meses === null
+    ? (d.lucro_liquido <= 0 ? "❌ Negativo" : "< 1 mês")
+    : d.payback_meses + " meses";
+  const paybackColor = d.payback_meses === null && d.lucro_liquido <= 0
+    ? "var(--danger)" : d.payback_meses <= 12 ? "var(--accent2)" : "var(--warn)";
+
+  document.getElementById("fin-unit-body").innerHTML =
+    metrica("💵","Ticket Médio", R(d.ticket_medio), "MRR por cliente ativo", "var(--accent)") +
+    metrica("📊","CAC", R(d.cac), "Custo para adquirir 1 cliente", "var(--warn)") +
+    metrica("♾️","LTV", R(d.ltv), "Receita vitalícia por cliente (churn 5%)", "var(--accent2)") +
+    metrica("⚗️","LTV/CAC", d.ltv_cac.toFixed(1)+"x", "Eficiência: meta >3x, ideal >5x", ltvCacColor) +
+    metrica("⏱️","Payback Total", paybackStr, "Retorno do investimento total", paybackColor) +
+    metrica("🦐","Viveiros Ativos", d.total_viveiros, "Total de viveiros monitorados", "var(--accent)");
+}
+
+// ── Gráfico: composição de custos ────────────────────
+function renderChartCustos(d) {
+  if (ch_custos_ref) ch_custos_ref.destroy();
+  const ctx = document.getElementById("ch-custos");
+  if (!ctx) return;
+  const labels = ["COGS", "OPEX", "Amort. CAPEX"];
+  const values = [d.cogs, d.opex, d.amort_mensal];
+  const cores  = ["rgba(255,64,96,.8)","rgba(255,179,0,.8)","rgba(0,229,255,.8)"];
+  ch_custos_ref = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: cores, borderColor: "#0b1221", borderWidth: 3 }]
+    },
+    options: {
+      responsive: true, cutout: "60%",
+      plugins: {
+        legend: { position: "bottom", labels: { color: "#8ba4c0", font: { family: "'JetBrains Mono'", size: 10 }, padding: 10 } },
+        tooltip: { backgroundColor: "#0b1221", borderColor: "#152038", borderWidth: 1,
+          callbacks: { label: c => c.label + ": " + R(c.parsed) + " (" + (d.opex+d.cogs+d.amort_mensal > 0 ? (c.parsed/(d.opex+d.cogs+d.amort_mensal)*100).toFixed(1) : 0) + "%)" }
+        }
+      }
+    }
+  });
+}
+
+// ── Gráfico: evolução mensal ──────────────────────────
+function renderChartEvolucao(historico) {
+  if (ch_evol_ref) ch_evol_ref.destroy();
+  const ctx = document.getElementById("ch-evolucao");
+  if (!ctx || !historico.length) return;
+  const labels = historico.map(h => h.mes_ano);
+  ch_evol_ref = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        { label: "MRR", data: historico.map(h => h.mrr||0), borderColor: "#00ffa3", backgroundColor: "rgba(0,255,163,.1)", fill: true, tension: .3, borderWidth: 2, pointRadius: 4 },
+        { label: "OPEX", data: historico.map(h => h.opex||0), borderColor: "#ffb300", backgroundColor: "rgba(255,179,0,.05)", fill: false, tension: .3, borderWidth: 2, pointRadius: 3, borderDash: [4,4] },
+        { label: "EBITDA", data: historico.map(h => h.ebitda||0), borderColor: "#00e5ff", backgroundColor: "rgba(0,229,255,.08)", fill: true, tension: .3, borderWidth: 2, pointRadius: 4 },
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: "top", labels: { color: "#8ba4c0", font: { family: "'JetBrains Mono'", size: 10 } } }, tooltip: { backgroundColor: "#0b1221", borderColor: "#152038", borderWidth: 1, callbacks: { label: c => c.dataset.label + ": " + R(c.parsed.y) } } },
+      scales: { x: { grid: { color: "rgba(21,32,56,.6)" }, ticks: { color: "#4a6080", font: { family: "'JetBrains Mono'", size: 9 } } }, y: { grid: { color: "rgba(21,32,56,.6)" }, ticks: { color: "#4a6080", font: { family: "'JetBrains Mono'", size: 9 }, callback: v => "R$" + v } } }
+    }
+  });
+}
+
+// ── Tabelas ───────────────────────────────────────────
+function renderTabelaCAPEX(itens) {
+  document.getElementById("tbl-capex").innerHTML = (itens||[]).filter(i=>i.status!=="inativo").map(i =>
+    `<tr>
+      <td><div style="font-weight:600;font-size:.76rem">${i.descricao}</div><div style="font-size:.62rem;color:var(--text3)">${i.categoria} · ${i.quantidade}x R$${parseFloat(i.valor_unit||0).toFixed(2)}</div></td>
+      <td class="mono" style="color:var(--accent3)">${R(i.valor_total)}</td>
+      <td class="mono" style="color:var(--warn)">${R(i.amort_mensal)}/mês</td>
+      <td class="mono" style="font-size:.7rem;color:var(--text3)">${i.meses_rest} meses</td>
+      <td><span class="bdg bg">● ativo</span></td>
+    </tr>`
+  ).join("") || '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Nenhum investimento lançado</td></tr>';
+}
+
+function renderTabelaOPEX(itens) {
+  document.getElementById("tbl-opex").innerHTML = (itens||[]).map(i =>
+    `<tr>
+      <td><span class="bdg bo" style="font-size:.58rem">${i.categoria}</span></td>
+      <td style="font-size:.74rem">${i.descricao}</td>
+      <td class="mono" style="color:var(--warn)">${R(i.valor)}</td>
+      <td style="font-size:.68rem;color:${i.recorrente==='Sim'?'var(--accent2)':'var(--text3)'}">${i.recorrente==='Sim'?'🔁 Sim':'—'}</td>
+    </tr>`
+  ).join("") || '<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:16px">Nenhuma despesa lançada neste mês</td></tr>';
+}
+
+function renderTabelaCOGS(itens) {
+  document.getElementById("tbl-cogs").innerHTML = (itens||[]).map(i =>
+    `<tr>
+      <td style="font-weight:600;font-size:.76rem">${i.cliente||"—"}</td>
+      <td style="font-size:.72rem;color:var(--accent)">${i.viveiro||"—"}</td>
+      <td><span class="bdg br" style="font-size:.56rem">${i.categoria}</span></td>
+      <td style="font-size:.74rem">${i.descricao}</td>
+      <td class="mono" style="color:var(--danger)">${R(i.valor)}</td>
+    </tr>`
+  ).join("") || '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Nenhum custo por cliente lançado</td></tr>';
+}
+
+// ════════════════════════════════════════════════════════
+// MODAL DE LANÇAMENTO
+// ════════════════════════════════════════════════════════
+function switchTab(tab) {
+  FIN_TAB_ATUAL = tab;
+  ["capex","opex","cogs"].forEach(t => {
+    document.getElementById("form-"+t).style.display = t===tab ? "block" : "none";
+    document.getElementById("tab-"+t).className = "btn btn-sm " + (t===tab ? "bac" : "bol");
+  });
+}
+
+function abrirLancar(tab) {
+  switchTab(tab || "opex");
+  // Popula select de clientes no form COGS
+  const sel = document.getElementById("cog-cli");
+  if (sel) {
+    sel.innerHTML = '<option value="">Selecionar...</option>';
+    (CLIENTES||[]).forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.Nome; opt.textContent = c.Nome;
+      sel.appendChild(opt);
+    });
+  }
+  openM("m-lancar");
+}
+
+function calcCAPEX() {
+  const qtd   = parseFloat(document.getElementById("cap-qtd")?.value  || 0);
+  const vunit = parseFloat(document.getElementById("cap-vunit")?.value || 0);
+  const vida  = parseInt(document.getElementById("cap-vida")?.value    || 24);
+  const total = qtd * vunit;
+  const amort = total / vida;
+  const el = document.getElementById("cap-total");
+  const pv = document.getElementById("cap-preview");
+  if (el) el.textContent = total > 0 ? "R$ " + total.toFixed(2).replace(".",",") : "R$ 0,00";
+  if (pv) pv.innerHTML = total > 0
+    ? `💡 <b style="color:var(--accent2)">R$ ${amort.toFixed(2).replace(".",",")}/mês</b> de amortização por <b>${vida} meses</b> — impacto no P&L: R$ ${amort.toFixed(2).replace(".",",")} por mês`
+    : "Preencha os valores para ver a amortização mensal.";
+}
+
+async function salvarLancamento() {
+  const tab = FIN_TAB_ATUAL;
+  let params = { acao: "fin_lancar_" + tab };
+
+  if (tab === "capex") {
+    params.categoria   = document.getElementById("cap-cat").value;
+    params.descricao   = document.getElementById("cap-desc").value;
+    params.quantidade  = document.getElementById("cap-qtd").value;
+    params.valor_unit  = document.getElementById("cap-vunit").value;
+    params.vida_util   = document.getElementById("cap-vida").value;
+    params.obs         = document.getElementById("cap-obs").value;
+    if (!params.descricao || !params.valor_unit) { toast("Preencha descrição e valor", "e"); return; }
+  } else if (tab === "opex") {
+    params.categoria    = document.getElementById("opx-cat").value;
+    params.subcategoria = document.getElementById("opx-subcat").value;
+    params.descricao    = document.getElementById("opx-desc").value;
+    params.valor        = document.getElementById("opx-val").value;
+    params.recorrente   = document.getElementById("opx-rec").value;
+    params.obs          = document.getElementById("opx-obs").value;
+    if (!params.descricao || !params.valor) { toast("Preencha descrição e valor", "e"); return; }
+  } else if (tab === "cogs") {
+    params.cliente   = document.getElementById("cog-cli").value;
+    params.viveiro   = document.getElementById("cog-viv").value;
+    params.categoria = document.getElementById("cog-cat").value;
+    params.descricao = document.getElementById("cog-desc").value;
+    params.valor     = document.getElementById("cog-val").value;
+    params.obs       = document.getElementById("cog-obs").value;
+    if (!params.descricao) { toast("Preencha a descrição", "e"); return; }
+  }
+
+  toast("Salvando lançamento...", "i");
+  try {
+    const data = await api(params);
+    if (data.status === "ok") {
+      toast("✅ " + data.msg, "s");
+      closeM("m-lancar");
+      await carregarDRE();
+    } else {
+      toast("Erro: " + data.msg, "e");
+    }
+  } catch {
+    toast("⚠ Erro de conexão com o Apps Script", "e");
+  }
+}
+
+// ── Inicializa módulo quando a página carrega ─────────
+document.addEventListener("DOMContentLoaded", function() {
+  initFinMeses();
+});
+
+// ── Carrega financeiro quando navegar para a seção ────
+// Substitua a função go() existente adicionando este bloco:
+// if (nm === "fin") { initFinMeses(); carregarDRE(); }
+</script>
