@@ -832,8 +832,9 @@ function abrirModalPL(ri){
   const pl=v.pl_ciclo_atual||{};
   document.getElementById("pl-lab").value=pl.laboratorio||"";
   document.getElementById("pl-lote").value=pl.lote||"";
-  document.getElementById("pl-qtd").value=pl.qtd_milhar||"";
-  document.getElementById("pl-valor").value=pl.valor_milhar||"";
+  document.getElementById("pl-qtd-total").value=pl.qtd_milhar?(pl.qtd_milhar*1000):"";
+  document.getElementById("pl-valor-total").value=pl.valor_total||"";
+  document.getElementById("pl-gramatura").value="";
   document.getElementById("pl-obs").value="";
   document.getElementById("pl-preview").style.display="none";
   document.getElementById("modal-pl").style.display="flex";
