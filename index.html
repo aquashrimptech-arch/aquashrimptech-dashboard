@@ -1678,45 +1678,37 @@ function iaTab(name,btn){
   document.getElementById("ia-tab-"+name).classList.add("active");btn.classList.add("active");
 }
 function renderAgentesVazios(){
-  document.getElementById("ia-tab-agentes").innerHTML=`<div class="agents-grid">${AGENTES_DEF.map(a=>`<div class="agent-card"><div class="agent-hd"><div class="agent-icon" style="background:${a.cor}">${a.icon}</div><div class="agent-meta"><div class="agent-name">${a.name}</div><div class="agent-spec">${a.spec}</div></div><span class="agent-status st-idle">AGUARDANDO</span></div><div class="agent-body"><div class="shim"></div><div class="shim" style="width:70%"></div><div class="shim" style="width:85%"></div></div></div>`).join("")}</div>`;
+  document.getElementById("ia-tab-agentes").innerHTML=`<div class="agents-grid">${AGENTES_DEF.map(a=>`<div class="agent-card" data-agent="${a.id}"><div class="agent-hd"><div class="agent-icon" style="background:${a.cor}">${a.icon}</div><div class="agent-meta"><div class="agent-name">${a.name}</div><div class="agent-spec">${a.spec}</div></div><span class="agent-status st-idle">AGUARDANDO</span></div><div class="agent-body"><div class="shim"></div><div class="shim" style="width:70%"></div><div class="shim" style="width:85%"></div></div></div>`).join("")}</div>`;
 }
 async function executarAnaliseLocal(){
   const vivs=DADOS.viveiros.filter(v=>!v._erro&&v.biometria);
   if(!vivs.length){alert("Nenhum viveiro com dados disponíveis.");return;}
-  const btn=document.getElementById("btn-analisar");btn.disabled=true;document.getElementById("ia-btn-txt").textContent="Analisando...";document.getElementById("ia-btn-icon").textContent="⏳";
+  const btn=document.getElementById("btn-analisar");btn.disabled=true;
+  document.getElementById("ia-btn-txt").textContent="Analisando...";document.getElementById("ia-btn-icon").textContent="⏳";
   renderAgentesVazios();
   document.querySelectorAll(".ia-tab-panel").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".ia-tab-btn").forEach(b=>b.classList.remove("active"));
   document.getElementById("ia-tab-agentes").classList.add("active");
   document.querySelector('[onclick="iaTab(\'agentes\',this)"]').classList.add("active");
+  AGENTES_DEF.forEach(a=>updateAgentCard(a.id,"run","ANALISANDO"));
   const tabPreco=parseFloat(document.getElementById("ia-tabela-preco").value)||19;
-  const totBioReal=vivs.reduce((s,v)=>s+(v.biomassaReal||v.biomassa||0),0);
-  const totCusto=vivs.reduce((s,v)=>s+(v.custoCiclo||0),0);
-  const fcas=vivs.filter(v=>v.fca>0);const fcaMed=fcas.length?fcas.reduce((s,v)=>s+v.fca,0)/fcas.length:0;
-  const est=DADOS.estoque;const crit=est.filter(i=>String(i.situacao||"").toLowerCase().includes("crit"));
-  const resumo=vivs.map(v=>{
-    const dias=v.diasCiclo??diasDesde(v.dataInicio)??0;const bio=v.biometria?.slice(-3)||[];const bioStr=bio.map(b=>`Sem${b.semana}:${b.peso}g`).join(", ");
-    const pl=v.pl_ciclo_atual;const plStr=pl?`Lab:${pl.laboratorio} ${pl.qtd_milhar}mil PLs`:"Sem PL registrada";
-    return`${v.nome}: ${dias}d ciclo, Peso:${v.pesoMedio||0}g, CCMT:${v.ccmt>0?"+"+v.ccmt.toFixed(1):"—"}, Bio:${Math.round(v.biomassaReal||0)}kg, FCA:${v.fca>0?v.fca.toFixed(2):"—"}, Sobrev:${v.sobrevivencia>0?v.sobrevivencia.toFixed(1)+"%":"—"}, Rac:${v.racaoAtual||0}kg/dia, Custo:R$${(v.custoCiclo||0).toFixed(0)}, PL:{${plStr}}, Bio últimas semanas:[${bioStr}]`;
-  }).join("\n");
-  const promptBase=`Dados da fazenda ${CLIENTE.nome} — ${new Date().toLocaleDateString("pt-BR")}:\nTabela de preços: R$${tabPreco}/kg base 10g (+R$1/kg por grama acima de 10g)\nBiomassa real total: ${totBioReal.toFixed(0)}kg | Custo total: R$${totCusto.toFixed(0)} | FCA médio: ${fcaMed.toFixed(2)}\nEstoque: ${est.length} itens, ${crit.length} críticos${crit.length?": "+crit.map(i=>i.produto).join(", "):""}\n\nViveiros:\n${resumo}\n\nResponda APENAS com dados presentes. Não invente valores. Seja técnico e direto. Máx 120 palavras por agente.`;
   _IA={};
-  for(const agente of AGENTES_DEF){
-    const prompts={
-      nutricao:`${promptBase}\n\nVocê é o Agente de Nutrição. Avalie: ração hoje vs ideal, FCA de cada viveiro, eficiência alimentar, ajustes recomendados.`,
-      agua:`${promptBase}\n\nVocê é o Agente de Qualidade da Água. Se não houver parâmetros no sumário, diga "Dados técnicos não registrados esta semana — atualize a aba Dados Técnicos". Avalie o que estiver disponível.`,
-      producao:`${promptBase}\n\nVocê é o Agente de Produção. Avalie crescimento (CCMT vs esperado L. vannamei), sobrevivência, densidade e biomassa.`,
-      financeiro:`${promptBase}\n\nVocê é o Agente Financeiro. Calcule custo/kg, projeção de receita (use tabela de preços fornecida), margem estimada e ponto de equilíbrio se possível.`,
-      estoque:`${promptBase}\n\nVocê é o Agente de Estoque. Avalie os itens críticos e baixos. Estime consumo diário de ração e quantos dias de estoque restam.`,
-      master:`${promptBase}\n\nVocê é o Agente Master. Faça uma síntese integrando todos os aspectos. Liste 3 ações prioritárias numeradas. Calcule Índice de Saúde: X/100 com explicação em 1 linha.`,
-    };
-    updateAgentCard(agente.id,"run","ANALISANDO");
-    try{
-      const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompts[agente.id]||promptBase}]})});
-      const data=await resp.json();const txt=(data.content?.[0]?.text||"Sem resposta.").trim();
-      _IA[agente.id]=txt;const score=agente.id==="master"?extrairScore(txt):null;
+  try{
+    const ctrl=new AbortController(),t=setTimeout(()=>ctrl.abort(),120000);
+    const url=ADM_URL+"?acao=gerar_agentes&cliente_id="+encodeURIComponent(CLIENTE.id)+"&tabela="+tabPreco;
+    const r=await fetch(url,{signal:ctrl.signal});clearTimeout(t);
+    const d=await r.json();
+    if(d.status!=="ok"||!d.agentes)throw new Error(d.msg||"Falha ao gerar análise.");
+    const ag=d.agentes;
+    for(const agente of AGENTES_DEF){
+      const txt=String(ag[agente.id]||"Sem resposta.").trim();
+      _IA[agente.id]=txt;
+      const score=agente.id==="master"?(ag.score!=null?ag.score:extrairScore(txt)):null;
       updateAgentCard(agente.id,"ok","ANÁLISE OK",txt,score);
-    }catch(e){updateAgentCard(agente.id,"err","ERRO","Falha na análise: "+e.message);}
+    }
+  }catch(e){
+    const msg=e.name==="AbortError"?"tempo esgotado (servidor demorou)":e.message;
+    AGENTES_DEF.forEach(a=>updateAgentCard(a.id,"err","ERRO","Falha na análise: "+msg));
   }
   renderConsolidado();renderFinanceiro();
   btn.disabled=false;document.getElementById("ia-btn-txt").textContent="Analisar Fazenda";document.getElementById("ia-btn-icon").textContent="⚡";
