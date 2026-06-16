@@ -794,6 +794,7 @@ const CORES = ["#00e5ff","#00ffa3","#ff6b35","#ffb300","#9b5de5","#ff4060","#60e
 // ══════════════════════════════════════════════════════
 // ESTADO GLOBAL
 // ══════════════════════════════════════════════════════
+let ADMIN_TOKEN = sessionStorage.getItem('ast_admin_token') || '';
 let CLIENTES = [];
 let mrr_chart = null, status_chart = null;
 let ch_custos_ref = null, ch_evol_ref = null;
@@ -842,6 +843,8 @@ function admLogin() {
   }
 }
 function logout() {
+  sessionStorage.removeItem('ast_admin_token');
+  ADMIN_TOKEN = "";
   document.getElementById("app").style.display = "none";
   document.getElementById("ls").style.display = "flex";
   document.getElementById("au").value = "";
@@ -857,7 +860,8 @@ function init() {
   setInterval(tick, 1000); tick();
   initFinMeses();
   carregarTokensLocais();
-  carregarDados();
+  if (!ADMIN_TOKEN) pedirAdminToken();
+  else carregarDados();
 }
 function tick() {
   const d = new Date();
@@ -868,38 +872,26 @@ function tick() {
 // API
 // ══════════════════════════════════════════════════════
 async function api(params) {
+  if (ADMIN_TOKEN) params = { ...params, admin_token: ADMIN_TOKEN };
   const url = ADM_SCRIPT_URL + "?" + new URLSearchParams(params).toString();
   const resp = await fetch(url);
-  return resp.json();
-}
-
-async function carregarDados() {
-  document.getElementById("sync-status").innerHTML = '<span class="loading-spinner"></span>';
-  try {
-    const data = await api({ acao: "dashboard" });
-    if (data.status === "ok") {
-      CLIENTES = data.clientes || [];
-      document.getElementById("sync-status").textContent = "✓ Sincronizado";
-      document.getElementById("dash-updated").textContent = "Atualizado: " + new Date().toLocaleTimeString("pt-BR");
-      renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
-    } else {
-      toast("Erro ao carregar: " + data.msg, "e");
-      document.getElementById("sync-status").textContent = "⚠ Erro";
-    }
-  } catch(err) {
-    CLIENTES = CLIENTES_DEMO;
-    renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
-    document.getElementById("sync-status").textContent = "⚠ Modo demo";
-    document.getElementById("dash-updated").textContent = "Configure ADM_SCRIPT_URL para dados reais";
+  const data = await resp.json();
+  if (data && data.status === "erro" && /acesso negado/i.test(data.msg || "")) {
+    sessionStorage.removeItem('ast_admin_token');
+    ADMIN_TOKEN = "";
+    toast("Token admin ausente/inválido — informe novamente.", "e");
+    pedirAdminToken();
   }
-  setTimeout(() => document.getElementById("sync-status").textContent = "", 3000);
+  return data;
 }
-
-const CLIENTES_DEMO = [
-  {ID:1,Nome:"Cleudo Dias",Telefone:"85987777108",Usuario:"cleudo",QtdViveiros:5,ValorPorViveiro:50,TotalMensal:250,DiaVencimento:10,Status:"ativo",UltimoPagamento:"18/05/2026",ProxVencimento:"18/06/2026",AsaasCustomerId:"cus_demo1",Observacoes:"Cliente fundador",UrlsViveiros:"https://script.google.com/macros/s/demo1/exec"},
-  {ID:2,Nome:"Bruno Adamis",Telefone:"88992329708",Usuario:"Bruno",QtdViveiros:9,ValorPorViveiro:50,TotalMensal:450,DiaVencimento:10,Status:"ativo",UltimoPagamento:"",ProxVencimento:"10/06/2026",AsaasCustomerId:"",Observacoes:"",UrlsViveiros:""},
-  {ID:3,Nome:"Elieudo Nobre",Telefone:"",Usuario:"",QtdViveiros:6,ValorPorViveiro:50,TotalMensal:300,DiaVencimento:10,Status:"ativo",UltimoPagamento:"",ProxVencimento:"10/06/2026",AsaasCustomerId:"",Observacoes:"",UrlsViveiros:""},
-];
+function pedirAdminToken() {
+  const t = prompt("🔑 Token de administrador (o mesmo valor da linha AdminToken na aba Config do ADM):", "");
+  if (t && t.trim()) {
+    ADMIN_TOKEN = t.trim();
+    sessionStorage.setItem('ast_admin_token', ADMIN_TOKEN);
+    carregarDados();
+  }
+}
 
 // ══════════════════════════════════════════════════════
 // RENDERS EXISTENTES
