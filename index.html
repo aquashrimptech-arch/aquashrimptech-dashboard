@@ -1033,8 +1033,8 @@ footer{
 // ══════════════════════════════════════════
 const ADM_URL="https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
 const EST_URL_PAD="https://script.google.com/macros/s/AKfycbxaZpPI2_5f4M7ojpxvliklpwBCkHALYIV6jmoZewS7Bd01ET4rgzFhveRZvtvI433s/exec";
-let CLIENTES=[],CLIENTE=null,DADOS={viveiros:[],estoque:[]};
-let _timer=null,_clCarreg=false,_ctxModal=null,_bioChart=null,_IA={};
+let CLIENTE=null,DADOS={viveiros:[],estoque:[]};
+let _timer=null,_ctxModal=null,_bioChart=null,_IA={};
 const R=n=>(isNaN(n)||n==null)?"—":"R$ "+Number(n).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
 const Nf=n=>(isNaN(n)||n==null)?"—":Number(n).toLocaleString("pt-BR");
 const esc=t=>String(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -1105,38 +1105,33 @@ function setIaStatus(st,icon,msg){
   ic.textContent=icon;ms.textContent=msg;ms.style.color={ok:"#c4b5fd",chk:"var(--muted)",err:"var(--red)"}[st];
 }
 
-// ── LOGIN ──
-async function loadClientes(){
-  if(_clCarreg)return;
-  try{
-    const r=await fetch(ADM_URL+"?acao=dashboard");const d=await r.json();
-    if(d.status==="ok"&&Array.isArray(d.clientes)){
-      CLIENTES=d.clientes.filter(c=>c.Status==="ativo"||c.Status==="pendente").map(c=>{
-        const urls=String(c.UrlsViveiros||"").split("|").filter(u=>u.trim().startsWith("http"));
-        const qtd=parseInt(c.QtdViveiros)||urls.length||1;
-        const viveiros=Array.from({length:Math.max(qtd,urls.length)},(_,i)=>({nome:`Viveiro ${String(i+1).padStart(2,"0")}`,url:urls[i]||""})).filter(v=>v.url);
-        return{id:String(c.ID),nome:c.Nome||"",usuario:(c.Usuario||"").toLowerCase(),senha:c.Senha||"",viveiros,estoqueUrl:String(c.UrlEstoque||"").trim()||EST_URL_PAD};
-      }).filter(c=>c.usuario&&c.senha&&c.viveiros.length>0);
-      _clCarreg=true;
-    }
-  }catch(e){console.warn("ADM offline",e);}
-}
+// ── LOGIN (server-side: nenhuma senha trafega/fica no navegador) ──
 async function fazerLogin(){
   const u=document.getElementById("inp-usuario").value.trim().toLowerCase();
   const s=document.getElementById("inp-senha").value.trim();
   const err=document.getElementById("login-error");const btn=document.querySelector(".login-btn");
   err.style.display="none";btn.textContent="⏳ Carregando...";btn.disabled=true;
-  await loadClientes();btn.textContent="✨ Entrar no Painel";btn.disabled=false;
-  const cl=CLIENTES.find(c=>c.usuario===u&&c.senha===s);
-  if(!cl){err.style.display="block";return;}
-  CLIENTE=cl;
-  sessionStorage.setItem("ast_u",u);sessionStorage.setItem("ast_s",s);
-  document.getElementById("login-screen").style.display="none";
-  document.getElementById("app").style.display="block";
-  document.getElementById("btn-adm").style.display="none";
-  document.getElementById("cliente-nome").textContent="👤 "+cl.nome;
-  document.title="AquaShrimpTech — "+cl.nome;
-  carregarDados();carregarAnaliseSemanal();testarClaude();
+  if(!u||!s){btn.textContent="✨ Entrar no Painel";btn.disabled=false;err.textContent="⚠️ Informe usuário e senha.";err.style.display="block";return;}
+  try{
+    const url=ADM_URL+"?acao=login&u="+encodeURIComponent(u)+"&s="+encodeURIComponent(s);
+    const r=await fetch(url);const d=await r.json();
+    btn.textContent="✨ Entrar no Painel";btn.disabled=false;
+    if(d.status!=="ok"||!d.cliente){err.textContent="⚠️ "+(d.msg||"Usuário ou senha incorretos.");err.style.display="block";return;}
+    const c=d.cliente;
+    const urls=String(c.urls_viveiros||"").split("|").map(x=>x.trim()).filter(x=>x.startsWith("http"));
+    const viveiros=urls.map((vurl,i)=>({nome:`Viveiro ${String(i+1).padStart(2,"0")}`,url:vurl}));
+    CLIENTE={id:String(c.id),nome:c.nome||"",usuario:(c.usuario||"").toLowerCase(),viveiros,estoqueUrl:String(c.url_estoque||"").trim()||EST_URL_PAD};
+    sessionStorage.setItem("ast_u",u);sessionStorage.setItem("ast_s",s);
+    document.getElementById("login-screen").style.display="none";
+    document.getElementById("app").style.display="block";
+    document.getElementById("btn-adm").style.display="none";
+    document.getElementById("cliente-nome").textContent="👤 "+CLIENTE.nome;
+    document.title="AquaShrimpTech — "+CLIENTE.nome;
+    carregarDados();carregarAnaliseSemanal();testarClaude();
+  }catch(e){
+    btn.textContent="✨ Entrar no Painel";btn.disabled=false;
+    err.textContent="⚠️ Falha de conexão. Tente novamente.";err.style.display="block";
+  }
 }
 document.getElementById("inp-senha").addEventListener("keydown",e=>{if(e.key==="Enter")fazerLogin()});
 document.getElementById("inp-usuario").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("inp-senha").focus()});
@@ -1152,12 +1147,10 @@ function fazerLogout(){
   setBadge("chk","CLAUDE");
 }
 window.addEventListener("load",async()=>{
-  loadClientes();
   const u=sessionStorage.getItem("ast_u"),s=sessionStorage.getItem("ast_s");
   if(u&&s){document.getElementById("inp-usuario").value=u;document.getElementById("inp-senha").value=s;fazerLogin();}
   else document.getElementById("btn-adm").style.display="block";
 });
-
 // ── DADOS ──
 async function carregarDados(){
   if(!CLIENTE)return;
@@ -1635,15 +1628,24 @@ function abrirModalOp(tipo,nome,url,dias,custoCiclo,ri){
   else if(tipo==="despesca"){document.getElementById("desp-kg").value="";document.getElementById("desp-valor").value="";document.getElementById("desp-cracao").value="";document.getElementById("desp-cadic").value="";document.getElementById("desp-dias").value=dias||"";document.getElementById("desp-senha").value="";document.getElementById("modal-despesca").style.display="flex";}
   else if(tipo==="limpar"){document.getElementById("limpar-senha").value="";document.getElementById("modal-limpar").style.display="flex";}
 }
-function validarSenha(inputId){return document.getElementById(inputId).value===CLIENTE.senha;}
+// 🔒 Validação de senha NO SERVIDOR — o navegador não conhece mais a senha do cliente
+async function validarSenha(inputId){
+  const senha=document.getElementById(inputId).value;
+  if(!senha||!CLIENTE)return false;
+  try{
+    const url=ADM_URL+"?acao=validar_senha&cliente_id="+encodeURIComponent(CLIENTE.id)+"&senha="+encodeURIComponent(senha);
+    const r=await fetch(url);const d=await r.json();
+    return d.status==="ok"&&d.ok===true;
+  }catch(e){return false;}
+}
 async function executarDesbaste(){
-  if(!validarSenha("desb-senha")){alert("Senha incorreta.");return;}
+  if(!(await validarSenha("desb-senha"))){alert("Senha incorreta.");return;}
   const kg=parseFloat(document.getElementById("desb-kg").value)||0;const valor=parseFloat(document.getElementById("desb-valor").value)||0;const dias=parseInt(document.getElementById("desb-dias").value)||0;
   if(kg<=0){alert("Informe o kg.");return;}fecharModais();
   try{const url=_ctxModal.url+"?tipo=desbaste&kg="+kg+"&valor="+valor+"&dias="+dias;const r=await fetch(url).then(res=>res.json());alert(r.status==="ok"?"✅ "+r.msg:"Erro: "+r.msg);carregarDados();}catch(e){alert("Falha: "+e.message);}
 }
 async function executarDespesca(){
-  if(!validarSenha("desp-senha")){alert("Senha incorreta.");return;}
+  if(!(await validarSenha("desp-senha"))){alert("Senha incorreta.");return;}
   const kg=parseFloat(document.getElementById("desp-kg").value)||0;const valor=parseFloat(document.getElementById("desp-valor").value)||0;const cracao=parseFloat(document.getElementById("desp-cracao").value)||0;const cadic=parseFloat(document.getElementById("desp-cadic").value)||0;const dias=parseInt(document.getElementById("desp-dias").value)||0;
   if(kg<=0){alert("Informe o kg.");return;}fecharModais();
   try{
@@ -1657,7 +1659,7 @@ async function executarDespesca(){
   }catch(e){alert("Falha: "+e.message);}
 }
 async function executarLimparCiclo(){
-  if(!validarSenha("limpar-senha")){alert("Senha incorreta.");return;}
+  if(!(await validarSenha("limpar-senha"))){alert("Senha incorreta.");return;}
   if(!confirm("⚠️ ATENÇÃO: Esta ação é irreversível. Confirma a limpeza do ciclo?"))return;
   fecharModais();
   try{const r=await fetch(_ctxModal.url+"?tipo=limpar_ciclo").then(res=>res.json());alert(r.status==="ok"?"✅ Ciclo limpo!":"Erro: "+r.msg);carregarDados();}catch(e){alert("Falha: "+e.message);}
