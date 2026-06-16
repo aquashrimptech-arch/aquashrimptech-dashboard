@@ -892,6 +892,33 @@ function pedirAdminToken() {
     carregarDados();
   }
 }
+async function carregarDados() {
+  document.getElementById("sync-status").innerHTML = '<span class="loading-spinner"></span>';
+  try {
+    const data = await api({ acao: "dashboard" });
+    if (data.status === "ok") {
+      CLIENTES = data.clientes || [];
+      document.getElementById("sync-status").textContent = "✓ Sincronizado";
+      document.getElementById("dash-updated").textContent = "Atualizado: " + new Date().toLocaleTimeString("pt-BR");
+      renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
+    } else {
+      toast("Erro ao carregar: " + data.msg, "e");
+      document.getElementById("sync-status").textContent = "⚠ Erro";
+    }
+  } catch(err) {
+    CLIENTES = CLIENTES_DEMO;
+    renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
+    document.getElementById("sync-status").textContent = "⚠ Modo demo";
+    document.getElementById("dash-updated").textContent = "Configure ADM_SCRIPT_URL para dados reais";
+  }
+  setTimeout(() => document.getElementById("sync-status").textContent = "", 3000);
+}
+
+const CLIENTES_DEMO = [
+  {ID:1,Nome:"Cleudo Dias",Telefone:"85987777108",Usuario:"cleudo",QtdViveiros:5,ValorPorViveiro:50,TotalMensal:250,DiaVencimento:10,Status:"ativo",UltimoPagamento:"18/05/2026",ProxVencimento:"18/06/2026",AsaasCustomerId:"cus_demo1",Observacoes:"Cliente fundador",UrlsViveiros:"https://script.google.com/macros/s/demo1/exec"},
+  {ID:2,Nome:"Bruno Adamis",Telefone:"88992329708",Usuario:"Bruno",QtdViveiros:9,ValorPorViveiro:50,TotalMensal:450,DiaVencimento:10,Status:"ativo",UltimoPagamento:"",ProxVencimento:"10/06/2026",AsaasCustomerId:"",Observacoes:"",UrlsViveiros:""},
+  {ID:3,Nome:"Elieudo Nobre",Telefone:"",Usuario:"",QtdViveiros:6,ValorPorViveiro:50,TotalMensal:300,DiaVencimento:10,Status:"ativo",UltimoPagamento:"",ProxVencimento:"10/06/2026",AsaasCustomerId:"",Observacoes:"",UrlsViveiros:""},
+];
 
 // ══════════════════════════════════════════════════════
 // RENDERS EXISTENTES
