@@ -787,8 +787,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
 // CONFIG
 // ══════════════════════════════════════════════════════
 const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
-const ADM_USER = "Maycon";
-const ADM_PASS = "328909";
 const CORES = ["#00e5ff","#00ffa3","#ff6b35","#ffb300","#9b5de5","#ff4060","#60efff","#f72585"];
 
 // ══════════════════════════════════════════════════════
@@ -831,27 +829,44 @@ function getChatId(clienteId) {
 // ══════════════════════════════════════════════════════
 // LOGIN
 // ══════════════════════════════════════════════════════
-function admLogin() {
-  const u = document.getElementById("au").value.trim();
-  const p = document.getElementById("ap").value.trim();
-  if (u === ADM_USER && p === ADM_PASS) {
-    document.getElementById("ls").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    init();
-  } else {
-    document.getElementById("lerr").style.display = "block";
+async function entrarComToken() {
+  const t = (prompt("🔑 Token de administrador (linha AdminToken na aba Config do ADM):", "") || "").trim();
+  if (!t) return; // cancelou ou vazio → não abre nada
+  ADMIN_TOKEN = t;
+  // valida de verdade contra o servidor antes de abrir
+  try {
+    const data = await api({ acao: "dashboard" });
+    if (data && data.status === "ok") {
+      sessionStorage.setItem('ast_admin_token', ADMIN_TOKEN);
+      document.getElementById("ls").style.display = "none";
+      document.getElementById("app").style.display = "block";
+      CLIENTES = data.clientes || [];
+      renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
+      iniciarRelogio();
+      initFinMeses();
+      carregarTokensLocais();
+      document.getElementById("dash-updated").textContent = "Atualizado: " + new Date().toLocaleTimeString("pt-BR");
+    } else {
+      ADMIN_TOKEN = "";
+      alert("❌ Token inválido. Acesso negado.");
+      entrarComToken(); // repergunta
+    }
+  } catch (e) {
+    ADMIN_TOKEN = "";
+    alert("⚠️ Erro de conexão ao validar o token. Tente novamente.");
+    entrarComToken();
   }
+}
+function iniciarRelogio() {
+  setInterval(tick, 1000); tick();
 }
 function logout() {
   sessionStorage.removeItem('ast_admin_token');
   ADMIN_TOKEN = "";
   document.getElementById("app").style.display = "none";
   document.getElementById("ls").style.display = "flex";
-  document.getElementById("au").value = "";
-  document.getElementById("ap").value = "";
+  
 }
-document.getElementById("ap").onkeydown = e => { if (e.key==="Enter") admLogin(); };
-document.getElementById("au").onkeydown = e => { if (e.key==="Enter") document.getElementById("ap").focus(); };
 
 // ══════════════════════════════════════════════════════
 // INIT
@@ -1645,6 +1660,29 @@ function openM(id){document.getElementById(id).classList.add("open");}
 function closeM(id){document.getElementById(id).classList.remove("open");}
 document.querySelectorAll(".ov").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)o.classList.remove("open");}));
 function toast(msg,tipo="i"){const ic={s:"✅",e:"❌",i:"ℹ️"}[tipo];const el=document.createElement("div");el.className=`toast ${tipo}`;el.innerHTML=`<span>${ic}</span><span>${msg}</span>`;document.getElementById("tc").appendChild(el);setTimeout(()=>el.remove(),4500);}
+// Ao abrir a página: pede o token imediatamente. Sem token, nada abre.
+window.addEventListener("load", () => {
+  const salvo = sessionStorage.getItem('ast_admin_token');
+  if (salvo) {
+    ADMIN_TOKEN = salvo;
+    // revalida o token salvo; se falhar, pede de novo
+    api({ acao: "dashboard" }).then(data => {
+      if (data && data.status === "ok") {
+        document.getElementById("ls").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        CLIENTES = data.clientes || [];
+        renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
+        iniciarRelogio(); initFinMeses(); carregarTokensLocais();
+        document.getElementById("dash-updated").textContent = "Atualizado: " + new Date().toLocaleTimeString("pt-BR");
+      } else {
+        sessionStorage.removeItem('ast_admin_token'); ADMIN_TOKEN = "";
+        entrarComToken();
+      }
+    }).catch(() => { entrarComToken(); });
+  } else {
+    entrarComToken();
+  }
+});
 </script>
 </body>
 </html>
