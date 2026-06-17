@@ -872,7 +872,7 @@ function tick() {
 // API
 // ══════════════════════════════════════════════════════
 async function api(params) {
-  if (ADMIN_TOKEN) params = { ...params, admin_token: ADMIN_TOKEN };
+  if (ADMIN_TOKEN) params = { ...params, token: ADMIN_TOKEN };
   const url = ADM_SCRIPT_URL + "?" + new URLSearchParams(params).toString();
   const resp = await fetch(url);
   const data = await resp.json();
