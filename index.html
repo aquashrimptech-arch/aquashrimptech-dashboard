@@ -1628,28 +1628,31 @@ function abrirModalOp(tipo,nome,url,dias,custoCiclo,ri){
   else if(tipo==="despesca"){document.getElementById("desp-kg").value="";document.getElementById("desp-valor").value="";document.getElementById("desp-cracao").value="";document.getElementById("desp-cadic").value="";document.getElementById("desp-dias").value=dias||"";document.getElementById("desp-senha").value="";document.getElementById("modal-despesca").style.display="flex";}
   else if(tipo==="limpar"){document.getElementById("limpar-senha").value="";document.getElementById("modal-limpar").style.display="flex";}
 }
-// 🔒 Validação de senha NO SERVIDOR — o navegador não conhece mais a senha do cliente
-async function validarSenha(inputId){
+// 🔒 Validação de senha NO SERVIDOR — devolve o viv_token quando a senha bate (senão null)
+async function validarSenhaToken(inputId){
   const senha=document.getElementById(inputId).value;
-  if(!senha||!CLIENTE)return false;
+  if(!senha||!CLIENTE)return null;
   try{
     const url=ADM_URL+"?acao=validar_senha&cliente_id="+encodeURIComponent(CLIENTE.id)+"&senha="+encodeURIComponent(senha);
     const r=await fetch(url);const d=await r.json();
-    return d.status==="ok"&&d.ok===true;
-  }catch(e){return false;}
+    if(d.status==="ok"&&d.ok===true)return d.viv_token||"";
+    return null;
+  }catch(e){return null;}
 }
 async function executarDesbaste(){
-  if(!(await validarSenha("desb-senha"))){alert("Senha incorreta.");return;}
+  const tok=await validarSenhaToken("desb-senha");
+  if(tok===null){alert("Senha incorreta.");return;}
   const kg=parseFloat(document.getElementById("desb-kg").value)||0;const valor=parseFloat(document.getElementById("desb-valor").value)||0;const dias=parseInt(document.getElementById("desb-dias").value)||0;
   if(kg<=0){alert("Informe o kg.");return;}fecharModais();
-  try{const url=_ctxModal.url+"?tipo=desbaste&kg="+kg+"&valor="+valor+"&dias="+dias;const r=await fetch(url).then(res=>res.json());alert(r.status==="ok"?"✅ "+r.msg:"Erro: "+r.msg);carregarDados();}catch(e){alert("Falha: "+e.message);}
+  try{const url=_ctxModal.url+"?tipo=desbaste&kg="+kg+"&valor="+valor+"&dias="+dias+"&token="+encodeURIComponent(tok);const r=await fetch(url).then(res=>res.json());alert(r.status==="ok"?"✅ "+r.msg:"Erro: "+r.msg);carregarDados();}catch(e){alert("Falha: "+e.message);}
 }
 async function executarDespesca(){
-  if(!(await validarSenha("desp-senha"))){alert("Senha incorreta.");return;}
+  const tok=await validarSenhaToken("desp-senha");
+  if(tok===null){alert("Senha incorreta.");return;}
   const kg=parseFloat(document.getElementById("desp-kg").value)||0;const valor=parseFloat(document.getElementById("desp-valor").value)||0;const cracao=parseFloat(document.getElementById("desp-cracao").value)||0;const cadic=parseFloat(document.getElementById("desp-cadic").value)||0;const dias=parseInt(document.getElementById("desp-dias").value)||0;
   if(kg<=0){alert("Informe o kg.");return;}fecharModais();
   try{
-    const url=_ctxModal.url+"?tipo=despesca&kg="+kg+"&valor="+valor+"&custoracao="+cracao+"&custoadicional="+cadic+"&dias="+dias;
+    const url=_ctxModal.url+"?tipo=despesca&kg="+kg+"&valor="+valor+"&custoracao="+cracao+"&custoadicional="+cadic+"&dias="+dias+"&token="+encodeURIComponent(tok);
     const r=await fetch(url).then(res=>res.json());
     if(r.status==="ok"){
       const lucro=valor-(cracao+cadic);const fca=kg>0?((cracao/4.6)/kg).toFixed(2):"—";
@@ -1659,12 +1662,12 @@ async function executarDespesca(){
   }catch(e){alert("Falha: "+e.message);}
 }
 async function executarLimparCiclo(){
-  if(!(await validarSenha("limpar-senha"))){alert("Senha incorreta.");return;}
+  const tok=await validarSenhaToken("limpar-senha");
+  if(tok===null){alert("Senha incorreta.");return;}
   if(!confirm("⚠️ ATENÇÃO: Esta ação é irreversível. Confirma a limpeza do ciclo?"))return;
   fecharModais();
-  try{const r=await fetch(_ctxModal.url+"?tipo=limpar_ciclo").then(res=>res.json());alert(r.status==="ok"?"✅ Ciclo limpo!":"Erro: "+r.msg);carregarDados();}catch(e){alert("Falha: "+e.message);}
+  try{const r=await fetch(_ctxModal.url+"?tipo=limpar_ciclo&token="+encodeURIComponent(tok)).then(res=>res.json());alert(r.status==="ok"?"✅ Ciclo limpo!":"Erro: "+r.msg);carregarDados();}catch(e){alert("Falha: "+e.message);}
 }
-
 // ── AGENTES IA ──
 const AGENTES_DEF=[
   {id:"nutricao",icon:"🍽️",name:"Agente de Nutrição",spec:"Arraçoamento e FCA",cor:"rgba(0,212,255,.1)"},
