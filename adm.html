@@ -555,6 +555,10 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
               <span class="bdg bw" id="asaas-status-badge">⏳ Verificando...</span>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">📞</span><div><div style="font-size:.78rem;font-weight:600">Twilio</div><div style="font-size:.63rem;color:var(--text3)">Ligações de emergência</div></div></div>
+            <span class="bdg bw" id="twilio-status-badge">⏳ Verificando...</span>
+          </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px">
               <div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">📊</span><div><div style="font-size:.78rem;font-weight:600">Google Sheets (ADM)</div><div style="font-size:.63rem;color:var(--text3)" id="sheets-status-desc">Verificando...</div></div></div>
               <span class="bdg" id="sheets-status-badge">⏳</span>
             </div>
@@ -625,6 +629,12 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div class="fsec">🏭 Estoque</div>
       <div class="fg"><label>URL Apps Script — Estoque</label><input id="c-est" type="text" placeholder="https://script.google.com/macros/s/.../exec"></div>
       <div class="fsec">🤖 Bot Telegram</div>
+      <div class="fsec">📞 Ligação de Emergência (Twilio)</div>
+      <div style="background:rgba(255,107,53,.05);border:1px solid rgba(255,107,53,.15);border-radius:8px;padding:10px 13px;margin-bottom:10px;font-size:.7rem;color:var(--text3)">
+        💡 Números que vão RECEBER LIGAÇÃO em queda de energia/aerador parado. Ao salvar, o sistema já dispara a ativação no Twilio — a pessoa atende e digita o código falado, uma vez só.
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:.74rem;color:var(--text3)">Um número por linha</span><button class="btn btn-sm bol" onclick="addTelVoz()">+ Telefone</button></div>
+      <div id="telvoz-ct"></div>
       <div class="fr c2">
         <div class="fg"><label>Bot Token</label><input id="c-bot-token" type="text" placeholder="123456789:AABBcc..."></div>
         <div class="fg"><label>Chat ID do Grupo</label><input id="c-chat-id" type="text" placeholder="-100123456789"></div>
@@ -766,6 +776,12 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
 <div class="tc" id="tc"></div>
 
 <script>
+function addTelVoz(valor='') {
+  const ct=document.getElementById('telvoz-ct'), n=ct.children.length+1, d=document.createElement('div');
+  d.className='viv-row';
+  d.innerHTML=`<div class="viv-n">📞${n}</div><input type="text" placeholder="Ex: 85999991234" value="${valor}" style="flex:1;background:transparent;border:none;color:var(--text);font-size:.78rem;outline:none"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>`;
+  ct.appendChild(d);
+}
 // ══════════════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════════════
@@ -925,7 +941,12 @@ async function verificarIntegracoes() {
       dSheets.textContent = d.msg || 'Falha';
     }
   } catch(e) { bSheets.className = 'bdg br'; bSheets.textContent = '✗ Offline'; dSheets.textContent = 'Sem conexão'; }
-
+  const bTwilio = document.getElementById('twilio-status-badge');
+  try {
+    const dT = await api({ acao: 'twilio_conta' });
+    if (dT?.status === 'ok') { bTwilio.className='bdg bg'; bTwilio.textContent = '✓ ' + (dT.tipo==='Trial' ? 'Trial ativo' : 'Ativo'); }
+    else { bTwilio.className='bdg br'; bTwilio.textContent = '✗ ' + (dT.msg || 'Erro'); }
+  } catch(e) { bTwilio.className='bdg br'; bTwilio.textContent = '✗ Offline'; }
   // Asaas — tenta criar via API (verificação via endpoint status)
   const bAsaas = document.getElementById('asaas-status-badge');
   try {
@@ -1553,6 +1574,7 @@ function novoCliente() {
   document.getElementById('c-bot-token').value = '';
   document.getElementById('c-chat-id').value = '';
   document.getElementById('viv-ct').innerHTML = '';
+  document.getElementById('telvoz-ct').innerHTML = ''; addTelVoz();
   addViv(); calcTotal();
   openM('m-cli');
 }
@@ -1583,6 +1605,9 @@ function editarCliente(id) {
     d.innerHTML=`<div class="viv-n">V${i+1}</div><input type="text" placeholder="URL Apps Script — Viveiro ${i+1}" value="${urls[i]||''}" style="flex:1;background:transparent;border:none;color:var(--text);font-size:.78rem;outline:none"><button onclick="this.parentElement.remove();reindexarViveiros()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>`;
     document.getElementById('viv-ct').appendChild(d);
   }
+  document.getElementById('telvoz-ct').innerHTML = '';
+  const tels = String(c.TelefonesAlertaVoz||'').split('|').map(t=>t.trim()).filter(Boolean);
+  if (tels.length) tels.forEach(t => addTelVoz(t)); else addTelVoz();
   calcTotal(); openM('m-cli');
 }
 
@@ -1605,6 +1630,8 @@ async function salvarCliente() {
     observacoes:document.getElementById('c-obs').value,
     urls_viveiros:[...document.querySelectorAll('#viv-ct input[type="text"]')].map(i=>i.value.trim()).filter(Boolean).join('|'),
     url_estoque:document.getElementById('c-est').value,
+    telefones_voz: [...document.querySelectorAll('#telvoz-ct input[type="text"]')].map(i=>i.value.trim()).filter(Boolean).join('|'),
+    chat_id: document.getElementById('c-chat-id').value.trim(),
   };
   toast('Salvando...','i');
   try {
@@ -1614,6 +1641,13 @@ async function salvarCliente() {
       const savedId=data.id||clienteId;
       if(savedId&&(botToken||chatId)) salvarTokenLocal(String(savedId), botToken, chatId);
       closeM('m-cli'); await carregarDados();
+      if (data.ativacao_twilio?.resultados?.length) {
+  data.ativacao_twilio.resultados.forEach(r => {
+    if (r.status === 'ligacao_enviada') toast(`📞 Ligando para ${r.tel} agora — peça pra atender e digitar o código falado.`, 'i');
+    else if (r.status === 'ja_verificado') toast(`✅ ${r.tel} já verificado no Twilio.`, 's');
+    else toast(`⚠ Falha ao ativar ${r.tel}: ${r.msg||''}`, 'e');
+  });
+}
     } else toast('Erro: '+data.msg,'e');
   } catch(err) {
     toast('Erro de conexão — verifique o Apps Script','e');
