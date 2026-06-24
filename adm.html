@@ -444,6 +444,25 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
       <div style="margin-bottom:16px">
         <div style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">Selecione o Cliente</div>
+        <!-- ══ CONSOLE DE LOG DO ESP32 (AO VIVO) ══ -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">📡 Console do ESP32 (ao vivo)</div>
+          <span style="font-size:.62rem;color:var(--text3)">atualiza a cada 10s · vem do heartbeat/log do firmware, não trava o ESP</span>
+        </div>
+        <div class="card-body">
+          <div class="bot-cfg-bar" id="esp-status-grid" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
+            <div style="color:var(--text3);font-size:.75rem">Carregando status dos viveiros...</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px">
+            <span style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em">Log de eventos do firmware</span>
+            <select id="esp-log-filtro" onchange="atualizarEspLogs()" style="background:var(--bg2);border:1px solid var(--border2);border-radius:7px;padding:4px 8px;color:var(--text);font-size:.68rem">
+              <option value="">Todos os viveiros</option>
+            </select>
+          </div>
+          <div class="bot-log" id="esp-log-box"><div class="log-line log-info">Carregando logs...</div></div>
+        </div>
+      </div>
         <div class="bot-cli-grid" id="bot-cli-grid">
           <div style="color:var(--text3);font-size:.8rem;padding:20px">Carregando clientes...</div>
         </div>
@@ -800,6 +819,7 @@ let BOT_CLI_SEL = null;
 let BOT_TOKENS = {};
 let BOT_TOKEN_VISIBLE = false;
 let ALERTAS_LIDOS = JSON.parse(localStorage.getItem('ast_alertas_lidos') || '[]');
+let ESP_CONSOLE_TIMER = null;
 
 // ══════════════════════════════════════════════════════
 // BOT TOKEN STORAGE (localStorage)
@@ -873,6 +893,7 @@ function logout() {
   sessionStorage.removeItem('ast_admin_token');
   ADMIN_TOKEN = '';
   CLIENTES = [];
+  pararEspConsole();
   BOT_CLI_SEL = null;
   document.getElementById('app').style.display = 'none';
   document.getElementById('ls').style.display = 'flex';
@@ -1120,7 +1141,63 @@ function renderConfigBots() {
     </div>`;
   }).join('');
 }
+// ══════════════════════════════════════════════════════
+// CONSOLE DE LOG DO ESP32 (AO VIVO)
+// ══════════════════════════════════════════════════════
+function iniciarEspConsole() {
+  pararEspConsole();
+  atualizarEspConsole();
+  ESP_CONSOLE_TIMER = setInterval(atualizarEspConsole, 10000);
+}
+function pararEspConsole() {
+  if (ESP_CONSOLE_TIMER) { clearInterval(ESP_CONSOLE_TIMER); ESP_CONSOLE_TIMER = null; }
+}
+async function atualizarEspConsole() {
+  await carregarEspStatus();
+  await atualizarEspLogs();
+}
 
+async function carregarEspStatus() {
+  try {
+    const data = await api({ acao: 'esp_status_list' });
+    const grid = document.getElementById('esp-status-grid');
+    const filtro = document.getElementById('esp-log-filtro');
+    if (!grid || data.status !== 'ok') return;
+    const lista = data.status_esp || [];
+    if (filtro) {
+      const valAtual = filtro.value;
+      filtro.innerHTML = '<option value="">Todos os viveiros</option>' +
+        lista.map(v => `<option value="${v.viveiro}">${v.viveiro}</option>`).join('');
+      filtro.value = valAtual;
+    }
+    grid.innerHTML = lista.length ? lista.map(v => `
+      <div class="bot-cfg-item">
+        <div class="bot-cfg-lbl">${v.viveiro}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+          <span class="bdg ${v.online?'bg':'br'}">${v.online?'🟢 Online':'🔴 Offline'}</span>
+          <span style="font-size:.6rem;color:var(--text3)">${v.seg_atras}s atrás</span>
+        </div>
+        <div style="font-size:.6rem;color:var(--text3);margin-top:4px">v${v.versao||'?'} · heap ${v.heap_kb||0}KB · RSSI ${v.rssi||0}dBm</div>
+      </div>`).join('') : '<div style="color:var(--text3);font-size:.75rem">Nenhum heartbeat recebido ainda — confirme LOG_SCRIPT_URL e LOG_SECRET no firmware.</div>';
+  } catch(e) {}
+}
+
+async function atualizarEspLogs() {
+  try {
+    const viveiro = document.getElementById('esp-log-filtro')?.value || '';
+    const data = await api({ acao: 'esp_log_read', viveiro, limite: 150 });
+    const el = document.getElementById('esp-log-box');
+    if (!el || data.status !== 'ok') return;
+    const linhas = data.logs || [];
+    el.innerHTML = linhas.length ? linhas.map(l => {
+      const cls = { E:'log-err', W:'log-warn', I:'log-info', D:'log-info' }[l.nivel] || 'log-info';
+      let msg = l.msg || '';
+      try { msg = decodeURIComponent(msg); } catch(e) {}
+      return `<div class="log-line ${cls}">[${l.recebido}] <b>${l.viveiro}</b> ${l.tag}: ${msg}</div>`;
+    }).join('') : '<div class="log-line log-info">Sem logs ainda.</div>';
+    el.scrollTop = el.scrollHeight;
+  } catch(e) {}
+}
 // ══════════════════════════════════════════════════════
 // BOTS
 // ══════════════════════════════════════════════════════
@@ -1916,7 +1993,7 @@ function go(nm,el) {
   else document.querySelectorAll('.ni').forEach(n=>{if(n.getAttribute('onclick')?.includes("'"+nm+"'"))n.classList.add('act');});
   document.getElementById('pg-title').textContent=PG_TITLES[nm]||nm;
   if(nm==='fin'){initFinMeses();carregarDRE();}
-  if(nm==='bots'){carregarBots();}
+  if(nm==='bots'){carregarBots();iniciarEspConsole();} else {pararEspConsole();}
   if(nm==='config'){renderConfigBots();}
   if(window.innerWidth<860)closeSB();
 }
