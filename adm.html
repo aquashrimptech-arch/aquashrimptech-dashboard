@@ -495,6 +495,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
             <script>
            <script>
           // 💡 Declaração global do timer para evitar erros de referência
+          // 💡 Garanta que essa variável está declarada no escopo global (no topo do seu <script>)
           let ESP_CONSOLE_TIMER = null;
           
           // ══════════════════════════════════════════════════════
@@ -591,8 +592,36 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
               console.error("Erro ao atualizar logs do ESP:", e);
             }
           }
-          </script>
-            
+          
+          async function atualizarEspLogs() {
+            if (!BOT_CLI_SEL) return;
+            try {
+              const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só logs deste cliente
+              const viveiro = document.getElementById('esp-log-filtro')?.value || '';
+              const data = await api({ acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 });
+              const el = document.getElementById('esp-log-box');
+              
+              if (!el || !data || data.status !== 'ok') return;
+              
+              const linhas = data.logs || [];
+              
+              el.innerHTML = linhas.length ? linhas.map(l => {
+                const cls = { E:'log-err', W:'log-warn', I:'log-info', D:'log-info' }[l.nivel] || 'log-info';
+                let msg = l.msg || '';
+                try { msg = decodeURIComponent(msg); } catch(e) {}
+                return `<div class="log-line ${cls}">[${l.recebido}] <b>${l.viveiro}</b> ${l.tag}: ${msg}</div>`;
+              }).join('') : '<div class="log-line log-info">Sem logs ainda para este cliente.</div>';
+              
+              // 💡 Rolagem inteligente: só joga para o fim se o usuário já estiver deslizando perto do final
+              const estaNoFim = el.scrollHeight - el.clientHeight - el.scrollTop < 60;
+              if (estaNoFim || el.scrollTop === 0) {
+                el.scrollTop = el.scrollHeight;
+              }
+            } catch(e) {
+              console.error("Erro ao atualizar logs do ESP:", e);
+            }
+          }
+                      
             async function atualizarEspLogs() {
               if (!BOT_CLI_SEL) return;
               try {
