@@ -492,75 +492,125 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
               <button class="btn btn-xs bol" onclick="limparLog()">✕ Limpar</button>
             </div>
            <div class="bot-log" id="bot-log"><div class="log-line log-info">Aguardando ação...</div></div>
-
-            // ══════════════════════════════════════════════════════
-// CONSOLE DE LOG DO ESP32 (AO VIVO) — escopado ao cliente selecionado
-// ══════════════════════════════════════════════════════
-function iniciarEspConsole() {
-  pararEspConsole();
-  if (!BOT_CLI_SEL) return; // ★ só roda se um cliente estiver selecionado
-  atualizarEspConsole();
-  ESP_CONSOLE_TIMER = setInterval(atualizarEspConsole, 10000);
-}
-function pararEspConsole() {
-  if (ESP_CONSOLE_TIMER) { clearInterval(ESP_CONSOLE_TIMER); ESP_CONSOLE_TIMER = null; }
-}
-async function atualizarEspConsole() {
-  await carregarEspStatus();
-  await atualizarEspLogs();
-}
-function qualidadeRSSI(rssi) {
-  if (rssi >= -50) return { label: 'Excelente', cor: 'var(--accent2)' };
-  if (rssi >= -60) return { label: 'Bom',        cor: 'var(--accent2)' };
-  if (rssi >= -70) return { label: 'Razoável',   cor: 'var(--warn)' };
-  if (rssi >= -80) return { label: 'Fraco',      cor: 'var(--danger)' };
-  return                  { label: 'Muito fraco', cor: 'var(--danger)' };
-}
-async function carregarEspStatus() {
-  if (!BOT_CLI_SEL) return;
-  try {
-    const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só viveiros deste cliente
-    const data = await api({ acao: 'esp_status_list', chat_id: chatId });
-    const grid = document.getElementById('esp-status-grid');
-    const filtro = document.getElementById('esp-log-filtro');
-    if (!grid || data.status !== 'ok') return;
-    const lista = data.status_esp || [];
-    if (filtro) {
-      const valAtual = filtro.value;
-      filtro.innerHTML = '<option value="">Todos os viveiros deste cliente</option>' +
-        lista.map(v => `<option value="${v.viveiro}">${v.viveiro}</option>`).join('');
-      filtro.value = valAtual;
-    }
-    grid.innerHTML = lista.length ? lista.map(v => `
-      <div class="bot-cfg-item">
-        <div class="bot-cfg-lbl">${v.viveiro}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-          <span class="bdg ${v.online?'bg':'br'}">${v.online?'🟢 Online':'🔴 Offline'}</span>
-          <span style="font-size:.6rem;color:var(--text3)">${v.seg_atras}s atrás</span>
-        </div>
-        <div style="font-size:.6rem;color:var(--text3);margin-top:4px">v${v.versao||'?'} · heap ${v.heap_kb||0}KB · RSSI ${v.rssi||0}dBm <span style="color:${qualidadeRSSI(v.rssi||0).cor};font-weight:700">(${qualidadeRSSI(v.rssi||0).label})</span></div>
-      </div>`).join('') : '<div style="color:var(--text3);font-size:.75rem">Nenhum heartbeat recebido ainda deste cliente — confirme se o firmware está na v9.34+ (manda chat_id) e o LOG_SECRET está certo.</div>';
-  } catch(e) {}
-}
-
-async function atualizarEspLogs() {
-  if (!BOT_CLI_SEL) return;
-  try {
-    const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só logs deste cliente
-    const viveiro = document.getElementById('esp-log-filtro')?.value || '';
-    const data = await api({ acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 });
-    const el = document.getElementById('esp-log-box');
-    if (!el || data.status !== 'ok') return;
-    const linhas = data.logs || [];
-    el.innerHTML = linhas.length ? linhas.map(l => {
-      const cls = { E:'log-err', W:'log-warn', I:'log-info', D:'log-info' }[l.nivel] || 'log-info';
-      let msg = l.msg || '';
-      try { msg = decodeURIComponent(msg); } catch(e) {}
-      return `<div class="log-line ${cls}">[${l.recebido}] <b>${l.viveiro}</b> ${l.tag}: ${msg}</div>`;
-    }).join('') : '<div class="log-line log-info">Sem logs ainda para este cliente.</div>';
-    el.scrollTop = el.scrollHeight;
-  } catch(e) {}
-}
+            <script>
+           <script>
+          // 💡 Declaração global do timer para evitar erros de referência
+          let ESP_CONSOLE_TIMER = null;
+          
+          // ══════════════════════════════════════════════════════
+          // CONSOLE DE LOG DO ESP32 (AO VIVO) — escopado ao cliente selecionado
+          // ══════════════════════════════════════════════════════
+          function iniciarEspConsole() {
+            pararEspConsole();
+            if (!BOT_CLI_SEL) return; // ★ só roda se um cliente estiver selecionado
+            atualizarEspConsole();
+            ESP_CONSOLE_TIMER = setInterval(atualizarEspConsole, 10000);
+          }
+          
+          function pararEspConsole() {
+            if (ESP_CONSOLE_TIMER) { 
+              clearInterval(ESP_CONSOLE_TIMER); 
+              ESP_CONSOLE_TIMER = null; 
+            }
+          }
+          
+          async function atualizarEspConsole() {
+            await carregarEspStatus();
+            await atualizarEspLogs();
+          }
+          
+          function qualidadeRSSI(rssi) {
+            if (rssi >= -50) return { label: 'Excelente', cor: 'var(--accent2)' };
+            if (rssi >= -60) return { label: 'Bom',        cor: 'var(--accent2)' };
+            if (rssi >= -70) return { label: 'Razoável',   cor: 'var(--warn)' };
+            if (rssi >= -80) return { label: 'Fraco',      cor: 'var(--danger)' };
+            return                  { label: 'Muito fraco', cor: 'var(--danger)' };
+          }
+          
+          async function carregarEspStatus() {
+            if (!BOT_CLI_SEL) return;
+            try {
+              const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só viveiros deste cliente
+              const data = await api({ acao: 'esp_status_list', chat_id: chatId });
+              const grid = document.getElementById('esp-status-grid');
+              const filtro = document.getElementById('esp-log-filtro');
+              
+              if (!grid || !data || data.status !== 'ok') return;
+              
+              const lista = data.status_esp || [];
+              
+              if (filtro) {
+                const valAtual = filtro.value;
+                filtro.innerHTML = '<option value="">Todos os viveiros deste cliente</option>' +
+                  lista.map(v => `<option value="${v.viveiro}">${v.viveiro}</option>`).join('');
+                filtro.value = valAtual;
+              }
+              
+              grid.innerHTML = lista.length ? lista.map(v => `
+                <div class="bot-cfg-item">
+                  <div class="bot-cfg-lbl">${v.viveiro}</div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+                    <span class="bdg ${v.online ? 'bg' : 'br'}">${v.online ? '🟢 Online' : '🔴 Offline'}</span>
+                    <span style="font-size:.6rem;color:var(--text3)">${v.seg_atras}s atrás</span>
+                  </div>
+                  <div style="font-size:.6rem;color:var(--text3);margin-top:4px">
+                    v${v.versao || '?'} · heap ${v.heap_kb || 0}KB · RSSI ${v.rssi || 0}dBm 
+                    <span style="color:${qualidadeRSSI(v.rssi || 0).cor};font-weight:700">(${qualidadeRSSI(v.rssi || 0).label})</span>
+                  </div>
+                </div>`).join('') : '<div style="color:var(--text3);font-size:.75rem">Nenhum heartbeat recebido ainda deste cliente — confirme se o firmware está na v9.34+ (manda chat_id) e o LOG_SECRET está certo.</div>';
+            } catch(e) {
+              console.error("Erro ao carregar status do ESP:", e);
+            }
+          }
+          
+          async function atualizarEspLogs() {
+            if (!BOT_CLI_SEL) return;
+            try {
+              const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só logs deste cliente
+              const viveiro = document.getElementById('esp-log-filtro')?.value || '';
+              const data = await api({ acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 });
+              const el = document.getElementById('esp-log-box');
+              
+              if (!el || !data || data.status !== 'ok') return;
+              
+              const linhas = data.logs || [];
+              
+              el.innerHTML = linhas.length ? linhas.map(l => {
+                const cls = { E:'log-err', W:'log-warn', I:'log-info', D:'log-info' }[l.nivel] || 'log-info';
+                let msg = l.msg || '';
+                try { msg = decodeURIComponent(msg); } catch(e) {}
+                return `<div class="log-line ${cls}">[${l.recebido}] <b>${l.viveiro}</b> ${l.tag}: ${msg}</div>`;
+              }).join('') : '<div class="log-line log-info">Sem logs ainda para este cliente.</div>';
+              
+              // 💡 Rolagem inteligente: só joga para o fim se o usuário já estiver deslizando perto do final
+              const estaNoFim = el.scrollHeight - el.clientHeight - el.scrollTop < 60;
+              if (estaNoFim || el.scrollTop === 0) {
+                el.scrollTop = el.scrollHeight;
+              }
+            } catch(e) {
+              console.error("Erro ao atualizar logs do ESP:", e);
+            }
+          }
+          </script>
+            
+            async function atualizarEspLogs() {
+              if (!BOT_CLI_SEL) return;
+              try {
+                const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só logs deste cliente
+                const viveiro = document.getElementById('esp-log-filtro')?.value || '';
+                const data = await api({ acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 });
+                const el = document.getElementById('esp-log-box');
+                if (!el || data.status !== 'ok') return;
+                const linhas = data.logs || [];
+                el.innerHTML = linhas.length ? linhas.map(l => {
+                  const cls = { E:'log-err', W:'log-warn', I:'log-info', D:'log-info' }[l.nivel] || 'log-info';
+                  let msg = l.msg || '';
+                  try { msg = decodeURIComponent(msg); } catch(e) {}
+                  return `<div class="log-line ${cls}">[${l.recebido}] <b>${l.viveiro}</b> ${l.tag}: ${msg}</div>`;
+                }).join('') : '<div class="log-line log-info">Sem logs ainda para este cliente.</div>';
+                el.scrollTop = el.scrollHeight;
+              } catch(e) {}
+            }
 
     <!-- UNIT ECONOMICS -->
     <div class="pg" id="pg-fin">
