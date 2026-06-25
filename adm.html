@@ -738,6 +738,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
           <div class="fg"><label>Vida Útil (meses)</label><select id="cap-vida"><option value="12">12 meses</option><option value="24" selected>24 meses</option><option value="36">36 meses</option><option value="48">48 meses</option><option value="60">60 meses</option></select></div>
         </div>
         <div class="fg"><label>Descrição</label><input id="cap-desc" type="text" placeholder="Ex: ESP32-S3 Dev Module — Lote inicial"></div>
+        <div class="fg"><label>Data do custo</label><input id="cap-data" type="date"></div>
         <div class="fr c3">
           <div class="fg"><label>Quantidade</label><input id="cap-qtd" type="number" value="1" min="1" oninput="calcCAPEX()"></div>
           <div class="fg"><label>Valor Unitário (R$)</label><input id="cap-vunit" type="number" placeholder="0,00" step="0.01" oninput="calcCAPEX()"></div>
@@ -765,6 +766,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
           <div class="fg"><label>Subcategoria</label><input id="opx-subcat" type="text" placeholder="Ex: Claude API, Combustível..."></div>
         </div>
         <div class="fg"><label>Descrição</label><input id="opx-desc" type="text" placeholder="Ex: Abastecimento — visita cliente Jaguaribe"></div>
+        <div class="fg"><label>Data do custo</label><input id="opx-data" type="date"></div>
         <div class="fr c2">
           <div class="fg"><label>Valor (R$)</label><input id="opx-val" type="number" placeholder="0,00" step="0.01"></div>
           <div class="fg"><label>Recorrente?</label><select id="opx-rec"><option value="Não">Não (pontual)</option><option value="Sim">Sim (todo mês)</option></select></div>
@@ -780,6 +782,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
         </div>
         <div class="fg"><label>Categoria</label><select id="cog-cat"><option>Hardware</option><option>Mão de Obra</option><option>Deslocamento</option><option>Material</option><option>Outros</option></select></div>
         <div class="fg"><label>Descrição</label><input id="cog-desc" type="text" placeholder="Ex: ESP32-S3 + carcaça IP65 + cabos"></div>
+        <div class="fg"><label>Data do custo</label><input id="cog-data" type="date"></div>
         <div class="fg"><label>Valor (R$)</label><input id="cog-val" type="number" placeholder="0,00" step="0.01"></div>
         <div class="fg"><label>Observação</label><input id="cog-obs" type="text" placeholder="Ex: Instalação realizada em 08/06/2026"></div>
       </div>
@@ -801,6 +804,14 @@ function addTelVoz(valor='') {
   d.innerHTML=`<div class="viv-n">📞${n}</div><input type="text" placeholder="Ex: 85999991234" value="${valor}" style="flex:1;background:transparent;border:none;color:var(--text);font-size:.78rem;outline:none"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>`;
   ct.appendChild(d);
 }
+async function excluirCliente(id, nome) {
+  if (!confirm(`Excluir "${nome}"? Isso só esconde o cliente — os dados continuam salvos e podem ser restaurados depois.`)) return;
+  try {
+    const data = await api({acao:'deletar', id});
+    if (data.status==='ok') { toast(`✅ ${data.msg}`,'s'); await carregarDados(); }
+    else toast('Erro: '+data.msg,'e');
+  } catch { toast('Erro de conexão','e'); }
+}  
 // ══════════════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════════════
@@ -841,7 +852,7 @@ function limparTodosTokensBots() {
   if (!confirm('Tem certeza? Isso vai remover todos os tokens de bot salvos localmente.')) return;
   localStorage.removeItem('ast_bot_tokens');
   BOT_TOKENS = {};
-  renderTabela(); carregarBots();
+  (); carregarBots();
   toast('Todos os tokens removidos.', 'i');
 }
 
@@ -941,7 +952,7 @@ async function carregarDados() {
 }
 
 function renderTudo() {
-  renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
+  renderDash(); (); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
   preencherDestCli(); renderConfigBots();
 }
 
@@ -1022,7 +1033,7 @@ function renderDash() {
   ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-ic">${k.ic}</div><div class="kpi-lb">${k.lb}</div><div class="kpi-vl ${k.clv}">${k.vl}</div><div class="kpi-tr">${k.tr}</div></div>`).join('');
 }
 
-function renderTabela(filtro='') {
+function (filtro='') {
   const lista = filtro
     ? CLIENTES.filter(c => c.Nome.toLowerCase().includes(filtro.toLowerCase()) || (c.Telefone||'').includes(filtro))
     : CLIENTES;
@@ -1046,6 +1057,7 @@ function renderTabela(filtro='') {
       <td><div style="display:flex;gap:3px;flex-wrap:wrap">
         <button class="btn btn-xs bol" onclick="verDetalhe(${c.ID})" title="Ver detalhe">👁</button>
         <button class="btn btn-xs bol" onclick="editarCliente(${c.ID})" title="Editar">✏️</button>
+        <button class="btn btn-xs bdn" onclick="excluirCliente(${c.ID},'${c.Nome.replace(/'/g,"\\'")}')" title="Excluir">🗑️</button>
         ${c.Telefone ? `<button class="btn btn-xs bwa" onclick="wpp(${c.ID})" title="WhatsApp">🟢</button>` : ''}
         <button class="btn btn-xs ${temToken?'bpp':'bol'}" onclick="irParaBot(${c.ID})" title="${temToken?'Bot configurado':'Configurar bot'}">🤖</button>
         ${c.Status!=='ativo'?`<button class="btn btn-xs bdn" onclick="gerarPix(${c.ID})" title="Gerar PIX">⚡</button>`:''}
@@ -1934,6 +1946,8 @@ function switchTab(tab) {
 
 function abrirLancar(tab) {
   switchTab(tab||'opex');
+  const hoje = new Date().toISOString().split('T')[0];           // ★ NOVO
+  ['cap-data','opx-data','cog-data'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value = hoje; }); // ★ NOVO
   const sel=document.getElementById('cog-cli');
   if(sel){sel.innerHTML='<option value="">Selecionar...</option>';CLIENTES.forEach(c=>{const opt=document.createElement('option');opt.value=c.Nome;opt.textContent=c.Nome;sel.appendChild(opt);});}
   openM('m-lancar');
@@ -1953,6 +1967,7 @@ async function salvarLancamento() {
   if(tab==='capex'){
     params.categoria=document.getElementById('cap-cat').value;
     params.descricao=document.getElementById('cap-desc').value;
+    params.data=document.getElementById('cap-data').value; 
     params.quantidade=document.getElementById('cap-qtd').value;
     params.valor_unit=document.getElementById('cap-vunit').value;
     params.vida_util=document.getElementById('cap-vida').value;
@@ -1962,6 +1977,7 @@ async function salvarLancamento() {
     params.categoria=document.getElementById('opx-cat').value;
     params.subcategoria=document.getElementById('opx-subcat').value;
     params.descricao=document.getElementById('opx-desc').value;
+    params.data=document.getElementById('opx-data').value;
     params.valor=document.getElementById('opx-val').value;
     params.recorrente=document.getElementById('opx-rec').value;
     params.obs=document.getElementById('opx-obs').value;
@@ -1971,6 +1987,7 @@ async function salvarLancamento() {
     params.viveiro=document.getElementById('cog-viv').value;
     params.categoria=document.getElementById('cog-cat').value;
     params.descricao=document.getElementById('cog-desc').value;
+    params.data=document.getElementById('cog-data').value;
     params.valor=document.getElementById('cog-val').value;
     params.obs=document.getElementById('cog-obs').value;
     if(!params.descricao){toast('Preencha a descrição','e');return;}
