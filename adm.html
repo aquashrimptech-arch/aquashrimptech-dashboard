@@ -804,13 +804,15 @@ function addTelVoz(valor='') {
   d.innerHTML=`<div class="viv-n">📞${n}</div><input type="text" placeholder="Ex: 85999991234" value="${valor}" style="flex:1;background:transparent;border:none;color:var(--text);font-size:.78rem;outline:none"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>`;
   ct.appendChild(d);
 }
-async function excluirCliente(id, nome) {
+async function excluirCliente(id) {
+  const c = CLIENTES.find(x => String(x.ID) === String(id));
+  const nome = c ? c.Nome : String(id);
   if (!confirm(`Excluir "${nome}"? Isso só esconde o cliente — os dados continuam salvos e podem ser restaurados depois.`)) return;
   try {
-    const data = await api({acao:'deletar', id});
-    if (data.status==='ok') { toast(`✅ ${data.msg}`,'s'); await carregarDados(); }
-    else toast('Erro: '+data.msg,'e');
-  } catch { toast('Erro de conexão','e'); }
+    const data = await api({ acao: 'deletar', id });
+    if (data.status === 'ok') { toast(`✅ ${data.msg}`, 's'); await carregarDados(); }
+    else toast('Erro: ' + data.msg, 'e');
+  } catch { toast('Erro de conexão', 'e'); }
 }  
 // ══════════════════════════════════════════════════════
 // CONFIG
@@ -1057,7 +1059,7 @@ function renderTabela(filtro='') {
       <td><div style="display:flex;gap:3px;flex-wrap:wrap">
         <button class="btn btn-xs bol" onclick="verDetalhe(${c.ID})" title="Ver detalhe">👁</button>
         <button class="btn btn-xs bol" onclick="editarCliente(${c.ID})" title="Editar">✏️</button>
-        <button class="btn btn-xs bdn" onclick="excluirCliente(${c.ID},'${c.Nome.replace(/'/g,"\\'")}')" title="Excluir">🗑️</button>
+        <button class="btn btn-xs bdn" onclick="excluirCliente(${c.ID})" title="Excluir">🗑️</button>
         ${c.Telefone ? `<button class="btn btn-xs bwa" onclick="wpp(${c.ID})" title="WhatsApp">🟢</button>` : ''}
         <button class="btn btn-xs ${temToken?'bpp':'bol'}" onclick="irParaBot(${c.ID})" title="${temToken?'Bot configurado':'Configurar bot'}">🤖</button>
         ${c.Status!=='ativo'?`<button class="btn btn-xs bdn" onclick="gerarPix(${c.ID})" title="Gerar PIX">⚡</button>`:''}
