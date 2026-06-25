@@ -852,7 +852,7 @@ function limparTodosTokensBots() {
   if (!confirm('Tem certeza? Isso vai remover todos os tokens de bot salvos localmente.')) return;
   localStorage.removeItem('ast_bot_tokens');
   BOT_TOKENS = {};
-  (); carregarBots();
+  renderTabela(); carregarBots();
   toast('Todos os tokens removidos.', 'i');
 }
 
@@ -952,7 +952,7 @@ async function carregarDados() {
 }
 
 function renderTudo() {
-  renderDash(); (); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
+  renderDash(); renderTabela(); renderAlertas(); renderCobrancas(); renderFinanceiro(); renderCharts();
   preencherDestCli(); renderConfigBots();
 }
 
@@ -1033,7 +1033,7 @@ function renderDash() {
   ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-ic">${k.ic}</div><div class="kpi-lb">${k.lb}</div><div class="kpi-vl ${k.clv}">${k.vl}</div><div class="kpi-tr">${k.tr}</div></div>`).join('');
 }
 
-function (filtro='') {
+function renderTabela(filtro='') {
   const lista = filtro
     ? CLIENTES.filter(c => c.Nome.toLowerCase().includes(filtro.toLowerCase()) || (c.Telefone||'').includes(filtro))
     : CLIENTES;
