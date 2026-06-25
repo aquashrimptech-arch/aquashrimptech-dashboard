@@ -1301,18 +1301,38 @@ function carregarBots() {
 function selecionarClienteBot(id) {
   BOT_CLI_SEL = CLIENTES.find(c => String(c.ID) === String(id));
   if (!BOT_CLI_SEL) return;
+  
   BOT_TOKEN_VISIBLE = false;
+  
   document.querySelectorAll('.bot-cli-card').forEach(el => el.classList.remove('selected'));
+  
   const card = document.getElementById('bcc-' + id);
   if (card) card.classList.add('selected');
-  document.getElementById('bot-empty').style.display = 'none';
-  document.getElementById('bot-painel').style.display = 'block';
-  document.getElementById('bp-nome').textContent = BOT_CLI_SEL.Nome;
+  
+  // 🌟 PROTEÇÃO: Verifica se os elementos existem antes de mexer no estilo
+  const botEmpty = document.getElementById('bot-empty');
+  if (botEmpty) {
+    botEmpty.style.display = 'none';
+  } else {
+    console.warn("Elemento 'bot-empty' não foi encontrado no HTML.");
+  }
+
+  const botPainel = document.getElementById('bot-painel');
+  if (botPainel) {
+    botPainel.style.display = 'block';
+  } else {
+    console.warn("Elemento 'bot-painel' não foi encontrado no HTML.");
+  }
+  
+  // Garanta também que esse elemento existe antes de mudar o texto
+  const bpNome = document.getElementById('bp-nome');
+  if (bpNome) bpNome.textContent = BOT_CLI_SEL.Nome;
+  
   atualizarDisplayToken(getToken(id), getChatId(id));
   renderViveirosBotPanel();
   limparLog();
   logBot('info', `Cliente selecionado: ${BOT_CLI_SEL.Nome}`);
-   iniciarEspConsole();
+  iniciarEspConsole();
 }
 
 function atualizarDisplayToken(token, chatId) {
