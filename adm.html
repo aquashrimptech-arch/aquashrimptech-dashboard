@@ -444,26 +444,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
       <div style="margin-bottom:16px">
         <div style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">Selecione o Cliente</div>
-        <!-- ══ CONSOLE DE LOG DO ESP32 (AO VIVO) ══ -->
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-title">📡 Console do ESP32 (ao vivo)</div>
-          <span style="font-size:.62rem;color:var(--text3)">atualiza a cada 10s · vem do heartbeat/log do firmware, não trava o ESP</span>
-        </div>
-        <div class="card-body">
-          <div class="bot-cfg-bar" id="esp-status-grid" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
-            <div style="color:var(--text3);font-size:.75rem">Carregando status dos viveiros...</div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px">
-            <span style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em">Log de eventos do firmware</span>
-            <select id="esp-log-filtro" onchange="atualizarEspLogs()" style="background:var(--bg2);border:1px solid var(--border2);border-radius:7px;padding:4px 8px;color:var(--text);font-size:.68rem">
-              <option value="">Todos os viveiros</option>
-            </select>
-          </div>
-          <div class="bot-log" id="esp-log-box"><div class="log-line log-info">Carregando logs...</div></div>
-        </div>
-      </div>
-        <div class="bot-cli-grid" id="bot-cli-grid">
+                <div class="bot-cli-grid" id="bot-cli-grid">
           <div style="color:var(--text3);font-size:.8rem;padding:20px">Carregando clientes...</div>
         </div>
       </div>
@@ -510,26 +491,76 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
               <span>Log de Operações</span>
               <button class="btn btn-xs bol" onclick="limparLog()">✕ Limpar</button>
             </div>
-            <div class="bot-log" id="bot-log"><div class="log-line log-info">Aguardando ação...</div></div>
-          </div>
+           <div class="bot-log" id="bot-log"><div class="log-line log-info">Aguardando ação...</div></div>
+
+            // ══════════════════════════════════════════════════════
+// CONSOLE DE LOG DO ESP32 (AO VIVO) — escopado ao cliente selecionado
+// ══════════════════════════════════════════════════════
+function iniciarEspConsole() {
+  pararEspConsole();
+  if (!BOT_CLI_SEL) return; // ★ só roda se um cliente estiver selecionado
+  atualizarEspConsole();
+  ESP_CONSOLE_TIMER = setInterval(atualizarEspConsole, 10000);
+}
+function pararEspConsole() {
+  if (ESP_CONSOLE_TIMER) { clearInterval(ESP_CONSOLE_TIMER); ESP_CONSOLE_TIMER = null; }
+}
+async function atualizarEspConsole() {
+  await carregarEspStatus();
+  await atualizarEspLogs();
+}
+function qualidadeRSSI(rssi) {
+  if (rssi >= -50) return { label: 'Excelente', cor: 'var(--accent2)' };
+  if (rssi >= -60) return { label: 'Bom',        cor: 'var(--accent2)' };
+  if (rssi >= -70) return { label: 'Razoável',   cor: 'var(--warn)' };
+  if (rssi >= -80) return { label: 'Fraco',      cor: 'var(--danger)' };
+  return                  { label: 'Muito fraco', cor: 'var(--danger)' };
+}
+async function carregarEspStatus() {
+  if (!BOT_CLI_SEL) return;
+  try {
+    const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só viveiros deste cliente
+    const data = await api({ acao: 'esp_status_list', chat_id: chatId });
+    const grid = document.getElementById('esp-status-grid');
+    const filtro = document.getElementById('esp-log-filtro');
+    if (!grid || data.status !== 'ok') return;
+    const lista = data.status_esp || [];
+    if (filtro) {
+      const valAtual = filtro.value;
+      filtro.innerHTML = '<option value="">Todos os viveiros deste cliente</option>' +
+        lista.map(v => `<option value="${v.viveiro}">${v.viveiro}</option>`).join('');
+      filtro.value = valAtual;
+    }
+    grid.innerHTML = lista.length ? lista.map(v => `
+      <div class="bot-cfg-item">
+        <div class="bot-cfg-lbl">${v.viveiro}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+          <span class="bdg ${v.online?'bg':'br'}">${v.online?'🟢 Online':'🔴 Offline'}</span>
+          <span style="font-size:.6rem;color:var(--text3)">${v.seg_atras}s atrás</span>
         </div>
-        <div class="bot-panel">
-          <div class="bot-panel-hd">
-            <div class="bot-panel-title">🦐 Viveiros</div>
-            <button class="btn btn-sm bol" onclick="limparFilaTodos()">🧹 Limpar fila de TODOS</button>
-          </div>
-          <div class="bot-panel-body">
-            <div style="font-size:.72rem;color:var(--text3);margin-bottom:12px">Cada viveiro tem seu próprio ESP32. As ações são enviadas para o Chat ID do cliente.</div>
-            <div class="viv-bot-grid" id="viv-bot-grid"></div>
-          </div>
-        </div>
-      </div>
-      <div id="bot-empty" style="text-align:center;padding:60px 20px;color:var(--text3)">
-        <div style="font-size:2.5rem;margin-bottom:14px">🤖</div>
-        <div style="font-size:.9rem;font-weight:600;margin-bottom:6px;color:var(--text2)">Selecione um cliente acima</div>
-        <div style="font-size:.75rem">Clique em um card de cliente para gerenciar os bots dos viveiros</div>
-      </div>
-    </div>
+        <div style="font-size:.6rem;color:var(--text3);margin-top:4px">v${v.versao||'?'} · heap ${v.heap_kb||0}KB · RSSI ${v.rssi||0}dBm <span style="color:${qualidadeRSSI(v.rssi||0).cor};font-weight:700">(${qualidadeRSSI(v.rssi||0).label})</span></div>
+      </div>`).join('') : '<div style="color:var(--text3);font-size:.75rem">Nenhum heartbeat recebido ainda deste cliente — confirme se o firmware está na v9.34+ (manda chat_id) e o LOG_SECRET está certo.</div>';
+  } catch(e) {}
+}
+
+async function atualizarEspLogs() {
+  if (!BOT_CLI_SEL) return;
+  try {
+    const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só logs deste cliente
+    const viveiro = document.getElementById('esp-log-filtro')?.value || '';
+    const data = await api({ acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 });
+    const el = document.getElementById('esp-log-box');
+    if (!el || data.status !== 'ok') return;
+    const linhas = data.logs || [];
+    el.innerHTML = linhas.length ? linhas.map(l => {
+      const cls = { E:'log-err', W:'log-warn', I:'log-info', D:'log-info' }[l.nivel] || 'log-info';
+      let msg = l.msg || '';
+      try { msg = decodeURIComponent(msg); } catch(e) {}
+      return `<div class="log-line ${cls}">[${l.recebido}] <b>${l.viveiro}</b> ${l.tag}: ${msg}</div>`;
+    }).join('') : '<div class="log-line log-info">Sem logs ainda para este cliente.</div>';
+    el.scrollTop = el.scrollHeight;
+  } catch(e) {}
+}
 
     <!-- UNIT ECONOMICS -->
     <div class="pg" id="pg-fin">
@@ -592,6 +623,18 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
             <div class="fg"><label>Dias para bloquear acesso</label><input id="cfg-dias-blq" type="number" value="10"></div>
             <div class="sw-w"><label class="sw"><input type="checkbox" id="cfg-wpp-auto" checked><span class="sl"></span></label><span style="font-size:.78rem">Lembrete WhatsApp automático</span></div>
             <button class="btn bac" style="width:100%;margin-top:8px" onclick="salvarConfig()">💾 Salvar</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">💙 Modo Confiança</div></div>
+          <div class="card-body">
+            <div class="sw-w"><label class="sw"><input type="checkbox" id="mc-ativo"><span class="sl"></span></label><span style="font-size:.78rem">Ativar Modo Confiança</span></div>
+            <div class="fg"><label>Dias de prazo (1º atraso)</label><input id="mc-dias" type="number" value="7" min="1"></div>
+            <div style="font-size:.68rem;color:var(--text3);line-height:1.5;margin-bottom:10px">
+              1º atraso: prazo cheio. 2º atraso consecutivo: prazo reduzido (metade). 3º atraso: perde o benefício.
+              Pagar a tempo zera o contador.
+            </div>
+            <button class="btn bac" style="width:100%" onclick="salvarModoConfianca()">💾 Salvar Modo Confiança</button>
           </div>
         </div>
         <div class="card">
@@ -813,7 +856,25 @@ async function excluirCliente(id) {
     if (data.status === 'ok') { toast(`✅ ${data.msg}`, 's'); await carregarDados(); }
     else toast('Erro: ' + data.msg, 'e');
   } catch { toast('Erro de conexão', 'e'); }
-}  
+} 
+async function carregarModoConfianca() {
+  try {
+    const data = await api({ acao: 'modo_confianca_ler' });
+    if (data && data.ativo !== undefined) {
+      document.getElementById('mc-ativo').checked = !!data.ativo;
+      document.getElementById('mc-dias').value = data.dias || 7;
+    }
+  } catch(e) {}
+}
+async function salvarModoConfianca() {
+  const ativo = document.getElementById('mc-ativo').checked ? 'sim' : 'nao';
+  const dias = document.getElementById('mc-dias').value || 7;
+  try {
+    const data = await api({ acao: 'modo_confianca_salvar', ativo, dias });
+    if (data.status === 'ok') toast('✅ ' + data.msg, 's');
+    else toast('Erro: ' + data.msg, 'e');
+  } catch { toast('Erro de conexão', 'e'); }
+}
 // ══════════════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════════════
@@ -999,6 +1060,7 @@ const SB = {
   ativo:        '<span class="bdg bg">● Ativo</span>',
   inadimplente: '<span class="bdg br">⚠ Inadimplente</span>',
   pendente:     '<span class="bdg bw">⏳ Pendente</span>',
+  modo_confianca: '<span class="bdg" style="background:rgba(155,93,229,.12);color:var(--purple);border:1px solid rgba(155,93,229,.25)">💙 Modo Confiança</span>',
   inativo:      '<span class="bdg" style="background:rgba(138,164,192,.1);color:var(--text3);border:1px solid rgba(138,164,192,.2)">○ Inativo</span>',
 };
 const R = n => isNaN(n)||n===null ? '—' : 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -1250,6 +1312,7 @@ function selecionarClienteBot(id) {
   renderViveirosBotPanel();
   limparLog();
   logBot('info', `Cliente selecionado: ${BOT_CLI_SEL.Nome}`);
+   iniciarEspConsole();
 }
 
 function atualizarDisplayToken(token, chatId) {
@@ -2018,9 +2081,10 @@ function go(nm,el) {
   else document.querySelectorAll('.ni').forEach(n=>{if(n.getAttribute('onclick')?.includes("'"+nm+"'"))n.classList.add('act');});
   document.getElementById('pg-title').textContent=PG_TITLES[nm]||nm;
   if(nm==='fin'){initFinMeses();carregarDRE();}
-  if(nm==='bots'){carregarBots();iniciarEspConsole();} else {pararEspConsole();}
-  if(nm==='config'){renderConfigBots();}
+  if(nm==='bots'){carregarBots(); if(BOT_CLI_SEL) iniciarEspConsole();} else {pararEspConsole();}
+  if(nm==='config'){renderConfigBots(); carregarModoConfianca();}
   if(window.innerWidth<860)closeSB();
+  
 }
 
 function tick() { document.getElementById('clk').textContent = new Date().toLocaleDateString('pt-BR')+' '+new Date().toLocaleTimeString('pt-BR'); }
