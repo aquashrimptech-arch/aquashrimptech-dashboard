@@ -1156,7 +1156,13 @@ async function atualizarEspConsole() {
   await carregarEspStatus();
   await atualizarEspLogs();
 }
-
+function qualidadeRSSI(rssi) {
+  if (rssi >= -50) return { label: 'Excelente', cor: 'var(--accent2)' };
+  if (rssi >= -60) return { label: 'Bom',        cor: 'var(--accent2)' };
+  if (rssi >= -70) return { label: 'Razoável',   cor: 'var(--warn)' };
+  if (rssi >= -80) return { label: 'Fraco',      cor: 'var(--danger)' };
+  return                  { label: 'Muito fraco', cor: 'var(--danger)' };
+}
 async function carregarEspStatus() {
   try {
     const data = await api({ acao: 'esp_status_list' });
@@ -1177,7 +1183,7 @@ async function carregarEspStatus() {
           <span class="bdg ${v.online?'bg':'br'}">${v.online?'🟢 Online':'🔴 Offline'}</span>
           <span style="font-size:.6rem;color:var(--text3)">${v.seg_atras}s atrás</span>
         </div>
-        <div style="font-size:.6rem;color:var(--text3);margin-top:4px">v${v.versao||'?'} · heap ${v.heap_kb||0}KB · RSSI ${v.rssi||0}dBm</div>
+        div style="font-size:.6rem;color:var(--text3);margin-top:4px">v${v.versao||'?'} · heap ${v.heap_kb||0}KB · RSSI ${v.rssi||0}dBm <span style="color:${qualidadeRSSI(v.rssi||0).cor};font-weight:700">(${qualidadeRSSI(v.rssi||0).label})</span></div>
       </div>`).join('') : '<div style="color:var(--text3);font-size:.75rem">Nenhum heartbeat recebido ainda — confirme LOG_SCRIPT_URL e LOG_SECRET no firmware.</div>';
   } catch(e) {}
 }
