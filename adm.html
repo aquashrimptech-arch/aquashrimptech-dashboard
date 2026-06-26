@@ -621,6 +621,13 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
         <div class="fg"><label>Nome Completo</label><input id="c-nome" type="text" placeholder="João Silva"></div>
         <div class="fg"><label>Telefone (WhatsApp) — só números</label><input id="c-tel" type="text" placeholder="85999990001"></div>
       </div>
+      <div class="fr c2">
+        <div class="fg"><label>Nome Completo</label><input id="c-nome" type="text" placeholder="João Silva"></div>
+        <div class="fg"><label>Telefone (WhatsApp) — só números</label><input id="c-tel" type="text" placeholder="85999990001"></div>
+      </div>
+      <div class="fr c2">
+        <div class="fg"><label>CPF ou CNPJ — só números</label><input id="c-cpf" type="text" placeholder="Ex: 12345678900"></div>
+      </div>
       <div class="fr c3">
         <div class="fg"><label>Usuário (login)</label><input id="c-usr" type="text" placeholder="joaosilva"></div>
         <div class="fg"><label>Senha</label><input id="c-pwd" type="password" placeholder="••••••••"></div>
@@ -631,10 +638,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
         <div class="fg"><label>Qtd. Viveiros</label><input id="c-vivs" type="number" value="1" min="1" max="20" oninput="calcTotal()"></div>
         <div class="fg"><label>Valor/Viveiro (R$)</label><div class="inp-pre"><span>R$</span><input id="c-valviv" type="number" value="50" min="1" step="5" oninput="calcTotal()"></div></div>
         <div class="fg"><label>Total Mensal</label><div id="total-disp" style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent2)">R$ 50,00</div></div>
-      </div>
-       <div class="fr c2">
-      <div class="fg"><label>CPF ou CNPJ — só números</label><input id="c-cpf" type="text" placeholder="Ex: 12345678900"></div>
-    </div>
+      </div>       
       <div class="fr c2">
         <div class="fg"><label>Dia de Vencimento</label><select id="c-venc"><option value="5">Dia 05</option><option value="10" selected>Dia 10</option><option value="15">Dia 15</option><option value="20">Dia 20</option><option value="25">Dia 25</option></select></div>
         <div class="fg"><label>Forma de Cobrança</label><select id="c-cob"><option>PIX automático (Asaas)</option><option>Boleto bancário</option><option>Manual</option></select></div>
