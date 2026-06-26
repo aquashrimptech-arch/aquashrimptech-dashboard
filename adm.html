@@ -1191,12 +1191,19 @@ function qualidadeRSSI(rssi) {
   if (rssi >= -80) return { label: 'Fraco',      cor: 'var(--danger)' };
   return                  { label: 'Muito fraco', cor: 'var(--danger)' };
 }
-
+function barraRSSI(rssi) {
+  // Converte dBm em % aproximada: -50dBm ou melhor = 100%, -90dBm ou pior = 0%
+  if (!rssi) return 0;
+  const pct = Math.round(Math.min(100, Math.max(0, 2 * (rssi + 100))));
+  return pct;
+}
 async function carregarEspStatus() {
   if (!BOT_CLI_SEL) return;
   try {
     const chatId = getChatId(BOT_CLI_SEL.ID);
-    const data = await api({ acao: 'esp_status_list', chat_id: chatId });
+    // Se o cliente tiver Chat ID, escopa por ele; senão busca todos (comportamento antigo)
+    const params = chatId ? { acao: 'esp_status_list', chat_id: chatId } : { acao: 'esp_status_list' };
+    const data = await api(params);
     const grid = document.getElementById('esp-status-grid');
     const filtro = document.getElementById('esp-log-filtro');
     if (!grid || !data || data.status !== 'ok') return;
@@ -1207,7 +1214,9 @@ async function carregarEspStatus() {
         lista.map(v => `<option value="${v.viveiro}">${v.viveiro}</option>`).join('');
       filtro.value = valAtual;
     }
-    grid.innerHTML = lista.length ? lista.map(v => `
+    grid.innerHTML = lista.length ? lista.map(v => {
+      const q = qualidadeRSSI(v.rssi || 0);
+      return `
       <div class="bot-cfg-item">
         <div class="bot-cfg-lbl">${v.viveiro}</div>
         <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
@@ -1216,9 +1225,16 @@ async function carregarEspStatus() {
         </div>
         <div style="font-size:.6rem;color:var(--text3);margin-top:4px">
           v${v.versao || '?'} · heap ${v.heap_kb || 0}KB · RSSI ${v.rssi || 0}dBm
-          <span style="color:${qualidadeRSSI(v.rssi || 0).cor};font-weight:700">(${qualidadeRSSI(v.rssi || 0).label})</span>
+          <span style="color:${q.cor};font-weight:700">(${q.label})</span>
         </div>
-      </div>`).join('') : '<div style="color:var(--text3);font-size:.75rem">Nenhum heartbeat recebido ainda deste cliente.</div>';
+        <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+          <div style="flex:1;height:5px;background:var(--bg);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${barraRSSI(v.rssi || 0)}%;background:${q.cor};transition:width .3s"></div>
+          </div>
+          <span style="font-size:.55rem;color:${q.cor};font-weight:700">${barraRSSI(v.rssi || 0)}%</span>
+        </div>
+      </div>`;
+    }).join('') : '<div style="color:var(--text3);font-size:.75rem">Nenhum heartbeat recebido ainda deste cliente — confirme se o firmware está na v9.34+ (manda chat_id) e o LOG_SECRET está certo.</div>';
   } catch(e) { console.error("Erro ao carregar status do ESP:", e); }
 }
 
@@ -1227,7 +1243,11 @@ async function atualizarEspLogs() {
   try {
     const chatId = getChatId(BOT_CLI_SEL.ID);
     const viveiro = document.getElementById('esp-log-filtro')?.value || '';
-    const data = await api({ acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 });
+    // Se o cliente tiver Chat ID, escopa por ele; senão busca todos (comportamento antigo)
+    const params = chatId
+      ? { acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 }
+      : { acao: 'esp_log_read', viveiro, limite: 150 };
+    const data = await api(params);
     const el = document.getElementById('esp-log-box');
     if (!el || !data || data.status !== 'ok') return;
     const linhas = data.logs || [];
