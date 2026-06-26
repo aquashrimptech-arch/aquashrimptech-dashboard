@@ -444,7 +444,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
       <div style="margin-bottom:16px">
         <div style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">Selecione o Cliente</div>
-                <div class="bot-cli-grid" id="bot-cli-grid">
+        <div class="bot-cli-grid" id="bot-cli-grid">
           <div style="color:var(--text3);font-size:.8rem;padding:20px">Carregando clientes...</div>
         </div>
       </div>
@@ -491,155 +491,25 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
               <span>Log de Operações</span>
               <button class="btn btn-xs bol" onclick="limparLog()">✕ Limpar</button>
             </div>
-           <div class="bot-log" id="bot-log"><div class="log-line log-info">Aguardando ação...</div></div>
-            <script>
-           <script>
-          // 💡 Declaração global do timer para evitar erros de referência
-          // 💡 Garanta que essa variável está declarada no escopo global (no topo do seu <script>)
-          let ESP_CONSOLE_TIMER = null;
-          
-          // ══════════════════════════════════════════════════════
-          // CONSOLE DE LOG DO ESP32 (AO VIVO) — escopado ao cliente selecionado
-          // ══════════════════════════════════════════════════════
-          function iniciarEspConsole() {
-            pararEspConsole();
-            if (!BOT_CLI_SEL) return; // ★ só roda se um cliente estiver selecionado
-            atualizarEspConsole();
-            ESP_CONSOLE_TIMER = setInterval(atualizarEspConsole, 10000);
-          }
-          
-          function pararEspConsole() {
-            if (ESP_CONSOLE_TIMER) { 
-              clearInterval(ESP_CONSOLE_TIMER); 
-              ESP_CONSOLE_TIMER = null; 
-            }
-          }
-          
-          async function atualizarEspConsole() {
-            await carregarEspStatus();
-            await atualizarEspLogs();
-          }
-          
-          function qualidadeRSSI(rssi) {
-            if (rssi >= -50) return { label: 'Excelente', cor: 'var(--accent2)' };
-            if (rssi >= -60) return { label: 'Bom',        cor: 'var(--accent2)' };
-            if (rssi >= -70) return { label: 'Razoável',   cor: 'var(--warn)' };
-            if (rssi >= -80) return { label: 'Fraco',      cor: 'var(--danger)' };
-            return                  { label: 'Muito fraco', cor: 'var(--danger)' };
-          }
-          
-          async function carregarEspStatus() {
-            if (!BOT_CLI_SEL) return;
-            try {
-              const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só viveiros deste cliente
-              const data = await api({ acao: 'esp_status_list', chat_id: chatId });
-              const grid = document.getElementById('esp-status-grid');
-              const filtro = document.getElementById('esp-log-filtro');
-              
-              if (!grid || !data || data.status !== 'ok') return;
-              
-              const lista = data.status_esp || [];
-              
-              if (filtro) {
-                const valAtual = filtro.value;
-                filtro.innerHTML = '<option value="">Todos os viveiros deste cliente</option>' +
-                  lista.map(v => `<option value="${v.viveiro}">${v.viveiro}</option>`).join('');
-                filtro.value = valAtual;
-              }
-              
-              grid.innerHTML = lista.length ? lista.map(v => `
-                <div class="bot-cfg-item">
-                  <div class="bot-cfg-lbl">${v.viveiro}</div>
-                  <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-                    <span class="bdg ${v.online ? 'bg' : 'br'}">${v.online ? '🟢 Online' : '🔴 Offline'}</span>
-                    <span style="font-size:.6rem;color:var(--text3)">${v.seg_atras}s atrás</span>
-                  </div>
-                  <div style="font-size:.6rem;color:var(--text3);margin-top:4px">
-                    v${v.versao || '?'} · heap ${v.heap_kb || 0}KB · RSSI ${v.rssi || 0}dBm 
-                    <span style="color:${qualidadeRSSI(v.rssi || 0).cor};font-weight:700">(${qualidadeRSSI(v.rssi || 0).label})</span>
-                  </div>
-                </div>`).join('') : '<div style="color:var(--text3);font-size:.75rem">Nenhum heartbeat recebido ainda deste cliente — confirme se o firmware está na v9.34+ (manda chat_id) e o LOG_SECRET está certo.</div>';
-            } catch(e) {
-              console.error("Erro ao carregar status do ESP:", e);
-            }
-          }
-          
-          async function atualizarEspLogs() {
-            if (!BOT_CLI_SEL) return;
-            try {
-              const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só logs deste cliente
-              const viveiro = document.getElementById('esp-log-filtro')?.value || '';
-              const data = await api({ acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 });
-              const el = document.getElementById('esp-log-box');
-              
-              if (!el || !data || data.status !== 'ok') return;
-              
-              const linhas = data.logs || [];
-              
-              el.innerHTML = linhas.length ? linhas.map(l => {
-                const cls = { E:'log-err', W:'log-warn', I:'log-info', D:'log-info' }[l.nivel] || 'log-info';
-                let msg = l.msg || '';
-                try { msg = decodeURIComponent(msg); } catch(e) {}
-                return `<div class="log-line ${cls}">[${l.recebido}] <b>${l.viveiro}</b> ${l.tag}: ${msg}</div>`;
-              }).join('') : '<div class="log-line log-info">Sem logs ainda para este cliente.</div>';
-              
-              // 💡 Rolagem inteligente: só joga para o fim se o usuário já estiver deslizando perto do final
-              const estaNoFim = el.scrollHeight - el.clientHeight - el.scrollTop < 60;
-              if (estaNoFim || el.scrollTop === 0) {
-                el.scrollTop = el.scrollHeight;
-              }
-            } catch(e) {
-              console.error("Erro ao atualizar logs do ESP:", e);
-            }
-          }
-          
-          async function atualizarEspLogs() {
-            if (!BOT_CLI_SEL) return;
-            try {
-              const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só logs deste cliente
-              const viveiro = document.getElementById('esp-log-filtro')?.value || '';
-              const data = await api({ acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 });
-              const el = document.getElementById('esp-log-box');
-              
-              if (!el || !data || data.status !== 'ok') return;
-              
-              const linhas = data.logs || [];
-              
-              el.innerHTML = linhas.length ? linhas.map(l => {
-                const cls = { E:'log-err', W:'log-warn', I:'log-info', D:'log-info' }[l.nivel] || 'log-info';
-                let msg = l.msg || '';
-                try { msg = decodeURIComponent(msg); } catch(e) {}
-                return `<div class="log-line ${cls}">[${l.recebido}] <b>${l.viveiro}</b> ${l.tag}: ${msg}</div>`;
-              }).join('') : '<div class="log-line log-info">Sem logs ainda para este cliente.</div>';
-              
-              // 💡 Rolagem inteligente: só joga para o fim se o usuário já estiver deslizando perto do final
-              const estaNoFim = el.scrollHeight - el.clientHeight - el.scrollTop < 60;
-              if (estaNoFim || el.scrollTop === 0) {
-                el.scrollTop = el.scrollHeight;
-              }
-            } catch(e) {
-              console.error("Erro ao atualizar logs do ESP:", e);
-            }
-          }
-                      
-            async function atualizarEspLogs() {
-              if (!BOT_CLI_SEL) return;
-              try {
-                const chatId = getChatId(BOT_CLI_SEL.ID); // ★ escopo: só logs deste cliente
-                const viveiro = document.getElementById('esp-log-filtro')?.value || '';
-                const data = await api({ acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 });
-                const el = document.getElementById('esp-log-box');
-                if (!el || data.status !== 'ok') return;
-                const linhas = data.logs || [];
-                el.innerHTML = linhas.length ? linhas.map(l => {
-                  const cls = { E:'log-err', W:'log-warn', I:'log-info', D:'log-info' }[l.nivel] || 'log-info';
-                  let msg = l.msg || '';
-                  try { msg = decodeURIComponent(msg); } catch(e) {}
-                  return `<div class="log-line ${cls}">[${l.recebido}] <b>${l.viveiro}</b> ${l.tag}: ${msg}</div>`;
-                }).join('') : '<div class="log-line log-info">Sem logs ainda para este cliente.</div>';
-                el.scrollTop = el.scrollHeight;
-              } catch(e) {}
-            }
+            <div class="bot-log" id="bot-log"><div class="log-line log-info">Aguardando ação...</div></div>
+
+            <!-- ── CONSOLE ESP32 AO VIVO ── -->
+            <div style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin:18px 0 10px">📡 Status dos ESP32 (ao vivo)</div>
+            <div class="bot-cfg-bar" id="esp-status-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+              <div style="color:var(--text3);font-size:.75rem">Selecione um cliente para ver os heartbeats.</div>
+            </div>
+            <div style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin:16px 0 8px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+              <span>📜 Log do firmware (ao vivo)</span>
+              <select id="esp-log-filtro" onchange="atualizarEspLogs()"
+                style="background:var(--bg2);border:1px solid var(--border2);border-radius:7px;padding:4px 9px;color:var(--text);font-size:.68rem;outline:none">
+                <option value="">Todos os viveiros deste cliente</option>
+              </select>
+            </div>
+            <div class="bot-log" id="esp-log-box" style="max-height:300px"><div class="log-line log-info">Aguardando logs do ESP32...</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- UNIT ECONOMICS -->
     <div class="pg" id="pg-fin">
@@ -684,9 +554,9 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
               <span class="bdg bw" id="asaas-status-badge">⏳ Verificando...</span>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px">
-            <div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">📞</span><div><div style="font-size:.78rem;font-weight:600">Twilio</div><div style="font-size:.63rem;color:var(--text3)">Ligações de emergência</div></div></div>
-            <span class="bdg bw" id="twilio-status-badge">⏳ Verificando...</span>
-          </div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">📞</span><div><div style="font-size:.78rem;font-weight:600">Twilio</div><div style="font-size:.63rem;color:var(--text3)">Ligações de emergência</div></div></div>
+              <span class="bdg bw" id="twilio-status-badge">⏳ Verificando...</span>
+            </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px">
               <div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">📊</span><div><div style="font-size:.78rem;font-weight:600">Google Sheets (ADM)</div><div style="font-size:.63rem;color:var(--text3)" id="sheets-status-desc">Verificando...</div></div></div>
               <span class="bdg" id="sheets-status-badge">⏳</span>
@@ -935,7 +805,7 @@ async function excluirCliente(id) {
     if (data.status === 'ok') { toast(`✅ ${data.msg}`, 's'); await carregarDados(); }
     else toast('Erro: ' + data.msg, 'e');
   } catch { toast('Erro de conexão', 'e'); }
-} 
+}
 async function carregarModoConfianca() {
   try {
     const data = await api({ acao: 'modo_confianca_ler' });
@@ -1121,11 +991,10 @@ async function verificarIntegracoes() {
     if (dT?.status === 'ok') { bTwilio.className='bdg bg'; bTwilio.textContent = '✓ ' + (dT.tipo==='Trial' ? 'Trial ativo' : 'Ativo'); }
     else { bTwilio.className='bdg br'; bTwilio.textContent = '✗ ' + (dT.msg || 'Erro'); }
   } catch(e) { bTwilio.className='bdg br'; bTwilio.textContent = '✗ Offline'; }
-  // Asaas — tenta criar via API (verificação via endpoint status)
+  // Asaas
   const bAsaas = document.getElementById('asaas-status-badge');
   try {
     const d2 = await api({ acao: 'asaas_status', asaas_id: 'ping_check' });
-    // Se não retornar erro de auth, está configurado
     bAsaas.className = 'bdg bg'; bAsaas.textContent = '✓ Configurado';
   } catch(e) {
     bAsaas.className = 'bdg bw'; bAsaas.textContent = '⚠ Verificar key';
@@ -1153,7 +1022,6 @@ function renderDash() {
   const totalVivs= CLIENTES.reduce((s,c)=>s+(parseInt(c.QtdViveiros)||0),0);
   const ticket   = ativos.length > 0 ? mrr/ativos.length : 0;
 
-  // badges sidebar
   const setB = (id, n) => { const el=document.getElementById(id); el.textContent=n; el.classList.toggle('show', n>0); };
   setB('bdg-inad', inad.length);
   setB('bdg-cob', inad.length + pend.length);
@@ -1296,28 +1164,19 @@ function renderConfigBots() {
     </div>`;
   }).join('');
 }
-              
-<script>
-// 💡 Garanta que essa variável está declarada no escopo global
-if (typeof ESP_CONSOLE_TIMER === 'undefined') {
-  var ESP_CONSOLE_TIMER = null;
-}
 
 // ══════════════════════════════════════════════════════
 // CONSOLE DE LOG DO ESP32 (AO VIVO) — escopado ao cliente selecionado
 // ══════════════════════════════════════════════════════
 function iniciarEspConsole() {
   pararEspConsole();
-  if (!BOT_CLI_SEL) return; 
+  if (!BOT_CLI_SEL) return;
   atualizarEspConsole();
   ESP_CONSOLE_TIMER = setInterval(atualizarEspConsole, 10000);
 }
 
 function pararEspConsole() {
-  if (ESP_CONSOLE_TIMER) { 
-    clearInterval(ESP_CONSOLE_TIMER); 
-    ESP_CONSOLE_TIMER = null; 
-  }
+  if (ESP_CONSOLE_TIMER) { clearInterval(ESP_CONSOLE_TIMER); ESP_CONSOLE_TIMER = null; }
 }
 
 async function atualizarEspConsole() {
@@ -1336,22 +1195,18 @@ function qualidadeRSSI(rssi) {
 async function carregarEspStatus() {
   if (!BOT_CLI_SEL) return;
   try {
-    const chatId = getChatId(BOT_CLI_SEL.ID); 
+    const chatId = getChatId(BOT_CLI_SEL.ID);
     const data = await api({ acao: 'esp_status_list', chat_id: chatId });
     const grid = document.getElementById('esp-status-grid');
     const filtro = document.getElementById('esp-log-filtro');
-    
     if (!grid || !data || data.status !== 'ok') return;
-    
     const lista = data.status_esp || [];
-    
     if (filtro) {
       const valAtual = filtro.value;
       filtro.innerHTML = '<option value="">Todos os viveiros deste cliente</option>' +
         lista.map(v => `<option value="${v.viveiro}">${v.viveiro}</option>`).join('');
       filtro.value = valAtual;
     }
-    
     grid.innerHTML = lista.length ? lista.map(v => `
       <div class="bot-cfg-item">
         <div class="bot-cfg-lbl">${v.viveiro}</div>
@@ -1360,43 +1215,33 @@ async function carregarEspStatus() {
           <span style="font-size:.6rem;color:var(--text3)">${v.seg_atras}s atrás</span>
         </div>
         <div style="font-size:.6rem;color:var(--text3);margin-top:4px">
-          v${v.versao || '?'} · heap ${v.heap_kb || 0}KB · RSSI ${v.rssi || 0}dBm 
+          v${v.versao || '?'} · heap ${v.heap_kb || 0}KB · RSSI ${v.rssi || 0}dBm
           <span style="color:${qualidadeRSSI(v.rssi || 0).cor};font-weight:700">(${qualidadeRSSI(v.rssi || 0).label})</span>
         </div>
       </div>`).join('') : '<div style="color:var(--text3);font-size:.75rem">Nenhum heartbeat recebido ainda deste cliente.</div>';
-  } catch(e) {
-    console.error("Erro ao carregar status do ESP:", e);
-  }
+  } catch(e) { console.error("Erro ao carregar status do ESP:", e); }
 }
 
 async function atualizarEspLogs() {
   if (!BOT_CLI_SEL) return;
   try {
-    const chatId = getChatId(BOT_CLI_SEL.ID); 
+    const chatId = getChatId(BOT_CLI_SEL.ID);
     const viveiro = document.getElementById('esp-log-filtro')?.value || '';
     const data = await api({ acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 });
     const el = document.getElementById('esp-log-box');
-    
     if (!el || !data || data.status !== 'ok') return;
-    
     const linhas = data.logs || [];
-    
     el.innerHTML = linhas.length ? linhas.map(l => {
       const cls = { E:'log-err', W:'log-warn', I:'log-info', D:'log-info' }[l.nivel] || 'log-info';
       let msg = l.msg || '';
       try { msg = decodeURIComponent(msg); } catch(e) {}
       return `<div class="log-line ${cls}">[${l.recebido}] <b>${l.viveiro}</b> ${l.tag}: ${msg}</div>`;
     }).join('') : '<div class="log-line log-info">Sem logs ainda para este cliente.</div>';
-    
     const estaNoFim = el.scrollHeight - el.clientHeight - el.scrollTop < 60;
-    if (estaNoFim || el.scrollTop === 0) {
-      el.scrollTop = el.scrollHeight;
-    }
-  } catch(e) {
-    console.error("Erro ao atualizar logs do ESP:", e);
-  }
+    if (estaNoFim || el.scrollTop === 0) el.scrollTop = el.scrollHeight;
+  } catch(e) { console.error("Erro ao atualizar logs do ESP:", e); }
 }
-</script>
+
 // ══════════════════════════════════════════════════════
 // BOTS
 // ══════════════════════════════════════════════════════
@@ -1418,33 +1263,14 @@ function carregarBots() {
 function selecionarClienteBot(id) {
   BOT_CLI_SEL = CLIENTES.find(c => String(c.ID) === String(id));
   if (!BOT_CLI_SEL) return;
-  
   BOT_TOKEN_VISIBLE = false;
-  
   document.querySelectorAll('.bot-cli-card').forEach(el => el.classList.remove('selected'));
-  
   const card = document.getElementById('bcc-' + id);
   if (card) card.classList.add('selected');
-  
-  // 🌟 PROTEÇÃO: Verifica se os elementos existem antes de mexer no estilo
-  const botEmpty = document.getElementById('bot-empty');
-  if (botEmpty) {
-    botEmpty.style.display = 'none';
-  } else {
-    console.warn("Elemento 'bot-empty' não foi encontrado no HTML.");
-  }
-
   const botPainel = document.getElementById('bot-painel');
-  if (botPainel) {
-    botPainel.style.display = 'block';
-  } else {
-    console.warn("Elemento 'bot-painel' não foi encontrado no HTML.");
-  }
-  
-  // Garanta também que esse elemento existe antes de mudar o texto
+  if (botPainel) botPainel.style.display = 'block';
   const bpNome = document.getElementById('bp-nome');
   if (bpNome) bpNome.textContent = BOT_CLI_SEL.Nome;
-  
   atualizarDisplayToken(getToken(id), getChatId(id));
   renderViveirosBotPanel();
   limparLog();
@@ -1475,8 +1301,7 @@ function toggleToken() {
 
 function renderViveirosBotPanel() {
   const grid = document.getElementById('viv-bot-grid');
-  if (!BOT_CLI_SEL) return;
-  // Filtra URLs válidas (ignora vazias e sequências de pipes do cliente "Teste")
+  if (!grid || !BOT_CLI_SEL) return;
   const urlsRaw = String(BOT_CLI_SEL.UrlsViveiros || '');
   const urls = urlsRaw.split('|').map(u=>u.trim()).filter(u=>u.startsWith('http'));
   const qtd = parseInt(BOT_CLI_SEL.QtdViveiros) || 1;
@@ -1612,7 +1437,6 @@ function abrirModalEditarToken(id) {
   if (!cId) { toast('Selecione um cliente primeiro','e'); return; }
   const c = CLIENTES.find(x=>String(x.ID)===String(cId));
   if (!c) { toast('Cliente não encontrado','e'); return; }
-  // Garante que BOT_CLI_SEL está definido para salvarTokenBot
   if (!BOT_CLI_SEL || String(BOT_CLI_SEL.ID) !== String(cId)) BOT_CLI_SEL = c;
   document.getElementById('mbt-nome').textContent = c.Nome;
   document.getElementById('mbt-token').value = getToken(cId) || '';
@@ -1649,7 +1473,6 @@ function salvarTokenBot() {
 
 function irParaBot(id) {
   go('bots', document.querySelector('.ni[onclick*="\'bots\'"]'));
-  // Pequeno delay para garantir que a página renderizou
   requestAnimationFrame(() => requestAnimationFrame(() => selecionarClienteBot(id)));
 }
 
@@ -1754,10 +1577,10 @@ async function wppMassa() {
 // MENSAGENS (página)
 // ══════════════════════════════════════════════════════
 const TMPLS = {
-  cobranca:`Olá *{NOME}*! 👋\n\n🦐 *AquaShrimpTech* — Lembrete de Pagamento\n\nSua mensalidade de *{VIVEIROS} viveiro{S}* no valor de *R/$ {VALOR}* vence em *{DATA}*.\n\n_AquaShrimpTech — Tecnologia que cultiva resultados_`,
+  cobranca:`Olá *{NOME}*! 👋\n\n🦐 *AquaShrimpTech* — Lembrete de Pagamento\n\nSua mensalidade de *{VIVEIROS} viveiro{S}* no valor de *R$ {VALOR}* vence em *{DATA}*.\n\n_AquaShrimpTech — Tecnologia que cultiva resultados_`,
   inadimplente:`⚠️ Olá *{NOME}*,\n\nSua mensalidade da *AquaShrimpTech* (R$ {VALOR}) está em atraso desde {DATA}.\n\nRegularize para manter o acesso ao sistema.\n\n_AquaShrimpTech_`,
-  boas_vindas:`Olá *{NOME}*! 🎉\n\nSeja bem-vindo(a) à *AquaShrimpTech*! 🦐\n\n🦐 *{VIVEIROS} viveiro{S}* | 💰 *R/$ {VALOR}/mês*\n\n🔐 Login: *{USUARIO}*\n🌐 https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/\n\n_AquaShrimpTech — Tecnologia que cultiva resultados_ 🚀`,
-  novo_viveiro:`Olá *{NOME}*! 🦐\n\nSeu novo viveiro foi adicionado!\n\n💰 Mensalidade atualizada: *R\${VALOR}/mês* ({VIVEIROS} viveiro{S})\n\n_AquaShrimpTech_`,
+  boas_vindas:`Olá *{NOME}*! 🎉\n\nSeja bem-vindo(a) à *AquaShrimpTech*! 🦐\n\n🦐 *{VIVEIROS} viveiro{S}* | 💰 *R$ {VALOR}/mês*\n\n🔐 Login: *{USUARIO}*\n🌐 https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/\n\n_AquaShrimpTech — Tecnologia que cultiva resultados_ 🚀`,
+  novo_viveiro:`Olá *{NOME}*! 🦐\n\nSeu novo viveiro foi adicionado!\n\n💰 Mensalidade atualizada: *R$ {VALOR}/mês* ({VIVEIROS} viveiro{S})\n\n_AquaShrimpTech_`,
   atualizacao:`🚀 *AquaShrimpTech* — Atualização disponível\n\nOlá *{NOME}*!\n\n✅ Novidades disponíveis no painel.\n\nAcesse: https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/\n\n_AquaShrimpTech_ 🦐`,
 };
 
@@ -1883,7 +1706,7 @@ function editarCliente(id) {
   document.getElementById('c-nome').value=c.Nome||'';
   document.getElementById('c-tel').value=c.Telefone||'';
   document.getElementById('c-usr').value=c.Usuario||'';
-  document.getElementById('c-pwd').value=''; // Nunca preenche senha na edição
+  document.getElementById('c-pwd').value='';
   document.getElementById('c-email').value=c.Email||'';
   document.getElementById('c-vivs').value=c.QtdViveiros||1;
   document.getElementById('c-valviv').value=c.ValorPorViveiro||50;
@@ -1891,7 +1714,6 @@ function editarCliente(id) {
   document.getElementById('c-est').value=c.UrlEstoque||'';
   document.getElementById('c-bot-token').value=getToken(c.ID)||'';
   document.getElementById('c-chat-id').value=getChatId(c.ID)||'';
-  // Viveiros: usa URLs reais ou cria vazios
   const urlsRaw = String(c.UrlsViveiros||'');
   const urls = urlsRaw.split('|').map(u=>u.trim()).filter(u=>u.startsWith('http'));
   const qtd = parseInt(c.QtdViveiros)||1;
@@ -1939,12 +1761,12 @@ async function salvarCliente() {
       if(savedId&&(botToken||chatId)) salvarTokenLocal(String(savedId), botToken, chatId);
       closeM('m-cli'); await carregarDados();
       if (data.ativacao_twilio?.resultados?.length) {
-  data.ativacao_twilio.resultados.forEach(r => {
-    if (r.status === 'ligacao_enviada') toast(`📞 Ligando para ${r.tel} agora — peça pra atender e digitar o código falado.`, 'i');
-    else if (r.status === 'ja_verificado') toast(`✅ ${r.tel} já verificado no Twilio.`, 's');
-    else toast(`⚠ Falha ao ativar ${r.tel}: ${r.msg||''}`, 'e');
-  });
-}
+        data.ativacao_twilio.resultados.forEach(r => {
+          if (r.status === 'ligacao_enviada') toast(`📞 Ligando para ${r.tel} agora — peça pra atender e digitar o código falado.`, 'i');
+          else if (r.status === 'ja_verificado') toast(`✅ ${r.tel} já verificado no Twilio.`, 's');
+          else toast(`⚠ Falha ao ativar ${r.tel}: ${r.msg||''}`, 'e');
+        });
+      }
     } else toast('Erro: '+data.msg,'e');
   } catch(err) {
     toast('Erro de conexão — verifique o Apps Script','e');
@@ -2100,7 +1922,7 @@ function renderUnitEconomics(d) {
 function renderChartCustos(d) {
   if(ch_custos_ref)ch_custos_ref.destroy();
   const ctx=document.getElementById('ch-custos'); if(!ctx)return;
-  ch_custos_ref=new Chart(ctx,{type:'doughnut',data:{labels:['COGS','OPEX','Amort. CAPEX'],datasets:[{data:[d.cogs,d.opex,d.amort_mensal],backgroundColor:['rgba(255,64,96,.8)','rgba(255,179,0,.8)','rgba(0,229,255,.8)'],borderColor:'#0b1221',borderWidth:3}]},options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:'#8ba4c0',font:{family:"'JetBrains Mono'",size:10},padding:10}},tooltip:{backgroundColor:'#0b1221',borderColor:'#152038',borderWidth:1,callbacks:{label:c=>c.label+': '+R(c.parsed)+' ('+(d.opex+d.cogs+d.amort_mensal>0?(c.parsed/(d.opex+d.cogs+d.amort_mensal)*100).toFixed(1):0)+'%)'}}}}}); 
+  ch_custos_ref=new Chart(ctx,{type:'doughnut',data:{labels:['COGS','OPEX','Amort. CAPEX'],datasets:[{data:[d.cogs,d.opex,d.amort_mensal],backgroundColor:['rgba(255,64,96,.8)','rgba(255,179,0,.8)','rgba(0,229,255,.8)'],borderColor:'#0b1221',borderWidth:3}]},options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:'#8ba4c0',font:{family:"'JetBrains Mono'",size:10},padding:10}},tooltip:{backgroundColor:'#0b1221',borderColor:'#152038',borderWidth:1,callbacks:{label:c=>c.label+': '+R(c.parsed)+' ('+(d.opex+d.cogs+d.amort_mensal>0?(c.parsed/(d.opex+d.cogs+d.amort_mensal)*100).toFixed(1):0)+'%)'}}}}});
 }
 
 function renderChartEvolucao(historico) {
@@ -2148,8 +1970,8 @@ function switchTab(tab) {
 
 function abrirLancar(tab) {
   switchTab(tab||'opex');
-  const hoje = new Date().toISOString().split('T')[0];           // ★ NOVO
-  ['cap-data','opx-data','cog-data'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value = hoje; }); // ★ NOVO
+  const hoje = new Date().toISOString().split('T')[0];
+  ['cap-data','opx-data','cog-data'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value = hoje; });
   const sel=document.getElementById('cog-cli');
   if(sel){sel.innerHTML='<option value="">Selecionar...</option>';CLIENTES.forEach(c=>{const opt=document.createElement('option');opt.value=c.Nome;opt.textContent=c.Nome;sel.appendChild(opt);});}
   openM('m-lancar');
@@ -2169,7 +1991,7 @@ async function salvarLancamento() {
   if(tab==='capex'){
     params.categoria=document.getElementById('cap-cat').value;
     params.descricao=document.getElementById('cap-desc').value;
-    params.data=document.getElementById('cap-data').value; 
+    params.data=document.getElementById('cap-data').value;
     params.quantidade=document.getElementById('cap-qtd').value;
     params.valor_unit=document.getElementById('cap-vunit').value;
     params.vida_util=document.getElementById('cap-vida').value;
@@ -2218,10 +2040,9 @@ function go(nm,el) {
   else document.querySelectorAll('.ni').forEach(n=>{if(n.getAttribute('onclick')?.includes("'"+nm+"'"))n.classList.add('act');});
   document.getElementById('pg-title').textContent=PG_TITLES[nm]||nm;
   if(nm==='fin'){initFinMeses();carregarDRE();}
-  if(nm==='bots'){carregarBots(); if(BOT_CLI_SEL) iniciarEspConsole();} else {pararEspConsole();}
+  if(nm==='bots'){carregarBots(); if(BOT_CLI_SEL) iniciarEspConsole();} else { pararEspConsole(); }
   if(nm==='config'){renderConfigBots(); carregarModoConfianca();}
   if(window.innerWidth<860)closeSB();
-  
 }
 
 function tick() { document.getElementById('clk').textContent = new Date().toLocaleDateString('pt-BR')+' '+new Date().toLocaleTimeString('pt-BR'); }
@@ -2247,15 +2068,12 @@ window.addEventListener('load', () => {
         abrirApp(data);
       } else {
         sessionStorage.removeItem('ast_admin_token'); ADMIN_TOKEN = '';
-        // Mostra tela de login (já está visível por padrão)
       }
-    }).catch(() => {
-      // Sem conexão — mostra login
-    });
+    }).catch(() => {});
   }
-  // Pressionar Enter nos campos de login
   document.getElementById('ap').addEventListener('keydown', e => { if(e.key==='Enter') admLogin(); });
 });
+
 </script>
 </body>
 </html>
