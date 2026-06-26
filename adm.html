@@ -1775,6 +1775,7 @@ async function salvarCliente() {
   const params={
     acao:'salvar', id:clienteId, nome,
     tel:limpaTel(document.getElementById('c-tel').value),
+    cpf_cnpj: document.getElementById('c-cpf').value.trim(),
     usuario:document.getElementById('c-usr').value,
     senha:document.getElementById('c-pwd').value,
     email:document.getElementById('c-email').value,
