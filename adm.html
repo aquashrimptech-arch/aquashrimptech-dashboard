@@ -1490,6 +1490,11 @@ function salvarTokenBot() {
   closeM('m-bot-token');
   logBot('ok', `Token e ChatID salvos para ${BOT_CLI_SEL.Nome}`);
   toast(`✅ Bot configurado para ${BOT_CLI_SEL.Nome}`,'s');
+  // ★ Sincroniza no servidor — necessário para o monitoramento automático
+  // de ESP offline (Apps Script) conseguir mandar Telegram/ligar sozinho
+  api({ acao: 'salvar_bot_token', id: BOT_CLI_SEL.ID, bot_token: token, chat_id: chatId })
+    .then(data => { if (data.status !== 'ok') toast('⚠ Aviso ao sincronizar: ' + data.msg, 'e'); })
+    .catch(() => toast('⚠ Token salvo localmente, mas não sincronizou no servidor', 'e'));
 }
 
 function irParaBot(id) {
@@ -1772,6 +1777,7 @@ async function salvarCliente() {
     url_estoque:document.getElementById('c-est').value,
     telefones_voz: [...document.querySelectorAll('#telvoz-ct input[type="text"]')].map(i=>i.value.trim()).filter(Boolean).join('|'),
     chat_id: document.getElementById('c-chat-id').value.trim(),
+    bot_token: botToken,
   };
   toast('Salvando...','i');
   try {
