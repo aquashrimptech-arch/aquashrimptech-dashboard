@@ -255,7 +255,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div class="lf"><label>Senha</label><input id="ap" type="password" placeholder="••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')admLogin()"></div>
       <button class="lbtn" id="lbtn" onclick="admLogin()">Entrar no Painel ADM</button>
       <div class="lerr" id="lerr">Credenciais inválidas.</div>
-      <a href="index.html" style="display:block;text-align:center;margin-top:12px;font-size:.72rem;color:var(--text3);text-decoration:none">← Voltar ao painel cliente</a>
+      <a href="index.html" style="display:block;text-align:center;margin-top:12px;font-size:.72rem;color:var(--text3);text-decoration:none">← Voltar ao painel </a>
     </div>
   </div>
 </div>
@@ -334,6 +334,9 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div class="card"><div class="tw"><table><thead><tr>
         <th>Cliente</th><th>Viveiros</th><th>Val./Viv.</th><th>Total</th><th>Vencimento</th><th>Status</th><th>Último Pag.</th><th>Asaas</th><th>Ações</th>
       </tr></thead><tbody id="tbl-cli"></tbody></table></div></div>
+    </div>
+        <div class="fr c2">
+      <div class="fg"><label>CPF ou CNPJ — só números</label><input id="c-cpf" type="text" placeholder="Ex: 12345678900"></div>
     </div>
 
     <!-- FINANCEIRO -->
@@ -1720,6 +1723,7 @@ function novoCliente() {
   document.getElementById('c-bot-token').value = '';
   document.getElementById('c-chat-id').value = '';
   document.getElementById('viv-ct').innerHTML = '';
+  document.getElementById('c-cpf').value = '';
   document.getElementById('telvoz-ct').innerHTML = ''; addTelVoz();
   addViv(); calcTotal();
   openM('m-cli');
@@ -1740,6 +1744,7 @@ function editarCliente(id) {
   document.getElementById('c-est').value=c.UrlEstoque||'';
   document.getElementById('c-bot-token').value=getToken(c.ID)||'';
   document.getElementById('c-chat-id').value=getChatId(c.ID)||'';
+  document.getElementById('c-cpf').value = c.CpfCnpj || '';
   const urlsRaw = String(c.UrlsViveiros||'');
   const urls = urlsRaw.split('|').map(u=>u.trim()).filter(u=>u.startsWith('http'));
   const qtd = parseInt(c.QtdViveiros)||1;
@@ -1777,7 +1782,7 @@ async function salvarCliente() {
     url_estoque:document.getElementById('c-est').value,
     telefones_voz: [...document.querySelectorAll('#telvoz-ct input[type="text"]')].map(i=>i.value.trim()).filter(Boolean).join('|'),
     chat_id: document.getElementById('c-chat-id').value.trim(),
-    bot_token: botToken,
+    bot_token: botToken, cpf_cnpj: document.getElementById('c-cpf').value.trim(),
   };
   toast('Salvando...','i');
   try {
