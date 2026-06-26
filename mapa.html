@@ -683,6 +683,7 @@ async function salvarCoordenada(){
 }
 
 // Envia TODAS as coords deste cliente para a planilha (coluna CoordenadasViveiros)
+// ★ usa acao=salvar_coordenadas — NÃO toca em nome/telefone/usuário/etc do cliente
 async function salvarCoordPlanilha(cliId){
   if(!ADM_TOKEN)return;
   try{
@@ -692,7 +693,7 @@ async function salvarCoordPlanilha(cliId){
       const co=getCoord(cliId,i);
       return co?`${co.lat},${co.lng}`:'';
     });
-    const data=await api({acao:'salvar',id:cliId,coordenadas_viveiros:coords.join('|')});
+    const data=await api({acao:'salvar_coordenadas',id:cliId,coordenadas_viveiros:coords.join('|')});
     if(data.status==='ok') toast('☁️ Coordenada sincronizada com a planilha','s');
     // else: silencioso — já está no localStorage
   }catch{ /* silencioso */ }
