@@ -308,6 +308,7 @@ let coordsLocal = {};   // { "cliId_vivIdx": {lat,lng} }  — cache local
 let marcadores  = [];   // [{cliId,vivIdx,marker}]
 let layerRotas  = [];
 let origem      = null;
+let marcadorOrigem = null;
 let miniMap     = null;
 let miniMarcador= null;
 let modalCtx    = null; // {cliId, vivIdx}
@@ -702,16 +703,43 @@ function abrirGoogleMaps(){window.open('https://www.google.com/maps','_blank');}
 // ══════════════════════════════════════════
 //  LOCALIZAÇÃO
 // ══════════════════════════════════════════
-function usarLocalizacao(){
-  if(!navigator.geolocation){toast('Navegador não suporta GPS','e');return;}
-  toast('📡 Buscando localização...','i');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    origem={lat:pos.coords.latitude,lng:pos.coords.longitude};
-    const icon=L.divIcon({html:`<div style="width:16px;height:16px;border-radius:50%;background:#00e5ff;border:3px solid #fff;box-shadow:0 0 12px #00e5ff66"></div>`,className:'',iconSize:[16,16],iconAnchor:[8,8]});
-    L.marker([origem.lat,origem.lng],{icon}).addTo(map).bindPopup('<b style="color:#00e5ff">📍 Você está aqui</b>').openPopup();
-    map.setView([origem.lat,origem.lng],14);
+// Busca a posição atual do usuário via GPS. Usada tanto pelo botão
+// "Minha loc." quanto automaticamente pelo cálculo de rota.
+function obterLocalizacaoAtual(mostrarToast=true){
+  return new Promise((resolve,reject)=>{
+    if(!navigator.geolocation){
+      if(mostrarToast)toast('Navegador não suporta GPS','e');
+      reject(new Error('sem_geo'));
+      return;
+    }
+    if(mostrarToast)toast('📡 Buscando localização...','i');
+    navigator.geolocation.getCurrentPosition(
+      pos=>resolve({lat:pos.coords.latitude,lng:pos.coords.longitude}),
+      ()=>{
+        if(mostrarToast)toast('Permita acesso à localização no navegador','e');
+        reject(new Error('negado'));
+      }
+    );
+  });
+}
+
+// Desenha (ou move) o marcador "Você está aqui" no mapa principal
+function marcarOrigemNoMapa(coord){
+  if(marcadorOrigem) map.removeLayer(marcadorOrigem);
+  const icon=L.divIcon({html:`<div style="width:16px;height:16px;border-radius:50%;background:#00e5ff;border:3px solid #fff;box-shadow:0 0 12px #00e5ff66"></div>`,className:'',iconSize:[16,16],iconAnchor:[8,8]});
+  marcadorOrigem=L.marker([coord.lat,coord.lng],{icon}).addTo(map).bindPopup('<b style="color:#00e5ff">📍 Você está aqui</b>');
+  return marcadorOrigem;
+}
+
+// Botão "Minha loc." — agora serve só para direcionar/centralizar o mapa
+// na posição atual. Não é mais necessário clicar aqui antes de calcular rota.
+async function usarLocalizacao(){
+  try{
+    const coord=await obterLocalizacaoAtual();
+    marcarOrigemNoMapa(coord).openPopup();
+    map.setView([coord.lat,coord.lng],14);
     toast('✅ Localização capturada!','s');
-  },()=>toast('Permita acesso à localização no navegador','e'));
+  }catch(e){ /* toast de erro já exibido em obterLocalizacaoAtual */ }
 }
 
 // ══════════════════════════════════════════
@@ -726,9 +754,22 @@ async function calcularRota(){
   const sel=vivsSelecionados();
   if(!sel.length){toast('Selecione ao menos um viveiro com coordenada','e');return;}
   limparRota(false);
+
+  // Busca a localização atual automaticamente — não precisa mais
+  // clicar em "Minha loc." antes de calcular a rota.
+  let origemRota=null;
+  try{
+    toast('📡 Obtendo sua localização...','i');
+    origemRota=await obterLocalizacaoAtual(false);
+    origem=origemRota;
+    marcarOrigemNoMapa(origemRota);
+  }catch(e){
+    toast('⚠️ Não foi possível obter sua localização — calculando a partir do 1º viveiro selecionado','i');
+  }
+
   // Ordena pelo vizinho mais próximo
-  let candidatos=[...sel],seq=[],atualCoord=origem||candidatos[0].coord;
-  if(origem)seq.push({vivNome:'📍 Você',cliNome:'',coord:origem,isOrigin:true});
+  let candidatos=[...sel],seq=[],atualCoord=origemRota||candidatos[0].coord;
+  if(origemRota)seq.push({vivNome:'📍 Você',cliNome:'',coord:origemRota,isOrigin:true});
   else{seq.push(candidatos.shift());atualCoord=seq[0].coord;}
   while(candidatos.length){
     let minD=Infinity,idx=0;
