@@ -276,7 +276,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div class="ni" onclick="go('cobrancas',this)"><span class="ni-ic">📄</span>Cobranças<span class="ni-bdg" id="bdg-cob">0</span></div>
       <div class="nav-sec" style="margin-top:10px">Operacional</div>
       <div class="ni" onclick="go('alertas',this)"><span class="ni-ic">🔔</span>Alertas<span class="ni-bdg" id="bdg-al">0</span></div>
-       <div class="ni" onclick="window.open('mapa.html','_blank')"><span class="ni-ic">🗺️</span>Mapa de Viveiros</div>
+      <div class="ni" onclick="go('mapa',this)"><span class="ni-ic">🗺️</span>Mapa de Viveiros</div>
       <div class="ni" onclick="go('mensagens',this)"><span class="ni-ic">💬</span>Mensagens</div>
       <div class="ni" onclick="go('bots',this)"><span class="ni-ic">🤖</span>Gerenciar Bots</div>
       <div class="nav-sec" style="margin-top:10px">Financeiro ADM</div>
@@ -335,7 +335,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
         <th>Cliente</th><th>Viveiros</th><th>Val./Viv.</th><th>Total</th><th>Vencimento</th><th>Status</th><th>Último Pag.</th><th>Asaas</th><th>Ações</th>
       </tr></thead><tbody id="tbl-cli"></tbody></table></div></div>
     </div>
-       
 
     <!-- FINANCEIRO -->
     <div class="pg" id="pg-financeiro">
@@ -608,6 +607,11 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
+    <!-- MAPA (embutido como página interna — nunca sai do ADM) -->
+    <div class="pg" id="pg-mapa" style="padding:0">
+      <iframe id="mapa-iframe" style="width:100%;height:calc(100vh - 53px);border:none;display:block;background:var(--bg)"></iframe>
+    </div>
+
   </div><!-- /main -->
 </div><!-- /app -->
 
@@ -634,7 +638,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
         <div class="fg"><label>Qtd. Viveiros</label><input id="c-vivs" type="number" value="1" min="1" max="20" oninput="calcTotal()"></div>
         <div class="fg"><label>Valor/Viveiro (R$)</label><div class="inp-pre"><span>R$</span><input id="c-valviv" type="number" value="50" min="1" step="5" oninput="calcTotal()"></div></div>
         <div class="fg"><label>Total Mensal</label><div id="total-disp" style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent2)">R$ 50,00</div></div>
-      </div>       
+      </div>
       <div class="fr c2">
         <div class="fg"><label>Dia de Vencimento</label><select id="c-venc"><option value="5">Dia 05</option><option value="10" selected>Dia 10</option><option value="15">Dia 15</option><option value="20">Dia 20</option><option value="25">Dia 25</option></select></div>
         <div class="fg"><label>Forma de Cobrança</label><select id="c-cob"><option>PIX automático (Asaas)</option><option>Boleto bancário</option><option>Manual</option></select></div>
@@ -838,7 +842,11 @@ const CORES = ["#00e5ff","#00ffa3","#ff6b35","#ffb300","#9b5de5","#ff4060","#60e
 // ══════════════════════════════════════════════════════
 // ESTADO GLOBAL
 // ══════════════════════════════════════════════════════
-let ADMIN_TOKEN = sessionStorage.getItem('ast_admin_token') || '';
+// ★ FIX: usa localStorage em vez de sessionStorage — o token de admin agora
+// sobrevive a F5 / recarregamento forçado / nova aba do mesmo navegador.
+// Antes, em alguns navegadores um refresh "forte" limpava o sessionStorage
+// e o usuário caía de volta na tela de login.
+let ADMIN_TOKEN = localStorage.getItem('ast_admin_token') || '';
 let CLIENTES = [];
 let mrr_chart = null, status_chart = null;
 let ch_custos_ref = null, ch_evol_ref = null;
@@ -848,6 +856,7 @@ let BOT_TOKENS = {};
 let BOT_TOKEN_VISIBLE = false;
 let ALERTAS_LIDOS = JSON.parse(localStorage.getItem('ast_alertas_lidos') || '[]');
 let ESP_CONSOLE_TIMER = null;
+let PAGINA_ANTES_MAPA = 'dash'; // ★ NOVO — lembra de onde veio antes de abrir o mapa
 
 // ══════════════════════════════════════════════════════
 // BOT TOKEN STORAGE (localStorage)
@@ -888,7 +897,7 @@ async function admLogin() {
   try {
     const data = await api({ acao: 'dashboard' });
     if (data && data.status === 'ok') {
-      sessionStorage.setItem('ast_admin_token', ADMIN_TOKEN);
+      localStorage.setItem('ast_admin_token', ADMIN_TOKEN); // ★ FIX: localStorage
       abrirApp(data);
     } else {
       ADMIN_TOKEN = '';
@@ -918,7 +927,7 @@ function abrirApp(data) {
 
 function logout() {
   if (!confirm('Sair do painel ADM?')) return;
-  sessionStorage.removeItem('ast_admin_token');
+  localStorage.removeItem('ast_admin_token'); // ★ FIX: localStorage
   ADMIN_TOKEN = '';
   CLIENTES = [];
   pararEspConsole();
@@ -941,7 +950,7 @@ async function api(params) {
   const resp = await fetch(url);
   const data = await resp.json();
   if (data && data.status === 'erro' && /acesso negado/i.test(data.msg || '')) {
-    sessionStorage.removeItem('ast_admin_token'); ADMIN_TOKEN = '';
+    localStorage.removeItem('ast_admin_token'); ADMIN_TOKEN = ''; // ★ FIX: localStorage
     toast('Token expirado — faça login novamente.', 'e');
     logout();
   }
@@ -950,6 +959,9 @@ async function api(params) {
 
 async function carregarDados() {
   document.getElementById('sync-status').innerHTML = '<span class="loading-spinner"></span>';
+  // ★ leve transição visual em vez de "flash" abrupto ao atualizar
+  const pgAtiva = document.querySelector('.pg.act');
+  if (pgAtiva) { pgAtiva.style.transition = 'opacity .15s'; pgAtiva.style.opacity = '0.45'; }
   try {
     const data = await api({ acao: 'dashboard' });
     if (data.status === 'ok') {
@@ -965,6 +977,7 @@ async function carregarDados() {
     toast('Erro de conexão — exibindo dados em cache.', 'e');
     document.getElementById('sync-status').textContent = '⚠';
   }
+  if (pgAtiva) pgAtiva.style.opacity = '1';
   setTimeout(() => document.getElementById('sync-status').textContent = '', 3000);
 }
 
@@ -1197,7 +1210,6 @@ function qualidadeRSSI(rssi) {
   return                  { label: 'Muito fraco', cor: 'var(--danger)' };
 }
 function barraRSSI(rssi) {
-  // Converte dBm em % aproximada: -50dBm ou melhor = 100%, -90dBm ou pior = 0%
   if (!rssi) return 0;
   const pct = Math.round(Math.min(100, Math.max(0, 2 * (rssi + 100))));
   return pct;
@@ -1206,7 +1218,6 @@ async function carregarEspStatus() {
   if (!BOT_CLI_SEL) return;
   try {
     const chatId = getChatId(BOT_CLI_SEL.ID);
-    // Se o cliente tiver Chat ID, escopa por ele; senão busca todos (comportamento antigo)
     const params = chatId ? { acao: 'esp_status_list', chat_id: chatId } : { acao: 'esp_status_list' };
     const data = await api(params);
     const grid = document.getElementById('esp-status-grid');
@@ -1248,7 +1259,6 @@ async function atualizarEspLogs() {
   try {
     const chatId = getChatId(BOT_CLI_SEL.ID);
     const viveiro = document.getElementById('esp-log-filtro')?.value || '';
-    // Se o cliente tiver Chat ID, escopa por ele; senão busca todos (comportamento antigo)
     const params = chatId
       ? { acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 }
       : { acao: 'esp_log_read', viveiro, limite: 150 };
@@ -1494,8 +1504,6 @@ function salvarTokenBot() {
   closeM('m-bot-token');
   logBot('ok', `Token e ChatID salvos para ${BOT_CLI_SEL.Nome}`);
   toast(`✅ Bot configurado para ${BOT_CLI_SEL.Nome}`,'s');
-  // ★ Sincroniza no servidor — necessário para o monitoramento automático
-  // de ESP offline (Apps Script) conseguir mandar Telegram/ligar sozinho
   api({ acao: 'salvar_bot_token', id: BOT_CLI_SEL.ID, bot_token: token, chat_id: chatId })
     .then(data => { if (data.status !== 'ok') toast('⚠ Aviso ao sincronizar: ' + data.msg, 'e'); })
     .catch(() => toast('⚠ Token salvo localmente, mas não sincronizou no servidor', 'e'));
@@ -1784,7 +1792,7 @@ async function salvarCliente() {
     url_estoque:document.getElementById('c-est').value,
     telefones_voz: [...document.querySelectorAll('#telvoz-ct input[type="text"]')].map(i=>i.value.trim()).filter(Boolean).join('|'),
     chat_id: document.getElementById('c-chat-id').value.trim(),
-    bot_token: botToken, cpf_cnpj: document.getElementById('c-cpf').value.trim(),
+    bot_token: botToken,
   };
   toast('Salvando...','i');
   try {
@@ -1846,7 +1854,7 @@ function verDetalhe(id) {
     <button class="btn bol" onclick="closeM('m-det')">Fechar</button>
     ${c.Telefone?`<button class="btn bwa" onclick="wpp(${c.ID});closeM('m-det')">🟢 WhatsApp</button>`:''}
     ${!c.AsaasCustomerId?`<button class="btn bor" onclick="criarAsaas(${c.ID})">🏦 Criar Asaas</button>`:
-      c.Status!=='ativo'?`<button class="btn bdn" onclick="gerarPix(${c.ID})">⚡ Gerar PIX</button>`:''}
+      `<button class="btn bdn" onclick="gerarPix(${c.ID})">⚡ Gerar PIX</button>`}
     <button class="btn bpp" onclick="irParaBot(${c.ID});closeM('m-det')">🤖 Gerenciar Bot</button>
     <button class="btn bac" onclick="editarCliente(${c.ID});closeM('m-det')">✏️ Editar</button>`;
   openM('m-det');
@@ -2064,9 +2072,15 @@ async function salvarLancamento() {
 const PG_TITLES = {
   dash:'Dashboard', clientes:'Clientes', financeiro:'Financeiro',
   cobrancas:'Cobranças', alertas:'Alertas', mensagens:'Mensagens',
-  bots:'🤖 Gerenciar Bots', fin:'Financeiro ADM — Unit Economics', config:'Configurações'
+  bots:'🤖 Gerenciar Bots', fin:'Financeiro ADM — Unit Economics', config:'Configurações',
+  mapa:'🗺️ Mapa de Viveiros'
 };
 function go(nm,el) {
+  // ★ lembra de qual aba veio ANTES de abrir o mapa, pra voltar certo
+  const atual = document.querySelector('.pg.act');
+  if (nm === 'mapa' && atual && atual.id !== 'pg-mapa') {
+    PAGINA_ANTES_MAPA = atual.id.replace('pg-','');
+  }
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('act'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));
   document.getElementById('pg-'+nm).classList.add('act');
@@ -2076,8 +2090,19 @@ function go(nm,el) {
   if(nm==='fin'){initFinMeses();carregarDRE();}
   if(nm==='bots'){carregarBots(); if(BOT_CLI_SEL) iniciarEspConsole();} else { pararEspConsole(); }
   if(nm==='config'){renderConfigBots(); carregarModoConfianca();}
+  if(nm==='mapa'){
+    // ★ carrega o iframe do mapa só na primeira vez que a aba é aberta
+    const ifr=document.getElementById('mapa-iframe');
+    if(!ifr.getAttribute('data-loaded')){ ifr.src='mapa.html'; ifr.setAttribute('data-loaded','1'); }
+  }
   if(window.innerWidth<860)closeSB();
 }
+// ★ Chamado pelo mapa.html (via window.parent) quando clica em "← ADM"
+// dentro do iframe — volta pra aba que estava aberta, sem reload nenhum.
+function voltarDoMapa(){
+  go(PAGINA_ANTES_MAPA, document.querySelector(`.ni[onclick*="'${PAGINA_ANTES_MAPA}'"]`));
+}
+window.voltarDoMapa = voltarDoMapa;
 
 function tick() { document.getElementById('clk').textContent = new Date().toLocaleDateString('pt-BR')+' '+new Date().toLocaleTimeString('pt-BR'); }
 function toggleSB(){document.getElementById('sb').classList.toggle('open');document.getElementById('sb-ov').classList.toggle('open');}
@@ -2094,20 +2119,19 @@ window.addEventListener('load', () => {
   setInterval(tick,1000); tick();
   initFinMeses();
   carregarTokensLocais();
-  const salvo = sessionStorage.getItem('ast_admin_token');
+  const salvo = localStorage.getItem('ast_admin_token'); // ★ FIX: localStorage
   if (salvo) {
     ADMIN_TOKEN = salvo;
     api({acao:'dashboard'}).then(data => {
       if (data && data.status === 'ok') {
         abrirApp(data);
       } else {
-        sessionStorage.removeItem('ast_admin_token'); ADMIN_TOKEN = '';
+        localStorage.removeItem('ast_admin_token'); ADMIN_TOKEN = ''; // ★ FIX: localStorage
       }
     }).catch(() => {});
   }
   document.getElementById('ap').addEventListener('keydown', e => { if(e.key==='Enter') admLogin(); });
 });
-
 </script>
 </body>
 </html>
