@@ -202,6 +202,10 @@
     const lsDiv = document.createElement("div");
     lsDiv.id = "ls";
     lsDiv.innerHTML = montarLoginHTML();
+    // ★ se já existe token salvo, esconde o login DESDE JÁ — evita o "flash"
+    //   de aparecer a tela de login por uma fração de segundo antes de
+    //   confirmar que o token é válido e entrar direto no painel.
+    if (ADMIN_TOKEN) lsDiv.style.display = "none";
     document.body.insertBefore(lsDiv, document.body.firstChild);
 
     const appDiv = document.getElementById("app");
@@ -236,9 +240,16 @@
     // auto-login se já tem token salvo
     if (ADMIN_TOKEN) {
       api({ acao: "dashboard" }).then((data) => {
-        if (data && data.status === "ok") mostrarApp();
-        else { localStorage.removeItem("ast_admin_token"); ADMIN_TOKEN = ""; }
-      }).catch(() => {});
+        if (data && data.status === "ok") {
+          mostrarApp();
+        } else {
+          localStorage.removeItem("ast_admin_token");
+          ADMIN_TOKEN = "";
+          document.getElementById("ls").style.display = "flex"; // token inválido -> mostra login
+        }
+      }).catch(() => {
+        document.getElementById("ls").style.display = "flex"; // erro de rede -> mostra login pra tentar de novo
+      });
     }
   }
 
