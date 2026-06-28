@@ -607,6 +607,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
+
     <!-- MAPA (embutido como página interna — nunca sai do ADM) -->
     <div class="pg" id="pg-mapa" style="padding:0">
       <iframe id="mapa-iframe" style="width:100%;height:calc(100vh - 53px);border:none;display:block;background:var(--bg)"></iframe>
@@ -2091,7 +2092,6 @@ function go(nm,el) {
   if(nm==='bots'){carregarBots(); if(BOT_CLI_SEL) iniciarEspConsole();} else { pararEspConsole(); }
   if(nm==='config'){renderConfigBots(); carregarModoConfianca();}
   if(nm==='mapa'){
-    // ★ carrega o iframe do mapa só na primeira vez que a aba é aberta
     const ifr=document.getElementById('mapa-iframe');
     if(!ifr.getAttribute('data-loaded')){ ifr.src='mapa.html'; ifr.setAttribute('data-loaded','1'); }
   }
