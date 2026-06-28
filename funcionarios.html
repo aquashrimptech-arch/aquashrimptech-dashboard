@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AquaShrimpTech — Funcionários</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="adm-shared.css">
+<style>
+.func-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.func-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;transition:border-color .2s}
+.func-card.inativo{opacity:.55}
+.func-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;color:#05080f;margin-bottom:10px}
+.func-nome{font-size:.86rem;font-weight:700}
+.func-funcao{font-size:.68rem;color:var(--text3);margin-top:2px}
+.func-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text3);margin-top:8px}
+.func-row span:last-child{color:var(--text);font-family:'JetBrains Mono',monospace}
+.func-actions{display:flex;gap:5px;margin-top:12px;flex-wrap:wrap}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3);font-size:.8rem}
+.empty-state .ic{font-size:2rem;margin-bottom:10px;display:block}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="pg act" id="pg-func">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:1.05rem;font-weight:700">👷 Funcionários</div>
+        <div style="font-size:.7rem;color:var(--text3)">Cadastro da equipe e lançamento de custos de mão de obra (entra automaticamente no Financeiro)</div>
+      </div>
+      <button class="btn bor" onclick="abrirModalNovoFunc()">+ Novo Funcionário</button>
+    </div>
+
+    <div id="func-lista">
+      <div style="text-align:center;padding:30px;color:var(--text3)"><span class="loading-spinner"></span> Carregando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOVO/EDITAR FUNCIONÁRIO -->
+<div class="ov" id="m-func">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hd"><div class="modal-title" id="m-func-title">+ Novo Funcionário</div><button class="modal-x" onclick="AdmShell.closeM('m-func')">✕</button></div>
+    <div class="modal-body">
+      <div class="fr c2">
+        <div class="fg"><label>Nome</label><input id="fn-nome" type="text" placeholder="Nome completo"></div>
+        <div class="fg"><label>Função</label><input id="fn-funcao" type="text" placeholder="Ex: Técnico de campo"></div>
+      </div>
+      <div class="fr c2">
+        <div class="fg"><label>Telefone</label><input id="fn-tel" type="text" placeholder="85999990000"></div>
+        <div class="fg"><label>Data de Contratação</label><input id="fn-data" type="date"></div>
+      </div>
+      <div class="fr c2">
+        <div class="fg"><label>Tipo de Pagamento</label><select id="fn-tipo"><option>Mensal</option><option>Diária</option><option>Comissão</option><option>Por instalação</option></select></div>
+        <div class="fg"><label>Valor de Referência (R$)</label><input id="fn-valor" type="number" placeholder="0,00" step="0.01" min="0"></div>
+      </div>
+      <div class="fg"><label>Observações</label><textarea id="fn-obs" rows="2"></textarea></div>
+      <input type="hidden" id="fn-id">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="AdmShell.closeM('m-func')">Cancelar</button>
+      <button class="btn bac" onclick="salvarFuncModal()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: LANÇAR CUSTO -->
+<div class="ov" id="m-custo">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hd"><div class="modal-title">💰 Lançar Custo — <span id="custo-func-nome"></span></div><button class="modal-x" onclick="AdmShell.closeM('m-custo')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:.72rem;color:var(--text3)">
+        Se for <b style="color:var(--accent)">mão de obra de um cliente específico</b> (ex: instalação), informe o cliente — vira COGS daquele cliente.<br>Se for <b style="color:var(--accent)">custo geral da empresa</b> (ex: salário fixo do mês), deixe o cliente em branco — vira OPEX da empresa.
+      </div>
+      <div class="fr c2">
+        <div class="fg"><label>Valor (R$)</label><input id="cu-valor" type="number" placeholder="0,00" step="0.01" min="0"></div>
+        <div class="fg"><label>Data</label><input id="cu-data" type="date"></div>
+      </div>
+      <div class="fg"><label>Cliente (opcional — deixe em branco pra custo geral)</label><input id="cu-cliente" type="text" placeholder="Nome do cliente, se for instalação específica" list="cu-clientes-list"><datalist id="cu-clientes-list"></datalist></div>
+      <div class="fg"><label>Viveiro (se informou cliente)</label><input id="cu-viveiro" type="text" placeholder="Ex: Viveiro 03"></div>
+      <div class="fg"><label>Descrição</label><input id="cu-desc" type="text" placeholder="Ex: Instalação completa, Salário mensal..."></div>
+      <div class="fg" id="cu-recorrente-wrap"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;font-size:.76rem"><input type="checkbox" id="cu-recorrente" style="width:auto"> Custo recorrente (se repete todo mês)</label></div>
+      <input type="hidden" id="cu-func-id">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="AdmShell.closeM('m-custo')">Cancelar</button>
+      <button class="btn bgr" onclick="confirmarLancarCusto()">💾 Lançar</button>
+    </div>
+  </div>
+</div>
+
+<script src="adm-shared.js"></script>
+<script>
+let FUNCIONARIOS = [];
+const R = n => isNaN(n)||n===null ? '—' : 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc = t => String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+AdmShell.init({
+  activeKey: 'funcionarios',
+  pageTitle: '👷 Funcionários',
+  onReady: function(){ carregarFuncionarios(); carregarClientesParaAutocomplete(); }
+});
+
+async function carregarClientesParaAutocomplete(){
+  const data = await AdmShell.api({ acao:'listar' });
+  if(data.status==='ok'){
+    document.getElementById('cu-clientes-list').innerHTML = (data.clientes||[]).map(c=>`<option value="${esc(c.Nome)}">`).join('');
+  }
+}
+
+async function carregarFuncionarios(){
+  const data = await AdmShell.api({ acao: 'funcionarios_listar' });
+  if(data.status !== 'ok'){ AdmShell.toast('Erro: '+data.msg,'e'); return; }
+  FUNCIONARIOS = data.funcionarios || [];
+  renderFuncionarios();
+}
+
+function renderFuncionarios(){
+  const el = document.getElementById('func-lista');
+  if(!FUNCIONARIOS.length){
+    el.innerHTML = `<div class="empty-state"><span class="ic">👷</span>Nenhum funcionário cadastrado ainda.<br>Clique em <b style="color:var(--text)">+ Novo Funcionário</b> pra começar.</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="func-grid">${FUNCIONARIOS.map(f=>{
+    const inativo = f.status === 'Inativo';
+    return `<div class="func-card ${inativo?'inativo':''}">
+      <div class="func-av">${(f.nome||'?')[0].toUpperCase()}</div>
+      <div class="func-nome">${esc(f.nome)} ${inativo?'<span class="bdg br" style="font-size:.55rem">Inativo</span>':''}</div>
+      <div class="func-funcao">${esc(f.funcao||'—')}</div>
+      <div class="func-row"><span>📞 Telefone</span><span>${esc(f.telefone||'—')}</span></div>
+      <div class="func-row"><span>💰 Valor Ref.</span><span>${R(f.valor_mensal)}</span></div>
+      <div class="func-row"><span>📋 Pagamento</span><span>${esc(f.tipo_pagamento)}</span></div>
+      <div class="func-row"><span>📅 Desde</span><span>${esc(f.data_contratacao)}</span></div>
+      <div class="func-actions">
+        ${!inativo ? `<button class="btn btn-xs bgr" onclick="abrirModalCusto('${f.id}','${esc(f.nome)}',${f.valor_mensal})">💰 Lançar Custo</button>` : ''}
+        <button class="btn btn-xs bol" onclick="editarFunc('${f.id}')">✏️</button>
+        ${inativo
+          ? `<button class="btn btn-xs bgr" onclick="reativarFunc('${f.id}')">↩️ Reativar</button>`
+          : `<button class="btn btn-xs bdn" onclick="desativarFunc('${f.id}')">🗑️ Desativar</button>`}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ── CRUD FUNCIONÁRIO ──
+function abrirModalNovoFunc(){
+  document.getElementById('m-func-title').textContent = '+ Novo Funcionário';
+  document.getElementById('fn-id').value = '';
+  document.getElementById('fn-nome').value = '';
+  document.getElementById('fn-funcao').value = '';
+  document.getElementById('fn-tel').value = '';
+  document.getElementById('fn-data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('fn-tipo').value = 'Mensal';
+  document.getElementById('fn-valor').value = '';
+  document.getElementById('fn-obs').value = '';
+  AdmShell.openM('m-func');
+}
+function editarFunc(id){
+  const f = FUNCIONARIOS.find(x=>String(x.id)===String(id)); if(!f) return;
+  document.getElementById('m-func-title').textContent = '✏️ Editar Funcionário';
+  document.getElementById('fn-id').value = f.id;
+  document.getElementById('fn-nome').value = f.nome;
+  document.getElementById('fn-funcao').value = f.funcao;
+  document.getElementById('fn-tel').value = f.telefone;
+  document.getElementById('fn-tipo').value = f.tipo_pagamento;
+  document.getElementById('fn-valor').value = f.valor_mensal;
+  document.getElementById('fn-obs').value = f.observacoes;
+  AdmShell.openM('m-func');
+}
+async function salvarFuncModal(){
+  const nome = document.getElementById('fn-nome').value.trim();
+  if(!nome){ AdmShell.toast('Informe o nome','e'); return; }
+  const params = {
+    acao: 'funcionarios_salvar',
+    id: document.getElementById('fn-id').value,
+    nome,
+    funcao: document.getElementById('fn-funcao').value.trim(),
+    telefone: document.getElementById('fn-tel').value.trim(),
+    data_contratacao: document.getElementById('fn-data').value,
+    tipo_pagamento: document.getElementById('fn-tipo').value,
+    valor_mensal: document.getElementById('fn-valor').value || 0,
+    observacoes: document.getElementById('fn-obs').value.trim(),
+  };
+  const data = await AdmShell.api(params);
+  if(data.status==='ok'){ AdmShell.toast('✅ Salvo!','s'); AdmShell.closeM('m-func'); await carregarFuncionarios(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+async function desativarFunc(id){
+  if(!confirm('Desativar este funcionário? O histórico de custos lançados é mantido.')) return;
+  const data = await AdmShell.api({ acao:'funcionarios_deletar', id });
+  if(data.status==='ok'){ AdmShell.toast('Funcionário desativado.','s'); await carregarFuncionarios(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+async function reativarFunc(id){
+  const data = await AdmShell.api({ acao:'funcionarios_restaurar', id });
+  if(data.status==='ok'){ AdmShell.toast('Funcionário reativado.','s'); await carregarFuncionarios(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+
+// ── LANÇAR CUSTO ──
+function abrirModalCusto(funcId, nome, valorRef){
+  document.getElementById('cu-func-id').value = funcId;
+  document.getElementById('custo-func-nome').textContent = nome;
+  document.getElementById('cu-valor').value = valorRef || '';
+  document.getElementById('cu-data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('cu-cliente').value = '';
+  document.getElementById('cu-viveiro').value = '';
+  document.getElementById('cu-desc').value = '';
+  document.getElementById('cu-recorrente').checked = false;
+  AdmShell.openM('m-custo');
+}
+async function confirmarLancarCusto(){
+  const valor = parseFloat(document.getElementById('cu-valor').value) || 0;
+  if(valor<=0){ AdmShell.toast('Informe o valor','e'); return; }
+  const params = {
+    acao: 'funcionarios_lancar_custo',
+    funcionario_id: document.getElementById('cu-func-id').value,
+    valor,
+    data: document.getElementById('cu-data').value,
+    cliente: document.getElementById('cu-cliente').value.trim(),
+    viveiro: document.getElementById('cu-viveiro').value.trim(),
+    descricao: document.getElementById('cu-desc').value.trim(),
+    recorrente: document.getElementById('cu-recorrente').checked ? 'Sim' : 'Não',
+  };
+  const data = await AdmShell.api(params);
+  if(data.status==='ok'){
+    const destino = params.cliente ? `COGS de ${params.cliente}` : 'OPEX da empresa';
+    AdmShell.toast(`✅ Custo lançado em ${destino}!`,'s');
+    AdmShell.closeM('m-custo');
+  } else AdmShell.toast('Erro: '+data.msg,'e');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AquaShrimpTech — Estoque Geral</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="adm-shared.css">
+<style>
+.est-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-bottom:22px}
+.est-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;transition:border-color .2s}
+.est-card.critico{border-color:rgba(255,64,96,.45)}.est-card.baixo{border-color:rgba(255,179,0,.45)}
+.est-nome{font-size:.84rem;font-weight:700;margin-bottom:6px}
+.est-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text3);margin-top:5px}
+.est-row span:last-child{color:var(--text);font-family:'JetBrains Mono',monospace}
+.est-bar-wrap{margin-top:10px;background:rgba(30,48,80,.5);border-radius:4px;height:4px}
+.est-bar{height:100%;border-radius:4px}
+.est-actions{display:flex;gap:5px;margin-top:11px;flex-wrap:wrap}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3);font-size:.8rem}
+.empty-state .ic{font-size:2rem;margin-bottom:10px;display:block}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="pg act" id="pg-estoque">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:1.05rem;font-weight:700">🏭 Estoque Geral</div>
+        <div style="font-size:.7rem;color:var(--text3)">Peças e hardware da empresa (ESP32, sensores, carcaças...) — diferente do estoque de ração dos viveiros</div>
+      </div>
+      <button class="btn bor" onclick="abrirModalNovoItem()">+ Novo Item</button>
+    </div>
+
+    <div class="kr" id="kpi-estoque">
+      <div class="kpi"><div class="kpi-ic">⏳</div><div class="kpi-lb">Carregando</div><div class="kpi-vl ca">...</div></div>
+    </div>
+
+    <div id="estoque-lista">
+      <div style="text-align:center;padding:30px;color:var(--text3)"><span class="loading-spinner"></span> Carregando estoque...</div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <div class="card-hd"><div class="card-title">📜 Histórico de Movimentações</div><button class="btn btn-xs bol" onclick="carregarHistorico()">🔄 Atualizar</button></div>
+      <div class="tw"><table>
+        <thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th style="text-align:right">Qtd</th><th style="text-align:right">Custo Unit.</th><th>Obs</th></tr></thead>
+        <tbody id="hist-tbody"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:16px">Carregando...</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOVO/EDITAR ITEM -->
+<div class="ov" id="m-novo-item">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hd"><div class="modal-title" id="m-novo-item-title">+ Novo Item</div><button class="modal-x" onclick="AdmShell.closeM('m-novo-item')">✕</button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Nome do Produto</label><input id="ni-produto" type="text" placeholder="Ex: ESP32-S3 Dev Module"></div>
+      <div class="fr c2">
+        <div class="fg"><label>Categoria</label><select id="ni-categoria"><option>Hardware</option><option>Sensor</option><option>Carcaça/Proteção</option><option>Cabos/Conectores</option><option>Ferramentas</option><option>Outros</option></select></div>
+        <div class="fg"><label>Unidade</label><select id="ni-unidade"><option>un</option><option>m</option><option>kg</option><option>pacote</option><option>caixa</option></select></div>
+      </div>
+      <div class="fr c2">
+        <div class="fg"><label>Custo Unitário (R$)</label><input id="ni-custo" type="number" placeholder="0,00" step="0.01" min="0"></div>
+        <div class="fg"><label>Estoque Mínimo (0 = sem alerta)</label><input id="ni-min" type="number" placeholder="0" step="1" min="0" value="0"></div>
+      </div>
+      <div class="fg" id="ni-qtd-inicial-wrap"><label>Quantidade Inicial</label><input id="ni-qtd-inicial" type="number" placeholder="0" step="1" min="0" value="0"></div>
+      <input type="hidden" id="ni-id">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="AdmShell.closeM('m-novo-item')">Cancelar</button>
+      <button class="btn bac" onclick="salvarItemModal()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MOVIMENTAÇÃO (entrada/saída) -->
+<div class="ov" id="m-mov">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-hd"><div class="modal-title" id="m-mov-title">📥 Entrada — <span id="mov-produto-nome"></span></div><button class="modal-x" onclick="AdmShell.closeM('m-mov')">✕</button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Quantidade</label><input id="mov-qtd" type="number" placeholder="0" step="1" min="1"></div>
+      <div class="fg" id="mov-custo-wrap"><label>Custo Unitário desta entrada (R$) — opcional</label><input id="mov-custo" type="number" placeholder="Deixe vazio pra manter o custo médio atual" step="0.01" min="0"></div>
+      <div class="fg"><label>Observação</label><input id="mov-obs" type="text" placeholder="Ex: Compra fornecedor X / Usado na instalação Y"></div>
+      <input type="hidden" id="mov-produto-id">
+      <input type="hidden" id="mov-tipo">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="AdmShell.closeM('m-mov')">Cancelar</button>
+      <button class="btn bgr" onclick="confirmarMovimento()">✅ Registrar</button>
+    </div>
+  </div>
+</div>
+
+<script src="adm-shared.js"></script>
+<script>
+let ESTOQUE = [];
+const R = n => isNaN(n)||n===null ? '—' : 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const Nf = n => isNaN(n)||n===null ? '—' : Number(n).toLocaleString('pt-BR');
+const esc = t => String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+AdmShell.init({
+  activeKey: 'estoque2',
+  pageTitle: '🏭 Estoque Geral',
+  onReady: function(){ carregarEstoque(); carregarHistorico(); }
+});
+
+async function carregarEstoque(){
+  const data = await AdmShell.api({ acao: 'estoque_listar' });
+  if(data.status !== 'ok'){ AdmShell.toast('Erro: '+data.msg,'e'); return; }
+  ESTOQUE = data.itens || [];
+  document.getElementById('kpi-estoque').innerHTML = [
+    {ic:'💎',lb:'Valor em Estoque',vl:R(data.valor_total),cls:'g',clv:'cg'},
+    {ic:'🚨',lb:'Itens Críticos',vl:data.criticos,cls:data.criticos>0?'d':'g',clv:data.criticos>0?'cd':'cg'},
+    {ic:'⚠️',lb:'Estoque Baixo',vl:data.baixos,cls:data.baixos>0?'w':'g',clv:data.baixos>0?'cw':'cg'},
+    {ic:'📦',lb:'Total de Itens',vl:ESTOQUE.length,cls:'',clv:'ca'},
+  ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-ic">${k.ic}</div><div class="kpi-lb">${k.lb}</div><div class="kpi-vl ${k.clv}">${k.vl}</div></div>`).join('');
+  renderEstoque();
+}
+
+function renderEstoque(){
+  const el = document.getElementById('estoque-lista');
+  if(!ESTOQUE.length){
+    el.innerHTML = `<div class="empty-state"><span class="ic">🏭</span>Nenhum item cadastrado ainda.<br>Clique em <b style="color:var(--text)">+ Novo Item</b> pra começar.</div>`;
+    return;
+  }
+  const maxQ = Math.max(...ESTOQUE.map(i=>i.quantidade), 1);
+  el.innerHTML = `<div class="est-grid">${ESTOQUE.map(i=>{
+    const sl = i.situacao==='ok' ? '✅ OK' : i.situacao==='baixo' ? '⚠️ Baixo' : '🚨 Crítico';
+    const sc = i.situacao==='ok' ? 'bg' : i.situacao==='baixo' ? 'bw' : 'br';
+    const barCor = i.situacao==='ok' ? 'var(--accent2)' : i.situacao==='baixo' ? 'var(--warn)' : 'var(--danger)';
+    const pct = Math.min(100, Math.round(i.quantidade/maxQ*100));
+    return `<div class="est-card ${i.situacao}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+        <div class="est-nome">${esc(i.produto)}</div>
+        <span class="bdg ${sc}" style="flex-shrink:0">${sl}</span>
+      </div>
+      <div style="font-size:.62rem;color:var(--text3)">${esc(i.categoria)}</div>
+      <div class="est-row"><span>📦 Quantidade</span><span>${Nf(i.quantidade)} ${esc(i.unidade)}</span></div>
+      <div class="est-row"><span>💲 Custo Unit.</span><span>${R(i.custo_unit)}</span></div>
+      <div class="est-row"><span>💰 Valor Total</span><span>${R(i.valor_total)}</span></div>
+      ${i.estoque_min>0 ? `<div class="est-row"><span>⚠️ Mínimo</span><span>${Nf(i.estoque_min)} ${esc(i.unidade)}</span></div>` : ''}
+      <div class="est-bar-wrap"><div class="est-bar" style="width:${pct}%;background:${barCor}"></div></div>
+      <div class="est-actions">
+        <button class="btn btn-xs bgr" onclick="abrirModalMov('${i.id}','${esc(i.produto)}','entrada')">📥 Entrada</button>
+        <button class="btn btn-xs bwn" onclick="abrirModalMov('${i.id}','${esc(i.produto)}','saida')">📤 Saída</button>
+        <button class="btn btn-xs bol" onclick="editarItem('${i.id}')">✏️</button>
+        <button class="btn btn-xs bdn" onclick="excluirItem('${i.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+async function carregarHistorico(){
+  const data = await AdmShell.api({ acao: 'estoque_mov_listar', limite: 60 });
+  const tb = document.getElementById('hist-tbody');
+  if(data.status !== 'ok'){ tb.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--danger);padding:16px">Erro: ${data.msg}</td></tr>`; return; }
+  const movs = data.movimentos || [];
+  if(!movs.length){ tb.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:16px">Nenhuma movimentação ainda.</td></tr>`; return; }
+  tb.innerHTML = movs.map(m=>{
+    const tipoBdg = m.tipo==='entrada' ? '<span class="bdg bg">📥 Entrada</span>' : '<span class="bdg bw">📤 Saída</span>';
+    return `<tr><td class="mono" style="font-size:.7rem">${m.data}</td><td>${esc(m.produto)}</td><td>${tipoBdg}</td><td class="mono" style="text-align:right">${Nf(m.qtd)}</td><td class="mono" style="text-align:right">${m.custo_unit>0?R(m.custo_unit):'—'}</td><td style="font-size:.7rem;color:var(--text3)">${esc(m.obs)}</td></tr>`;
+  }).join('');
+}
+
+// ── CRUD ITEM ──
+function abrirModalNovoItem(){
+  document.getElementById('m-novo-item-title').textContent = '+ Novo Item';
+  document.getElementById('ni-id').value = '';
+  document.getElementById('ni-produto').value = '';
+  document.getElementById('ni-categoria').value = 'Hardware';
+  document.getElementById('ni-unidade').value = 'un';
+  document.getElementById('ni-custo').value = '';
+  document.getElementById('ni-min').value = '0';
+  document.getElementById('ni-qtd-inicial').value = '0';
+  document.getElementById('ni-qtd-inicial-wrap').style.display = 'block';
+  AdmShell.openM('m-novo-item');
+}
+function editarItem(id){
+  const i = ESTOQUE.find(x=>String(x.id)===String(id)); if(!i) return;
+  document.getElementById('m-novo-item-title').textContent = '✏️ Editar Item';
+  document.getElementById('ni-id').value = i.id;
+  document.getElementById('ni-produto').value = i.produto;
+  document.getElementById('ni-categoria').value = i.categoria;
+  document.getElementById('ni-unidade').value = i.unidade;
+  document.getElementById('ni-custo').value = i.custo_unit;
+  document.getElementById('ni-min').value = i.estoque_min;
+  document.getElementById('ni-qtd-inicial-wrap').style.display = 'none'; // quantidade só muda via movimentação depois de criado
+  AdmShell.openM('m-novo-item');
+}
+async function salvarItemModal(){
+  const produto = document.getElementById('ni-produto').value.trim();
+  if(!produto){ AdmShell.toast('Informe o nome do produto','e'); return; }
+  const params = {
+    acao: 'estoque_item_salvar',
+    id: document.getElementById('ni-id').value,
+    produto,
+    categoria: document.getElementById('ni-categoria').value,
+    unidade: document.getElementById('ni-unidade').value,
+    custo_unit: document.getElementById('ni-custo').value || 0,
+    estoque_min: document.getElementById('ni-min').value || 0,
+    quantidade_inicial: document.getElementById('ni-qtd-inicial').value || 0,
+  };
+  const data = await AdmShell.api(params);
+  if(data.status==='ok'){ AdmShell.toast('✅ Salvo!','s'); AdmShell.closeM('m-novo-item'); await carregarEstoque(); await carregarHistorico(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+async function excluirItem(id){
+  if(!confirm('Remover este item do estoque? O histórico de movimentações é mantido.')) return;
+  const data = await AdmShell.api({ acao:'estoque_item_deletar', id });
+  if(data.status==='ok'){ AdmShell.toast('Item removido.','s'); await carregarEstoque(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+
+// ── MOVIMENTAÇÃO ──
+function abrirModalMov(produtoId, produtoNome, tipo){
+  document.getElementById('mov-produto-id').value = produtoId;
+  document.getElementById('mov-tipo').value = tipo;
+  document.getElementById('mov-produto-nome').textContent = produtoNome;
+  document.getElementById('m-mov-title').textContent = (tipo==='entrada' ? '📥 Entrada — ' : '📤 Saída — ') + produtoNome;
+  document.getElementById('mov-qtd').value = '';
+  document.getElementById('mov-custo').value = '';
+  document.getElementById('mov-obs').value = '';
+  document.getElementById('mov-custo-wrap').style.display = tipo==='entrada' ? 'block' : 'none';
+  AdmShell.openM('m-mov');
+}
+async function confirmarMovimento(){
+  const qtd = parseFloat(document.getElementById('mov-qtd').value) || 0;
+  if(qtd<=0){ AdmShell.toast('Informe a quantidade','e'); return; }
+  const params = {
+    acao: 'estoque_mov_registrar',
+    produto_id: document.getElementById('mov-produto-id').value,
+    tipo: document.getElementById('mov-tipo').value,
+    qtd,
+    custo_unit: document.getElementById('mov-custo').value || 0,
+    obs: document.getElementById('mov-obs').value.trim(),
+  };
+  const data = await AdmShell.api(params);
+  if(data.status==='ok'){
+    AdmShell.toast(data.ficou_negativo ? `⚠️ Registrado — estoque ficou negativo/zerado!` : '✅ Movimento registrado!', data.ficou_negativo?'e':'s');
+    AdmShell.closeM('m-mov');
+    await carregarEstoque(); await carregarHistorico();
+  } else AdmShell.toast('Erro: '+data.msg,'e');
+}
+</script>
+</body>
+</html>

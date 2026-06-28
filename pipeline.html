@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AquaShrimpTech — Fila de Instalação</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="adm-shared.css">
+<style>
+.kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;align-items:flex-start}
+.kan-col{background:var(--card2);border:1px solid var(--border);border-radius:14px;min-width:230px;flex:1 0 230px;max-width:280px}
+.kan-col-hd{padding:11px 13px;border-bottom:1px solid var(--border);font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.kan-count{background:rgba(0,229,255,.12);color:var(--accent);font-size:.62rem;font-weight:700;padding:1px 7px;border-radius:10px}
+.kan-cards{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:60px}
+.kan-card{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:10px 11px;font-size:.74rem}
+.kan-card-cliente{font-weight:700;font-size:.78rem;margin-bottom:4px}
+.kan-card-meta{font-size:.64rem;color:var(--text3);margin-bottom:2px}
+.kan-card-obs{font-size:.64rem;color:var(--text2);margin-top:5px;font-style:italic}
+.kan-card-actions{display:flex;gap:4px;margin-top:8px;justify-content:space-between}
+.kan-mv{background:var(--bg2);border:1px solid var(--border2);color:var(--text2);border-radius:6px;padding:3px 8px;font-size:.65rem;cursor:pointer;transition:all .15s}
+.kan-mv:hover{border-color:var(--accent);color:var(--accent)}
+.kan-mv:disabled{opacity:.3;cursor:not-allowed}
+.kan-empty{font-size:.66rem;color:var(--text3);text-align:center;padding:14px 0}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="pg act" id="pg-pipeline">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:1.05rem;font-weight:700">🛠️ Fila de Instalação</div>
+        <div style="font-size:.7rem;color:var(--text3)">Acompanhe cada cliente do lead até o pós-venda</div>
+      </div>
+      <button class="btn bor" onclick="abrirModalNovoCard()">+ Novo Card</button>
+    </div>
+
+    <div id="kanban-wrap">
+      <div style="text-align:center;padding:30px;color:var(--text3)"><span class="loading-spinner"></span> Carregando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOVO/EDITAR CARD -->
+<div class="ov" id="m-card">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hd"><div class="modal-title" id="m-card-title">+ Novo Card</div><button class="modal-x" onclick="AdmShell.closeM('m-card')">✕</button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Cliente</label><input id="cd-cliente" type="text" placeholder="Nome do cliente ou lead" list="cd-clientes-list"><datalist id="cd-clientes-list"></datalist></div>
+      <div class="fr c2">
+        <div class="fg"><label>Etapa</label><select id="cd-etapa"></select></div>
+        <div class="fg"><label>Data Agendada</label><input id="cd-data" type="date"></div>
+      </div>
+      <div class="fg"><label>Responsável (opcional)</label><select id="cd-resp"><option value="">Não definido</option></select></div>
+      <div class="fg"><label>Observações</label><textarea id="cd-obs" rows="2"></textarea></div>
+      <input type="hidden" id="cd-id">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="AdmShell.closeM('m-card')">Cancelar</button>
+      <button class="btn bac" onclick="salvarCardModal()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: APLICAR KIT (ao marcar como Instalado) -->
+<div class="ov" id="m-aplicar-kit">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hd"><div class="modal-title">🚀 Aplicar Kit — <span id="ak-cliente-nome"></span></div><button class="modal-x" onclick="AdmShell.closeM('m-aplicar-kit')">✕</button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Kit de Custo</label><select id="ak-kit"><option value="">Selecionar...</option></select></div>
+      <div class="fg"><label>Viveiro</label><input id="ak-viveiro" type="text" placeholder="Ex: Viveiro 01"></div>
+      <div class="fg"><label>Data</label><input id="ak-data" type="date"></div>
+      <div id="ak-preview" style="font-size:.74rem;color:var(--accent2)"></div>
+      <input type="hidden" id="ak-cliente">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="AdmShell.closeM('m-aplicar-kit')">Pular</button>
+      <button class="btn bgr" onclick="confirmarAplicarKitPipeline()">🚀 Aplicar e Lançar no COGS</button>
+    </div>
+  </div>
+</div>
+
+<script src="adm-shared.js"></script>
+<script>
+const ETAPAS = ["Lead/Negociando","Agendado","Kit Separado","Em Instalação","Instalado","Pós-venda"];
+let CARDS = [];
+let KITS_CACHE = [];
+let FUNC_CACHE = [];
+const esc = t => String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const R = n => isNaN(n)||n===null ? '—' : 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+AdmShell.init({
+  activeKey: 'pipeline',
+  pageTitle: '🛠️ Fila de Instalação',
+  onReady: function(){
+    carregarPipeline();
+    carregarClientesParaAutocomplete();
+    carregarFuncionariosCache();
+    document.getElementById('cd-etapa').innerHTML = ETAPAS.map(e=>`<option>${e}</option>`).join('');
+  }
+});
+
+async function carregarClientesParaAutocomplete(){
+  const data = await AdmShell.api({ acao:'listar' });
+  if(data.status==='ok') document.getElementById('cd-clientes-list').innerHTML = (data.clientes||[]).map(c=>`<option value="${esc(c.Nome)}">`).join('');
+}
+async function carregarFuncionariosCache(){
+  const data = await AdmShell.api({ acao:'funcionarios_listar' });
+  if(data.status==='ok'){
+    FUNC_CACHE = (data.funcionarios||[]).filter(f=>f.status!=='Inativo');
+    document.getElementById('cd-resp').innerHTML = '<option value="">Não definido</option>' + FUNC_CACHE.map(f=>`<option value="${esc(f.nome)}">${esc(f.nome)}</option>`).join('');
+  }
+}
+
+async function carregarPipeline(){
+  const data = await AdmShell.api({ acao: 'pipeline_listar' });
+  if(data.status !== 'ok'){ AdmShell.toast('Erro: '+data.msg,'e'); return; }
+  CARDS = data.cards || [];
+  renderKanban();
+}
+
+function renderKanban(){
+  const wrap = document.getElementById('kanban-wrap');
+  wrap.innerHTML = `<div class="kanban">${ETAPAS.map((etapa, idx)=>{
+    const cards = CARDS.filter(c=>c.etapa===etapa);
+    return `<div class="kan-col">
+      <div class="kan-col-hd"><span>${etapa}</span><span class="kan-count">${cards.length}</span></div>
+      <div class="kan-cards">
+        ${cards.length ? cards.map(c=>`
+          <div class="kan-card">
+            <div class="kan-card-cliente">🦐 ${esc(c.cliente)}</div>
+            ${c.data_agendada ? `<div class="kan-card-meta">📅 ${c.data_agendada}</div>` : ''}
+            ${c.responsavel ? `<div class="kan-card-meta">👷 ${esc(c.responsavel)}</div>` : ''}
+            ${c.observacoes ? `<div class="kan-card-obs">"${esc(c.observacoes)}"</div>` : ''}
+            <div class="kan-card-actions">
+              <div>
+                <button class="kan-mv" ${idx===0?'disabled':''} onclick="moverCard('${c.id}', ${idx-1})">◀</button>
+                <button class="kan-mv" ${idx===ETAPAS.length-1?'disabled':''} onclick="moverCard('${c.id}', ${idx+1})">▶</button>
+              </div>
+              <div>
+                <button class="kan-mv" onclick="editarCard('${c.id}')">✏️</button>
+                <button class="kan-mv" onclick="excluirCard('${c.id}')">🗑️</button>
+              </div>
+            </div>
+          </div>`).join('') : `<div class="kan-empty">Vazio</div>`}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function abrirModalNovoCard(){
+  document.getElementById('m-card-title').textContent = '+ Novo Card';
+  document.getElementById('cd-id').value = '';
+  document.getElementById('cd-cliente').value = '';
+  document.getElementById('cd-etapa').value = ETAPAS[0];
+  document.getElementById('cd-data').value = '';
+  document.getElementById('cd-resp').value = '';
+  document.getElementById('cd-obs').value = '';
+  AdmShell.openM('m-card');
+}
+function editarCard(id){
+  const c = CARDS.find(x=>String(x.id)===String(id)); if(!c) return;
+  document.getElementById('m-card-title').textContent = '✏️ Editar Card';
+  document.getElementById('cd-id').value = c.id;
+  document.getElementById('cd-cliente').value = c.cliente;
+  document.getElementById('cd-etapa').value = c.etapa;
+  document.getElementById('cd-resp').value = c.responsavel || '';
+  document.getElementById('cd-obs').value = c.observacoes || '';
+  AdmShell.openM('m-card');
+}
+async function salvarCardModal(){
+  const cliente = document.getElementById('cd-cliente').value.trim();
+  if(!cliente){ AdmShell.toast('Informe o cliente','e'); return; }
+  const params = {
+    acao: 'pipeline_salvar',
+    id: document.getElementById('cd-id').value,
+    cliente,
+    etapa: document.getElementById('cd-etapa').value,
+    data_agendada: document.getElementById('cd-data').value,
+    responsavel: document.getElementById('cd-resp').value,
+    observacoes: document.getElementById('cd-obs').value.trim(),
+  };
+  const data = await AdmShell.api(params);
+  if(data.status==='ok'){ AdmShell.toast('✅ Salvo!','s'); AdmShell.closeM('m-card'); await carregarPipeline(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+async function excluirCard(id){
+  if(!confirm('Remover este card da fila?')) return;
+  const data = await AdmShell.api({ acao:'pipeline_deletar', id });
+  if(data.status==='ok'){ AdmShell.toast('Removido.','s'); await carregarPipeline(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+
+async function moverCard(id, novoIdx){
+  if(novoIdx<0 || novoIdx>=ETAPAS.length) return;
+  const novaEtapa = ETAPAS[novoIdx];
+  const card = CARDS.find(x=>String(x.id)===String(id));
+  const data = await AdmShell.api({ acao:'pipeline_mover', id, nova_etapa: novaEtapa });
+  if(data.status!=='ok'){ AdmShell.toast('Erro: '+data.msg,'e'); return; }
+  AdmShell.toast('Movido para '+novaEtapa,'s');
+  await carregarPipeline();
+
+  // ★ integração: ao chegar em "Instalado", oferece aplicar um Kit de Custo
+  if(novaEtapa === 'Instalado' && card){
+    if(confirm(`"${card.cliente}" foi movido para Instalado.\n\nDeseja aplicar um Kit de Custo agora (lança no COGS automaticamente)?`)){
+      abrirModalAplicarKit(card.cliente);
+    }
+  }
+}
+
+// ── INTEGRAÇÃO COM KITS ──
+async function abrirModalAplicarKit(cliente){
+  document.getElementById('ak-cliente').value = cliente;
+  document.getElementById('ak-cliente-nome').textContent = cliente;
+  document.getElementById('ak-viveiro').value = '';
+  document.getElementById('ak-data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('ak-preview').textContent = '';
+
+  if(!KITS_CACHE.length){
+    const data = await AdmShell.api({ acao:'kits_listar' });
+    if(data.status==='ok') KITS_CACHE = data.kits || [];
+  }
+  const sel = document.getElementById('ak-kit');
+  sel.innerHTML = '<option value="">Selecionar...</option>' + KITS_CACHE.map(k=>{
+    const total = (k.itens||[]).reduce((s,i)=>s+(parseFloat(i.valor_unit)||0)*(parseFloat(i.qtd)||0),0);
+    return `<option value="${k.id}">${esc(k.nome)} (${R(total)})</option>`;
+  }).join('');
+  AdmShell.openM('m-aplicar-kit');
+}
+async function confirmarAplicarKitPipeline(){
+  const kitId = document.getElementById('ak-kit').value;
+  const cliente = document.getElementById('ak-cliente').value;
+  const viveiro = document.getElementById('ak-viveiro').value.trim();
+  const data_custo = document.getElementById('ak-data').value;
+  if(!kitId){ AdmShell.toast('Selecione um kit','e'); return; }
+  if(!viveiro){ AdmShell.toast('Informe o viveiro','e'); return; }
+  const result = await AdmShell.api({ acao:'kits_aplicar', kit_id: kitId, cliente, viveiro, data: data_custo });
+  if(result.status==='ok'){
+    AdmShell.toast(`✅ ${result.msg}`,'s');
+    AdmShell.closeM('m-aplicar-kit');
+  } else AdmShell.toast('Erro: '+result.msg,'e');
+}
+</script>
+</body>
+</html>

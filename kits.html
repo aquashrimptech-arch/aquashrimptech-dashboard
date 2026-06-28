@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AquaShrimpTech — Kits de Custo</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="adm-shared.css">
+<style>
+/* ── estilos específicos desta página ── */
+.kit-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;transition:border-color .2s}
+.kit-card:hover{border-color:var(--border2)}
+.kit-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;flex-wrap:wrap;gap:10px}
+.kit-nome{font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.kit-desc{font-size:.7rem;color:var(--text3);margin-top:3px}
+.kit-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.kit-total{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent2)}
+.kit-toggle{background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:5px 11px;font-size:.68rem;cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif}
+.kit-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.kit-itens{display:none;border-top:1px solid var(--border)}
+.kit-itens.open{display:block}
+.kit-actions{display:flex;gap:6px;padding:12px 18px;border-top:1px solid var(--border);flex-wrap:wrap}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3);font-size:.8rem}
+.empty-state .ic{font-size:2rem;margin-bottom:10px;display:block}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="pg act" id="pg-kits">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:1.05rem;font-weight:700">📦 Kits de Custo</div>
+        <div style="font-size:.7rem;color:var(--text3)">Cadastre os itens de uma instalação uma vez — depois aplique em qualquer cliente com 1 clique</div>
+      </div>
+      <button class="btn bor" onclick="abrirModalNovoKit()">+ Novo Kit</button>
+    </div>
+
+    <div id="kits-lista">
+      <div style="text-align:center;padding:30px;color:var(--text3)"><span class="loading-spinner"></span> Carregando kits...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOVO/EDITAR KIT -->
+<div class="ov" id="m-kit">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hd"><div class="modal-title" id="m-kit-title">+ Novo Kit</div><button class="modal-x" onclick="AdmShell.closeM('m-kit')">✕</button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Nome do Kit</label><input id="kit-nome" type="text" placeholder="Ex: Kit Instalação Padrão (3 aeradores)"></div>
+      <div class="fg"><label>Descrição (opcional)</label><textarea id="kit-desc" rows="2" placeholder="Ex: ESP32-S3 + sensores + carcaça + cabos"></textarea></div>
+      <input type="hidden" id="kit-id">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="AdmShell.closeM('m-kit')">Cancelar</button>
+      <button class="btn bac" onclick="salvarKitModal()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOVO/EDITAR ITEM -->
+<div class="ov" id="m-item">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hd"><div class="modal-title" id="m-item-title">+ Novo Item</div><button class="modal-x" onclick="AdmShell.closeM('m-item')">✕</button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Descrição</label><input id="item-desc" type="text" placeholder="Ex: ESP32-S3 Dev Module"></div>
+      <div class="fr c2">
+        <div class="fg"><label>Categoria</label><select id="item-cat"><option>Hardware</option><option>Sensor</option><option>Carcaça/Proteção</option><option>Cabos/Conectores</option><option>Mão de Obra</option><option>Outros</option></select></div>
+        <div class="fg"><label>Quantidade</label><input id="item-qtd" type="number" value="1" min="0" step="1" oninput="calcItemTotal()"></div>
+      </div>
+      <div class="fr c2">
+        <div class="fg"><label>Valor Unitário (R$)</label><input id="item-valor" type="number" placeholder="0,00" step="0.01" min="0" oninput="calcItemTotal()"></div>
+        <div class="fg"><label>Total do Item</label><div id="item-total-disp" style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;color:var(--accent2)">R$ 0,00</div></div>
+      </div>
+      <div class="fg">
+        <label>Vincular a um item do Estoque Geral (opcional)</label>
+        <select id="item-estoque-vinculo"><option value="">Nenhum (não abate estoque)</option></select>
+        <div style="font-size:.62rem;color:var(--text3);margin-top:4px">Se vincular, ao aplicar o kit em um cliente a quantidade é abatida automaticamente do Estoque Geral.</div>
+      </div>
+      <input type="hidden" id="item-id">
+      <input type="hidden" id="item-kit-id">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="AdmShell.closeM('m-item')">Cancelar</button>
+      <button class="btn bac" onclick="salvarItemModal()">💾 Salvar Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: APLICAR KIT A UM CLIENTE -->
+<div class="ov" id="m-aplicar">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hd"><div class="modal-title">🚀 Aplicar Kit — <span id="ap-kit-nome"></span></div><button class="modal-x" onclick="AdmShell.closeM('m-aplicar')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:.72rem;color:var(--text3)">
+        Isso lança <b style="color:var(--accent)">todos os itens do kit</b> de uma vez na aba COGS, já vinculados ao cliente e viveiro escolhidos.
+      </div>
+      <div class="fg"><label>Cliente</label><select id="ap-cliente"><option value="">Selecionar...</option></select></div>
+      <div class="fg"><label>Viveiro</label><input id="ap-viveiro" type="text" placeholder="Ex: Viveiro 03"></div>
+      <div class="fg"><label>Data do custo</label><input id="ap-data" type="date"></div>
+      <div id="ap-preview" style="background:rgba(0,255,163,.06);border:1px solid rgba(0,255,163,.2);border-radius:8px;padding:12px 14px;margin-top:6px;font-size:.78rem;color:var(--accent2)"></div>
+      <input type="hidden" id="ap-kit-id">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="AdmShell.closeM('m-aplicar')">Cancelar</button>
+      <button class="btn bgr" onclick="confirmarAplicarKit()">🚀 Aplicar e Lançar no COGS</button>
+    </div>
+  </div>
+</div>
+
+<script src="adm-shared.js"></script>
+<script>
+let KITS = [];
+let CLIENTES_CACHE = [];
+let ESTOQUE_CACHE = [];
+const R = n => isNaN(n)||n===null ? '—' : 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+AdmShell.init({
+  activeKey: 'kits',
+  pageTitle: '📦 Kits de Custo',
+  onReady: function(){ carregarKits(); carregarEstoqueCache(); }
+});
+
+async function carregarEstoqueCache(){
+  const data = await AdmShell.api({ acao: 'estoque_listar' });
+  if(data.status==='ok') ESTOQUE_CACHE = data.itens || [];
+}
+
+async function carregarKits(){
+  const data = await AdmShell.api({ acao: 'kits_listar' });
+  if(data.status !== 'ok'){ AdmShell.toast('Erro ao carregar kits: '+data.msg,'e'); return; }
+  KITS = data.kits || [];
+  renderKits();
+}
+
+function renderKits(){
+  const el = document.getElementById('kits-lista');
+  if(!KITS.length){
+    el.innerHTML = `<div class="empty-state"><span class="ic">📦</span>Nenhum kit cadastrado ainda.<br>Clique em <b style="color:var(--text)">+ Novo Kit</b> pra criar o primeiro.</div>`;
+    return;
+  }
+  el.innerHTML = KITS.map(k => {
+    const total = (k.itens||[]).reduce((s,i)=>s + (parseFloat(i.valor_unit)||0)*(parseFloat(i.qtd)||0), 0);
+    return `
+    <div class="kit-card">
+      <div class="kit-hd">
+        <div>
+          <div class="kit-nome">🦐 ${esc(k.nome)} <span class="bdg bb">${(k.itens||[]).length} ${(k.itens||[]).length===1?'item':'itens'}</span></div>
+          ${k.descricao ? `<div class="kit-desc">${esc(k.descricao)}</div>` : ''}
+        </div>
+        <div class="kit-meta">
+          <span class="kit-total">${R(total)}</span>
+          <button class="kit-toggle" onclick="toggleKit('${k.id}')">🔽 Ver itens</button>
+        </div>
+      </div>
+      <div class="kit-itens" id="itens-${k.id}">
+        <div class="tw"><table>
+          <thead><tr><th>Descrição</th><th>Categoria</th><th style="text-align:right">Valor Unit.</th><th style="text-align:right">Qtd</th><th style="text-align:right">Total</th><th></th></tr></thead>
+          <tbody>${(k.itens||[]).map(i => `
+            <tr>
+              <td>${esc(i.descricao)} ${i.estoque_produto_id ? '<span class="bdg bg" style="font-size:.56rem" title="Abate do Estoque Geral">🔗 estoque</span>' : ''}</td>
+              <td><span class="bdg bo" style="font-size:.6rem">${esc(i.categoria||'—')}</span></td>
+              <td class="mono" style="text-align:right">${R(i.valor_unit)}</td>
+              <td class="mono" style="text-align:right">${i.qtd}</td>
+              <td class="mono" style="text-align:right;font-weight:700;color:var(--accent2)">${R((parseFloat(i.valor_unit)||0)*(parseFloat(i.qtd)||0))}</td>
+              <td style="white-space:nowrap">
+                <button class="btn btn-xs bol" onclick="abrirModalItem('${k.id}','${i.id}')">✏️</button>
+                <button class="btn btn-xs bdn" onclick="excluirItem('${i.id}')">🗑️</button>
+              </td>
+            </tr>`).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:16px">Nenhum item ainda — clique em "+ Adicionar Item" abaixo.</td></tr>`}
+          </tbody>
+        </table></div>
+      </div>
+      <div class="kit-actions">
+        <button class="btn btn-sm bgr" onclick="abrirModalAplicar('${k.id}')">🚀 Aplicar a um Cliente</button>
+        <button class="btn btn-sm bol" onclick="abrirModalItem('${k.id}')">+ Adicionar Item</button>
+        <button class="btn btn-sm bol" onclick="editarKit('${k.id}')">✏️ Editar Kit</button>
+        <button class="btn btn-sm bdn" onclick="excluirKit('${k.id}')">🗑️ Excluir Kit</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleKit(id){ document.getElementById('itens-'+id).classList.toggle('open'); }
+function esc(t){ return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── CRUD KIT ──
+function abrirModalNovoKit(){
+  document.getElementById('m-kit-title').textContent = '+ Novo Kit';
+  document.getElementById('kit-id').value = '';
+  document.getElementById('kit-nome').value = '';
+  document.getElementById('kit-desc').value = '';
+  AdmShell.openM('m-kit');
+}
+function editarKit(id){
+  const k = KITS.find(x=>String(x.id)===String(id)); if(!k) return;
+  document.getElementById('m-kit-title').textContent = '✏️ Editar Kit';
+  document.getElementById('kit-id').value = k.id;
+  document.getElementById('kit-nome').value = k.nome;
+  document.getElementById('kit-desc').value = k.descricao || '';
+  AdmShell.openM('m-kit');
+}
+async function salvarKitModal(){
+  const nome = document.getElementById('kit-nome').value.trim();
+  if(!nome){ AdmShell.toast('Informe o nome do kit','e'); return; }
+  const params = { acao:'kits_salvar', id: document.getElementById('kit-id').value, nome, descricao: document.getElementById('kit-desc').value.trim() };
+  const data = await AdmShell.api(params);
+  if(data.status==='ok'){ AdmShell.toast('✅ Kit salvo!','s'); AdmShell.closeM('m-kit'); await carregarKits(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+async function excluirKit(id){
+  if(!confirm('Excluir este kit? Os itens lançados em clientes anteriormente NÃO são afetados.')) return;
+  const data = await AdmShell.api({ acao:'kits_deletar', id });
+  if(data.status==='ok'){ AdmShell.toast('Kit excluído.','s'); await carregarKits(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+
+// ── CRUD ITEM ──
+function calcItemTotal(){
+  const v = parseFloat(document.getElementById('item-valor').value)||0;
+  const q = parseFloat(document.getElementById('item-qtd').value)||0;
+  document.getElementById('item-total-disp').textContent = R(v*q);
+}
+function abrirModalItem(kitId, itemId){
+  document.getElementById('item-kit-id').value = kitId;
+  const selEst = document.getElementById('item-estoque-vinculo');
+  selEst.innerHTML = '<option value="">Nenhum (não abate estoque)</option>' + ESTOQUE_CACHE.map(p=>`<option value="${p.id}">${esc(p.produto)} (${p.quantidade} ${esc(p.unidade)} em estoque)</option>`).join('');
+  if(itemId){
+    const k = KITS.find(x=>String(x.id)===String(kitId));
+    const item = k && (k.itens||[]).find(i=>String(i.id)===String(itemId));
+    document.getElementById('m-item-title').textContent = '✏️ Editar Item';
+    document.getElementById('item-id').value = item.id;
+    document.getElementById('item-desc').value = item.descricao;
+    document.getElementById('item-cat').value = item.categoria || 'Hardware';
+    document.getElementById('item-qtd').value = item.qtd;
+    document.getElementById('item-valor').value = item.valor_unit;
+    selEst.value = item.estoque_produto_id || '';
+  } else {
+    document.getElementById('m-item-title').textContent = '+ Novo Item';
+    document.getElementById('item-id').value = '';
+    document.getElementById('item-desc').value = '';
+    document.getElementById('item-cat').value = 'Hardware';
+    document.getElementById('item-qtd').value = '1';
+    document.getElementById('item-valor').value = '';
+    selEst.value = '';
+  }
+  calcItemTotal();
+  AdmShell.openM('m-item');
+}
+async function salvarItemModal(){
+  const desc = document.getElementById('item-desc').value.trim();
+  if(!desc){ AdmShell.toast('Informe a descrição do item','e'); return; }
+  const params = {
+    acao: 'kits_item_salvar',
+    id: document.getElementById('item-id').value,
+    kit_id: document.getElementById('item-kit-id').value,
+    descricao: desc,
+    categoria: document.getElementById('item-cat').value,
+    valor_unit: document.getElementById('item-valor').value || 0,
+    qtd: document.getElementById('item-qtd').value || 1,
+    estoque_produto_id: document.getElementById('item-estoque-vinculo').value || '',
+  };
+  const data = await AdmShell.api(params);
+  if(data.status==='ok'){ AdmShell.toast('✅ Item salvo!','s'); AdmShell.closeM('m-item'); await carregarKits(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+async function excluirItem(id){
+  if(!confirm('Excluir este item do kit?')) return;
+  const data = await AdmShell.api({ acao:'kits_item_deletar', id });
+  if(data.status==='ok'){ AdmShell.toast('Item excluído.','s'); await carregarKits(); }
+  else AdmShell.toast('Erro: '+data.msg,'e');
+}
+
+// ── APLICAR KIT ──
+async function abrirModalAplicar(kitId){
+  const k = KITS.find(x=>String(x.id)===String(kitId)); if(!k) return;
+  document.getElementById('ap-kit-id').value = kitId;
+  document.getElementById('ap-kit-nome').textContent = k.nome;
+  document.getElementById('ap-viveiro').value = '';
+  document.getElementById('ap-data').value = new Date().toISOString().split('T')[0];
+  const total = (k.itens||[]).reduce((s,i)=>s + (parseFloat(i.valor_unit)||0)*(parseFloat(i.qtd)||0), 0);
+  document.getElementById('ap-preview').innerHTML = `📦 ${(k.itens||[]).length} item(ns) · 💰 Total a lançar: <b>${R(total)}</b>`;
+
+  if(!CLIENTES_CACHE.length){
+    const data = await AdmShell.api({ acao:'listar' });
+    if(data.status==='ok') CLIENTES_CACHE = data.clientes || [];
+  }
+  const sel = document.getElementById('ap-cliente');
+  sel.innerHTML = '<option value="">Selecionar...</option>' + CLIENTES_CACHE.map(c=>`<option value="${esc(c.Nome)}">${esc(c.Nome)}</option>`).join('');
+  AdmShell.openM('m-aplicar');
+}
+async function confirmarAplicarKit(){
+  const kitId = document.getElementById('ap-kit-id').value;
+  const cliente = document.getElementById('ap-cliente').value;
+  const viveiro = document.getElementById('ap-viveiro').value.trim();
+  const data_custo = document.getElementById('ap-data').value;
+  if(!cliente){ AdmShell.toast('Selecione o cliente','e'); return; }
+  if(!viveiro){ AdmShell.toast('Informe o viveiro','e'); return; }
+  if(!confirm(`Confirma lançar todos os itens deste kit no COGS de "${cliente}" / "${viveiro}"?`)) return;
+  const result = await AdmShell.api({ acao:'kits_aplicar', kit_id: kitId, cliente, viveiro, data: data_custo });
+  if(result.status==='ok'){
+    AdmShell.toast(`✅ ${result.itens_lancados} item(ns) lançado(s) — ${R(result.valor_total)} no COGS de ${cliente}`,'s');
+    AdmShell.closeM('m-aplicar');
+  } else AdmShell.toast('Erro: '+result.msg,'e');
+}
+</script>
+</body>
+</html>
