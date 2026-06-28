@@ -518,34 +518,55 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
 
     <!-- UNIT ECONOMICS -->
     <div class="pg" id="pg-fin">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
-        <div><div style="font-size:1.05rem;font-weight:700">Financeiro ADM — Unit Economics</div><div style="font-size:.7rem;color:var(--text3)" id="fin-updated">Selecione o mês e clique em Atualizar</div></div>
-        <div style="display:flex;gap:7px;flex-wrap:wrap">
-          <select id="fin-mes" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:.74rem;outline:none" onchange="carregarDRE()"></select>
-          <button class="btn btn-sm bol" onclick="carregarDRE()">🔄 Atualizar</button>
-          <button class="btn btn-sm bac" onclick="abrirLancar('opex')">+ Lançar Custo</button>
-        </div>
-      </div>
-      <div class="kr" id="kpi-fin-adm" style="grid-template-columns:repeat(auto-fit,minmax(145px,1fr))">
-        <div class="kpi"><div class="kpi-ic">⏳</div><div class="kpi-lb">Aguardando</div><div class="kpi-vl ca">—</div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:16px">
-        <div class="card"><div class="card-hd"><div class="card-title">📊 DRE — Demonstrativo de Resultado</div><span class="bdg bb" id="fin-mes-label">—</span></div><div class="card-body" id="fin-dre-body"><div style="color:var(--text3);text-align:center;padding:20px">Clique em Atualizar</div></div></div>
-        <div class="card"><div class="card-hd"><div class="card-title">🥧 Composição de Custos</div></div><div class="card-body"><canvas id="ch-custos" height="220"></canvas></div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px;margin-bottom:16px">
-        <div class="card"><div class="card-hd"><div class="card-title">⚗️ Unit Economics</div></div><div class="card-body" id="fin-unit-body"><div style="color:var(--text3);text-align:center;padding:20px">—</div></div></div>
-        <div class="card"><div class="card-hd"><div class="card-title">📈 Evolução: MRR vs OPEX vs EBITDA</div></div><div class="card-body"><canvas id="ch-evolucao" height="190"></canvas></div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
-        <div class="card"><div class="card-hd"><div class="card-title">🔧 CAPEX — Investimentos</div><button class="btn btn-xs bac" onclick="abrirLancar('capex')">+ Novo</button></div><div class="tw"><table><thead><tr><th>Descrição</th><th>Total</th><th>Amort/mês</th><th>Meses</th><th>Status</th></tr></thead><tbody id="tbl-capex"></tbody></table></div></div>
-        <div class="card"><div class="card-hd"><div class="card-title">💸 OPEX — Despesas do Mês</div><button class="btn btn-xs bwn" onclick="abrirLancar('opex')">+ Nova</button></div><div class="tw"><table><thead><tr><th>Categoria</th><th>Descrição</th><th>Valor</th><th>Recorr.</th></tr></thead><tbody id="tbl-opex"></tbody></table></div></div>
-      </div>
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-hd"><div class="card-title">📦 COGS — Custo por Cliente Instalado</div><button class="btn btn-xs bdn" onclick="abrirLancar('cogs')">+ Lançar</button></div>
-        <div class="tw"><table><thead><tr><th>Cliente</th><th>Viveiro</th><th>Categoria</th><th>Descrição</th><th>Valor</th></tr></thead><tbody id="tbl-cogs"></tbody></table></div>
-      </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div><div style="font-size:1.05rem;font-weight:700">Financeiro ADM — Unit Economics</div><div style="font-size:.7rem;color:var(--text3)" id="fin-updated">Selecione o mês e clique em Atualizar</div></div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <select id="fin-mes" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:.74rem;outline:none" onchange="carregarDRE()"></select>
+      <button class="btn btn-sm bol" onclick="carregarDRE()">🔄 Atualizar</button>
+      <button class="btn btn-sm bac" onclick="abrirLancar('opex')">+ Lançar Custo</button>
     </div>
+  </div>
+
+  <!-- ★ NOVO — Ponto de Equilíbrio: quanto a empresa precisa faturar/mês -->
+  <div class="card" style="margin-bottom:16px;border-color:rgba(0,229,255,.25)">
+    <div class="card-body" id="breakeven-body" style="padding:18px 20px">
+      <div style="color:var(--text3);text-align:center;padding:10px">Carregando...</div>
+    </div>
+  </div>
+
+  <div class="kr" id="kpi-fin-adm" style="grid-template-columns:repeat(auto-fit,minmax(145px,1fr))">
+    <div class="kpi"><div class="kpi-ic">⏳</div><div class="kpi-lb">Aguardando</div><div class="kpi-vl ca">—</div></div>
+  </div>
+
+  <!-- ★ NOVO — Payback por Cliente: quando cada instalação se paga -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-hd">
+      <div class="card-title">⏱️ Payback por Cliente — quando cada instalação se paga</div>
+      <span style="font-size:.6rem;color:var(--text3)">Investido = total lançado no COGS daquele cliente</span>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Cliente</th><th style="text-align:right">Investido</th><th style="text-align:right">Receita/mês</th><th style="text-align:right">Já recebido (estim.)</th><th>Status</th></tr></thead>
+      <tbody id="tbl-payback-cliente"><tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Carregando...</td></tr></tbody>
+    </table></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:16px">
+    <div class="card"><div class="card-hd"><div class="card-title">📊 DRE — Demonstrativo de Resultado</div><span class="bdg bb" id="fin-mes-label">—</span></div><div class="card-body" id="fin-dre-body"><div style="color:var(--text3);text-align:center;padding:20px">Clique em Atualizar</div></div></div>
+    <div class="card"><div class="card-hd"><div class="card-title">🥧 Composição de Custos</div></div><div class="card-body"><canvas id="ch-custos" height="220"></canvas></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px;margin-bottom:16px">
+    <div class="card"><div class="card-hd"><div class="card-title">⚗️ Unit Economics</div></div><div class="card-body" id="fin-unit-body"><div style="color:var(--text3);text-align:center;padding:20px">—</div></div></div>
+    <div class="card"><div class="card-hd"><div class="card-title">📈 Evolução: MRR vs OPEX vs EBITDA</div></div><div class="card-body"><canvas id="ch-evolucao" height="190"></canvas></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+    <div class="card"><div class="card-hd"><div class="card-title">🔧 CAPEX — Investimentos</div><button class="btn btn-xs bac" onclick="abrirLancar('capex')">+ Novo</button></div><div class="tw"><table><thead><tr><th>Descrição</th><th>Total</th><th>Amort/mês</th><th>Meses</th><th>Status</th></tr></thead><tbody id="tbl-capex"></tbody></table></div></div>
+    <div class="card"><div class="card-hd"><div class="card-title">💸 OPEX — Despesas do Mês</div><button class="btn btn-xs bwn" onclick="abrirLancar('opex')">+ Nova</button></div><div class="tw"><table><thead><tr><th>Categoria</th><th>Descrição</th><th>Valor</th><th>Recorr.</th></tr></thead><tbody id="tbl-opex"></tbody></table></div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-hd"><div class="card-title">📦 COGS — Custo por Cliente Instalado</div><button class="btn btn-xs bdn" onclick="abrirLancar('cogs')">+ Lançar</button></div>
+    <div class="tw"><table><thead><tr><th>Cliente</th><th>Viveiro</th><th>Categoria</th><th>Descrição</th><th>Valor</th></tr></thead><tbody id="tbl-cogs"></tbody></table></div>
+  </div>
+</div>
 
     <!-- CONFIG -->
     <div class="pg" id="pg-config">
@@ -1905,18 +1926,97 @@ async function carregarDRE() {
       api({acao:'fin_opex',mes_ano:ma}),
       api({acao:'fin_cogs'}),
     ]);
-    if(dreResp.status==='ok'){renderKPIsFin(dreResp);renderDRE(dreResp);renderUnitEconomics(dreResp);renderChartCustos(dreResp);}
+    if(dreResp.status==='ok'){
+      renderBreakeven(dreResp);
+      renderKPIsFin(dreResp);
+      renderDRE(dreResp);
+      renderUnitEconomics(dreResp);
+      renderChartCustos(dreResp);
+    }
     else toast('DRE: '+dreResp.msg,'e');
     if(histResp.status==='ok') renderChartEvolucao(histResp.historico);
     if(capexResp.status==='ok') renderTabelaCAPEX(capexResp.itens);
     if(opexResp.status==='ok')  renderTabelaOPEX(opexResp.itens);
-    if(cogsResp.status==='ok')  renderTabelaCOGS(cogsResp.itens);
+    if(cogsResp.status==='ok'){ renderTabelaCOGS(cogsResp.itens); renderPaybackClientes(cogsResp); }
     document.getElementById('fin-updated').textContent='DRE atualizado: '+new Date().toLocaleTimeString('pt-BR');
   } catch(err) {
     document.getElementById('fin-updated').textContent='⚠ Erro — verifique o Apps Script';
     toast('Erro ao carregar DRE: '+err.message,'e');
     console.error(err);
   }
+}
+
+// ★ NOVO — Banner do Ponto de Equilíbrio (breakeven mensal da empresa)
+function renderBreakeven(d){
+  const breakeven = (d.opex||0) + (d.amort_mensal||0);
+  const diff = d.mrr - breakeven;
+  const acima = diff >= 0;
+  const pct = breakeven>0 ? Math.min(150, (d.mrr/breakeven*100)) : 100;
+  const ticket = d.ticket_medio || 0;
+  const clientesNecessarios = ticket>0 ? Math.ceil(breakeven/ticket) : 0;
+  const clientesFaltam = Math.max(0, clientesNecessarios - (d.clientes_ativos||0));
+  document.getElementById('breakeven-body').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <div>
+        <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">🎯 Ponto de Equilíbrio Mensal</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--accent)">${R(breakeven)}</div>
+        <div style="font-size:.66rem;color:var(--text3);margin-top:3px;max-width:340px">OPEX (${R(d.opex)}) + Amortização CAPEX (${R(d.amort_mensal)}) — é o que a empresa precisa faturar todo mês só pra não ter prejuízo, antes de qualquer lucro.</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">MRR Atual</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:${acima?'var(--accent2)':'var(--danger)'}">${R(d.mrr)}</div>
+        <div style="font-size:.7rem;font-weight:700;color:${acima?'var(--accent2)':'var(--danger)'}">${acima ? '✅ '+R(diff)+' acima do equilíbrio' : '⚠️ Faltam '+R(-diff)+'/mês'}</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;background:var(--bg2);border-radius:6px;height:8px;overflow:hidden;position:relative">
+      <div style="height:100%;border-radius:6px;width:${Math.min(100,pct)}%;background:${acima?'var(--accent2)':'var(--warn)'};transition:width .6s"></div>
+    </div>
+    <div style="margin-top:10px;font-size:.7rem;color:var(--text3)">
+      ${clientesFaltam>0
+        ? `Com seu ticket médio de ${R(ticket)}/cliente, faltam <b style="color:var(--warn)">${clientesFaltam} cliente(s) ativo(s)</b> pra cobrir o ponto de equilíbrio (precisa de ~${clientesNecessarios}, tem ${d.clientes_ativos}).`
+        : ticket>0 ? `Você já tem clientes suficientes pra cobrir o ponto de equilíbrio (precisava de ~${clientesNecessarios}, tem ${d.clientes_ativos}). O excedente é lucro.` : ''}
+    </div>
+  `;
+}
+
+// ★ NOVO — Payback individual por cliente (usa o global CLIENTES já carregado pelo Dashboard)
+function renderPaybackClientes(cogsDados){
+  const porCliente = cogsDados.por_cliente || {};
+  const tb = document.getElementById('tbl-payback-cliente');
+  const nomes = Object.keys(porCliente);
+  if(!nomes.length){ tb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Nenhum custo de cliente lançado ainda no COGS.</td></tr>'; return; }
+
+  const escFin = t => String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const linhas = nomes.map(nome=>{
+    const investido = porCliente[nome] || 0;
+    const cliente = CLIENTES.find(c=>c.Nome===nome);
+    const receitaMensal = cliente ? (parseInt(cliente.QtdViveiros)||0)*(parseFloat(cliente.ValorPorViveiro)||50) : 0;
+    const paybackMeses = receitaMensal>0 ? (investido/receitaMensal) : null;
+    let mesesAtivo = 0;
+    if(cliente && cliente.DataCadastro){
+      const m = String(cliente.DataCadastro).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if(m){ const dt = new Date(+m[3], +m[2]-1, +m[1]); mesesAtivo = Math.max(0, (new Date()-dt)/(1000*60*60*24*30)); }
+    }
+    const jaRecebido = receitaMensal * mesesAtivo;
+    const pago = paybackMeses!==null && mesesAtivo >= paybackMeses;
+    return { nome, investido, receitaMensal, paybackMeses, jaRecebido, pago, mesesAtivo };
+  }).sort((a,b)=> (a.pago - b.pago) || ((a.paybackMeses||999) - (b.paybackMeses||999)));
+
+  tb.innerHTML = linhas.map(l=>{
+    const statusHtml = l.receitaMensal<=0
+      ? '<span class="bdg bw">⚠️ sem mensalidade cadastrada</span>'
+      : l.pago
+        ? `<span class="bdg bg">✅ pago há ${Math.max(0,Math.round(l.mesesAtivo - l.paybackMeses))} ${Math.max(0,Math.round(l.mesesAtivo-l.paybackMeses))===1?'mês':'meses'}</span>`
+        : `<span class="bdg bw">⏳ faltam ${Math.max(0,Math.ceil(l.paybackMeses - l.mesesAtivo))} ${Math.max(0,Math.ceil(l.paybackMeses-l.mesesAtivo))===1?'mês':'meses'}</span>`;
+    return `<tr>
+      <td style="font-weight:600">${escFin(l.nome)}</td>
+      <td class="mono" style="text-align:right;color:var(--danger)">${R(l.investido)}</td>
+      <td class="mono" style="text-align:right;color:var(--accent2)">${l.receitaMensal>0?R(l.receitaMensal)+'/mês':'—'}</td>
+      <td class="mono" style="text-align:right;color:var(--text3)">${R(l.jaRecebido)}</td>
+      <td>${statusHtml}</td>
+    </tr>`;
+  }).join('');
 }
 
 function renderKPIsFin(d) {
@@ -1929,7 +2029,7 @@ function renderKPIsFin(d) {
     {ic:'📈',lb:'EBITDA',vl:R(d.ebitda),tr:d.ebitda_pct.toFixed(1)+'% da receita',cls:d.ebitda>=0?'g':'d',clv:d.ebitda>=0?'cg':'cd'},
     {ic:'💵',lb:'Lucro Líquido',vl:R(d.lucro_liquido),tr:'Após amort. CAPEX',cls:d.lucro_liquido>=0?'g':'d',clv:d.lucro_liquido>=0?'cg':'cd'},
     {ic:'🔁',lb:'LTV/CAC',vl:d.ltv_cac.toFixed(1)+'x',tr:'Meta: >3x | Ideal: >5x',cls:'p',clv:ltvCacColor},
-    {ic:'⏱️',lb:'Payback',vl:paybackStr,tr:'Retorno do investimento',cls:'w',clv:'cw'},
+    {ic:'⏱️',lb:'Payback Total',vl:paybackStr,tr:'Retorno do investimento total da empresa',cls:'w',clv:'cw'},
     {ic:'💸',lb:'OPEX Total',vl:R(d.opex),tr:'Despesas do mês',cls:'o',clv:'co'},
     {ic:'🔧',lb:'CAPEX Amort.',vl:R(d.amort_mensal),tr:'Total investido: '+R(d.total_investido),cls:'',clv:'ca'},
   ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-ic">${k.ic}</div><div class="kpi-lb">${k.lb}</div><div class="kpi-vl ${k.clv}">${k.vl}</div><div class="kpi-tr">${k.tr}</div></div>`).join('');
@@ -2070,6 +2170,7 @@ async function salvarLancamento() {
     else toast('Erro: '+data.msg,'e');
   } catch { toast('⚠ Erro de conexão com o Apps Script','e'); }
 }
+
 
 // ══════════════════════════════════════════════════════
 // NAV / MODAL / UTILS
