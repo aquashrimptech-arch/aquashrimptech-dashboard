@@ -674,6 +674,7 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div id="viv-ct"></div>
       <div class="fsec">🏷️ Nomes dos Viveiros (igual ao firmware)</div>
       <div style="font-size:.7rem;color:var(--text3);margin-bottom:8px">Deve bater EXATAMENTE com o nome configurado no ESP32 (ex: "Viveiro 02"). Um por linha, na mesma ordem das URLs acima.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="font-size:.74rem;color:var(--text3)">Um nome por viveiro, na mesma ordem</span><button class="btn btn-sm bol" onclick="addVivNome()">+ Nome</button></div>
       <div id="vivnomes-ct"></div>
       <div class="fsec">🏭 Estoque</div>
       <div class="fg"><label>URL Apps Script — Estoque</label><input id="c-est" type="text" placeholder="https://script.google.com/macros/s/.../exec"></div>
@@ -832,6 +833,12 @@ function addTelVoz(valor='') {
   const ct=document.getElementById('telvoz-ct'), n=ct.children.length+1, d=document.createElement('div');
   d.className='viv-row';
   d.innerHTML=`<div class="viv-n">📞${n}</div><input type="text" placeholder="Ex: 85999991234" value="${valor}" style="flex:1;background:transparent;border:none;color:var(--text);font-size:.78rem;outline:none"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>`;
+  ct.appendChild(d);
+}
+function addVivNome(valor='') {
+  const ct=document.getElementById('vivnomes-ct'), n=ct.children.length+1, d=document.createElement('div');
+  d.className='viv-row';
+  d.innerHTML=`<div class="viv-n">N${n}</div><input type="text" placeholder="Ex: Viveiro 0${n}" value="${valor}" style="flex:1;background:transparent;border:none;color:var(--text);font-size:.78rem;outline:none"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:.82rem;padding:3px">✕</button>`;
   ct.appendChild(d);
 }
 async function excluirCliente(id) {
@@ -1287,10 +1294,10 @@ async function atualizarEspLogs() {
   if (!BOT_CLI_SEL) return;
   try {
     const nomesViv = String(BOT_CLI_SEL.ViveirosNomes || '').trim();
-    const params = nomesViv ? { acao: 'esp_status_list', viveiros: nomesViv } : { acao: 'esp_status_list', chat_id: getChatId(BOT_CLI_SEL.ID) };
-    const params = chatId
-      ? { acao: 'esp_log_read', viveiro, chat_id: chatId, limite: 150 }
-      : { acao: 'esp_log_read', viveiro, limite: 150 };
+    const viveiro = document.getElementById('esp-log-filtro')?.value || '';
+    const params = nomesViv
+      ? { acao: 'esp_log_read', viveiro, viveiros: nomesViv, limite: 150 }
+      : { acao: 'esp_log_read', viveiro, chat_id: getChatId(BOT_CLI_SEL.ID), limite: 150 };
     const data = await api(params);
     const el = document.getElementById('esp-log-box');
     if (!el || !data || data.status !== 'ok') return;
