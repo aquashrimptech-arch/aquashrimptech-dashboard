@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaShrimpTech — Manual Técnico Completo</title>
+<style>
+  :root {
+    --verde: #2ecc71; --verde-dark: #27ae60; --azul: #3498db; --azul-dark: #2980b9;
+    --laranja: #e67e22; --vermelho: #e74c3c; --roxo: #9b59b6; --cinza: #95a5a6;
+    --bg: #0f1923; --bg2: #162030; --bg3: #1e2d3d; --bg4: #243444;
+    --text: #ecf0f1; --text2: #bdc3c7; --border: #2c3e50;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height:1.6; }
+
+  /* NAV */
+  nav { background: var(--bg2); border-bottom: 2px solid var(--verde); position: sticky; top:0; z-index:100; padding: 0 20px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  nav .logo { font-size:1.3rem; font-weight:700; color: var(--verde); padding: 12px 0; margin-right:12px; white-space:nowrap; }
+  nav a { color: var(--text2); text-decoration:none; padding: 14px 10px; font-size:0.82rem; border-bottom: 3px solid transparent; transition:.2s; white-space:nowrap; }
+  nav a:hover, nav a.active { color: var(--verde); border-bottom-color: var(--verde); }
+
+  /* LAYOUT */
+  .container { max-width:1100px; margin:0 auto; padding: 30px 20px; }
+  h1 { font-size:2rem; color: var(--verde); margin-bottom:6px; }
+  h2 { font-size:1.4rem; color: var(--azul); margin: 32px 0 14px; border-left: 4px solid var(--azul); padding-left:12px; }
+  h3 { font-size:1.1rem; color: var(--verde); margin: 20px 0 8px; }
+  h4 { font-size:.95rem; color: var(--laranja); margin: 14px 0 6px; }
+  p { color: var(--text2); margin-bottom:10px; }
+  ul, ol { color: var(--text2); padding-left:20px; margin-bottom:10px; }
+  li { margin-bottom:4px; }
+  strong { color: var(--text); }
+  code { background: var(--bg4); color: #f1c40f; padding: 2px 7px; border-radius:4px; font-family: 'Courier New', monospace; font-size:.88rem; }
+  pre { background: var(--bg4); border: 1px solid var(--border); border-radius:8px; padding:16px; overflow-x:auto; margin:12px 0; }
+  pre code { background:none; padding:0; color: #a8ff78; font-size:.85rem; }
+
+  /* SECTIONS */
+  .section { display:none; }
+  .section.active { display:block; }
+
+  /* CARDS */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius:10px; padding:20px; margin-bottom:16px; }
+  .card-green { border-left: 4px solid var(--verde); }
+  .card-blue { border-left: 4px solid var(--azul); }
+  .card-orange { border-left: 4px solid var(--laranja); }
+  .card-red { border-left: 4px solid var(--vermelho); }
+  .card-purple { border-left: 4px solid var(--roxo); }
+
+  /* BADGE */
+  .badge { display:inline-block; padding:2px 10px; border-radius:20px; font-size:.75rem; font-weight:600; margin-left:6px; }
+  .badge-green { background: rgba(46,204,113,.2); color: var(--verde); }
+  .badge-orange { background: rgba(230,126,34,.2); color: var(--laranja); }
+  .badge-red { background: rgba(231,76,60,.2); color: var(--vermelho); }
+  .badge-blue { background: rgba(52,152,219,.2); color: var(--azul); }
+  .badge-purple { background: rgba(155,89,182,.2); color: var(--roxo); }
+  .badge-gray { background: rgba(149,165,166,.2); color: var(--cinza); }
+
+  /* ALERT BOX */
+  .alert { padding:14px 16px; border-radius:8px; margin:12px 0; font-size:.9rem; }
+  .alert-warn { background: rgba(230,126,34,.15); border: 1px solid var(--laranja); color: #f39c12; }
+  .alert-info { background: rgba(52,152,219,.15); border: 1px solid var(--azul); color: #74b9ff; }
+  .alert-danger { background: rgba(231,76,60,.15); border: 1px solid var(--vermelho); color: #ff7675; }
+  .alert-success { background: rgba(46,204,113,.15); border: 1px solid var(--verde); color: var(--verde); }
+
+  /* TABLE */
+  table { width:100%; border-collapse:collapse; margin:12px 0; font-size:.88rem; }
+  th { background: var(--bg4); color: var(--azul); padding:10px 12px; text-align:left; border-bottom: 2px solid var(--border); }
+  td { padding:9px 12px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align:top; }
+  tr:hover td { background: rgba(255,255,255,.03); }
+
+  /* STEP */
+  .steps { counter-reset: step; }
+  .step { display:flex; gap:16px; margin-bottom:20px; align-items:flex-start; }
+  .step-num { min-width:36px; height:36px; border-radius:50%; background: var(--verde); color:#000; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:.95rem; }
+  .step-body { flex:1; }
+
+  /* FLOW */
+  .flow { display:flex; flex-direction:column; gap:0; }
+  .flow-item { display:flex; gap:0; }
+  .flow-line { display:flex; flex-direction:column; align-items:center; width:40px; }
+  .flow-dot { width:14px; height:14px; border-radius:50%; background: var(--verde); flex-shrink:0; margin-top:4px; }
+  .flow-connector { width:2px; background: var(--border); flex:1; min-height:20px; }
+  .flow-content { flex:1; background: var(--bg3); border-radius:8px; padding:12px 16px; margin-bottom:8px; border: 1px solid var(--border); }
+  .flow-content strong { color: var(--verde); }
+
+  /* CMD BOX */
+  .cmd-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:12px; margin:12px 0; }
+  .cmd-card { background: var(--bg3); border: 1px solid var(--border); border-radius:8px; padding:14px; }
+  .cmd-name { color: #f1c40f; font-family: monospace; font-size:.95rem; font-weight:700; margin-bottom:4px; }
+  .cmd-scope { font-size:.72rem; margin-bottom:6px; }
+  .cmd-desc { color: var(--text2); font-size:.85rem; }
+
+  /* BTN */
+  .tg-btn { display:inline-block; background: var(--bg4); border: 1px solid var(--border); border-radius:6px; padding:6px 14px; margin:3px; font-size:.82rem; color: var(--text); cursor:default; }
+  .tg-btn:hover { border-color: var(--verde); color: var(--verde); }
+
+  /* DEFINE TABLE */
+  .define-row { display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--border); }
+  .define-key { font-family:monospace; color:#f1c40f; min-width:220px; font-size:.88rem; }
+  .define-val { color: var(--verde); font-family:monospace; font-size:.88rem; min-width:60px; }
+  .define-desc { color: var(--text2); font-size:.85rem; flex:1; }
+
+  /* FLUXO TELEGRAM */
+  .tg-flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:8px 0; }
+  .tg-box { background: var(--bg4); border:1px solid var(--border); border-radius:8px; padding:8px 14px; font-size:.83rem; color: var(--text2); }
+  .tg-arrow { color: var(--verde); font-size:1.2rem; }
+
+  /* ARCH DIAGRAM */
+  .arch { display:grid; grid-template-columns: 1fr auto 1fr; gap:8px; align-items:center; margin:16px 0; }
+  .arch-box { background: var(--bg3); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center; }
+  .arch-box strong { display:block; color: var(--verde); margin-bottom:4px; }
+  .arch-arrow { text-align:center; color: var(--azul); font-size:1.5rem; }
+
+  /* CHIP INFO */
+  .chip { display:inline-flex; align-items:center; gap:6px; background: var(--bg4); border:1px solid var(--border); border-radius:20px; padding:4px 12px; font-size:.8rem; margin:3px; }
+  .chip-dot { width:8px; height:8px; border-radius:50%; }
+
+  /* SEARCH */
+  #searchBox { width:100%; padding:12px 16px; background: var(--bg3); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:.95rem; margin-bottom:20px; }
+  #searchBox:focus { outline:none; border-color: var(--verde); }
+  .search-result { display:none; }
+  .search-result.visible { display:block; }
+
+  /* RESPONSIVE */
+  @media(max-width:600px) {
+    h1 { font-size:1.5rem; }
+    .cmd-grid { grid-template-columns:1fr; }
+    .arch { grid-template-columns:1fr; }
+    .arch-arrow { transform: rotate(90deg); }
+    .define-row { flex-direction:column; gap:4px; }
+  }
+
+  /* COPY BTN */
+  .copy-btn { background: var(--bg4); border:1px solid var(--border); color: var(--text2); padding:3px 10px; border-radius:4px; cursor:pointer; font-size:.75rem; float:right; margin-top:-2px; }
+  .copy-btn:hover { border-color: var(--verde); color: var(--verde); }
+
+  .tag-line { color: var(--text2); font-size:.95rem; margin-bottom:24px; }
+  .version-badge { background: rgba(46,204,113,.15); border:1px solid var(--verde); color: var(--verde); padding:4px 14px; border-radius:20px; font-size:.85rem; display:inline-block; margin-bottom:20px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">🦐 AST Bot</div>
+  <a href="#" class="active" onclick="showSection('visao',this)">Visão Geral</a>
+  <a href="#" onclick="showSection('arquitetura',this)">Arquitetura</a>
+  <a href="#" onclick="showSection('provisioning',this)">Provisionamento</a>
+  <a href="#" onclick="showSection('codigo',this)">Configuração do Código</a>
+  <a href="#" onclick="showSection('comandos',this)">Comandos</a>
+  <a href="#" onclick="showSection('botoes',this)">Botões & Fluxos</a>
+  <a href="#" onclick="showSection('sensores',this)">Sensores</a>
+  <a href="#" onclick="showSection('multibot',this)">Multi-Viveiro</a>
+  <a href="#" onclick="showSection('troubleshoot',this)">Solução de Problemas</a>
+  <a href="#" onclick="showSection('novocliente',this)">Novo Cliente</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- VISÃO GERAL -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="visao" class="section active">
+<div class="container">
+  <h1>🦐 AquaShrimpTech — Manual Técnico Completo</h1>
+  <p class="tag-line">Sistema de monitoramento e gestão para carcinicultura (cultivo de camarão L. vannamei)</p>
+  <div class="version-badge">Firmware v9.40 — Junho 2026</div>
+
+  <div class="card card-blue">
+    <h3>O que é o AquaShrimpTech Bot?</h3>
+    <p>Um sistema embarcado no <strong>ESP32-S3</strong> que se comunica via <strong>Telegram</strong> para monitorar e controlar viveiros de camarão. Cada viveiro tem seu próprio ESP32-S3 com firmware dedicado. O técnico ou produtor opera tudo pelo celular, sem precisar estar presencialmente no viveiro.</p>
+  </div>
+
+  <h2>O que o sistema faz</h2>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px;">
+    <div class="card card-green">
+      <h4>🌀 Controle de Aeradores</h4>
+      <p>Liga/desliga aeradores remotamente via Telegram. Monitora corrente elétrica e alerta automaticamente se um aerador parar.</p>
+    </div>
+    <div class="card card-green">
+      <h4>⚡ Monitoramento Elétrico</h4>
+      <p>Mede tensão nas 3 fases (L1, L2, L3). Alerta em caso de fase zerada, sobretensão ou subtensão.</p>
+    </div>
+    <div class="card card-green">
+      <h4>🦐 Gestão de Cultivo</h4>
+      <p>Registra povoamento, biometria, ração diária, mortalidade, FCA, biomassa estimada e sobrevivência.</p>
+    </div>
+    <div class="card card-green">
+      <h4>📦 Controle de Estoque</h4>
+      <p>Gerencia entrada e saída de insumos (ração, produtos químicos, etc.) com alertas de estoque mínimo.</p>
+    </div>
+    <div class="card card-green">
+      <h4>🧪 Dados Técnicos</h4>
+      <p>Coleta temperatura, OD, pH, salinidade, transparência, amônia, nitrito e alcalinidade.</p>
+    </div>
+    <div class="card card-green">
+      <h4>📊 Google Sheets</h4>
+      <p>Todos os dados são enviados automaticamente para planilhas Google, acessíveis pelo painel web.</p>
+    </div>
+    <div class="card card-green">
+      <h4>🔄 OTA (Update Remoto)</h4>
+      <p>Firmware atualiza automaticamente via internet, sem precisar de cabo USB após a instalação inicial.</p>
+    </div>
+    <div class="card card-green">
+      <h4>🔒 Tampa / Segurança</h4>
+      <p>Sensor de fim de curso detecta abertura do painel elétrico e envia alerta imediato.</p>
+    </div>
+  </div>
+
+  <h2>Componentes de Hardware</h2>
+  <table>
+    <tr><th>Componente</th><th>Função</th><th>Observação</th></tr>
+    <tr><td><strong>ESP32-S3 Dev Module</strong></td><td>Microcontrolador principal</td><td>Board: ESP32S3 Dev Module no Arduino IDE</td></tr>
+    <tr><td><strong>Módulos SCT-013</strong></td><td>Sensor de corrente (não invasivo)</td><td>1 por aerador — GPIOs 1, 2, 3, 4</td></tr>
+    <tr><td><strong>Módulos ZMPT101B</strong></td><td>Sensor de tensão AC</td><td>1 por fase — GPIOs 5, 6, 7</td></tr>
+    <tr><td><strong>Módulos Relé 5V</strong></td><td>Acionamento dos aeradores</td><td>GPIOs 16, 17, 18 (19 reservado)</td></tr>
+    <tr><td><strong>Fim de curso</strong></td><td>Sensor de abertura da tampa</td><td>GPIO 15, INPUT_PULLUP</td></tr>
+    <tr><td><strong>Fonte 5V</strong></td><td>Alimentação do ESP32-S3</td><td>Mínimo 1A. Brownout causa reinicializações.</td></tr>
+  </table>
+
+  <h2>Partition Scheme (obrigatório)</h2>
+  <div class="alert alert-warn">
+    ⚠️ No Arduino IDE: <strong>Tools → Partition Scheme → Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)</strong><br>
+    Sem isso, o OTA não funciona (sem espaço para o segundo firmware).
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ARQUITETURA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="arquitetura" class="section">
+<div class="container">
+  <h1>Arquitetura do Sistema</h1>
+
+  <h2>Fluxo de dados</h2>
+  <div class="flow">
+    <div class="flow-item">
+      <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>ESP32-S3 (viveiro)</strong> — lê sensores a cada 5s, processa lógica local, persiste estado no NVS</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Bot Telegram</strong> — canal bidirecional. ESP envia alertas; operador envia comandos. Polling a cada 1s (<code>getUpdates</code>)</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Google Apps Script (GAS)</strong> — recebe dados via HTTP GET, grava nas planilhas Google Sheets do cliente</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Google Sheets</strong> — armazena histórico completo de cultivo, estoque, custos e dados técnicos</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-line"><div class="flow-dot"></div></div>
+      <div class="flow-content"><strong>Dashboard Web (GitHub Pages)</strong> — painel administrativo e do cliente, lê dados do Sheets em tempo real</div>
+    </div>
+  </div>
+
+  <h2>Arquitetura Multi-Viveiro</h2>
+  <div class="card card-blue">
+    <p>Cada viveiro tem seu próprio <strong>ESP32-S3</strong> e seu próprio <strong>Bot Telegram</strong> (token diferente). Todos os bots ficam no <strong>mesmo grupo Telegram</strong> do cliente. O <code>chat_id</code> é o mesmo para todos os ESPs de um cliente.</p>
+    <br>
+    <table>
+      <tr><th>ESP</th><th>Token Bot</th><th>Chat ID</th><th>URL Sheets</th><th>URL Estoque</th></tr>
+      <tr><td>Viveiro 01</td><td>Token_Bot_V01</td><td>MESMO</td><td>Script do V01</td><td>Script compartilhado</td></tr>
+      <tr><td>Viveiro 02</td><td><strong>Token_Bot_V02</strong></td><td>MESMO</td><td>Script do V02</td><td>Script compartilhado</td></tr>
+      <tr><td>Viveiro 03</td><td><strong>Token_Bot_V03</strong></td><td>MESMO</td><td>Script do V03</td><td>Script compartilhado</td></tr>
+    </table>
+    <div class="alert alert-danger" style="margin-top:12px;">
+      ❌ <strong>NUNCA use o mesmo token em dois ESPs.</strong> Causa conflito 409 na fila do Telegram — ambos tentam consumir as mesmas mensagens e travam.
+    </div>
+  </div>
+
+  <h2>Seleção de Viveiro (como funciona)</h2>
+  <p>O Telegram é um canal de <strong>broadcast</strong> — todos os bots do grupo recebem todas as mensagens. O mecanismo de seleção resolve quem age:</p>
+  <div class="flow">
+    <div class="flow-item">
+      <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Usuário clica "🦐 VIVEIRO 02"</strong> — todos os ESPs recebem a mensagem</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Cada ESP extrai o número</strong> e compara com o seu: ESP do V02 vê <code>numClic==2</code> e <code>numEste==2</code> → match! Salva <code>grupoSelecionouEsteViveiro=true</code> no NVS</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>ESP do V01, V03...</strong> veem que não é deles e salvam <code>false</code>. O guard bloqueia todos os comandos subsequentes neles.</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-line"><div class="flow-dot"></div></div>
+      <div class="flow-content"><strong>Agora apenas o V02 responde</strong> a qualquer botão ou comando — até que outro viveiro seja selecionado</div>
+    </div>
+  </div>
+
+  <h2>NVS — Memória persistente</h2>
+  <p>O ESP32-S3 usa o <strong>NVS (Non-Volatile Storage)</strong> para guardar todas as configurações. Elas <strong>sobrevivem a:</strong> reboot, queda de energia, OTA, watchdog reset.</p>
+  <table>
+    <tr><th>Chave NVS</th><th>Conteúdo</th><th>Quando é gravada</th></tr>
+    <tr><td><code>ssid</code></td><td>Nome da rede WiFi</td><td>Provisionamento / /configurarwifi</td></tr>
+    <tr><td><code>pass</code></td><td>Senha do WiFi</td><td>Provisionamento / /configurarwifi</td></tr>
+    <tr><td><code>token</code></td><td>Token do Bot Telegram</td><td>Provisionamento</td></tr>
+    <tr><td><code>chat_id</code></td><td>ID do grupo Telegram</td><td>Provisionamento</td></tr>
+    <tr><td><code>sheets</code></td><td>URL do Google Script do viveiro</td><td>Provisionamento</td></tr>
+    <tr><td><code>estoque</code></td><td>URL do Google Script do estoque</td><td>Provisionamento / /configurarestoque</td></tr>
+    <tr><td><code>viveiro</code></td><td>Nome do viveiro (ex: "Viveiro 02")</td><td>Provisionamento</td></tr>
+    <tr><td><code>vivsel</code></td><td>Se este viveiro está selecionado no grupo</td><td>A cada seleção/desseleção</td></tr>
+    <tr><td><code>rl0, rl1, rl2</code></td><td>Estado dos relés (ligado/desligado)</td><td>A cada acionamento de relé</td></tr>
+    <tr><td><code>cal0, cal1, cal2</code></td><td>Fatores de calibração ZMPT por fase</td><td>/calibrar</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PROVISIONAMENTO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="provisioning" class="section">
+<div class="container">
+  <h1>Provisionamento — Configuração Inicial</h1>
+  <p>Provisionamento é o processo de gravar as credenciais do cliente no ESP32-S3 pela primeira vez. Feito <strong>uma única vez por device</strong>, via cabo USB + Serial Monitor.</p>
+
+  <h2>Pré-requisitos</h2>
+  <ul>
+    <li>Arduino IDE instalado com suporte ao ESP32-S3</li>
+    <li>Driver USB instalado (CH340 ou CP2102 dependendo da placa)</li>
+    <li>Board selecionada: <strong>ESP32S3 Dev Module</strong></li>
+    <li>Partition Scheme: <strong>Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)</strong></li>
+    <li>Baud rate Serial Monitor: <strong>115200</strong></li>
+    <li>Line ending: <strong>Newline</strong> (Tools → Line ending → Newline)</li>
+  </ul>
+
+  <h2>Processo Passo a Passo</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Criar o Bot Telegram</strong>
+        <p>Abra o Telegram e fale com <code>@BotFather</code>. Digite <code>/newbot</code>, escolha um nome (ex: <em>AquaShrimpTech V02</em>) e um username (ex: <em>ast_viveiro02_bot</em>). Guarde o <strong>token</strong> gerado.</p>
+        <div class="alert alert-warn">Um bot por viveiro. Nunca reutilize o mesmo token em dois ESPs.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Adicionar o Bot ao Grupo</strong>
+        <p>No grupo Telegram do cliente, clique em "Adicionar membro" e procure pelo username do bot criado. Adicione-o como membro.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Obter o Chat ID do grupo</strong>
+        <p>Adicione o bot <code>@userinfobot</code> ao grupo e envie qualquer mensagem. Ele responderá com o <strong>Chat ID</strong> do grupo (número negativo, ex: <code>-1001234567890</code>).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>Gravar o firmware no ESP32-S3</strong>
+        <p>Abra o arquivo <code>viveiro_bot_v9_40.ino</code> no Arduino IDE. Selecione a porta COM correta e clique em <strong>Upload</strong>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <strong>Abrir o Serial Monitor e preencher os dados</strong>
+        <p>Após o upload, abra o Serial Monitor (115200 baud, Newline). O ESP detecta que o NVS está vazio e inicia o provisionamento:</p>
+        <pre><code>╔══════════════════════════════════════════╗
+║     AQUASHRIMPTECH — PROVISIONAMENTO     ║
+╚══════════════════════════════════════════╝
+
+1/7 - SSID Wi-Fi do cliente       : MinhaRede2G
+2/7 - Senha Wi-Fi                 : minhasenha123
+3/7 - Token do Bot Telegram       : 7654321:AAFxxx...
+4/7 - Chat ID do grupo            : -1001234567890
+5/7 - URL Google Script viveiro   : https://script.google.com/macros/s/AKfycb.../exec
+6/7 - URL Google Script estoque   : https://script.google.com/macros/s/AKfycb.../exec
+7/7 - Nome do viveiro             : Viveiro 02</code></pre>
+        <p>Digite cada valor e pressione <strong>Enter</strong>. Após o 7º campo, o ESP grava no NVS e reinicia automaticamente.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <strong>Verificar no Telegram</strong>
+        <p>O bot enviará no grupo:</p>
+        <pre><code>🦐 [Viveiro 02] online — v9.40
+ℹ️ Selecione este viveiro no menu para operar</code></pre>
+        <p>O provisionamento foi concluído com sucesso.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Reprovisionar (limpar e recomeçar)</h2>
+  <p>Se precisar apagar tudo e começar do zero (erro, troca de cliente, etc.), use o sketch <code>limpar_e_reprovisionar.ino</code>:</p>
+  <ol>
+    <li>Grave o <code>limpar_e_reprovisionar.ino</code> no ESP</li>
+    <li>Abra o Serial Monitor — ele apaga o NVS e pede os 7 campos novamente</li>
+    <li>Após preencher, grave o firmware principal (<code>viveiro_bot_v9_40.ino</code>)</li>
+  </ol>
+  <div class="alert alert-info">O NVS gravado pelo sketch de limpeza <strong>não é sobrescrito</strong> quando você grava o firmware principal — o firmware só provisiona se o NVS estiver vazio.</div>
+
+  <h2>Alterar WiFi remotamente (sem cabo)</h2>
+  <p>Se a rede WiFi do cliente mudar, use o comando no Telegram (com o viveiro selecionado):</p>
+  <pre><code>/configurarwifi NovoNomeDaRede / NovaSenha123</code></pre>
+  <p>O ESP salva no NVS e reinicia. Em 10 segundos está online na nova rede.</p>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CÓDIGO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="codigo" class="section">
+<div class="container">
+  <h1>Configuração do Código-Fonte</h1>
+  <p>Todas as configurações que <strong>mudam por cliente ou por viveiro</strong> estão concentradas no topo do arquivo <code>viveiro_bot_v9_40.ino</code>. O restante do código não precisa ser tocado.</p>
+
+  <h2>O que muda por CLIENTE</h2>
+  <div class="alert alert-info">Estas configurações são gravadas no NVS durante o provisionamento. Não ficam no código — são únicas por device.</div>
+  <table>
+    <tr><th>Campo</th><th>Exemplo</th><th>Como alterar</th></tr>
+    <tr><td>SSID WiFi</td><td><code>MinhaRede2G</td><td>Provisionamento ou <code>/configurarwifi</code></td></tr>
+    <tr><td>Senha WiFi</td><td><code>minhasenha</code></td><td>Provisionamento ou <code>/configurarwifi</code></td></tr>
+    <tr><td>Token Telegram</td><td><code>7654321:AAFxxx</code></td><td>Provisionamento (requer cabo)</td></tr>
+    <tr><td>Chat ID</td><td><code>-1001234567890</code></td><td>Provisionamento (requer cabo)</td></tr>
+    <tr><td>URL Script Estoque</td><td><code>https://script.google.com/...</code></td><td>Provisionamento ou <code>/configurarestoque</code></td></tr>
+  </table>
+
+  <h2>O que muda por VIVEIRO</h2>
+  <table>
+    <tr><th>Campo</th><th>Exemplo</th><th>Como alterar</th></tr>
+    <tr><td>Nome do viveiro</td><td><code>Viveiro 02</code></td><td>Provisionamento (requer cabo)</td></tr>
+    <tr><td>URL Script viveiro</td><td><code>https://script.google.com/...</code></td><td>Provisionamento</td></tr>
+    <tr><td>Token do Bot</td><td>Único por viveiro</td><td>Provisionamento (requer cabo)</td></tr>
+  </table>
+
+  <h2>Defines do Firmware (linha ~68 do arquivo)</h2>
+  <p>Estas constantes <strong>ficam no código</strong> e exigem recompilação + nova gravação quando alteradas:</p>
+
+  <div class="card card-orange">
+    <h3>🔧 Configuração de Sensores e Pinos</h3>
+    <div class="define-row">
+      <div class="define-key">PINO_SCT[4]</div>
+      <div class="define-val">{1,2,3,4}</div>
+      <div class="define-desc">GPIOs dos sensores de corrente SCT-013. Um por aerador. Use <code>-1</code> para desabilitar um canal sem sensor físico.</div>
+    </div>
+    <div class="define-row">
+      <div class="define-key">PINO_ZMPT[3]</div>
+      <div class="define-val">{5,6,7}</div>
+      <div class="define-desc">GPIOs dos sensores de tensão ZMPT101B. Um por fase elétrica (L1, L2, L3). Use <code>-1</code> para desabilitar.</div>
+    </div>
+    <div class="define-row">
+      <div class="define-key">PINO_RELE[4]</div>
+      <div class="define-val">{16,17,18,19}</div>
+      <div class="define-desc">GPIOs dos relés. Os 3 primeiros controlam aeradores. O 4º (GPIO 19) está reservado para expansão.</div>
+    </div>
+    <div class="define-row">
+      <div class="define-key">PINO_TAMPA</div>
+      <div class="define-val">15</div>
+      <div class="define-desc">GPIO do sensor de fim de curso da tampa do painel. Configurado como INPUT_PULLUP. Não alterar sem hardware correspondente.</div>
+    </div>
+    <div class="define-row">
+      <div class="define-key">NUM_AERADORES</div>
+      <div class="define-val">3</div>
+      <div class="define-desc">Quantos aeradores este viveiro tem. Máximo 4. Altera automaticamente os botões Ligar 1/2/3 e o monitoramento.</div>
+    </div>
+  </div>
+
+  <div class="card card-red" style="margin-top:16px;">
+    <h3>🔴 Define mais importante: SEM_SENSORES</h3>
+    <div class="define-row">
+      <div class="define-key">#define SEM_SENSORES</div>
+      <div class="define-val">true</div>
+      <div class="define-desc">
+        <strong>true</strong> = sem sensores físicos instalados. Desabilita TODAS as leituras de corrente, tensão e tampa. Zero alertas automáticos. Use quando o viveiro ainda não tem hardware de medição.<br><br>
+        <strong>false</strong> = sensores físicos instalados e funcionando. Habilita monitoramento completo, alertas automáticos e calibração.
+      </div>
+    </div>
+    <div class="alert alert-success" style="margin-top:8px;">
+      ✅ Para ativar os sensores: mude <code>#define SEM_SENSORES true</code> para <code>#define SEM_SENSORES false</code>, recompile e grave via OTA ou cabo.
+    </div>
+  </div>
+
+  <div class="card card-blue" style="margin-top:16px;">
+    <h3>🔵 Multi-viveiro no mesmo grupo</h3>
+    <div class="define-row">
+      <div class="define-key">#define VIVEIRO_UNICO_NO_GRUPO</div>
+      <div class="define-val">false</div>
+      <div class="define-desc">
+        <strong>false</strong> = há múltiplos ESPs no mesmo grupo Telegram. O device só responde após ser selecionado pelo usuário. <em>Use quando o cliente tem 2+ viveiros.</em><br><br>
+        <strong>true</strong> = apenas 1 ESP no grupo. Responde a tudo sem precisar ser selecionado. <em>Use apenas para cliente com 1 viveiro.</em>
+      </div>
+    </div>
+  </div>
+
+  <h2>Parâmetros elétricos (linha ~78)</h2>
+  <table>
+    <tr><th>Constante</th><th>Valor padrão</th><th>Significado</th></tr>
+    <tr><td><code>RUIDO_CORRENTE</code></td><td>1.6A</td><td>Abaixo disto considera ruído (leitura vira 0A)</td></tr>
+    <tr><td><code>LIM_LIGADO</code></td><td>1.7A</td><td>Acima disto considera aerador ligado</td></tr>
+    <tr><td><code>LIM_SOBRECARGA</code></td><td>5.0A</td><td>Acima disto dispara alerta de sobrecarga</td></tr>
+    <tr><td><code>TENSAO_CRITICA_MIN</code></td><td>187V</td><td>Abaixo → alerta CRÍTICO de subtensão</td></tr>
+    <tr><td><code>TENSAO_CRITICA_MAX</code></td><td>242V</td><td>Acima → alerta CRÍTICO de sobretensão</td></tr>
+    <tr><td><code>TENSAO_FASE_ZERADA</code></td><td>30V</td><td>Abaixo → alerta de fase zerada (emergência)</td></tr>
+    <tr><td><code>GRACA_PARTIDA</code></td><td>10000ms</td><td>Ignora sobrecarga nos primeiros 10s após ligar (corrente de inrush)</td></tr>
+    <tr><td><code>DELAY_CONFIRMA_RELE</code></td><td>1500ms</td><td>Espera após acionar relé antes de ler corrente</td></tr>
+    <tr><td><code>CALIBRACAO_ZMPT[3]</code></td><td>340.2</td><td>Fator de calibração de tensão por fase. Salvo no NVS via <code>/calibrar</code></td></tr>
+  </table>
+
+  <h2>Intervalos do sistema (linha ~103)</h2>
+  <table>
+    <tr><th>Constante</th><th>Valor</th><th>Função</th></tr>
+    <tr><td><code>INTERVALO_LEITURA</code></td><td>5s</td><td>Frequência de leitura de sensores (corrente/tensão/tampa)</td></tr>
+    <tr><td><code>INTERVALO_TELEGRAM</code></td><td>1s</td><td>Frequência de polling de novas mensagens</td></tr>
+    <tr><td><code>INTERVALO_RELATORIO</code></td><td>1h</td><td>Relatório automático horário no grupo</td></tr>
+    <tr><td><code>INTERVALO_DIARIO</code></td><td>24h</td><td>Fechamento diário + verificação de OTA</td></tr>
+    <tr><td><code>INTERVALO_HEARTBEAT</code></td><td>45s</td><td>Frequência do "estou vivo" enviado ao painel ADM</td></tr>
+    <tr><td><code>WD_ESTAGIO1_MS</code></td><td>4min</td><td>Tempo sem mensagem antes de tentar auto-recuperação (limpeza de fila)</td></tr>
+    <tr><td><code>WD_ESTAGIO2_MS</code></td><td>7min</td><td>Tempo sem mensagem antes de reiniciar o ESP automaticamente</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- COMANDOS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="comandos" class="section">
+<div class="container">
+  <h1>Comandos do Bot</h1>
+  <p>Os comandos são enviados digitando no chat do grupo Telegram. Há dois tipos:</p>
+  <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
+    <div><span class="badge badge-blue">GLOBAL</span> Todos os ESPs do grupo respondem simultaneamente</div>
+    <div><span class="badge badge-green">OPERACIONAL</span> Só o viveiro selecionado responde</div>
+  </div>
+
+  <h2>Comandos Globais (todos os ESPs respondem)</h2>
+  <div class="cmd-grid">
+    <div class="cmd-card">
+      <div class="cmd-name">/versao</div>
+      <div class="cmd-scope"><span class="badge badge-blue">GLOBAL</span></div>
+      <div class="cmd-desc">Mostra versão do firmware, heap livre e status do NVS de cada ESP. Útil para confirmar que todos estão na mesma versão.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/showconfig</div>
+      <div class="cmd-scope"><span class="badge badge-blue">GLOBAL</span></div>
+      <div class="cmd-desc">Exibe o conteúdo do NVS: viveiro, SSID, chat_id, URLs. Use para verificar se o provisionamento foi correto. Token não aparece completo por segurança.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/ajuda</div>
+      <div class="cmd-scope"><span class="badge badge-blue">GLOBAL</span></div>
+      <div class="cmd-desc">Lista todos os comandos disponíveis com descrição resumida.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/limpafila</div>
+      <div class="cmd-scope"><span class="badge badge-blue">GLOBAL</span></div>
+      <div class="cmd-desc">Descarta mensagens acumuladas na fila do Telegram e reabre o socket SSL. Usar quando o bot parar de responder. Todos os ESPs executam — é intencional.</div>
+    </div>
+  </div>
+
+  <h2>Comandos Operacionais (só viveiro selecionado)</h2>
+  <div class="alert alert-warn">Selecione o viveiro antes de usar estes comandos: clique em "🦐 VIVEIRO 0X" no picker.</div>
+  <div class="cmd-grid">
+    <div class="cmd-card">
+      <div class="cmd-name">/reiniciar</div>
+      <div class="cmd-scope"><span class="badge badge-green">OPERACIONAL</span></div>
+      <div class="cmd-desc">Reinicia o ESP selecionado remotamente. Útil para testar restauração de relés sem ir ao local. O ESP volta sozinho em ~15 segundos.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/atualizar</div>
+      <div class="cmd-scope"><span class="badge badge-green">OPERACIONAL</span></div>
+      <div class="cmd-desc">Força verificação de OTA imediatamente (sem aguardar as 24h). Baixa e instala nova versão se disponível no GitHub.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/simulacao</div>
+      <div class="cmd-scope"><span class="badge badge-green">OPERACIONAL</span> <span class="badge badge-orange">TOGGLE</span></div>
+      <div class="cmd-desc">Ativa/desativa modo simulação. Em simulação, tensões e correntes são geradas aleatoriamente (sem ler sensores reais). Útil para demo.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/recarregarestoque</div>
+      <div class="cmd-scope"><span class="badge badge-green">OPERACIONAL</span></div>
+      <div class="cmd-desc">Recarrega a lista de insumos da planilha de estoque. Usar após adicionar novos insumos diretamente na planilha.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/calibragem</div>
+      <div class="cmd-scope"><span class="badge badge-green">OPERACIONAL</span></div>
+      <div class="cmd-desc">Exibe os fatores de calibração atuais de cada fase (L1, L2, L3) e a tensão sendo lida com eles.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/calibrar &lt;fase&gt; &lt;V_real&gt;</div>
+      <div class="cmd-scope"><span class="badge badge-green">OPERACIONAL</span></div>
+      <div class="cmd-desc">Calibra a tensão de uma fase usando um multímetro como referência. Exemplo: <code>/calibrar 1 220</code> calibra L1 para 220V. Salvo no NVS — sobrevive a OTA.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/configurarwifi &lt;ssid&gt; / &lt;senha&gt;</div>
+      <div class="cmd-scope"><span class="badge badge-green">OPERACIONAL</span></div>
+      <div class="cmd-desc">Atualiza WiFi remotamente sem cabo. Exemplo: <code>/configurarwifi MinhaRede / senha123</code>. O ESP salva e reinicia.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/configurarestoque &lt;url&gt;</div>
+      <div class="cmd-scope"><span class="badge badge-green">OPERACIONAL</span></div>
+      <div class="cmd-desc">Define ou corrige a URL do Google Script do estoque compartilhado. Salvo no NVS.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/alterarsenha</div>
+      <div class="cmd-scope"><span class="badge badge-green">OPERACIONAL</span></div>
+      <div class="cmd-desc">Altera a senha de acesso à planilha. Mínimo 4 caracteres.</div>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">/menu ou /start</div>
+      <div class="cmd-scope"><span class="badge badge-purple">ESPECIAL</span></div>
+      <div class="cmd-desc">Exibe o Painel Central de Viveiros (picker). Na versão atual, todos os ESPs respondem — será corrigido na v9.41.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- BOTÕES E FLUXOS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="botoes" class="section">
+<div class="container">
+  <h1>Botões e Fluxos do Menu</h1>
+
+  <h2>Menu Principal — Picker de Viveiros</h2>
+  <p>Aparece ao digitar <code>/menu</code> ou clicar "Voltar ao Menu Principal". Enviado pelo Viveiro 01 no boot.</p>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; max-width:400px; margin:12px 0;">
+    <div class="tg-btn">🦐 VIVEIRO 01</div><div class="tg-btn">🦐 VIVEIRO 02</div>
+    <div class="tg-btn">🦐 VIVEIRO 03</div><div class="tg-btn">🦐 VIVEIRO 04</div>
+    <div class="tg-btn">🦐 VIVEIRO 05</div><div class="tg-btn">🦐 VIVEIRO 06</div>
+  </div>
+  <p>Ao clicar em um viveiro, o ESP correspondente confirma a seleção e exibe o Menu Operacional.</p>
+
+  <h2>Menu Operacional (após selecionar viveiro)</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; max-width:500px; margin:12px 0;">
+    <div class="tg-btn">🍲 Informar Ração</div><div class="tg-btn">⚖️ Biometria</div>
+    <div class="tg-btn">🐟 Povoamento</div><div class="tg-btn">✏️ Editar Povoamento</div>
+    <div class="tg-btn">💰 Custos</div><div class="tg-btn">📦 Estoque</div>
+    <div class="tg-btn">🧪 Dados Técnicos</div><div class="tg-btn">💀 Mortalidade</div>
+    <div class="tg-btn">📊 Status</div><div class="tg-btn">📋 Relatório</div>
+    <div class="tg-btn">🌀 Ligar Todos</div><div class="tg-btn">⏹️ Desligar Todos</div>
+    <div class="tg-btn">▶️ Ligar 1</div><div class="tg-btn">⏹️ Desligar 1</div>
+    <div class="tg-btn">▶️ Ligar 2</div><div class="tg-btn">⏹️ Desligar 2</div>
+    <div class="tg-btn">▶️ Ligar 3</div><div class="tg-btn">⏹️ Desligar 3</div>
+    <div class="tg-btn" style="grid-column:1/-1">🔙 Voltar ao Menu Principal</div>
+  </div>
+
+  <h2>Fluxos Detalhados</h2>
+
+  <div class="card card-green">
+    <h3>🍲 Informar Ração</h3>
+    <div class="tg-flow">
+      <div class="tg-box">Clica "Informar Ração"</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Bot pede: kg consumidos</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Usuário digita ex: 45.5</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Bot calcula e mostra biomassa, FCA, sobrevivência, ração ideal</div>
+    </div>
+    <p style="margin-top:8px; font-size:.85rem;">Dados enviados ao Google Sheets. Desconta ração do estoque automaticamente se houver "Racao" cadastrado.</p>
+  </div>
+
+  <div class="card card-green">
+    <h3>⚖️ Biometria</h3>
+    <div class="tg-flow">
+      <div class="tg-box">Clica "Biometria"</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Bot pede: peso médio (g)</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Usuário digita ex: 8.5</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Bot exibe CCMT, biomassa, FCA, sobrevivência, qtd viva</div>
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <h3>🐟 Povoamento (novo ciclo)</h3>
+    <div class="tg-flow">
+      <div class="tg-box">Clica "Povoamento"</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Bot pede: quantidade (un)</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Bot pede: área (ha)</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Bot pede: laboratório/ração (ou "pular")</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Confirma com densidade e dados</div>
+    </div>
+    <div class="alert alert-warn" style="margin-top:8px;">⚠️ Use "Editar Povoamento" para corrigir a quantidade sem iniciar novo ciclo.</div>
+  </div>
+
+  <div class="card card-orange">
+    <h3>💰 Custos</h3>
+    <div class="tg-flow">
+      <div class="tg-box">Clica "Custos"</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Escolhe categoria</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Digita: Descrição / Valor</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Ex: "Reparo motor / 350"</div>
+    </div>
+    <p style="margin-top:8px; font-size:.85rem;">Categorias: Manutenção, Produtos, Novo Equipamento, Energia Gerador, Aluguel, Transporte, Outros.</p>
+  </div>
+
+  <div class="card card-blue">
+    <h3>📦 Estoque — Entrada de Insumo</h3>
+    <div class="tg-flow">
+      <div class="tg-box">Clica "Entrada de Insumo"</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Seleciona insumo existente OU "✨ Novo insumo"</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Se novo: digita nome, unidade, estoque mínimo</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Digita quantidade</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Digita valor total pago (R$)</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Sistema calcula custo/unidade e salva</div>
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <h3>📦 Estoque — Uso de Insumo</h3>
+    <div class="tg-flow">
+      <div class="tg-box">Clica "Uso de Insumo"</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Lista insumos com saldo > 0</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Seleciona o insumo</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Digita quantidade usada</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Sistema desconta do saldo e calcula custo</div>
+    </div>
+    <p style="margin-top:8px; font-size:.85rem;">Se o saldo ficar abaixo do mínimo configurado, dispara alerta automático no grupo.</p>
+  </div>
+
+  <div class="card card-purple">
+    <h3>🧪 Dados Técnicos</h3>
+    <div class="tg-flow">
+      <div class="tg-box">Clica "Dados Técnicos"</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Escolhe parâmetro (ou digita todos em sequência)</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Digita valor (ou "pular")</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Ao final exibe resumo com alertas automáticos</div>
+    </div>
+    <p style="margin-top:8px; font-size:.85rem;">Parâmetros: Temperatura, OD, pH, Salinidade, Transparência, Amônia, Nitrito, Alcalinidade. Cada um tem faixas de atenção e crítico configuradas.</p>
+  </div>
+
+  <div class="card card-red">
+    <h3>💀 Mortalidade</h3>
+    <div class="tg-flow">
+      <div class="tg-box">Clica "Mortalidade"</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Digita quantidade (un)</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Digita causa/obs (ou "pular")</div><div class="tg-arrow">→</div>
+      <div class="tg-box">Bot calcula % do plantel e acumulado. Se > 0,5%, dispara alerta.</div>
+    </div>
+  </div>
+
+  <div class="card card-orange">
+    <h3>📊 Status</h3>
+    <p>Exibe snapshot completo: tensões das 3 fases, estado e corrente de cada aerador, tempo ligado, dados de cultivo (biomassa, sobrevivência, ração do dia, densidade, área) e estado da tampa. Consulta o Google Sheets em tempo real.</p>
+  </div>
+
+  <h2>Alertas Automáticos (sem precisar de comando)</h2>
+  <table>
+    <tr><th>Evento</th><th>Condição</th><th>Tipo</th></tr>
+    <tr><td>⚡ Fase zerada</td><td>Tensão &lt; 30V</td><td>🚨 Emergência + Alerta de voz</td></tr>
+    <tr><td>🔴 Tensão crítica</td><td>&lt; 187V ou &gt; 242V</td><td>🔴 Crítico</td></tr>
+    <tr><td>🚨 Aerador parou</td><td>Corrente cai a 0A sem comando manual</td><td>🚨 Emergência + Alerta de voz</td></tr>
+    <tr><td>🟠 Aeração fraca</td><td>Corrente entre 1.3A e 1.7A</td><td>🟠 Aviso</td></tr>
+    <tr><td>⚡ Sobrecarga</td><td>Corrente &gt; 5A</td><td>⚡ Alerta</td></tr>
+    <tr><td>🔓 Tampa aberta</td><td>Sensor fim de curso abre</td><td>🚨 Alerta de violação</td></tr>
+    <tr><td>📦 Estoque baixo</td><td>Qtd ≤ mínimo configurado</td><td>⚠️ Aviso diário</td></tr>
+    <tr><td>💀 Mortalidade alta</td><td>&gt; 0,5% do plantel</td><td>🚨 Alerta imediato</td></tr>
+    <tr><td>⚠️ Ração acabando</td><td>Dias restantes ≤ prazo entrega + 5</td><td>⚠️ Aviso</td></tr>
+    <tr><td>⚠️ Memória baixa</td><td>Heap &lt; 18KB livre</td><td>⚠️ Aviso (só observa)</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SENSORES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="sensores" class="section">
+<div class="container">
+  <h1>Sensores — Instalação e Ativação</h1>
+
+  <h2>Estado atual: SEM_SENSORES</h2>
+  <div class="alert alert-info">
+    Quando <code>#define SEM_SENSORES true</code>, o ESP funciona normalmente para registro de dados (ração, biometria, custos, estoque), mas <strong>não lê nenhum sensor físico</strong> e <strong>não envia nenhum alerta automático</strong> de tensão, corrente ou tampa.
+  </div>
+
+  <h2>Para ATIVAR os sensores</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Instale o hardware</strong>
+        <p>Conecte os módulos SCT-013 nos GPIOs 1, 2, 3 (um por aerador) e os ZMPT101B nos GPIOs 5, 6, 7 (um por fase). Conecte o fim de curso da tampa no GPIO 15.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Mude o define no código</strong>
+        <pre><code>// Linha ~74 do arquivo viveiro_bot_v9_40.ino
+#define SEM_SENSORES false  // era true</code></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Grave o firmware</strong>
+        <p>Via cabo USB + Arduino IDE, ou via OTA se uma versão anterior já estiver rodando (atualize o arquivo no GitHub e dispare <code>/atualizar</code>).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>Calibre a tensão (com multímetro)</strong>
+        <p>Com o viveiro energizado e um multímetro na fase 1, verifique a tensão real. Se o bot mostrar valor diferente:</p>
+        <pre><code>/calibrar 1 220.5</code></pre>
+        <p>Repita para as fases 2 e 3. Os fatores ficam salvos no NVS — sobrevivem a OTA e reboot.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Mapeamento de Pinos</h2>
+  <table>
+    <tr><th>GPIO</th><th>Sensor</th><th>Aerador/Fase</th><th>Observação</th></tr>
+    <tr><td>1</td><td>SCT-013</td><td>Aerador 1</td><td>Leitura de corrente não-invasiva</td></tr>
+    <tr><td>2</td><td>SCT-013</td><td>Aerador 2</td><td>Leitura de corrente não-invasiva</td></tr>
+    <tr><td>3</td><td>SCT-013</td><td>Aerador 3</td><td>Leitura de corrente não-invasiva</td></tr>
+    <tr><td>4</td><td>SCT-013</td><td>Aerador 4 (reservado)</td><td>Use -1 se não tiver 4º aerador</td></tr>
+    <tr><td>5</td><td>ZMPT101B</td><td>Fase L1</td><td>Tensão AC da 1ª fase</td></tr>
+    <tr><td>6</td><td>ZMPT101B</td><td>Fase L2</td><td>Tensão AC da 2ª fase</td></tr>
+    <tr><td>7</td><td>ZMPT101B</td><td>Fase L3</td><td>Tensão AC da 3ª fase</td></tr>
+    <tr><td>15</td><td>Fim de curso</td><td>Tampa do painel</td><td>INPUT_PULLUP. LOW = tampa fechada</td></tr>
+    <tr><td>16</td><td>Relé</td><td>Aerador 1</td><td>HIGH = ligado, LOW = desligado</td></tr>
+    <tr><td>17</td><td>Relé</td><td>Aerador 2</td><td>HIGH = ligado, LOW = desligado</td></tr>
+    <tr><td>18</td><td>Relé</td><td>Aerador 3</td><td>HIGH = ligado, LOW = desligado</td></tr>
+    <tr><td>19</td><td>Relé</td><td>Aerador 4 (reservado)</td><td>Disponível para expansão</td></tr>
+  </table>
+
+  <h2>Faixas de alerta dos parâmetros de qualidade da água</h2>
+  <table>
+    <tr><th>Parâmetro</th><th>Faixa Ideal</th><th>Atenção 🟡</th><th>Crítico 🔴</th></tr>
+    <tr><td>Temperatura</td><td>27–30°C</td><td>&lt;27 ou &gt;30°C</td><td>&lt;22 ou &gt;35°C</td></tr>
+    <tr><td>OD (oxigênio)</td><td>6–8 mg/L</td><td>&lt;6 mg/L</td><td>&lt;4 mg/L</td></tr>
+    <tr><td>pH</td><td>7.8–8.3</td><td>&lt;7.5 ou &gt;8.6</td><td>&lt;7.0 ou &gt;9.0</td></tr>
+    <tr><td>Salinidade</td><td>5–20 ppt</td><td>&gt;28 ppt</td><td>&gt;35 ppt</td></tr>
+    <tr><td>Transparência</td><td>30–40 cm</td><td>&lt;30 ou &gt;60 cm</td><td>&lt;20 cm</td></tr>
+    <tr><td>Amônia (TAN)</td><td>&lt;1.0 mg/L</td><td>&gt;1.0 mg/L</td><td>&gt;2.0 mg/L</td></tr>
+    <tr><td>Nitrito</td><td>&lt;0.5 mg/L</td><td>&gt;0.5 mg/L</td><td>&gt;2.0 mg/L</td></tr>
+    <tr><td>Alcalinidade</td><td>100–150 mg/L</td><td>&lt;100 mg/L</td><td>&lt;60 mg/L</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- MULTI-VIVEIRO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="multibot" class="section">
+<div class="container">
+  <h1>Configuração Multi-Viveiro</h1>
+
+  <h2>Checklist para adicionar um novo viveiro</h2>
+  <div class="card card-blue">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>Criar novo Bot no BotFather</strong><p><code>@BotFather → /newbot → AquaShrimpTech V0X → ast_viveiro0X_bot</code> → guardar token</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>Adicionar o novo bot ao grupo do cliente</strong><p>O grupo já existe — só adicionar o novo bot como membro.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body"><strong>Criar a planilha Google do novo viveiro</strong><p>Copiar o template, publicar o Google Apps Script e guardar a URL.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body"><strong>Gravar firmware no ESP</strong><p>No Arduino IDE: gravar <code>viveiro_bot_v9_40.ino</code> com <code>VIVEIRO_UNICO_NO_GRUPO = false</code> e <code>SEM_SENSORES</code> conforme necessário.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body"><strong>Provisionar via Serial Monitor</strong><p>Preencher os 7 campos. Atenção: token novo (criado no passo 1), mesmo chat_id, URL do script do novo viveiro, nome "Viveiro 0X".</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body"><strong>Verificar no Telegram</strong><p>O novo bot deve anunciar no grupo: <code>🦐 [Viveiro 0X] online — v9.40</code></p></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>O que é IGUAL em todos os viveiros de um cliente</h2>
+  <table>
+    <tr><th>Campo</th><th>Valor</th></tr>
+    <tr><td>Chat ID do grupo</td><td>O mesmo para todos os ESPs</td></tr>
+    <tr><td>SSID e senha WiFi</td><td>A mesma rede do cliente</td></tr>
+    <tr><td>URL Estoque</td><td>Script compartilhado único por cliente</td></tr>
+    <tr><td>Firmware (.ino)</td><td>Mesmo arquivo, mesmos defines (exceto SEM_SENSORES se necessário)</td></tr>
+    <tr><td>VIVEIRO_UNICO_NO_GRUPO</td><td><code>false</code> quando há 2+ viveiros</td></tr>
+  </table>
+
+  <h2>O que é DIFERENTE por viveiro</h2>
+  <table>
+    <tr><th>Campo</th><th>Viveiro 01</th><th>Viveiro 02</th><th>Viveiro 0X</th></tr>
+    <tr><td>Token Bot</td><td>Token_V01</td><td>Token_V02</td><td>Token_V0X</td></tr>
+    <tr><td>Nome (NVS)</td><td>Viveiro 01</td><td>Viveiro 02</td><td>Viveiro 0X</td></tr>
+    <tr><td>URL Sheets</td><td>Script do V01</td><td>Script do V02</td><td>Script do V0X</td></tr>
+    <tr><td>SEM_SENSORES</td><td>false (com sensores)</td><td>true (sem sensores ainda)</td><td>Conforme instalação</td></tr>
+  </table>
+
+  <div class="alert alert-success">
+    ✅ O menu "🦐 VIVEIRO 01, 02, 03..." do picker é gerado pelo firmware, não pelo NVS. Se o cliente tiver 5 viveiros, o picker sempre mostra até 12 opções — só as que têm ESP físico respondem.
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- TROUBLESHOOT -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="troubleshoot" class="section">
+<div class="container">
+  <h1>Solução de Problemas</h1>
+
+  <div class="card card-red">
+    <h3>🔴 Bot não responde a nada</h3>
+    <p><strong>Causa mais comum:</strong> fila do Telegram travada.</p>
+    <p><strong>Solução:</strong> envie <code>/limpafila</code> no grupo. Todos os ESPs executam e limpam a fila.</p>
+    <p><strong>Se não resolver:</strong> o ESP pode estar em loop de boot. Conecte via Serial Monitor e observe o log.</p>
+  </div>
+
+  <div class="card card-red">
+    <h3>🔴 ESP em loop de boot (reinicia repetidamente)</h3>
+    <p><strong>Identificação:</strong> no Serial Monitor aparece "AQUASHRIMPTECH BOOT OK" repetidas vezes com intervalo de ~15 segundos.</p>
+    <p><strong>Causas possíveis:</strong></p>
+    <ul>
+      <li><strong>GPIO inválido:</strong> erro <code>adc_io_to_channel(29): invalid gpio number</code> → <code>PINO_SCT[3] = 4</code> é inválido no S3. Mude para <code>-1</code> ou ative <code>SEM_SENSORES true</code>.</li>
+      <li><strong>Brownout:</strong> fonte USB fraca. Use carregador de celular 5V/1A+ em vez de porta USB do notebook.</li>
+      <li><strong>Crash de código (PANIC):</strong> motivo do reset aparece no Serial como "PANIC". Envie o log.</li>
+    </ul>
+  </div>
+
+  <div class="card card-orange">
+    <h3>🟡 Viveiro selecionado não responde aos botões</h3>
+    <p><strong>Causa:</strong> <code>grupoSelecionouEsteViveiro = false</code> no ESP — o guard bloqueando tudo.</p>
+    <p><strong>Solução:</strong> clique novamente em "🦐 VIVEIRO 0X" no picker. A seleção é salva no NVS e sobrevive a reboot.</p>
+    <p><strong>Se persistir:</strong> o ESP pode estar consumindo mensagens com delay. Aguarde 5 segundos após clicar.</p>
+  </div>
+
+  <div class="card card-orange">
+    <h3>🟡 Erro HTTP 409 no Serial</h3>
+    <p><strong>Causa:</strong> dois ESPs com o mesmo token tentando consumir a mesma fila do Telegram.</p>
+    <p><strong>Solução:</strong> cada viveiro precisa de um token diferente. Crie novo bot no BotFather e reprovisione o ESP com token único.</p>
+  </div>
+
+  <div class="card card-orange">
+    <h3>🟡 Alertas falsos de tensão zerada (sem sensores)</h3>
+    <p><strong>Causa:</strong> <code>SEM_SENSORES false</code> com pinos físicos não conectados — ADC lê zero e dispara alerta.</p>
+    <p><strong>Solução:</strong> mude para <code>#define SEM_SENSORES true</code> e regrave.</p>
+  </div>
+
+  <div class="card card-orange">
+    <h3>🟡 OTA falhou</h3>
+    <p><strong>Causas possíveis:</strong></p>
+    <ul>
+      <li>Partition Scheme errado: deve ser "Minimal SPIFFS (1.9MB APP with OTA)"</li>
+      <li>Arquivo .bin maior que 1.9MB</li>
+      <li>Conexão WiFi instável durante o download</li>
+      <li>Timeout de 30s sem dados</li>
+    </ul>
+    <p><strong>Solução:</strong> verifique o Partition Scheme no Arduino IDE e tente <code>/atualizar</code> novamente.</p>
+  </div>
+
+  <div class="card card-blue">
+    <h3>🔵 Watchdog Estágio 1/2 frequente</h3>
+    <p><strong>Estágio 1 (4min):</strong> o bot tenta auto-recuperar limpando a fila. Normal se houver instabilidade de WiFi.</p>
+    <p><strong>Estágio 2 (7min):</strong> o ESP reinicia automaticamente. Se acontecer mais de 1x por dia, investigar sinal WiFi (RSSI aparece no heartbeat do painel ADM). RSSI abaixo de -70dBm é problemático — instalar antena externa.</p>
+  </div>
+
+  <div class="card card-blue">
+    <h3>🔵 Mensagem duplicada (menu aparece 2x)</h3>
+    <p><strong>Causa:</strong> <code>/menu</code>, <code>/start</code> e "Voltar ao Menu Principal" são globais — todos os ESPs respondem.</p>
+    <p><strong>Status:</strong> comportamento cosmético, não quebra nada. Será corrigido na v9.41.</p>
+  </div>
+
+  <h2>Como usar o Serial Monitor para diagnóstico</h2>
+  <ol>
+    <li>Conecte o ESP via cabo USB</li>
+    <li>Abra Arduino IDE → Tools → Serial Monitor</li>
+    <li>Configure: <strong>115200 baud</strong></li>
+    <li>Observe as linhas <code>[LOG]</code>, <code>[HEAP]</code>, <code>[WD]</code>, <code>[FILA]</code> e <code>[BOOT]</code></li>
+  </ol>
+  <pre><code>[BOOT] online v9.40 | reset: Power-on | heap 247KB   ← boot normal
+[HEAP] free=250000  maxBloco=155000  min=128000       ← memória saudável
+[WD] Estagio 1: tentando consumir (pending=1)          ← watchdog agindo
+[LOG] TENSAO: Fase 1 (L1) ZEROU (0V)                  ← alerta de tensão
+[FILA] Descartada. update_id=12345                     ← fila limpa</code></pre>
+
+  <h2>Log remoto no painel ADM</h2>
+  <p>Todos os logs do Serial também são enviados ao painel administrativo via HTTP. Acesse o ADM e filtre por viveiro para ver histórico de eventos sem precisar de cabo USB.</p>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- NOVO CLIENTE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="novocliente" class="section">
+<div class="container">
+  <h1>Guia: Instalando para um Novo Cliente</h1>
+  <p>Checklist completo do zero ao viveiro funcionando.</p>
+
+  <h2>Informações necessárias do cliente</h2>
+  <table>
+    <tr><th>#</th><th>Informação</th><th>Exemplo</th><th>Onde usar</th></tr>
+    <tr><td>1</td><td>Nome da rede WiFi (2.4GHz)</td><td>MinhaRede2G</td><td>Provisionamento campo 1</td></tr>
+    <tr><td>2</td><td>Senha do WiFi</td><td>senha123</td><td>Provisionamento campo 2</td></tr>
+    <tr><td>3</td><td>Nome do cliente / fazenda</td><td>Fazenda São João</td><td>Para nomear os bots e planilhas</td></tr>
+    <tr><td>4</td><td>Quantidade de viveiros</td><td>5</td><td>Define quantos ESPs e bots criar</td></tr>
+    <tr><td>5</td><td>Área de cada viveiro (ha)</td><td>0.6, 0.8, 1.0...</td><td>Configurado via bot (Povoamento)</td></tr>
+  </table>
+
+  <h2>Checklist de Instalação</h2>
+  <div class="card card-green">
+    <h3>Parte 1 — Telegram e Google</h3>
+    <ul>
+      <li>☐ Criar grupo Telegram com o cliente</li>
+      <li>☐ Para cada viveiro: criar bot no BotFather e guardar token</li>
+      <li>☐ Adicionar todos os bots ao grupo</li>
+      <li>☐ Obter o Chat ID do grupo (via @userinfobot)</li>
+      <li>☐ Para cada viveiro: copiar planilha template e publicar GAS → guardar URL</li>
+      <li>☐ Criar planilha de estoque compartilhada → guardar URL</li>
+    </ul>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Parte 2 — Hardware e Firmware</h3>
+    <ul>
+      <li>☐ Para cada ESP: gravar <code>viveiro_bot_v9_40.ino</code> via Arduino IDE</li>
+      <li>☐ Verificar Partition Scheme: Minimal SPIFFS (1.9MB APP with OTA)</li>
+      <li>☐ Se viveiro sem sensores ainda: confirmar <code>#define SEM_SENSORES true</code></li>
+      <li>☐ Se 2+ viveiros: confirmar <code>#define VIVEIRO_UNICO_NO_GRUPO false</code></li>
+      <li>☐ Para cada ESP: abrir Serial Monitor e preencher os 7 campos do provisionamento</li>
+    </ul>
+  </div>
+
+  <div class="card card-orange">
+    <h3>Parte 3 — Verificação Final</h3>
+    <ul>
+      <li>☐ Cada bot anuncia no grupo após boot</li>
+      <li>☐ <code>/showconfig</code> em cada viveiro confirma dados corretos</li>
+      <li>☐ <code>/versao</code> confirma firmware correto em todos</li>
+      <li>☐ Picker funciona: clicar em cada viveiro e verificar resposta</li>
+      <li>☐ Estoque carrega corretamente</li>
+      <li>☐ Testar Informar Ração em pelo menos 1 viveiro</li>
+      <li>☐ Se sensores instalados: verificar tensões no Status e calibrar se necessário</li>
+    </ul>
+  </div>
+
+  <h2>Resumo dos arquivos entregues ao cliente</h2>
+  <table>
+    <tr><th>Arquivo</th><th>Para que serve</th></tr>
+    <tr><td><code>viveiro_bot_v9_40.ino</code></td><td>Firmware principal. Grava em todos os ESPs.</td></tr>
+    <tr><td><code>limpar_e_reprovisionar.ino</code></td><td>Sketch de emergência para limpar NVS e reconfigurar.</td></tr>
+    <tr><td><code>README_AquaShrimpTech.html</code></td><td>Este manual. Salvar no repositório GitHub.</td></tr>
+  </table>
+
+  <h2>Convenções de nomes</h2>
+  <table>
+    <tr><th>Item</th><th>Padrão</th><th>Exemplo</th></tr>
+    <tr><td>Nome do bot</td><td>AquaShrimpTech V0X</td><td>AquaShrimpTech V02</td></tr>
+    <tr><td>Username do bot</td><td>ast_[cliente]_v0X_bot</td><td>ast_saojoao_v02_bot</td></tr>
+    <tr><td>Nome no NVS (viveiro)</td><td>Viveiro 0X</td><td>Viveiro 02</td></tr>
+    <tr><td>Planilha Google</td><td>[Cliente] — Viveiro 0X</td><td>São João — Viveiro 02</td></tr>
+  </table>
+
+  <div class="alert alert-warn">
+    ⚠️ O nome do viveiro no NVS (<code>Viveiro 02</code>) deve ter espaço e número sem zero à esquerda ou com zero — tanto faz, mas tem que ser <strong>consistente</strong>. O firmware extrai o número com <code>toInt()</code>: "Viveiro 02" e "Viveiro 2" resultam no mesmo número (2) e funcionam igualmente.
+  </div>
+
+  <h2>Suporte e Manutenção Remota</h2>
+  <table>
+    <tr><th>Necessidade</th><th>Solução</th><th>Requer cabo?</th></tr>
+    <tr><td>Bot travado</td><td><code>/limpafila</code></td><td>❌ Não</td></tr>
+    <tr><td>Atualizar firmware</td><td><code>/atualizar</code> ou OTA automático (24h)</td><td>❌ Não</td></tr>
+    <tr><td>Trocar WiFi</td><td><code>/configurarwifi ssid / senha</code></td><td>❌ Não</td></tr>
+    <tr><td>Ver config atual</td><td><code>/showconfig</code></td><td>❌ Não</td></tr>
+    <tr><td>Reiniciar ESP</td><td><code>/reiniciar</code></td><td>❌ Não</td></tr>
+    <tr><td>Calibrar tensão</td><td><code>/calibrar 1 220</code></td><td>❌ Não</td></tr>
+    <tr><td>Ativar sensores</td><td>Mudar <code>SEM_SENSORES false</code> + regravar</td><td>✅ Sim (ou OTA)</td></tr>
+    <tr><td>Trocar token</td><td>Reprovisionar</td><td>✅ Sim</td></tr>
+    <tr><td>Zerar configurações</td><td><code>limpar_e_reprovisionar.ino</code></td><td>✅ Sim</td></tr>
+  </table>
+</div>
+</div>
+
+<script>
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(el) el.classList.add('active');
+  window.scrollTo(0,0);
+  return false;
+}
+
+// Copy code blocks
+document.querySelectorAll('pre').forEach(pre => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copiar';
+  btn.onclick = () => {
+    navigator.clipboard.writeText(pre.querySelector('code').textContent);
+    btn.textContent = '✓ Copiado';
+    setTimeout(() => btn.textContent = 'Copiar', 2000);
+  };
+  pre.style.position = 'relative';
+  pre.appendChild(btn);
+});
+</script>
+</body>
+</html>
