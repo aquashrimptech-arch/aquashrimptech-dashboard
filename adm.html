@@ -908,8 +908,44 @@ function salvarTokenLocal(clienteId, token, chatId) {
 function carregarTokensLocais() {
   try { BOT_TOKENS = JSON.parse(localStorage.getItem('ast_bot_tokens') || '{}'); } catch(e) { BOT_TOKENS = {}; }
 }
-function getToken(clienteId) { return (BOT_TOKENS[String(clienteId)] || {}).token || ''; }
-function getChatId(clienteId) { return (BOT_TOKENS[String(clienteId)] || {}).chatId || ''; }
+// ══════════════════════════════════════════════════════
+// BOT TOKEN STORAGE (localStorage + fallback pro servidor)
+// ══════════════════════════════════════════════════════
+function salvarTokenLocal(clienteId, token, chatId) {
+  try {
+    const data = JSON.parse(localStorage.getItem('ast_bot_tokens') || '{}');
+    data[clienteId] = { token, chatId };
+    localStorage.setItem('ast_bot_tokens', JSON.stringify(data));
+    BOT_TOKENS = data;
+  } catch(e) {}
+}
+function carregarTokensLocais() {
+  try { BOT_TOKENS = JSON.parse(localStorage.getItem('ast_bot_tokens') || '{}'); } catch(e) { BOT_TOKENS = {}; }
+}
+
+// ★ ALTERADO: agora prioriza o que já veio da planilha (via CLIENTES),
+// e só usa o localStorage como override manual (ex: você editou no modal
+// mas ainda não deu tempo do salvar_bot_token sincronizar no servidor).
+function getToken(clienteId) {
+  const local = (BOT_TOKENS[String(clienteId)] || {}).token;
+  if (local) return local;
+  const c = CLIENTES.find(x => String(x.ID) === String(clienteId));
+  return (c && c.BotToken) ? c.BotToken : '';
+}
+function getChatId(clienteId) {
+  const local = (BOT_TOKENS[String(clienteId)] || {}).chatId;
+  if (local) return local;
+  const c = CLIENTES.find(x => String(x.ID) === String(clienteId));
+  return (c && c.ChatId) ? c.ChatId : '';
+}
+
+function limparTodosTokensBots() {
+  if (!confirm('Tem certeza? Isso vai remover todos os tokens de bot salvos localmente neste navegador (o que está salvo na planilha continua intacto).')) return;
+  localStorage.removeItem('ast_bot_tokens');
+  BOT_TOKENS = {};
+  renderTabela(); carregarBots();
+  toast('Overrides locais removidos — voltando a usar o que está na planilha.', 'i');
+}
 function limparTodosTokensBots() {
   if (!confirm('Tem certeza? Isso vai remover todos os tokens de bot salvos localmente.')) return;
   localStorage.removeItem('ast_bot_tokens');
