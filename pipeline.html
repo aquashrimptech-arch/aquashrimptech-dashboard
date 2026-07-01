@@ -7,32 +7,83 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="adm-shared.css">
 <style>
+.kr-mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.kpi-mini{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;position:relative;overflow:hidden}
+.kpi-mini::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--kc,var(--accent)),transparent)}
+.kpi-mini.o{--kc:var(--accent3)}.kpi-mini.d{--kc:var(--danger)}.kpi-mini.g{--kc:var(--accent2)}
+.kpi-mini-lb{font-size:.58rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px}
+.kpi-mini-vl{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700}
+
+.filtros-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filtros-bar input,.filtros-bar select{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-size:.74rem;outline:none;font-family:'Space Grotesk',sans-serif}
+.filtros-bar input{width:190px}
+
 .kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;align-items:flex-start}
-.kan-col{background:var(--card2);border:1px solid var(--border);border-radius:14px;min-width:230px;flex:1 0 230px;max-width:280px}
+.kan-col{background:var(--card2);border:1px solid var(--border);border-radius:14px;min-width:250px;flex:1 0 250px;max-width:300px}
 .kan-col-hd{padding:11px 13px;border-bottom:1px solid var(--border);font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:space-between}
 .kan-count{background:rgba(0,229,255,.12);color:var(--accent);font-size:.62rem;font-weight:700;padding:1px 7px;border-radius:10px}
-.kan-cards{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:60px}
-.kan-card{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:10px 11px;font-size:.74rem}
-.kan-card-cliente{font-weight:700;font-size:.78rem;margin-bottom:4px}
-.kan-card-meta{font-size:.64rem;color:var(--text3);margin-bottom:2px}
-.kan-card-obs{font-size:.64rem;color:var(--text2);margin-top:5px;font-style:italic}
-.kan-card-actions{display:flex;gap:4px;margin-top:8px;justify-content:space-between}
+.kan-cards{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:60px;max-height:calc(100vh - 320px);overflow-y:auto}
+.kan-card{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:11px 12px;font-size:.74rem;cursor:pointer;transition:border-color .15s}
+.kan-card:hover{border-color:var(--accent)}
+.kan-card.urgente{border-left:3px solid var(--danger)}
+.kan-card.atrasado{border-color:rgba(255,64,96,.4)}
+.kan-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:5px}
+.kan-card-cliente{font-weight:700;font-size:.8rem;line-height:1.25}
+.kan-badge-urg{font-size:.55rem;font-weight:700;color:var(--danger);background:rgba(255,64,96,.12);border:1px solid rgba(255,64,96,.3);border-radius:6px;padding:1px 5px;flex-shrink:0}
+.kan-card-meta-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.kan-tag{font-size:.6rem;color:var(--text2);background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:2px 6px;display:inline-flex;align-items:center;gap:3px}
+.kan-tag.warn-empty{color:var(--warn);border-color:rgba(255,179,0,.3);background:rgba(255,179,0,.08)}
+.kan-tag.atraso{color:var(--danger);border-color:rgba(255,64,96,.3);background:rgba(255,64,96,.08);font-weight:700}
+.kan-check-bar{display:flex;align-items:center;gap:6px;margin:6px 0}
+.kan-check-track{flex:1;height:4px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.kan-check-fill{height:100%;background:var(--accent2);transition:width .25s}
+.kan-check-lbl{font-size:.58rem;color:var(--text3);white-space:nowrap}
+.kan-card-obs{font-size:.64rem;color:var(--text2);margin-top:5px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kan-card-actions{display:flex;gap:4px;margin-top:9px;justify-content:space-between;align-items:center}
 .kan-mv{background:var(--bg2);border:1px solid var(--border2);color:var(--text2);border-radius:6px;padding:3px 8px;font-size:.65rem;cursor:pointer;transition:all .15s}
 .kan-mv:hover{border-color:var(--accent);color:var(--accent)}
 .kan-mv:disabled{opacity:.3;cursor:not-allowed}
 .kan-empty{font-size:.66rem;color:var(--text3);text-align:center;padding:14px 0}
+
+/* ── DETALHE ── */
+.det-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.det-item{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 11px}
+.det-lb{font-size:.58rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.det-vl{font-size:.8rem;font-weight:600}
+.chk-row{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;cursor:pointer;transition:border-color .15s}
+.chk-row:hover{border-color:var(--accent)}
+.chk-row.done{border-color:rgba(0,255,163,.35);background:rgba(0,255,163,.04)}
+.chk-row input{width:16px;height:16px;accent-color:var(--accent2)}
+.chk-row span{font-size:.78rem}
+.hist-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(21,32,56,.5);font-size:.7rem}
+.hist-item:last-child{border-bottom:none}
+.hist-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.hist-etapa{font-weight:600;color:var(--text)}
+.hist-data{color:var(--text3);margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.65rem}
 </style>
 </head>
 <body>
 
 <div id="app">
   <div class="pg act" id="pg-pipeline">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
       <div>
         <div style="font-size:1.05rem;font-weight:700">🛠️ Fila de Instalação</div>
         <div style="font-size:.7rem;color:var(--text3)">Acompanhe cada cliente do lead até o pós-venda</div>
       </div>
       <button class="btn bor" onclick="abrirModalNovoCard()">+ Novo Card</button>
+    </div>
+
+    <div class="kr-mini" id="kpi-pipeline"></div>
+
+    <div class="filtros-bar">
+      <input id="flt-busca" type="text" placeholder="🔍 Cliente ou localidade..." oninput="renderKanban()">
+      <select id="flt-resp" onchange="renderKanban()"><option value="">Todos os responsáveis</option></select>
+      <select id="flt-atraso" onchange="renderKanban()">
+        <option value="">Todos os cards</option>
+        <option value="atrasado">⚠️ Só atrasados</option>
+        <option value="urgente">🔴 Só urgentes</option>
+      </select>
     </div>
 
     <div id="kanban-wrap">
@@ -43,21 +94,82 @@
 
 <!-- MODAL: NOVO/EDITAR CARD -->
 <div class="ov" id="m-card">
-  <div class="modal" style="max-width:480px">
+  <div class="modal" style="max-width:560px">
     <div class="modal-hd"><div class="modal-title" id="m-card-title">+ Novo Card</div><button class="modal-x" onclick="AdmShell.closeM('m-card')">✕</button></div>
     <div class="modal-body">
-      <div class="fg"><label>Cliente</label><input id="cd-cliente" type="text" placeholder="Nome do cliente ou lead" list="cd-clientes-list"><datalist id="cd-clientes-list"></datalist></div>
+      <div class="fsec" style="margin-top:0">👤 Cliente</div>
+      <div class="fg"><label>Cliente</label><input id="cd-cliente" type="text" placeholder="Nome do cliente ou lead" list="cd-clientes-list" oninput="autoPreencherCliente()"><datalist id="cd-clientes-list"></datalist></div>
+      <div class="fr c3">
+        <div class="fg"><label>Qtd. Viveiros</label><input id="cd-viveiros" type="number" min="1" placeholder="Ex: 5"></div>
+        <div class="fg"><label>Telefone / WhatsApp</label><input id="cd-tel" type="text" placeholder="85999990000"></div>
+        <div class="fg"><label>Prioridade</label><select id="cd-prioridade"><option value="Normal">Normal</option><option value="Urgente">🔴 Urgente</option></select></div>
+      </div>
+      <div class="fg"><label>Localidade</label><input id="cd-local" type="text" placeholder="Ex: Morada Nova, Limoeiro do Norte..." list="cd-local-list">
+        <datalist id="cd-local-list">
+          <option value="Morada Nova">
+          <option value="Limoeiro do Norte">
+          <option value="Itaitinga">
+          <option value="Fortaleza">
+          <option value="Quixeré">
+        </datalist>
+      </div>
+
+      <div class="fsec">🛠️ Instalação</div>
       <div class="fr c2">
         <div class="fg"><label>Etapa</label><select id="cd-etapa"></select></div>
         <div class="fg"><label>Data Agendada</label><input id="cd-data" type="date"></div>
       </div>
-      <div class="fg"><label>Responsável (opcional)</label><select id="cd-resp"><option value="">Não definido</option></select></div>
-      <div class="fg"><label>Observações</label><textarea id="cd-obs" rows="2"></textarea></div>
+      <div class="fr c2">
+        <div class="fg"><label>Responsável</label><select id="cd-resp"><option value="">Não definido</option></select></div>
+        <div class="fg"><label>Kit previsto (opcional)</label><select id="cd-kit"><option value="">Não definido</option></select></div>
+      </div>
+      <div id="cd-resp-hint" style="display:none;font-size:.66rem;color:var(--warn);margin:-8px 0 12px">⚠ Nenhum funcionário ativo cadastrado — <a href="funcionarios.html" target="_blank" style="color:var(--accent)">cadastre aqui</a> pra poder escolher um responsável.</div>
+
+      <div class="fsec">📝 Observações</div>
+      <div class="fg"><textarea id="cd-obs" rows="2" placeholder="Negociação, detalhes de acesso ao local, etc."></textarea></div>
       <input type="hidden" id="cd-id">
     </div>
     <div class="modal-ft">
       <button class="btn bol" onclick="AdmShell.closeM('m-card')">Cancelar</button>
       <button class="btn bac" onclick="salvarCardModal()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DETALHE DO CARD -->
+<div class="ov" id="m-det">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-hd"><div class="modal-title" id="det-title">👤 Cliente</div><button class="modal-x" onclick="AdmShell.closeM('m-det')">✕</button></div>
+    <div class="modal-body">
+      <div class="det-grid">
+        <div class="det-item"><div class="det-lb">🦐 Viveiros</div><div class="det-vl" id="det-viv">—</div></div>
+        <div class="det-item"><div class="det-lb">📍 Localidade</div><div class="det-vl" id="det-local">—</div></div>
+        <div class="det-item"><div class="det-lb">👷 Responsável</div><div class="det-vl" id="det-resp">—</div></div>
+        <div class="det-item"><div class="det-lb">📅 Agendado</div><div class="det-vl" id="det-data">—</div></div>
+        <div class="det-item"><div class="det-lb">🎯 Etapa atual</div><div class="det-vl" id="det-etapa">—</div></div>
+        <div class="det-item"><div class="det-lb">⏱ Nesta etapa há</div><div class="det-vl" id="det-diasparado">—</div></div>
+      </div>
+
+      <div class="fsec" style="margin-top:0">✅ Checklist de Instalação</div>
+      <div class="chk-row" id="chk-hardware" onclick="toggleChecklist('hardware')"><input type="checkbox" id="chk-hardware-cb" onclick="event.stopPropagation()"><span>Hardware separado (ESP32, sensores, cabos)</span></div>
+      <div class="chk-row" id="chk-config" onclick="toggleChecklist('config')"><input type="checkbox" id="chk-config-cb" onclick="event.stopPropagation()"><span>WiFi / SIM configurado e testado em bancada</span></div>
+      <div class="chk-row" id="chk-campo" onclick="toggleChecklist('campo')"><input type="checkbox" id="chk-campo-cb" onclick="event.stopPropagation()"><span>Instalado fisicamente no viveiro</span></div>
+      <div class="chk-row" id="chk-teste" onclick="toggleChecklist('teste')"><input type="checkbox" id="chk-teste-cb" onclick="event.stopPropagation()"><span>Testado em campo (aerador, sensores, alertas Telegram)</span></div>
+
+      <div class="fsec">📝 Observações</div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.75rem;color:var(--text3);min-height:40px" id="det-obs">—</div>
+
+      <div class="fsec">📜 Histórico</div>
+      <div id="det-hist" style="max-height:160px;overflow-y:auto"></div>
+
+      <input type="hidden" id="det-id">
+    </div>
+    <div class="modal-ft">
+      <button class="btn bol" onclick="AdmShell.closeM('m-det')">Fechar</button>
+      <button class="btn bwa" id="det-btn-wpp" style="display:none">🟢 WhatsApp</button>
+      <a class="btn bol" id="det-btn-ligar" style="display:none;text-decoration:none">📞 Ligar</a>
+      <button class="btn bac" onclick="editarCardDoDetalhe()">✏️ Editar</button>
+      <button class="btn bdn" onclick="excluirCardDoDetalhe()">🗑️ Excluir</button>
     </div>
   </div>
 </div>
@@ -83,9 +195,13 @@
 <script src="adm-shared.js"></script>
 <script>
 const ETAPAS = ["Lead/Negociando","Agendado","Kit Separado","Em Instalação","Instalado","Pós-venda"];
+// dias até considerar "atrasado" parado na mesma etapa
+const LIMITE_DIAS = {"Lead/Negociando":7,"Agendado":3,"Kit Separado":2,"Em Instalação":2,"Instalado":9999,"Pós-venda":9999};
 let CARDS = [];
 let KITS_CACHE = [];
 let FUNC_CACHE = [];
+let CLIENTES_CACHE = [];
+let CARD_ATIVO = null; // card aberto no modal de detalhe
 const esc = t => String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const R = n => isNaN(n)||n===null ? '—' : 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 
@@ -102,37 +218,131 @@ AdmShell.init({
 
 async function carregarClientesParaAutocomplete(){
   const data = await AdmShell.api({ acao:'listar' });
-  if(data.status==='ok') document.getElementById('cd-clientes-list').innerHTML = (data.clientes||[]).map(c=>`<option value="${esc(c.Nome)}">`).join('');
+  if(data.status==='ok'){
+    CLIENTES_CACHE = data.clientes || [];
+    document.getElementById('cd-clientes-list').innerHTML = CLIENTES_CACHE.map(c=>`<option value="${esc(c.Nome)}">`).join('');
+  }
 }
+function autoPreencherCliente(){
+  const nome = document.getElementById('cd-cliente').value.trim();
+  const c = CLIENTES_CACHE.find(x=>x.Nome===nome);
+  if(!c) return;
+  // só preenche se o campo ainda estiver vazio, pra não sobrescrever edição manual
+  const vivEl = document.getElementById('cd-viveiros'), telEl = document.getElementById('cd-tel');
+  if(!vivEl.value && c.QtdViveiros) vivEl.value = c.QtdViveiros;
+  if(!telEl.value && c.Telefone) telEl.value = c.Telefone;
+}
+
 async function carregarFuncionariosCache(){
   const data = await AdmShell.api({ acao:'funcionarios_listar' });
+  const selResp = document.getElementById('cd-resp');
+  const selFiltro = document.getElementById('flt-resp');
+  const hint = document.getElementById('cd-resp-hint');
   if(data.status==='ok'){
     FUNC_CACHE = (data.funcionarios||[]).filter(f=>f.status!=='Inativo');
-    document.getElementById('cd-resp').innerHTML = '<option value="">Não definido</option>' + FUNC_CACHE.map(f=>`<option value="${esc(f.nome)}">${esc(f.nome)}</option>`).join('');
-  }
+  } else FUNC_CACHE = [];
+  selResp.innerHTML = '<option value="">Não definido</option>' + FUNC_CACHE.map(f=>`<option value="${esc(f.nome)}">${esc(f.nome)} — ${esc(f.funcao||'')}</option>`).join('');
+  selFiltro.innerHTML = '<option value="">Todos os responsáveis</option>' + FUNC_CACHE.map(f=>`<option value="${esc(f.nome)}">${esc(f.nome)}</option>`).join('');
+  hint.style.display = FUNC_CACHE.length ? 'none' : 'block';
+}
+async function carregarKitsCache(){
+  const data = await AdmShell.api({ acao:'kits_listar' });
+  if(data.status==='ok') KITS_CACHE = data.kits || [];
+  const sel = document.getElementById('cd-kit');
+  sel.innerHTML = '<option value="">Não definido</option>' + KITS_CACHE.map(k=>`<option value="${k.id}">${esc(k.nome)}</option>`).join('');
 }
 
 async function carregarPipeline(){
   const data = await AdmShell.api({ acao: 'pipeline_listar' });
   if(data.status !== 'ok'){ AdmShell.toast('Erro: '+data.msg,'e'); return; }
   CARDS = data.cards || [];
+  renderKPIs();
   renderKanban();
 }
 
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+function diasDesde(dataStr){
+  if(!dataStr) return null;
+  const d = new Date(dataStr);
+  if(isNaN(d)) return null;
+  return Math.floor((Date.now() - d.getTime()) / 86400000);
+}
+function checklistProgresso(c){
+  const itens = [c.checklist_hardware, c.checklist_config, c.checklist_campo, c.checklist_teste];
+  const feitos = itens.filter(x=>x==='sim'||x===true).length;
+  return {feitos, total:4};
+}
+function cardAtrasado(c){
+  const dias = diasDesde(c.data_ultima_mudanca || c.data_criacao);
+  const limite = LIMITE_DIAS[c.etapa] ?? 9999;
+  return dias !== null && dias > limite;
+}
+
+function renderKPIs(){
+  const ativos = CARDS.filter(c=>c.etapa!=='Instalado');
+  const totalViveiros = ativos.reduce((s,c)=>s+(parseInt(c.qtd_viveiros)||0),0);
+  const atrasados = ativos.filter(cardAtrasado).length;
+  const urgentes = ativos.filter(c=>c.prioridade==='Urgente').length;
+  const semResp = ativos.filter(c=>!c.responsavel).length;
+  document.getElementById('kpi-pipeline').innerHTML = [
+    {lb:'Na fila (ativos)',vl:ativos.length,cls:''},
+    {lb:'Viveiros aguardando',vl:totalViveiros,cls:'o'},
+    {lb:'⚠️ Atrasados',vl:atrasados,cls:'d'},
+    {lb:'🔴 Urgentes',vl:urgentes,cls:'d'},
+    {lb:'👷 Sem responsável',vl:semResp,cls:atrasados||semResp?'o':'g'},
+  ].map(k=>`<div class="kpi-mini ${k.cls}"><div class="kpi-mini-lb">${k.lb}</div><div class="kpi-mini-vl">${k.vl}</div></div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// KANBAN
+// ══════════════════════════════════════════════════════
+function cardsFiltrados(){
+  const busca = (document.getElementById('flt-busca').value||'').toLowerCase();
+  const resp = document.getElementById('flt-resp').value;
+  const tipo = document.getElementById('flt-atraso').value;
+  return CARDS.filter(c=>{
+    if(busca && !(String(c.cliente||'').toLowerCase().includes(busca) || String(c.localidade||'').toLowerCase().includes(busca))) return false;
+    if(resp && c.responsavel !== resp) return false;
+    if(tipo==='atrasado' && !cardAtrasado(c)) return false;
+    if(tipo==='urgente' && c.prioridade!=='Urgente') return false;
+    return true;
+  });
+}
+
 function renderKanban(){
+  const lista = cardsFiltrados();
   const wrap = document.getElementById('kanban-wrap');
   wrap.innerHTML = `<div class="kanban">${ETAPAS.map((etapa, idx)=>{
-    const cards = CARDS.filter(c=>c.etapa===etapa);
+    const cards = lista.filter(c=>c.etapa===etapa);
     return `<div class="kan-col">
       <div class="kan-col-hd"><span>${etapa}</span><span class="kan-count">${cards.length}</span></div>
       <div class="kan-cards">
-        ${cards.length ? cards.map(c=>`
-          <div class="kan-card">
-            <div class="kan-card-cliente">🦐 ${esc(c.cliente)}</div>
-            ${c.data_agendada ? `<div class="kan-card-meta">📅 ${c.data_agendada}</div>` : ''}
-            ${c.responsavel ? `<div class="kan-card-meta">👷 ${esc(c.responsavel)}</div>` : ''}
+        ${cards.length ? cards.map(c=>{
+          const atrasado = cardAtrasado(c);
+          const dias = diasDesde(c.data_ultima_mudanca || c.data_criacao);
+          const ck = checklistProgresso(c);
+          const urgente = c.prioridade === 'Urgente';
+          return `
+          <div class="kan-card ${urgente?'urgente':''} ${atrasado?'atrasado':''}" onclick="abrirDetalheCard('${c.id}')">
+            <div class="kan-card-top">
+              <div class="kan-card-cliente">🦐 ${esc(c.cliente)}</div>
+              ${urgente ? '<span class="kan-badge-urg">URGENTE</span>' : ''}
+            </div>
+            <div class="kan-card-meta-row">
+              <span class="kan-tag">🦐 ${c.qtd_viveiros || '?'} viv.</span>
+              ${c.localidade ? `<span class="kan-tag">📍 ${esc(c.localidade)}</span>` : ''}
+              ${c.responsavel ? `<span class="kan-tag">👷 ${esc(c.responsavel)}</span>` : `<span class="kan-tag warn-empty">⚠ sem responsável</span>`}
+              ${c.data_agendada ? `<span class="kan-tag">📅 ${c.data_agendada}</span>` : ''}
+              ${dias!==null ? `<span class="kan-tag ${atrasado?'atraso':''}">${atrasado?'⚠️ ':'⏱ '}${dias}d nesta etapa</span>` : ''}
+            </div>
+            <div class="kan-check-bar">
+              <div class="kan-check-track"><div class="kan-check-fill" style="width:${ck.feitos/ck.total*100}%"></div></div>
+              <span class="kan-check-lbl">${ck.feitos}/${ck.total} ✓</span>
+            </div>
             ${c.observacoes ? `<div class="kan-card-obs">"${esc(c.observacoes)}"</div>` : ''}
-            <div class="kan-card-actions">
+            <div class="kan-card-actions" onclick="event.stopPropagation()">
               <div>
                 <button class="kan-mv" ${idx===0?'disabled':''} onclick="moverCard('${c.id}', ${idx-1})">◀</button>
                 <button class="kan-mv" ${idx===ETAPAS.length-1?'disabled':''} onclick="moverCard('${c.id}', ${idx+1})">▶</button>
@@ -142,43 +352,78 @@ function renderKanban(){
                 <button class="kan-mv" onclick="excluirCard('${c.id}')">🗑️</button>
               </div>
             </div>
-          </div>`).join('') : `<div class="kan-empty">Vazio</div>`}
+          </div>`;
+        }).join('') : `<div class="kan-empty">Vazio</div>`}
       </div>
     </div>`;
   }).join('')}</div>`;
 }
 
-function abrirModalNovoCard(){
+// ══════════════════════════════════════════════════════
+// MODAL NOVO/EDITAR
+// ══════════════════════════════════════════════════════
+async function abrirModalNovoCard(){
   document.getElementById('m-card-title').textContent = '+ Novo Card';
   document.getElementById('cd-id').value = '';
   document.getElementById('cd-cliente').value = '';
+  document.getElementById('cd-viveiros').value = '';
+  document.getElementById('cd-tel').value = '';
+  document.getElementById('cd-local').value = '';
+  document.getElementById('cd-prioridade').value = 'Normal';
   document.getElementById('cd-etapa').value = ETAPAS[0];
   document.getElementById('cd-data').value = '';
   document.getElementById('cd-resp').value = '';
+  document.getElementById('cd-kit').value = '';
   document.getElementById('cd-obs').value = '';
+  await carregarFuncionariosCache();
+  await carregarKitsCache();
   AdmShell.openM('m-card');
 }
-function editarCard(id){
+async function editarCard(id){
   const c = CARDS.find(x=>String(x.id)===String(id)); if(!c) return;
   document.getElementById('m-card-title').textContent = '✏️ Editar Card';
   document.getElementById('cd-id').value = c.id;
   document.getElementById('cd-cliente').value = c.cliente;
+  document.getElementById('cd-viveiros').value = c.qtd_viveiros || '';
+  document.getElementById('cd-tel').value = c.telefone || '';
+  document.getElementById('cd-local').value = c.localidade || '';
+  document.getElementById('cd-prioridade').value = c.prioridade || 'Normal';
   document.getElementById('cd-etapa').value = c.etapa;
+  document.getElementById('cd-data').value = c.data_agendada || '';
+  await carregarFuncionariosCache();
+  await carregarKitsCache();
   document.getElementById('cd-resp').value = c.responsavel || '';
+  document.getElementById('cd-kit').value = c.kit_previsto || '';
   document.getElementById('cd-obs').value = c.observacoes || '';
   AdmShell.openM('m-card');
+}
+function editarCardDoDetalhe(){
+  AdmShell.closeM('m-det');
+  editarCard(document.getElementById('det-id').value);
 }
 async function salvarCardModal(){
   const cliente = document.getElementById('cd-cliente').value.trim();
   if(!cliente){ AdmShell.toast('Informe o cliente','e'); return; }
+  const id = document.getElementById('cd-id').value;
+  const existente = CARDS.find(x=>String(x.id)===String(id));
   const params = {
     acao: 'pipeline_salvar',
-    id: document.getElementById('cd-id').value,
+    id,
     cliente,
     etapa: document.getElementById('cd-etapa').value,
+    qtd_viveiros: document.getElementById('cd-viveiros').value || '',
+    telefone: document.getElementById('cd-tel').value.trim(),
+    localidade: document.getElementById('cd-local').value.trim(),
+    prioridade: document.getElementById('cd-prioridade').value,
     data_agendada: document.getElementById('cd-data').value,
     responsavel: document.getElementById('cd-resp').value,
+    kit_previsto: document.getElementById('cd-kit').value,
     observacoes: document.getElementById('cd-obs').value.trim(),
+    // preserva o que já existia e não é editável neste modal
+    checklist_hardware: existente ? (existente.checklist_hardware||'') : '',
+    checklist_config: existente ? (existente.checklist_config||'') : '',
+    checklist_campo: existente ? (existente.checklist_campo||'') : '',
+    checklist_teste: existente ? (existente.checklist_teste||'') : '',
   };
   const data = await AdmShell.api(params);
   if(data.status==='ok'){ AdmShell.toast('✅ Salvo!','s'); AdmShell.closeM('m-card'); await carregarPipeline(); }
@@ -190,7 +435,82 @@ async function excluirCard(id){
   if(data.status==='ok'){ AdmShell.toast('Removido.','s'); await carregarPipeline(); }
   else AdmShell.toast('Erro: '+data.msg,'e');
 }
+function excluirCardDoDetalhe(){
+  const id = document.getElementById('det-id').value;
+  AdmShell.closeM('m-det');
+  excluirCard(id);
+}
 
+// ══════════════════════════════════════════════════════
+// MODAL DE DETALHE
+// ══════════════════════════════════════════════════════
+function abrirDetalheCard(id){
+  const c = CARDS.find(x=>String(x.id)===String(id)); if(!c) return;
+  CARD_ATIVO = c;
+  document.getElementById('det-id').value = c.id;
+  document.getElementById('det-title').textContent = '🦐 ' + c.cliente;
+  document.getElementById('det-viv').textContent = (c.qtd_viveiros || '—') + (c.qtd_viveiros ? ' viveiro(s)' : '');
+  document.getElementById('det-local').textContent = c.localidade || '—';
+  document.getElementById('det-resp').textContent = c.responsavel || '⚠ Não definido';
+  document.getElementById('det-data').textContent = c.data_agendada || '—';
+  document.getElementById('det-etapa').textContent = c.etapa;
+  const dias = diasDesde(c.data_ultima_mudanca || c.data_criacao);
+  document.getElementById('det-diasparado').innerHTML = dias!==null ? `${dias} dia(s) ${cardAtrasado(c)?'<span style="color:var(--danger)">⚠️ atrasado</span>':''}` : '—';
+  document.getElementById('det-obs').textContent = c.observacoes || 'Nenhuma observação.';
+
+  ['hardware','config','campo','teste'].forEach(k=>{
+    const feito = c['checklist_'+k] === 'sim' || c['checklist_'+k] === true;
+    document.getElementById('chk-'+k+'-cb').checked = feito;
+    document.getElementById('chk-'+k).classList.toggle('done', feito);
+  });
+
+  let hist = [];
+  try { hist = c.historico_json ? JSON.parse(c.historico_json) : []; } catch(e){ hist = []; }
+  const histEl = document.getElementById('det-hist');
+  histEl.innerHTML = hist.length ? hist.slice().reverse().map(h=>`
+    <div class="hist-item"><span class="hist-dot"></span><span class="hist-etapa">${esc(h.etapa)}</span><span class="hist-data">${esc(h.data)}</span></div>
+  `).join('') : '<div style="color:var(--text3);font-size:.7rem;padding:8px 0">Sem histórico de movimentação ainda.</div>';
+
+  const btnWpp = document.getElementById('det-btn-wpp');
+  const btnLigar = document.getElementById('det-btn-ligar');
+  if(c.telefone){
+    const num = String(c.telefone).replace(/\D/g,'');
+    btnWpp.style.display = 'inline-flex';
+    btnWpp.onclick = () => window.open(`https://wa.me/55${num}?text=${encodeURIComponent('Olá '+c.cliente+'! Aqui é da AquaShrimpTech 🦐')}`,'_blank');
+    btnLigar.style.display = 'inline-flex';
+    btnLigar.href = `tel:+55${num}`;
+  } else {
+    btnWpp.style.display = 'none';
+    btnLigar.style.display = 'none';
+  }
+
+  AdmShell.openM('m-det');
+}
+
+async function toggleChecklist(campo){
+  const c = CARD_ATIVO; if(!c) return;
+  const cb = document.getElementById('chk-'+campo+'-cb');
+  const novoValor = cb.checked ? '' : 'sim'; // clicou na linha antes do onclick nativo do checkbox rodar
+  cb.checked = !cb.checked;
+  document.getElementById('chk-'+campo).classList.toggle('done', cb.checked);
+  const params = {
+    acao: 'pipeline_salvar',
+    id: c.id, cliente: c.cliente, etapa: c.etapa,
+    qtd_viveiros: c.qtd_viveiros||'', telefone: c.telefone||'', localidade: c.localidade||'',
+    prioridade: c.prioridade||'Normal', data_agendada: c.data_agendada||'',
+    responsavel: c.responsavel||'', kit_previsto: c.kit_previsto||'', observacoes: c.observacoes||'',
+    checklist_hardware: c.checklist_hardware||'', checklist_config: c.checklist_config||'',
+    checklist_campo: c.checklist_campo||'', checklist_teste: c.checklist_teste||'',
+  };
+  params['checklist_'+campo] = cb.checked ? 'sim' : '';
+  const data = await AdmShell.api(params);
+  if(data.status==='ok'){ c['checklist_'+campo] = params['checklist_'+campo]; await carregarPipeline(); }
+  else AdmShell.toast('Erro ao salvar checklist: '+data.msg,'e');
+}
+
+// ══════════════════════════════════════════════════════
+// MOVER ENTRE ETAPAS
+// ══════════════════════════════════════════════════════
 async function moverCard(id, novoIdx){
   if(novoIdx<0 || novoIdx>=ETAPAS.length) return;
   const novaEtapa = ETAPAS[novoIdx];
@@ -203,13 +523,13 @@ async function moverCard(id, novoIdx){
   // ★ integração: ao chegar em "Instalado", oferece aplicar um Kit de Custo
   if(novaEtapa === 'Instalado' && card){
     if(confirm(`"${card.cliente}" foi movido para Instalado.\n\nDeseja aplicar um Kit de Custo agora (lança no COGS automaticamente)?`)){
-      abrirModalAplicarKit(card.cliente);
+      abrirModalAplicarKit(card.cliente, card.kit_previsto);
     }
   }
 }
 
 // ── INTEGRAÇÃO COM KITS ──
-async function abrirModalAplicarKit(cliente){
+async function abrirModalAplicarKit(cliente, kitPrevisto){
   document.getElementById('ak-cliente').value = cliente;
   document.getElementById('ak-cliente-nome').textContent = cliente;
   document.getElementById('ak-viveiro').value = '';
@@ -225,6 +545,7 @@ async function abrirModalAplicarKit(cliente){
     const total = (k.itens||[]).reduce((s,i)=>s+(parseFloat(i.valor_unit)||0)*(parseFloat(i.qtd)||0),0);
     return `<option value="${k.id}">${esc(k.nome)} (${R(total)})</option>`;
   }).join('');
+  if(kitPrevisto) sel.value = kitPrevisto;
   AdmShell.openM('m-aplicar-kit');
 }
 async function confirmarAplicarKitPipeline(){
