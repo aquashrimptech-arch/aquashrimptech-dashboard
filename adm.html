@@ -1290,7 +1290,7 @@ async function carregarEspStatus() {
   if (!BOT_CLI_SEL) return;
   try {
     const nomesViv = String(BOT_CLI_SEL.ViveirosNomes || '').trim();
-    const params = nomesViv ? { acao: 'esp_status_list', viveiros: nomesViv } : { acao: 'esp_status_list', chat_id: getChatId(BOT_CLI_SEL.ID) };
+    const params = { acao: 'esp_status_list', viveiros: nomesViv, chat_id: getChatId(BOT_CLI_SEL.ID) };
     const data = await api(params);
     const grid = document.getElementById('esp-status-grid');
     const filtro = document.getElementById('esp-log-filtro');
