@@ -1625,10 +1625,17 @@ function wppComLink(id,link,valor,vencimento) {
 function wppBoasVindas() {
   const n=document.getElementById('c-nome').value||'Cliente';
   const u=document.getElementById('c-usr').value||'usuario';
+  const s=document.getElementById('c-pwd').value;
   const tel=document.getElementById('c-tel').value;
   const vivs=document.getElementById('c-vivs').value||1;
   const val=document.getElementById('c-valviv').value||50;
-  const msg=`Olá *${n}*! 🎉\n\nSeja bem-vindo(a) à *AquaShrimpTech*! 🦐\n\n🦐 *${vivs} viveiro${vivs!=1?'s':''}* | 💰 *${R(vivs*val)}/mês*\n\n🔐 Login: *${u}*\n🌐 https://aquashrimptech-arch.github.io/aquashrimptech-dashboard/\n\n_AquaShrimpTech — Tecnologia que cultiva resultados_ 🚀`;
+
+  if (!s) {
+    toast('⚠ Preencha o campo Senha no formulário antes de enviar — ela não fica salva no navegador por segurança.','e');
+    return;
+  }
+
+  const msg=`Olá *${n}*! 🎉\n\nSeja bem-vindo(a) à *AquaShrimpTech*! 🦐\n\n🦐 *${vivs} viveiro${vivs!=1?'s':''}* | 💰 *${R(vivs*val)}/mês*\n\n🔐 Login: *${u}*\n🔑 Senha: *${s}*\n🌐 https://www.astcamaroes.com.br\n\n_AquaShrimpTech — Tecnologia que cultiva resultados_ 🚀`;
   const num = limpaTel(tel);
   const url = num ? `https://wa.me/55${num}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
   window.open(url,'_blank');
