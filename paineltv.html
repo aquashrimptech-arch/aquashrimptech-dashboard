@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AquaShrimpTech — Painel de Monitoramento</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#05080f;--card:#0b1221;--card2:#0f1929;--border:#152038;--border2:#1e2f4a;--accent:#00e5ff;--accent2:#00ffa3;--accent3:#ff6b35;--warn:#ffb300;--danger:#ff4060;--purple:#9b5de5;--text:#e2eaf5;--text2:#8ba4c0;--text3:#4a6080}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,229,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.025) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
+::-webkit-scrollbar{height:6px;width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--border);position:relative;z-index:1}
+.brand{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.1em;background:linear-gradient(135deg,var(--accent3),var(--warn));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:.8rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:-4px}
+.clk{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--accent)}
+.dt{font-size:.8rem;color:var(--text3);text-align:right}
+
+.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;padding:18px 28px;position:relative;z-index:1}
+.sumcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center}
+.sumcard .n{font-family:'JetBrains Mono',monospace;font-size:2.4rem;font-weight:700}
+.sumcard .l{font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.sumcard.online .n{color:var(--accent2)}
+.sumcard.offline .n{color:var(--danger)}
+.sumcard.fraco .n{color:var(--warn)}
+
+.section-hd{display:flex;align-items:center;justify-content:space-between;padding:0 28px;margin-bottom:14px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.08em;display:flex;align-items:center;gap:10px}
+.section-title .ico{font-size:1.2rem}
+.section-sub{font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--accent2);display:inline-block;animation:livepulse 1.6s infinite}
+@keyframes livepulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,255,163,.5)}50%{opacity:.55;box-shadow:0 0 0 5px rgba(0,255,163,0)}}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:0 28px 32px;position:relative;z-index:1}
+.card{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+.card:hover{transform:translateY(-3px)}
+.card .hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.card .viv{font-size:1.15rem;font-weight:700}
+.card .cli{font-size:.7rem;color:var(--text3);margin-top:2px}
+.card .badge{padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:700;display:flex;align-items:center;gap:5px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+.card.online{border-color:rgba(0,255,163,.25)}
+.card.online .badge{background:rgba(0,255,163,.15);color:var(--accent2)}
+.card.online .dot{background:var(--accent2)}
+
+.card.offline{border-color:var(--danger);animation:blinkred 1.1s infinite}
+.card.offline .badge{background:rgba(255,64,96,.18);color:var(--danger)}
+.card.offline .dot{background:var(--danger)}
+@keyframes blinkred{0%,100%{box-shadow:0 0 0 0 rgba(255,64,96,.5)}50%{box-shadow:0 0 22px 4px rgba(255,64,96,.5)}}
+
+.card.fraco{border-color:var(--warn);animation:blinkyellow 1.6s infinite}
+.card.fraco .badge{background:rgba(255,179,0,.18);color:var(--warn)}
+.card.fraco .dot{background:var(--warn)}
+@keyframes blinkyellow{0%,100%{box-shadow:0 0 0 0 rgba(255,179,0,.45)}50%{box-shadow:0 0 18px 3px rgba(255,179,0,.45)}}
+
+.rssibar{height:7px;background:var(--bg);border-radius:4px;overflow:hidden;margin:10px 0 6px}
+.rssifill{height:100%;border-radius:4px;transition:width .4s}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:.68rem;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:8px}
+.meta b{color:var(--text2)}
+
+/* ── FILA DE INSTALAÇÃO (Kanban) ── */
+.pipeline-section{padding:6px 0 34px;position:relative;z-index:1}
+.kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(270px,1fr);gap:16px;overflow-x:auto;padding:0 28px 8px}
+.kcol{background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:140px}
+.kcol-hd{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:2px solid var(--kc,var(--accent))}
+.kcol-nome{font-size:.8rem;font-weight:700;color:var(--text)}
+.kcol-count{font-family:'JetBrains Mono',monospace;font-size:.7rem;background:rgba(255,255,255,.06);padding:2px 9px;border-radius:20px;color:var(--text2)}
+.kcard{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--kc,var(--accent));border-radius:10px;padding:10px 12px}
+.kcard.fresh{animation:pulseFresh 2.4s ease-in-out 2}
+@keyframes pulseFresh{0%{box-shadow:0 0 0 0 rgba(0,229,255,.55)}70%{box-shadow:0 0 0 12px rgba(0,229,255,0)}100%{box-shadow:0 0 0 0 rgba(0,229,255,0)}}
+.kc-nome{font-size:.8rem;font-weight:700;margin-bottom:4px}
+.kc-meta{font-size:.63rem;color:var(--text3);line-height:1.6;font-family:'JetBrains Mono',monospace}
+.kc-meta b{color:var(--text2);font-family:'Space Grotesk',sans-serif}
+.kc-time{display:inline-block;margin-top:6px;font-size:.6rem;color:var(--text3);background:rgba(255,255,255,.04);padding:2px 8px;border-radius:10px}
+.kcol-empty{font-size:.7rem;color:var(--text3);text-align:center;padding:24px 0}
+
+#login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999}
+#login input{background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;width:280px;margin-bottom:10px}
+#login button{padding:10px 16px;background:var(--accent3);border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer}
+
+.empty{padding:60px;text-align:center;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div style="text-align:center">
+    <div class="brand">PAINEL TV</div>
+    <div class="sub" style="margin-bottom:20px">AquaShrimpTech — Monitoramento ao vivo</div>
+    <div><input id="tokenInput" type="password" placeholder="Admin Token"></div>
+    <div><button onclick="entrar()">Entrar</button></div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <div class="topbar">
+    <div>
+      <div class="brand">AQUASHRIMP — PAINEL</div>
+      <div class="sub">Monitoramento ao vivo dos viveiros</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <button class="btn" style="background:transparent;border:1px solid var(--border2);color:var(--text2);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:.78rem;font-family:'Space Grotesk',sans-serif" onclick="document.documentElement.requestFullscreen()">⛶ Tela cheia</button>
+      <div style="text-align:right">
+        <div class="clk" id="clk">--:--:--</div>
+        <div class="dt" id="dt">--</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary" id="summary"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="pipeline-section">
+    <div class="section-hd">
+      <div class="section-title"><span class="ico">🛠️</span>Fila de Instalação</div>
+      <div class="section-sub"><span class="live-dot"></span>&nbsp; atualiza a cada 15s</div>
+    </div>
+    <div class="kanban" id="kanban"></div>
+  </div>
+</div>
+
+<script>
+const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
+const ADM_HTML_URL   = "adm.html"; // ajuste se estiver em outro caminho
+let TOKEN = localStorage.getItem('painel_tv_token') || '';
+let CLIENTES = [];
+let PIPELINE_ANTERIOR = {}; // id → etapa, pra detectar mudança e dar destaque
+
+// Ordem e visual de cada etapa do Kanban — cai num "Outros" cinza se a etapa
+// não bater com nenhum padrão conhecido, então nunca perde card por causa
+// de um nome de etapa diferente do esperado.
+const ETAPAS_CONFIG = [
+  { match: /lead|negocia/i,          nome: '📋 Lead / Negociando', cor: 'var(--text3)' },
+  { match: /agend/i,                 nome: '🗓️ Agendado',          cor: 'var(--accent)' },
+  { match: /instala|andamento|obra/i,nome: '🔧 Em Instalação',     cor: 'var(--accent3)' },
+  { match: /teste|homolog/i,         nome: '🧪 Em Teste',          cor: 'var(--purple)' },
+  { match: /conclu|finaliz|ativo/i,  nome: '✅ Concluído',          cor: 'var(--accent2)' },
+  { match: /cancel|perdid/i,         nome: '❌ Cancelado',          cor: 'var(--danger)' },
+];
+function configEtapa(etapa){
+  const f = ETAPAS_CONFIG.find(e => e.match.test(etapa||''));
+  return f || { nome: etapa || 'Outros', cor: 'var(--text3)' };
+}
+
+function entrar(){
+  const t = document.getElementById('tokenInput').value.trim();
+  if(!t){ alert('Informe o token admin'); return; }
+  TOKEN = t;
+  localStorage.setItem('painel_tv_token', t);
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='block';
+  iniciar();
+}
+
+if(TOKEN){
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='block';
+  window.addEventListener('DOMContentLoaded', iniciar);
+}
+
+async function api(params){
+  params = {...params, token: TOKEN};
+  const url = ADM_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
+  const resp = await fetch(url);
+  return resp.json();
+}
+
+function tick(){
+  const n = new Date();
+  document.getElementById('clk').textContent = n.toLocaleTimeString('pt-BR');
+  document.getElementById('dt').textContent = n.toLocaleDateString('pt-BR',{weekday:'long', day:'2-digit', month:'long'});
+}
+
+function qualidade(rssi){
+  if(rssi >= -60) return {label:'Excelente', cor:'var(--accent2)', estado:'online'};
+  if(rssi >= -70) return {label:'Bom', cor:'var(--accent2)', estado:'online'};
+  if(rssi >= -80) return {label:'Fraco', cor:'var(--warn)', estado:'fraco'};
+  return {label:'Crítico', cor:'var(--danger)', estado:'fraco'};
+}
+function pctRssi(rssi){ return Math.round(Math.min(100, Math.max(0, 2*(rssi+100)))); }
+
+async function carregarDados(){
+  try{
+    const [dashResp, statusResp, pipeResp] = await Promise.all([
+      api({acao:'dashboard'}),
+      api({acao:'esp_status_list'}),  // sem filtro → traz TODOS os clientes
+      api({acao:'pipeline_listar'}),
+    ]);
+    if(dashResp.status!=='ok'){ console.error('Erro dashboard:', dashResp.msg); return; }
+    CLIENTES = dashResp.clientes || [];
+    const status = (statusResp.status==='ok') ? (statusResp.status_esp||[]) : [];
+    renderTudo(status);
+    if(pipeResp.status==='ok') renderPipeline(pipeResp.cards || []);
+  }catch(e){ console.error(e); }
+}
+
+function buscarCliente(viveiro, chatId){
+  // tenta casar por ChatId + nome de viveiro nas listas ViveirosNomes do cliente
+  for(const c of CLIENTES){
+    const nomes = String(c.ViveirosNomes||'').split('|').map(v=>v.trim());
+    const mesmoChat = String(c.ChatId||'').trim() === chatId;
+    if(mesmoChat && nomes.includes(viveiro)) return c;
+  }
+  // fallback: casa só pelo nome (caso ChatId não bata)
+  for(const c of CLIENTES){
+    const nomes = String(c.ViveirosNomes||'').split('|').map(v=>v.trim());
+    if(nomes.includes(viveiro)) return c;
+  }
+  return null;
+}
+
+function renderTudo(statusList){
+  let online=0, offline=0, fraco=0, somaRssi=0, comSinal=0;
+  const grid = document.getElementById('grid');
+
+  if(!statusList.length){
+    grid.innerHTML = '<div class="empty">Nenhum heartbeat recebido ainda.</div>';
+    document.getElementById('summary').innerHTML='';
+    return;
+  }
+
+  const cardsHtml = statusList.map(v=>{
+    const cliente = buscarCliente(v.viveiro, v.chat_id);
+    const isOnline = v.online;
+    const q = qualidade(v.rssi||0);
+    let classe = 'online';
+    if(!isOnline){ classe='offline'; offline++; }
+    else if(q.estado==='fraco'){ classe='fraco'; fraco++; online++; }
+    else { online++; }
+    if(isOnline){ somaRssi += (v.rssi||0); comSinal++; }
+
+    const cliId = cliente ? cliente.ID : '';
+    const cliNome = cliente ? cliente.Nome : '(cliente não identificado)';
+    const pct = pctRssi(v.rssi||0);
+
+    return `<div class="card ${classe}" onclick="abrirCliente('${cliId}')">
+      <div class="hd">
+        <div>
+          <div class="viv">${v.viveiro}</div>
+          <div class="cli">${cliNome}</div>
+        </div>
+        <div class="badge"><span class="dot"></span>${isOnline ? (q.estado==='fraco'?'SINAL FRACO':'ONLINE') : 'OFFLINE'}</div>
+      </div>
+      <div class="rssibar"><div class="rssifill" style="width:${isOnline?pct:0}%;background:${q.cor}"></div></div>
+      <div class="meta">
+        <div>RSSI: <b>${v.rssi||0} dBm</b></div>
+        <div>Qualidade: <b style="color:${q.cor}">${isOnline?q.label:'—'}</b></div>
+        <div>Heap: <b>${v.heap_kb||0} KB</b></div>
+        <div>Versão: <b>v${v.versao||'?'}</b></div>
+        <div>Uptime: <b>${formatarUptime(v.uptime_seg)}</b></div>
+        <div>Últ. contato: <b>${v.seg_atras!=null?v.seg_atras+'s':'—'}</b></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  grid.innerHTML = cardsHtml;
+
+  const mediaRssi = comSinal ? Math.round(somaRssi/comSinal) : 0;
+  document.getElementById('summary').innerHTML = `
+    <div class="sumcard online"><div class="n">${online}</div><div class="l">Online</div></div>
+    <div class="sumcard offline"><div class="n">${offline}</div><div class="l">Offline</div></div>
+    <div class="sumcard fraco"><div class="n">${fraco}</div><div class="l">Sinal Fraco</div></div>
+    <div class="sumcard"><div class="n" style="color:var(--accent)">${statusList.length}</div><div class="l">Total Viveiros</div></div>
+    <div class="sumcard"><div class="n" style="color:var(--accent)">${mediaRssi||'—'}</div><div class="l">RSSI Médio (dBm)</div></div>
+  `;
+}
+
+// ── FILA DE INSTALAÇÃO ──
+function tempoDesde(dataHoraBR){
+  // aceita "dd/MM/yyyy HH:mm:ss" ou "dd/MM/yyyy HH:mm"
+  if(!dataHoraBR) return null;
+  const m = String(dataHoraBR).match(/(\d{2})\/(\d{2})\/(\d{4})[ ,]+(\d{2}):(\d{2})/);
+  if(!m) return null;
+  const [,dd,mm,yyyy,hh,mi] = m;
+  return new Date(+yyyy, +mm-1, +dd, +hh, +mi);
+}
+function formatarHaQuanto(data){
+  if(!data) return '';
+  const diffSeg = Math.floor((Date.now() - data.getTime())/1000);
+  if(diffSeg < 0) return 'agora';
+  if(diffSeg < 60) return 'agora mesmo';
+  if(diffSeg < 3600) return Math.floor(diffSeg/60)+'min atrás';
+  if(diffSeg < 86400) return Math.floor(diffSeg/3600)+'h atrás';
+  return Math.floor(diffSeg/86400)+'d atrás';
+}
+
+function renderPipeline(cards){
+  const kanban = document.getElementById('kanban');
+  if(!cards.length){
+    kanban.innerHTML = '<div class="empty" style="padding:20px 28px">Nenhum cliente na fila de instalação no momento.</div>';
+    return;
+  }
+
+  // agrupa por etapa, preservando a ordem de primeira aparição
+  const grupos = {};
+  const ordemEtapas = [];
+  cards.forEach(c => {
+    const etapa = c.etapa || 'Outros';
+    if(!grupos[etapa]){ grupos[etapa] = []; ordemEtapas.push(etapa); }
+    grupos[etapa].push(c);
+  });
+
+  // ordena as colunas seguindo ETAPAS_CONFIG quando possível, senão mantém a ordem de aparição
+  ordemEtapas.sort((a,b) => {
+    const ia = ETAPAS_CONFIG.findIndex(e => e.match.test(a));
+    const ib = ETAPAS_CONFIG.findIndex(e => e.match.test(b));
+    return (ia<0?99:ia) - (ib<0?99:ib);
+  });
+
+  const novoMapaEtapas = {};
+
+  kanban.innerHTML = ordemEtapas.map(etapa => {
+    const cfg = configEtapa(etapa);
+    const itens = grupos[etapa].slice().sort((a,b) => {
+      const ta = tempoDesde(a.atualizado_em)?.getTime() || 0;
+      const tb = tempoDesde(b.atualizado_em)?.getTime() || 0;
+      return tb - ta; // mais recente primeiro
+    });
+
+    const cardsHtml = itens.map(c => {
+      novoMapaEtapas[c.id] = etapa;
+      const mudouDeEtapa = PIPELINE_ANTERIOR[c.id] && PIPELINE_ANTERIOR[c.id] !== etapa;
+      const dataUpd = tempoDesde(c.atualizado_em);
+      const fresh = mudouDeEtapa || (dataUpd && (Date.now()-dataUpd.getTime()) < 90000);
+      return `<div class="kcard${fresh?' fresh':''}" style="--kc:${cfg.cor}">
+        <div class="kc-nome">${c.cliente||'—'}</div>
+        <div class="kc-meta">
+          ${c.responsavel ? `👤 <b>${c.responsavel}</b><br>` : ''}
+          ${c.data_agendada ? `🗓️ <b>${c.data_agendada}</b><br>` : ''}
+          ${c.observacoes ? `📝 ${c.observacoes}` : ''}
+        </div>
+        <div class="kc-time">${dataUpd ? formatarHaQuanto(dataUpd) : ''}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="kcol">
+      <div class="kcol-hd" style="--kc:${cfg.cor}">
+        <div class="kcol-nome">${cfg.nome}</div>
+        <div class="kcol-count">${itens.length}</div>
+      </div>
+      ${cardsHtml || '<div class="kcol-empty">Vazio</div>'}
+    </div>`;
+  }).join('');
+
+  PIPELINE_ANTERIOR = novoMapaEtapas;
+}
+
+function formatarUptime(seg){
+  if(!seg) return '—';
+  const h = Math.floor(seg/3600), m = Math.floor((seg%3600)/60);
+  return h>0 ? `${h}h ${m}min` : `${m}min`;
+}
+
+function abrirCliente(id){
+  if(!id) return;
+  window.open(ADM_HTML_URL + '?cliente_id=' + encodeURIComponent(id), '_blank');
+}
+
+function iniciar(){
+  tick(); setInterval(tick,1000);
+  carregarDados();
+  setInterval(carregarDados, 15000); // atualiza tudo (viveiros + fila) a cada 15s
+}
+</script>
+</body>
+</html>
