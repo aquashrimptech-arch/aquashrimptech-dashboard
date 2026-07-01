@@ -1290,7 +1290,12 @@ async function carregarEspStatus() {
   if (!BOT_CLI_SEL) return;
   try {
     const nomesViv = String(BOT_CLI_SEL.ViveirosNomes || '').trim();
-    const params = { acao: 'esp_status_list', viveiros: nomesViv, chat_id: getChatId(BOT_CLI_SEL.ID) };
+    // ★ FIX: idem — sempre manda os dois juntos, nunca um no lugar do outro.
+    const params = {
+      acao: 'esp_status_list',
+      viveiros: nomesViv,
+      chat_id: getChatId(BOT_CLI_SEL.ID)
+    };
     const data = await api(params);
     const grid = document.getElementById('esp-status-grid');
     const filtro = document.getElementById('esp-log-filtro');
@@ -1331,9 +1336,16 @@ async function atualizarEspLogs() {
   try {
     const nomesViv = String(BOT_CLI_SEL.ViveirosNomes || '').trim();
     const viveiro = document.getElementById('esp-log-filtro')?.value || '';
-    const params = nomesViv
-      ? { acao: 'esp_log_read', viveiro, viveiros: nomesViv, limite: 150 }
-      : { acao: 'esp_log_read', viveiro, chat_id: getChatId(BOT_CLI_SEL.ID), limite: 150 };
+    // ★ FIX: manda viveiros E chat_id juntos, sempre — antes mandava só um ou
+    // outro, o que deixava o filtro por nome vazar entre clientes com viveiro
+    // homônimo (ex: "Viveiro 01" existe em mais de um cliente).
+    const params = {
+      acao: 'esp_log_read',
+      viveiro,
+      viveiros: nomesViv,
+      chat_id: getChatId(BOT_CLI_SEL.ID),
+      limite: 150
+    };
     const data = await api(params);
     const el = document.getElementById('esp-log-box');
     if (!el || !data || data.status !== 'ok') return;
@@ -1348,7 +1360,6 @@ async function atualizarEspLogs() {
     if (estaNoFim || el.scrollTop === 0) el.scrollTop = el.scrollHeight;
   } catch(e) { console.error("Erro ao atualizar logs do ESP:", e); }
 }
-
 // ══════════════════════════════════════════════════════
 // BOTS
 // ══════════════════════════════════════════════════════
