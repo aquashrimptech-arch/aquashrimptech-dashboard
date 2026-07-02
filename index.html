@@ -10,7 +10,7 @@
      ⚙️  CONFIGURAÇÃO — edite só estas 2 linhas
      ============================================================ */
   :root{
-    --video-src: "https://raw.githubusercontent.com/SEU-USUARIO/SEU-REPOSITORIO/main/apresentacao.mp4";
+    --video-src: "https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/apresentacao.mp4";
     /* ↑ Troque pela URL RAW do vídeo no GitHub (ou de outro host).
          Ex: https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/apresentacao.mp4 */
   }
@@ -30,6 +30,7 @@
     width:100%;
     line-height:0; /* remove espaço fantasma abaixo da img */
   }
+  .splash picture{display:block;}
   .splash img{
     display:block;
     width:100%;
@@ -196,7 +197,12 @@
   <div class="center-overlay"></div>
 
   <div class="splash">
-    <img src="assets/capa-aquashrimptech.png" alt="AquaShrimpTech — Inteligência e Tecnologia para Resultados Reais">
+    <picture>
+      <!-- Em telas até 640px de largura (celulares), usa a imagem vertical.
+           Troque o nome do arquivo abaixo pelo que você der à imagem mobile. -->
+      <source media="(max-width: 640px)" srcset="assets/capa-aquashrimptech-mobile.png">
+      <img src="assets/capa-aquashrimptech.png" alt="AquaShrimpTech — Inteligência e Tecnologia para Resultados Reais">
+    </picture>
   </div>
 
   <div class="play-wrap">
