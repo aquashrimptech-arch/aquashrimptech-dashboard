@@ -2223,6 +2223,9 @@ const LEADS_SECRET = "troque-por-uma-senha-aleatoria-aqui"; // ★ igual ao LEAD
 const MEU_WHATSAPP = "5585900000000"; // ★ seu WhatsApp, fallback se o do lead vier vazio/quebrado
 let PV_TIMER = null;
 
+function esc(t){ return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+
 async function apiLeads(params){
   params = {...params, secret: LEADS_SECRET};
   const url = LEADS_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
