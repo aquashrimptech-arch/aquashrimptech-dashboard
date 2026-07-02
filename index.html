@@ -24,24 +24,26 @@
     overflow-x:hidden;
   }
 
-  /* ===== TELA DE FUNDO ===== */
+  /* ===== IMAGEM COMPLETA — sem cortes, sempre inteira ===== */
   .splash{
     position:relative;
     width:100%;
-    min-height:100vh;
-    background-image:url("assets/capa-aquashrimptech.png");
-    background-size:cover;
-    background-position:center;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    line-height:0; /* remove espaço fantasma abaixo da img */
   }
-  .splash::before{
-    /* leve escurecimento adicional no centro pra destacar o botão de play */
-    content:"";
-    position:absolute; inset:0;
-    background:radial-gradient(ellipse at center, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 45%);
+  .splash img{
+    display:block;
+    width:100%;
+    height:auto; /* mantém a proporção original — nunca corta */
+  }
+
+  /* leve escurecimento central fixo, atrás do botão de play, pra dar contraste
+     em cima de qualquer trecho da imagem que estiver visível na tela */
+  .center-overlay{
+    position:fixed;
+    top:0; left:0; right:0; bottom:0;
+    z-index:5;
     pointer-events:none;
+    background:radial-gradient(ellipse at center, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 42%);
   }
 
   /* ===== BOTÃO DE LOGIN (canto superior direito) ===== */
@@ -73,9 +75,12 @@
   }
   .login-btn svg{width:16px;height:16px;flex-shrink:0;}
 
-  /* ===== BOTÃO DE PLAY (centro da tela) ===== */
+  /* ===== BOTÃO DE PLAY — fixo no centro da tela, mesmo se a página rolar ===== */
   .play-wrap{
-    position:relative;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
     z-index:10;
     display:flex;
     flex-direction:column;
@@ -188,13 +193,17 @@
     Login
   </a>
 
+  <div class="center-overlay"></div>
+
   <div class="splash">
-    <div class="play-wrap">
-      <button class="play-btn" id="playBtn" aria-label="Assistir apresentação">
-        <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
-      </button>
-      <span class="play-label">Assista à apresentação</span>
-    </div>
+    <img src="assets/capa-aquashrimptech.png" alt="AquaShrimpTech — Inteligência e Tecnologia para Resultados Reais">
+  </div>
+
+  <div class="play-wrap">
+    <button class="play-btn" id="playBtn" aria-label="Assistir apresentação">
+      <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
+    </button>
+    <span class="play-label">Assista à apresentação</span>
   </div>
 
   <!-- Player de vídeo — abre centralizado, não em tela cheia -->
