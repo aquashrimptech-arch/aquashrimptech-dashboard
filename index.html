@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaShrimpTech — Inteligência e Tecnologia para Resultados Reais</title>
+<style>
+
+  /* ============================================================
+     ⚙️  CONFIGURAÇÃO — edite só estas 2 linhas
+     ============================================================ */
+  :root{
+    --video-src: "https://raw.githubusercontent.com/SEU-USUARIO/SEU-REPOSITORIO/main/apresentacao.mp4";
+    /* ↑ Troque pela URL RAW do vídeo no GitHub (ou de outro host).
+         Ex: https://raw.githubusercontent.com/aquashrimptech-arch/aquashrimptech-dashboard/main/apresentacao.mp4 */
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:#050b14;
+    color:#fff;
+    overflow-x:hidden;
+  }
+
+  /* ===== TELA DE FUNDO ===== */
+  .splash{
+    position:relative;
+    width:100%;
+    min-height:100vh;
+    background-image:url("capa-aquashrimptech.png");
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .splash::before{
+    /* leve escurecimento adicional no centro pra destacar o botão de play */
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(ellipse at center, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 45%);
+    pointer-events:none;
+  }
+
+  /* ===== BOTÃO DE LOGIN (canto superior direito) ===== */
+  .login-btn{
+    position:fixed;
+    top:24px;
+    right:28px;
+    z-index:40;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(8,16,28,.55);
+    backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.22);
+    color:#fff;
+    font-size:14.5px;
+    font-weight:700;
+    letter-spacing:.02em;
+    padding:11px 22px;
+    border-radius:999px;
+    text-decoration:none;
+    box-shadow:0 4px 18px rgba(0,0,0,.3);
+    transition:background .18s, border-color .18s, transform .12s;
+  }
+  .login-btn:hover{
+    background:rgba(0,212,255,.16);
+    border-color:rgba(0,212,255,.55);
+    transform:translateY(-1px);
+  }
+  .login-btn svg{width:16px;height:16px;flex-shrink:0;}
+
+  /* ===== BOTÃO DE PLAY (centro da tela) ===== */
+  .play-wrap{
+    position:relative;
+    z-index:10;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+  }
+  .play-btn{
+    width:96px;
+    height:96px;
+    border-radius:50%;
+    background:rgba(8,16,28,.5);
+    border:2px solid rgba(255,255,255,.75);
+    backdrop-filter:blur(4px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow:0 0 0 0 rgba(0,212,255,.5);
+    animation:pulse 2.4s ease-out infinite;
+    transition:transform .18s, background .18s, border-color .18s;
+  }
+  .play-btn:hover{
+    transform:scale(1.06);
+    background:rgba(0,212,255,.22);
+    border-color:#00d4ff;
+  }
+  .play-btn svg{width:34px;height:34px;margin-left:5px;fill:#fff;}
+  @keyframes pulse{
+    0%   { box-shadow:0 0 0 0 rgba(0,212,255,.45); }
+    70%  { box-shadow:0 0 0 26px rgba(0,212,255,0); }
+    100% { box-shadow:0 0 0 0 rgba(0,212,255,0); }
+  }
+  .play-label{
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#fff;
+    text-shadow:0 2px 10px rgba(0,0,0,.6);
+  }
+
+  /* ===== PLAYER DE VÍDEO — abre NO MEIO da tela, não em fullscreen ===== */
+  .video-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:rgba(2,6,12,.86);
+    backdrop-filter:blur(6px);
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    animation:fadeIn .2s ease-out;
+  }
+  .video-modal.open{display:flex;}
+  @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+
+  .video-box{
+    position:relative;
+    width:100%;
+    max-width:960px;
+    background:#000;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 20px 70px rgba(0,0,0,.6);
+    border:1px solid rgba(255,255,255,.12);
+  }
+  .video-box video{
+    display:block;
+    width:100%;
+    max-height:80vh;
+    background:#000;
+  }
+  .video-close{
+    position:absolute;
+    top:-46px;
+    right:0;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.3);
+    color:#fff;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    font-size:18px;
+    line-height:1;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background .15s;
+  }
+  .video-close:hover{background:rgba(255,255,255,.25);}
+
+  @media(max-width:640px){
+    .login-btn{padding:9px 16px;font-size:13px;top:16px;right:16px;}
+    .play-btn{width:76px;height:76px;}
+    .play-btn svg{width:26px;height:26px;}
+  }
+</style>
+</head>
+<body>
+
+  <!-- Botão de Login — troque href="login.html" pela URL real da tela de login do sistema -->
+  <a href="login.html" class="login-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+      <polyline points="10 17 15 12 10 7"/>
+      <line x1="15" y1="12" x2="3" y2="12"/>
+    </svg>
+    Login
+  </a>
+
+  <div class="splash">
+    <div class="play-wrap">
+      <button class="play-btn" id="playBtn" aria-label="Assistir apresentação">
+        <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
+      </button>
+      <span class="play-label">Assista à apresentação</span>
+    </div>
+  </div>
+
+  <!-- Player de vídeo — abre centralizado, não em tela cheia -->
+  <div class="video-modal" id="videoModal">
+    <div class="video-box">
+      <button class="video-close" id="closeBtn" aria-label="Fechar vídeo">✕</button>
+      <video id="player" controls playsinline>
+        <source id="playerSource" src="" type="video/mp4">
+        Seu navegador não suporta vídeo HTML5.
+      </video>
+    </div>
+  </div>
+
+<script>
+  const playBtn     = document.getElementById('playBtn');
+  const videoModal  = document.getElementById('videoModal');
+  const closeBtn    = document.getElementById('closeBtn');
+  const player      = document.getElementById('player');
+  const playerSource= document.getElementById('playerSource');
+
+  const videoSrc = getComputedStyle(document.documentElement)
+    .getPropertyValue('--video-src')
+    .trim()
+    .replace(/^"|"$/g, '');
+
+  function abrirVideo(){
+    playerSource.src = videoSrc;
+    player.load();
+    videoModal.classList.add('open');
+    player.play().catch(()=>{ /* alguns navegadores exigem clique extra */ });
+  }
+
+  function fecharVideo(){
+    player.pause();
+    player.currentTime = 0;
+    videoModal.classList.remove('open');
+  }
+
+  playBtn.addEventListener('click', abrirVideo);
+  closeBtn.addEventListener('click', fecharVideo);
+
+  // fecha clicando fora da caixa do vídeo
+  videoModal.addEventListener('click', function(e){
+    if(e.target === videoModal) fecharVideo();
+  });
+
+  // fecha com ESC
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') fecharVideo();
+  });
+</script>
+
+</body>
+</html>
