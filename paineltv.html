@@ -77,6 +77,26 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .kc-time{display:inline-block;margin-top:6px;font-size:.6rem;color:var(--text3);background:rgba(255,255,255,.04);padding:2px 8px;border-radius:10px}
 .kcol-empty{font-size:.7rem;color:var(--text3);text-align:center;padding:24px 0}
 
+/* ============================================================
+   ★ NOVO — SEÇÃO DE LEADS
+   ============================================================ */
+.leads-section{padding:6px 0 34px;position:relative;z-index:1}
+.leads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:0 28px}
+.lead-card{background:var(--card);border:2px solid var(--purple);border-radius:16px;padding:16px;position:relative;overflow:hidden;animation:pulseLead 2.6s ease-in-out infinite}
+@keyframes pulseLead{0%,100%{box-shadow:0 0 0 0 rgba(155,93,229,.35)}50%{box-shadow:0 0 16px 2px rgba(155,93,229,.35)}}
+.lead-card .lhd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.lead-card .lnome{font-size:1.05rem;font-weight:700}
+.lead-card .ltag{background:rgba(155,93,229,.18);color:var(--purple);font-size:.65rem;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em}
+.lead-meta{font-size:.72rem;color:var(--text2);font-family:'JetBrains Mono',monospace;line-height:1.7;margin-bottom:12px}
+.lead-meta b{color:var(--text)}
+.lead-actions{display:flex;gap:8px}
+.lead-btn{flex:1;text-align:center;padding:9px 10px;border-radius:9px;font-size:.72rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;transition:opacity .15s}
+.lead-btn:hover{opacity:.85}
+.lead-btn.wa{background:#25D366;color:#fff}
+.lead-btn.baixa{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.lead-btn.baixa:disabled{opacity:.5;cursor:wait}
+.leads-empty{padding:30px 28px;color:var(--text3);font-size:.85rem}
+
 #login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999}
 #login input{background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;width:280px;margin-bottom:10px}
 #login button{padding:10px 16px;background:var(--accent3);border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer}
@@ -113,6 +133,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
   <div class="summary" id="summary"></div>
   <div class="grid" id="grid"></div>
 
+  <!-- ============================================================
+       ★ NOVO — SEÇÃO DE LEADS
+       ============================================================ -->
+  <div class="leads-section">
+    <div class="section-hd">
+      <div class="section-title"><span class="ico">🟣</span>Novos Leads</div>
+      <div class="section-sub"><span class="live-dot" style="background:var(--purple)"></span>&nbsp; atualiza a cada 15s</div>
+    </div>
+    <div class="leads-grid" id="leadsGrid"></div>
+  </div>
+
   <div class="pipeline-section">
     <div class="section-hd">
       <div class="section-title"><span class="ico">🛠️</span>Fila de Instalação</div>
@@ -125,6 +156,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 <script>
 const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
 const ADM_HTML_URL   = "adm.html"; // ajuste se estiver em outro caminho
+
+// ★ NOVO — script de leads (o mesmo que recebe o formulário da landing page)
+const LEADS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyS13R2URKjBhRBI4vCsiYExg3RwiQcbusdVqM9brvwP-uaz0TRIU2xWbu0JaQI6lVPNw/exec";
+// ★ precisa ser IDENTICO ao valor de LEADS_SECRET no Code.gs do projeto de leads
+const LEADS_SECRET = "troque-por-uma-senha-aleatoria-aqui";
+// ★ seu WhatsApp (DDI+DDD+numero, só digitos) — usado como fallback quando
+//   o WhatsApp do lead vier em formato estranho
+const MEU_WHATSAPP = "5585900000000";
+
 let TOKEN = localStorage.getItem('painel_tv_token') || '';
 let CLIENTES = [];
 let PIPELINE_ANTERIOR = {}; // id → etapa, pra detectar mudança e dar destaque
@@ -168,6 +208,14 @@ async function api(params){
   return resp.json();
 }
 
+// ★ NOVO — chamada ao script separado de leads
+async function apiLeads(params){
+  params = {...params, secret: LEADS_SECRET};
+  const url = LEADS_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
+  const resp = await fetch(url);
+  return resp.json();
+}
+
 function tick(){
   const n = new Date();
   document.getElementById('clk').textContent = n.toLocaleTimeString('pt-BR');
@@ -184,16 +232,18 @@ function pctRssi(rssi){ return Math.round(Math.min(100, Math.max(0, 2*(rssi+100)
 
 async function carregarDados(){
   try{
-    const [dashResp, statusResp, pipeResp] = await Promise.all([
+    const [dashResp, statusResp, pipeResp, leadsResp] = await Promise.all([
       api({acao:'dashboard'}),
       api({acao:'esp_status_list'}),  // sem filtro → traz TODOS os clientes
       api({acao:'pipeline_listar'}),
+      apiLeads({acao:'listar_leads'}), // ★ NOVO
     ]);
     if(dashResp.status!=='ok'){ console.error('Erro dashboard:', dashResp.msg); return; }
     CLIENTES = dashResp.clientes || [];
     const status = (statusResp.status==='ok') ? (statusResp.status_esp||[]) : [];
     renderTudo(status);
     if(pipeResp.status==='ok') renderPipeline(pipeResp.cards || []);
+    if(leadsResp.status==='ok') renderLeads(leadsResp.leads || []); // ★ NOVO
   }catch(e){ console.error(e); }
 }
 
@@ -266,6 +316,72 @@ function renderTudo(statusList){
     <div class="sumcard"><div class="n" style="color:var(--accent)">${statusList.length}</div><div class="l">Total Viveiros</div></div>
     <div class="sumcard"><div class="n" style="color:var(--accent)">${mediaRssi||'—'}</div><div class="l">RSSI Médio (dBm)</div></div>
   `;
+}
+
+// ============================================================
+//  ★ NOVO — LEADS
+// ============================================================
+function normalizarWhatsapp(numero){
+  let digitos = String(numero||'').replace(/\D/g,'');
+  if(!digitos) return MEU_WHATSAPP;
+  // se não começar com o DDI do Brasil (55), adiciona
+  if(!digitos.startsWith('55')) digitos = '55' + digitos;
+  return digitos;
+}
+
+function renderLeads(leads){
+  const grid = document.getElementById('leadsGrid');
+
+  if(!leads.length){
+    grid.innerHTML = '<div class="leads-empty">Nenhum lead novo no momento. 🎣</div>';
+    return;
+  }
+
+  grid.innerHTML = leads.map(l => {
+    const numero = normalizarWhatsapp(l.whatsapp);
+    const mensagem = encodeURIComponent(
+      `Olá, ${l.nome || ''}! Vi que você entrou em contato com a AquaShrimpTech. ` +
+      `Meu nome é Maycon, sou o responsável — posso te ajudar com o que precisar?`
+    );
+    const waLink = `https://wa.me/${numero}?text=${mensagem}`;
+
+    return `<div class="lead-card" id="lead-${l.linha}">
+      <div class="lhd">
+        <div class="lnome">${l.nome || '(sem nome)'}</div>
+        <div class="ltag">Novo</div>
+      </div>
+      <div class="lead-meta">
+        📱 <b>${l.whatsapp || '—'}</b><br>
+        📍 ${l.cidade || '—'}${l.viveiros ? ` &nbsp;•&nbsp; 🦐 <b>${l.viveiros}</b> viveiro(s)` : ''}<br>
+        ${l.email ? `✉️ ${l.email}<br>` : ''}
+        🕒 ${l.data || ''} &nbsp;•&nbsp; ${l.origem || 'Landing Page'}
+      </div>
+      <div class="lead-actions">
+        <a class="lead-btn wa" href="${waLink}" target="_blank">💬 Falar no WhatsApp</a>
+        <button class="lead-btn baixa" onclick="darBaixaLead(${l.linha}, this)">✔️ Dar baixa</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function darBaixaLead(linha, btn){
+  btn.disabled = true;
+  btn.textContent = '...';
+  try{
+    const resp = await apiLeads({acao:'baixa_lead', linha});
+    if(resp.status === 'ok'){
+      const card = document.getElementById('lead-'+linha);
+      if(card) card.remove();
+      const grid = document.getElementById('leadsGrid');
+      if(!grid.children.length) grid.innerHTML = '<div class="leads-empty">Nenhum lead novo no momento. 🎣</div>';
+    } else {
+      alert('Erro ao dar baixa: ' + (resp.msg||'desconhecido'));
+      btn.disabled = false; btn.textContent = '✔️ Dar baixa';
+    }
+  } catch(e){
+    alert('Erro de conexão ao dar baixa.');
+    btn.disabled = false; btn.textContent = '✔️ Dar baixa';
+  }
 }
 
 // ── FILA DE INSTALAÇÃO ──
@@ -362,7 +478,7 @@ function abrirCliente(id){
 function iniciar(){
   tick(); setInterval(tick,1000);
   carregarDados();
-  setInterval(carregarDados, 15000); // atualiza tudo (viveiros + fila) a cada 15s
+  setInterval(carregarDados, 15000); // atualiza tudo (viveiros + fila + leads) a cada 15s
 }
 </script>
 </body>
