@@ -12,6 +12,12 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,229,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.025) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
 ::-webkit-scrollbar{height:6px;width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
+/* ★ NOVO — transição suave entre telas (fade) */
+body{animation:fadeInBody .28s ease-out;}
+@keyframes fadeInBody{from{opacity:0} to{opacity:1}}
+body.fading-out{animation:fadeOutBody .22s ease-in forwards;}
+@keyframes fadeOutBody{from{opacity:1} to{opacity:0}}
+
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--border);position:relative;z-index:1}
 .brand{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.1em;background:linear-gradient(135deg,var(--accent3),var(--warn));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .sub{font-size:.8rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:-4px}
@@ -61,7 +67,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .meta{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:.68rem;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:8px}
 .meta b{color:var(--text2)}
 
-/* ── FILA DE INSTALAÇÃO (Kanban) ── */
 .pipeline-section{padding:6px 0 34px;position:relative;z-index:1}
 .pipe-kpis{display:flex;gap:10px;flex-wrap:wrap}
 .pipe-kpi{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:.62rem;color:var(--text2);display:flex;align-items:center;gap:5px}
@@ -89,9 +94,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .kc-time.late{color:var(--danger);background:rgba(255,64,96,.1)}
 .kcol-empty{font-size:.7rem;color:var(--text3);text-align:center;padding:24px 0}
 
-/* ============================================================
-   SEÇÃO DE LEADS
-   ============================================================ */
 .leads-section{padding:6px 0 34px;position:relative;z-index:1}
 .leads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:0 28px}
 .lead-card{background:var(--card);border:2px solid var(--purple);border-radius:16px;padding:16px;position:relative;overflow:hidden;animation:pulseLead 2.6s ease-in-out infinite}
@@ -145,9 +147,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
   <div class="summary" id="summary"></div>
   <div class="grid" id="grid"></div>
 
-  <!-- ============================================================
-       SEÇÃO DE LEADS
-       ============================================================ -->
   <div class="leads-section">
     <div class="section-hd">
       <div class="section-title"><span class="ico">🟣</span>Novos Leads</div>
@@ -169,22 +168,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 
 <script>
 const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
-const ADM_HTML_URL   = "adm.html"; // ajuste se estiver em outro caminho
+const ADM_HTML_URL   = "adm.html";
 
-// script de leads (o mesmo que recebe o formulário da landing page)
 const LEADS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyS13R2URKjBhRBI4vCsiYExg3RwiQcbusdVqM9brvwP-uaz0TRIU2xWbu0JaQI6lVPNw/exec";
-// precisa ser IDENTICO ao valor de LEADS_SECRET no Code.gs do projeto de leads
 const LEADS_SECRET = "troque-por-uma-senha-aleatoria-aqui";
-// seu WhatsApp (DDI+DDD+numero, só digitos) — usado como fallback quando
-// o WhatsApp do lead vier em formato estranho
 const MEU_WHATSAPP = "5585900000000";
 
-let TOKEN = localStorage.getItem('painel_tv_token') || '';
+// ★ NOVO — token compartilhado com o adm.html (mesma chave: ast_admin_token)
+const TOKEN_KEY_PRINCIPAL = 'ast_admin_token';
+const TOKEN_KEY_FALLBACK  = 'painel_tv_token';
+let TOKEN = localStorage.getItem(TOKEN_KEY_PRINCIPAL) || localStorage.getItem(TOKEN_KEY_FALLBACK) || '';
 let CLIENTES = [];
-let PIPELINE_ANTERIOR = {}; // id → etapa, pra detectar mudança e dar destaque
+let PIPELINE_ANTERIOR = {};
 
-// Etapas conhecidas do pipeline.html — casamento exato (não por substring),
-// então "Instalado" nunca é confundido com "Em Instalação".
 const ETAPAS_CONFIG = [
   { match: /^lead\/negociando$/i, nome: '📋 Lead / Negociando', cor: 'var(--text3)' },
   { match: /^agendado$/i,         nome: '🗓️ Agendado',          cor: 'var(--accent)' },
@@ -193,7 +189,6 @@ const ETAPAS_CONFIG = [
   { match: /^instalado$/i,        nome: '✅ Instalado',          cor: 'var(--accent2)' },
   { match: /^pós-venda$/i,        nome: '🤝 Pós-venda',          cor: 'var(--accent)' },
 ];
-// dias parado na mesma etapa até considerar atrasado (mesmo critério do pipeline.html)
 const LIMITE_DIAS = {"Lead/Negociando":7,"Agendado":3,"Kit Separado":2,"Em Instalação":2,"Instalado":9999,"Pós-venda":9999};
 
 function configEtapa(etapa){
@@ -205,7 +200,8 @@ function entrar(){
   const t = document.getElementById('tokenInput').value.trim();
   if(!t){ alert('Informe o token admin'); return; }
   TOKEN = t;
-  localStorage.setItem('painel_tv_token', t);
+  localStorage.setItem(TOKEN_KEY_PRINCIPAL, t);
+  localStorage.setItem(TOKEN_KEY_FALLBACK, t);
   document.getElementById('login').style.display='none';
   document.getElementById('app').style.display='block';
   iniciar();
@@ -224,7 +220,6 @@ async function api(params){
   return resp.json();
 }
 
-// chamada ao script separado de leads
 async function apiLeads(params){
   params = {...params, secret: LEADS_SECRET};
   const url = LEADS_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
@@ -252,7 +247,7 @@ async function carregarDados(){
   try{
     const [dashResp, statusResp, pipeResp, leadsResp] = await Promise.all([
       api({acao:'dashboard'}),
-      api({acao:'esp_status_list'}),  // sem filtro → traz TODOS os clientes
+      api({acao:'esp_status_list'}),
       api({acao:'pipeline_listar'}),
       apiLeads({acao:'listar_leads'}),
     ]);
@@ -267,13 +262,11 @@ async function carregarDados(){
 }
 
 function buscarCliente(viveiro, chatId){
-  // tenta casar por ChatId + nome de viveiro nas listas ViveirosNomes do cliente
   for(const c of CLIENTES){
     const nomes = String(c.ViveirosNomes||'').split('|').map(v=>v.trim());
     const mesmoChat = String(c.ChatId||'').trim() === chatId;
     if(mesmoChat && nomes.includes(viveiro)) return c;
   }
-  // fallback: casa só pelo nome (caso ChatId não bata)
   for(const c of CLIENTES){
     const nomes = String(c.ViveirosNomes||'').split('|').map(v=>v.trim());
     if(nomes.includes(viveiro)) return c;
@@ -305,7 +298,7 @@ function renderTudo(statusList){
     const cliNome = cliente ? cliente.Nome : '(cliente não identificado)';
     const pct = pctRssi(v.rssi||0);
 
-    return `<div class="card ${classe}" onclick="abrirCliente('${cliId}')">
+    return `<div class="card ${classe}" onclick="abrirCliente('${cliId}','${esc(v.viveiro)}')">
       <div class="hd">
         <div>
           <div class="viv">${v.viveiro}</div>
@@ -337,13 +330,9 @@ function renderTudo(statusList){
   `;
 }
 
-// ============================================================
-//  LEADS
-// ============================================================
 function normalizarWhatsapp(numero){
   let digitos = String(numero||'').replace(/\D/g,'');
   if(!digitos) return MEU_WHATSAPP;
-  // se não começar com o DDI do Brasil (55), adiciona
   if(!digitos.startsWith('55')) digitos = '55' + digitos;
   return digitos;
 }
@@ -403,10 +392,6 @@ async function darBaixaLead(linha, btn){
   }
 }
 
-// ── FILA DE INSTALAÇÃO ──
-// campos de controle (data_criacao/data_ultima_mudanca/data_conclusao) agora
-// vêm em ISO (yyyy-MM-ddTHH:mm:ss) do backend do pipeline — new Date() lê
-// direto, sem precisar de regex.
 function parseDataHora(iso){
   if(!iso) return null;
   const d = new Date(iso);
@@ -450,7 +435,6 @@ function renderPipeline(cards){
     return;
   }
 
-  // agrupa por etapa, preservando a ordem de primeira aparição
   const grupos = {};
   const ordemEtapas = [];
   cards.forEach(c => {
@@ -459,7 +443,6 @@ function renderPipeline(cards){
     grupos[etapa].push(c);
   });
 
-  // ordena as colunas seguindo ETAPAS_CONFIG quando possível, senão mantém a ordem de aparição
   ordemEtapas.sort((a,b) => {
     const ia = ETAPAS_CONFIG.findIndex(e => e.match.test(a));
     const ib = ETAPAS_CONFIG.findIndex(e => e.match.test(b));
@@ -473,7 +456,7 @@ function renderPipeline(cards){
     const itens = grupos[etapa].slice().sort((a,b) => {
       const ta = parseDataHora(a.data_ultima_mudanca || a.data_criacao)?.getTime() || 0;
       const tb = parseDataHora(b.data_ultima_mudanca || b.data_criacao)?.getTime() || 0;
-      return tb - ta; // mais recente primeiro
+      return tb - ta;
     });
 
     const cardsHtml = itens.map(c => {
@@ -522,18 +505,27 @@ function formatarUptime(seg){
   return h>0 ? `${h}h ${m}min` : `${m}min`;
 }
 
-function abrirCliente(id){
+// ★ NOVO — navegação com fade suave + deep-link pro log do viveiro clicado
+function abrirCliente(id, viveiro){
   if(!id) return;
-  // manda o token junto pra o adm.html logar sozinho — sem isso ele cai
-  // na tela de login mesmo com o painel TV já autenticado. Token e
-  // cliente_id juntos abrem direto no detalhe do cliente.
-  window.open(ADM_HTML_URL + '?cliente_id=' + encodeURIComponent(id) + '&token=' + encodeURIComponent(TOKEN), '_blank');
+
+  const params = new URLSearchParams({
+    view: 'bots',        // pede pro adm.html abrir direto a aba "Gerenciar Bots"
+    cliente_id: id,
+    token: TOKEN          // evita pedir login de novo no adm.html
+  });
+  if(viveiro) params.set('viveiro', viveiro);
+
+  const destino = ADM_HTML_URL + '?' + params.toString();
+
+  document.body.classList.add('fading-out');
+  setTimeout(() => { window.location.href = destino; }, 220);
 }
 
 function iniciar(){
   tick(); setInterval(tick,1000);
   carregarDados();
-  setInterval(carregarDados, 15000); // atualiza tudo (viveiros + fila + leads) a cada 15s
+  setInterval(carregarDados, 15000);
 }
 </script>
 </body>
