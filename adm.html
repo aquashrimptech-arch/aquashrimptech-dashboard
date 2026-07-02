@@ -12,8 +12,8 @@
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,229,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.025) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
 ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-
-/* ── LOGIN ── */
+body{animation:fadeInBody .28s ease-out;}
+@keyframes fadeInBody{from{opacity:0} to{opacity:1}}
 #ls{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
 .lw{display:flex;flex-direction:column;align-items:center;gap:24px;width:100%;max-width:400px;padding:20px}
 .lb{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.12em;background:linear-gradient(135deg,var(--accent3),var(--warn));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 16px rgba(255,107,53,.4))}
@@ -27,8 +27,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .lbtn{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent3),var(--warn));border:none;border-radius:8px;color:#05080f;font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;margin-top:4px}
 .lbtn:hover{opacity:.92;transform:translateY(-1px)}
 .lerr{background:rgba(255,64,96,.1);border:1px solid rgba(255,64,96,.3);border-radius:7px;padding:9px 13px;color:var(--danger);font-size:.74rem;margin-top:9px;display:none;text-align:center}
-
-/* ── APP ── */
 #app{display:none;min-height:100vh}
 .sb{position:fixed;left:0;top:0;bottom:0;width:228px;z-index:100;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:transform .3s}
 .sb-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
@@ -57,8 +55,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .pg{padding:22px;display:none}
 .pg.act{display:block;animation:fi .25s ease}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── KPI CARDS ── */
 .kr{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:18px}
 .kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:relative;overflow:hidden;transition:transform .2s}
 .kpi:hover{transform:translateY(-2px)}
@@ -69,14 +65,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .kpi-vl{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;line-height:1}
 .ca{color:var(--accent)}.cg{color:var(--accent2)}.co{color:var(--accent3)}.cw{color:var(--warn)}.cd{color:var(--danger)}.cp{color:var(--purple)}
 .kpi-tr{font-size:.62rem;color:var(--text3);margin-top:4px}
-
-/* ── CARDS ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
 .card-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
 .card-title{font-size:.84rem;font-weight:700}
 .card-body{padding:16px}
-
-/* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.74rem;font-family:'Space Grotesk',sans-serif;font-weight:600;cursor:pointer;border:none;transition:all .2s}
 .btn-sm{padding:4px 10px;font-size:.68rem}
 .btn-xs{padding:3px 8px;font-size:.63rem}
@@ -88,16 +80,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .bwn{background:var(--warn);color:#05080f}
 .bwa{background:#25D366;color:#fff}.bwa:hover{background:#1ebe5d}
 .bpp{background:var(--purple);color:#fff}
-
-/* ── BADGES ── */
 .bdg{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:.58rem;font-weight:700;letter-spacing:.05em}
 .bg{background:rgba(0,255,163,.12);color:var(--accent2);border:1px solid rgba(0,255,163,.25)}
 .br{background:rgba(255,64,96,.12);color:var(--danger);border:1px solid rgba(255,64,96,.25)}
 .bw{background:rgba(255,179,0,.12);color:var(--warn);border:1px solid rgba(255,179,0,.25)}
 .bb{background:rgba(0,229,255,.1);color:var(--accent);border:1px solid rgba(0,229,255,.2)}
 .bo{background:rgba(255,107,53,.12);color:var(--accent3);border:1px solid rgba(255,107,53,.25)}
-
-/* ── TABLE ── */
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 thead th{font-size:.56rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);white-space:nowrap}
@@ -106,8 +94,6 @@ tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:rgba(0,229,255,.03)}
 tbody td{padding:10px 12px;font-size:.76rem;vertical-align:middle}
 .mono{font-family:'JetBrains Mono',monospace}
-
-/* ── MODAL ── */
 .ov{position:fixed;inset:0;z-index:500;background:rgba(5,8,15,.9);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
 .ov.open{display:flex;animation:fi .2s ease}
 .modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 0 60px rgba(0,0,0,.7)}
@@ -131,8 +117,6 @@ tbody td{padding:10px 12px;font-size:.76rem;vertical-align:middle}
 .viv-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:6px}
 .viv-n{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--accent);font-weight:700;width:20px;flex-shrink:0}
 .viv-row input{flex:1;background:transparent;border:none;color:var(--text);font-size:.78rem;outline:none}
-
-/* ── ALERTAS / COBRANÇAS ── */
 .al-list{display:flex;flex-direction:column;gap:8px}
 .al-item{display:flex;align-items:center;gap:11px;background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;transition:border-color .2s}
 .al-item:hover{border-color:var(--accent)}
@@ -142,8 +126,6 @@ tbody td{padding:10px 12px;font-size:.76rem;vertical-align:middle}
 .al-nm{font-size:.79rem;font-weight:600}
 .al-ds{font-size:.66rem;color:var(--text3);margin-top:2px}
 .al-act{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap}
-
-/* ── SWITCH ── */
 .sw-w{display:flex;align-items:center;gap:9px;margin-bottom:12px}
 .sw{position:relative;width:36px;height:20px}
 .sw input{opacity:0;width:0;height:0}
@@ -151,8 +133,6 @@ tbody td{padding:10px 12px;font-size:.76rem;vertical-align:middle}
 .sl::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--text3);border-radius:50%;transition:.3s}
 input:checked+.sl{background:var(--accent3)}
 input:checked+.sl::before{transform:translateX(16px);background:#05080f}
-
-/* ── WHATSAPP PREVIEW ── */
 .wa-prv{background:#0b1521;border:1px solid var(--border);border-radius:11px;overflow:hidden;max-width:320px}
 .wa-hd{background:#1a2f3a;padding:10px 13px;display:flex;align-items:center;gap:8px}
 .wa-av{width:34px;height:34px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:.95rem}
@@ -161,28 +141,18 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
 .wa-bub{background:#1f2c34;border-radius:8px 8px 8px 0;padding:8px 12px;max-width:92%}
 .wa-txt{font-size:.76rem;color:#e9edef;line-height:1.5}
 .wa-time{font-size:.58rem;color:#8696a0;text-align:right;margin-top:3px}.wa-tick{color:#53bdeb}
-
-/* ── TOAST ── */
 .tc{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:7px}
 .toast{background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:12px 15px;font-size:.77rem;min-width:250px;box-shadow:0 8px 32px rgba(0,0,0,.5);display:flex;align-items:center;gap:8px;animation:sli .3s ease}
 @keyframes sli{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
 .toast.s{border-left:3px solid var(--accent2)}.toast.e{border-left:3px solid var(--danger)}.toast.i{border-left:3px solid var(--accent)}
-
-/* ── PIX BOX ── */
 .pix-box{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:16px;text-align:center;margin-bottom:13px}
 .pix-valor{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--accent2);margin-bottom:4px}
 .pix-link{font-size:.72rem;color:var(--accent);word-break:break-all;margin-top:6px}
-
-/* ── SPINNER ── */
 .loading-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,229,255,.3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── MOBILE ── */
 .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer}
 .sb-ov{display:none;position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.5)}
 .sb-ov.open{display:block}
-
-/* ── BOTS ── */
 .bot-cli-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px}
 .bot-cli-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;position:relative}
 .bot-cli-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,229,255,.08)}
@@ -216,15 +186,10 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
 .action-card:hover{border-color:var(--accent);transform:translateY(-2px)}
 .action-card.danger:hover{border-color:var(--danger)}.action-card.warn:hover{border-color:var(--warn)}.action-card.green:hover{border-color:var(--accent2)}
 .action-ic{font-size:1.3rem}.action-title{font-size:.76rem;font-weight:700}.action-desc{font-size:.62rem;color:var(--text3);line-height:1.4}
-
-/* ── UNIT ECONOMICS ── */
 .resp-box{background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:11px 13px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text2);white-space:pre-wrap;word-break:break-all;max-height:180px;overflow-y:auto}
-
-/* ── STATUS BADGE ASAAS ── */
 #asaas-status-badge.bg{background:rgba(0,255,163,.12);color:var(--accent2);border:1px solid rgba(0,255,163,.25)}
 #asaas-status-badge.br{background:rgba(255,64,96,.12);color:var(--danger);border:1px solid rgba(255,64,96,.25)}
 #asaas-status-badge.bw{background:rgba(255,179,0,.12);color:var(--warn);border:1px solid rgba(255,179,0,.25)}
-
 @media(max-width:860px){
   .sb{position:fixed;top:0;bottom:0;left:0;z-index:100;transform:translateX(-100%)}
   .sb.open{transform:translateX(0)}
@@ -240,8 +205,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
 </style>
 </head>
 <body>
-
-<!-- ── LOGIN ── -->
 <div id="ls">
   <div class="lw">
     <div style="text-align:center">
@@ -260,7 +223,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
-<!-- ── APP ── -->
 <div id="app">
   <div class="sb-ov" id="sb-ov" onclick="toggleSB()"></div>
   <aside class="sb" id="sb">
@@ -311,7 +273,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
-    <!-- DASHBOARD -->
     <div class="pg act" id="pg-dash">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Visão Geral</div><div style="font-size:.7rem;color:var(--text3)" id="dash-updated">Carregando...</div></div>
@@ -327,7 +288,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
-    <!-- CLIENTES -->
     <div class="pg" id="pg-clientes">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Gestão de Clientes</div><div style="font-size:.7rem;color:var(--text3)">Modelo: R$50/viveiro · valor negociável</div></div>
@@ -341,7 +301,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </tr></thead><tbody id="tbl-cli"></tbody></table></div></div>
     </div>
 
-    <!-- FINANCEIRO -->
     <div class="pg" id="pg-financeiro">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Financeiro</div><div style="font-size:.7rem;color:var(--text3)">Asaas · PIX recorrente</div></div>
@@ -353,7 +312,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
-    <!-- COBRANÇAS -->
     <div class="pg" id="pg-cobrancas">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Cobranças</div><div style="font-size:.7rem;color:var(--text3)">Gera PIX via Asaas · WhatsApp automático</div></div>
@@ -370,7 +328,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div class="al-list" id="cob-list"></div>
     </div>
 
-    <!-- ALERTAS -->
     <div class="pg" id="pg-alertas">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div><div style="font-size:1.05rem;font-weight:700">Central de Alertas</div></div>
@@ -379,7 +336,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       <div class="al-list" id="al-list"></div>
     </div>
 
-    <!-- MENSAGENS -->
     <div class="pg" id="pg-mensagens">
       <div style="margin-bottom:16px"><div style="font-size:1.05rem;font-weight:700">Mensagens</div><div style="font-size:.7rem;color:var(--text3)">WhatsApp Business · Templates prontos</div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
@@ -427,8 +383,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
         </div>
       </div>
     </div>
-
-    <!-- BOTS -->
     <div class="pg" id="pg-bots">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
         <div>
@@ -499,7 +453,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
             </div>
             <div class="bot-log" id="bot-log"><div class="log-line log-info">Aguardando ação...</div></div>
 
-            <!-- ── CONSOLE ESP32 AO VIVO ── -->
             <div style="font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin:18px 0 10px">📡 Status dos ESP32 (ao vivo)</div>
             <div class="bot-cfg-bar" id="esp-status-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
               <div style="color:var(--text3);font-size:.75rem">Selecione um cliente para ver os heartbeats.</div>
@@ -517,7 +470,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
       </div>
     </div>
 
-    <!-- UNIT ECONOMICS -->
     <div class="pg" id="pg-fin">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
     <div><div style="font-size:1.05rem;font-weight:700">Financeiro ADM — Unit Economics</div><div style="font-size:.7rem;color:var(--text3)" id="fin-updated">Selecione o mês e clique em Atualizar</div></div>
@@ -528,7 +480,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
     </div>
   </div>
 
-  <!-- ★ NOVO — Ponto de Equilíbrio: quanto a empresa precisa faturar/mês -->
   <div class="card" style="margin-bottom:16px;border-color:rgba(0,229,255,.25)">
     <div class="card-body" id="breakeven-body" style="padding:18px 20px">
       <div style="color:var(--text3);text-align:center;padding:10px">Carregando...</div>
@@ -539,7 +490,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
     <div class="kpi"><div class="kpi-ic">⏳</div><div class="kpi-lb">Aguardando</div><div class="kpi-vl ca">—</div></div>
   </div>
 
-  <!-- ★ NOVO — Payback por Cliente: quando cada instalação se paga -->
   <div class="card" style="margin-bottom:16px">
     <div class="card-hd">
       <div class="card-title">⏱️ Payback por Cliente — quando cada instalação se paga</div>
@@ -569,7 +519,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
-    <!-- CONFIG -->
     <div class="pg" id="pg-config">
       <div style="margin-bottom:16px"><div style="font-size:1.05rem;font-weight:700">Configurações</div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
@@ -634,15 +583,12 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
     </div>
 
 
-    <!-- MAPA (embutido como página interna — nunca sai do ADM) -->
     <div class="pg" id="pg-mapa" style="padding:0">
       <iframe id="mapa-iframe" style="width:100%;height:calc(100vh - 53px);border:none;display:block;background:var(--bg)"></iframe>
     </div>
 
-  </div><!-- /main -->
-</div><!-- /app -->
-
-<!-- MODAL CLIENTE -->
+  </div>
+</div>
 <div class="ov" id="m-cli">
   <div class="modal">
     <div class="modal-hd"><div class="modal-title" id="m-cli-title">➕ Novo Cliente</div><button class="modal-x" onclick="closeM('m-cli')">✕</button></div>
@@ -706,7 +652,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
-<!-- MODAL PIX -->
 <div class="ov" id="m-pix">
   <div class="modal" style="max-width:440px">
     <div class="modal-hd"><div class="modal-title">⚡ Cobrança PIX Gerada</div><button class="modal-x" onclick="closeM('m-pix')">✕</button></div>
@@ -715,7 +660,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
-<!-- MODAL DETALHE CLIENTE -->
 <div class="ov" id="m-det">
   <div class="modal">
     <div class="modal-hd"><div class="modal-title" id="m-det-title">👤 Detalhe</div><button class="modal-x" onclick="closeM('m-det')">✕</button></div>
@@ -724,7 +668,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
-<!-- MODAL EDITAR TOKEN BOT -->
 <div class="ov" id="m-bot-token">
   <div class="modal" style="max-width:520px">
     <div class="modal-hd">
@@ -752,7 +695,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
-<!-- MODAL LANÇAR CUSTO -->
 <div class="ov" id="m-lancar">
   <div class="modal" style="max-width:560px">
     <div class="modal-hd"><div class="modal-title">+ Lançar Custo</div><button class="modal-x" onclick="closeM('m-lancar')">✕</button></div>
@@ -826,7 +768,6 @@ input:checked+.sl::before{transform:translateX(16px);background:#05080f}
   </div>
 </div>
 
-<!-- TOAST CONTAINER -->
 <div class="tc" id="tc"></div>
 
 <script>
@@ -870,19 +811,9 @@ async function salvarModoConfianca() {
     else toast('Erro: ' + data.msg, 'e');
   } catch { toast('Erro de conexão', 'e'); }
 }
-// ══════════════════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════════════════
 const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
 const CORES = ["#00e5ff","#00ffa3","#ff6b35","#ffb300","#9b5de5","#ff4060","#60efff","#f72585"];
 
-// ══════════════════════════════════════════════════════
-// ESTADO GLOBAL
-// ══════════════════════════════════════════════════════
-// ★ FIX: usa localStorage em vez de sessionStorage — o token de admin agora
-// sobrevive a F5 / recarregamento forçado / nova aba do mesmo navegador.
-// Antes, em alguns navegadores um refresh "forte" limpava o sessionStorage
-// e o usuário caía de volta na tela de login.
 let ADMIN_TOKEN = localStorage.getItem('ast_admin_token') || '';
 let CLIENTES = [];
 let mrr_chart = null, status_chart = null;
@@ -893,25 +824,8 @@ let BOT_TOKENS = {};
 let BOT_TOKEN_VISIBLE = false;
 let ALERTAS_LIDOS = JSON.parse(localStorage.getItem('ast_alertas_lidos') || '[]');
 let ESP_CONSOLE_TIMER = null;
-let PAGINA_ANTES_MAPA = 'dash'; // ★ NOVO — lembra de onde veio antes de abrir o mapa
+let PAGINA_ANTES_MAPA = 'dash';
 
-// ══════════════════════════════════════════════════════
-// BOT TOKEN STORAGE (localStorage)
-// ══════════════════════════════════════════════════════
-function salvarTokenLocal(clienteId, token, chatId) {
-  try {
-    const data = JSON.parse(localStorage.getItem('ast_bot_tokens') || '{}');
-    data[clienteId] = { token, chatId };
-    localStorage.setItem('ast_bot_tokens', JSON.stringify(data));
-    BOT_TOKENS = data;
-  } catch(e) {}
-}
-function carregarTokensLocais() {
-  try { BOT_TOKENS = JSON.parse(localStorage.getItem('ast_bot_tokens') || '{}'); } catch(e) { BOT_TOKENS = {}; }
-}
-// ══════════════════════════════════════════════════════
-// BOT TOKEN STORAGE (localStorage + fallback pro servidor)
-// ══════════════════════════════════════════════════════
 function salvarTokenLocal(clienteId, token, chatId) {
   try {
     const data = JSON.parse(localStorage.getItem('ast_bot_tokens') || '{}');
@@ -924,9 +838,6 @@ function carregarTokensLocais() {
   try { BOT_TOKENS = JSON.parse(localStorage.getItem('ast_bot_tokens') || '{}'); } catch(e) { BOT_TOKENS = {}; }
 }
 
-// ★ ALTERADO: agora prioriza o que já veio da planilha (via CLIENTES),
-// e só usa o localStorage como override manual (ex: você editou no modal
-// mas ainda não deu tempo do salvar_bot_token sincronizar no servidor).
 function getToken(clienteId) {
   const local = (BOT_TOKENS[String(clienteId)] || {}).token;
   if (local) return local;
@@ -947,17 +858,7 @@ function limparTodosTokensBots() {
   renderTabela(); carregarBots();
   toast('Overrides locais removidos — voltando a usar o que está na planilha.', 'i');
 }
-function limparTodosTokensBots() {
-  if (!confirm('Tem certeza? Isso vai remover todos os tokens de bot salvos localmente.')) return;
-  localStorage.removeItem('ast_bot_tokens');
-  BOT_TOKENS = {};
-  renderTabela(); carregarBots();
-  toast('Todos os tokens removidos.', 'i');
-}
 
-// ══════════════════════════════════════════════════════
-// LOGIN — usa o token como senha do admin
-// ══════════════════════════════════════════════════════
 async function admLogin() {
   const usuario = (document.getElementById('au').value || '').trim().toLowerCase();
   const token   = (document.getElementById('ap').value || '').trim();
@@ -970,7 +871,7 @@ async function admLogin() {
   try {
     const data = await api({ acao: 'dashboard' });
     if (data && data.status === 'ok') {
-      localStorage.setItem('ast_admin_token', ADMIN_TOKEN); // ★ FIX: localStorage
+      localStorage.setItem('ast_admin_token', ADMIN_TOKEN);
       abrirApp(data);
     } else {
       ADMIN_TOKEN = '';
@@ -1000,7 +901,7 @@ function abrirApp(data) {
 
 function logout() {
   if (!confirm('Sair do painel ADM?')) return;
-  localStorage.removeItem('ast_admin_token'); // ★ FIX: localStorage
+  localStorage.removeItem('ast_admin_token');
   ADMIN_TOKEN = '';
   CLIENTES = [];
   pararEspConsole();
@@ -1014,16 +915,13 @@ function logout() {
 
 function iniciarRelogio() { setInterval(tick, 1000); tick(); }
 
-// ══════════════════════════════════════════════════════
-// API
-// ══════════════════════════════════════════════════════
 async function api(params) {
   if (ADMIN_TOKEN) params = { ...params, token: ADMIN_TOKEN };
   const url = ADM_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
   const resp = await fetch(url);
   const data = await resp.json();
   if (data && data.status === 'erro' && /acesso negado/i.test(data.msg || '')) {
-    localStorage.removeItem('ast_admin_token'); ADMIN_TOKEN = ''; // ★ FIX: localStorage
+    localStorage.removeItem('ast_admin_token'); ADMIN_TOKEN = '';
     toast('Token expirado — faça login novamente.', 'e');
     logout();
   }
@@ -1032,7 +930,6 @@ async function api(params) {
 
 async function carregarDados() {
   document.getElementById('sync-status').innerHTML = '<span class="loading-spinner"></span>';
-  // ★ leve transição visual em vez de "flash" abrupto ao atualizar
   const pgAtiva = document.querySelector('.pg.act');
   if (pgAtiva) { pgAtiva.style.transition = 'opacity .15s'; pgAtiva.style.opacity = '0.45'; }
   try {
@@ -1059,11 +956,7 @@ function renderTudo() {
   preencherDestCli(); renderConfigBots();
 }
 
-// ══════════════════════════════════════════════════════
-// INTEGRAÇOES
-// ══════════════════════════════════════════════════════
 async function verificarIntegracoes() {
-  // Sheets
   const bSheets = document.getElementById('sheets-status-badge');
   const dSheets = document.getElementById('sheets-status-desc');
   try {
@@ -1082,7 +975,6 @@ async function verificarIntegracoes() {
     if (dT?.status === 'ok') { bTwilio.className='bdg bg'; bTwilio.textContent = '✓ ' + (dT.tipo==='Trial' ? 'Trial ativo' : 'Ativo'); }
     else { bTwilio.className='bdg br'; bTwilio.textContent = '✗ ' + (dT.msg || 'Erro'); }
   } catch(e) { bTwilio.className='bdg br'; bTwilio.textContent = '✗ Offline'; }
-  // Asaas
   const bAsaas = document.getElementById('asaas-status-badge');
   try {
     const d2 = await api({ acao: 'asaas_status', asaas_id: 'ping_check' });
@@ -1092,9 +984,6 @@ async function verificarIntegracoes() {
   }
 }
 
-// ══════════════════════════════════════════════════════
-// RENDERS
-// ══════════════════════════════════════════════════════
 const SB = {
   ativo:        '<span class="bdg bg">● Ativo</span>',
   inadimplente: '<span class="bdg br">⚠ Inadimplente</span>',
@@ -1256,9 +1145,6 @@ function renderConfigBots() {
   }).join('');
 }
 
-// ══════════════════════════════════════════════════════
-// CONSOLE DE LOG DO ESP32 (AO VIVO) — escopado ao cliente selecionado
-// ══════════════════════════════════════════════════════
 function iniciarEspConsole() {
   pararEspConsole();
   if (!BOT_CLI_SEL) return;
@@ -1291,7 +1177,6 @@ async function carregarEspStatus() {
   if (!BOT_CLI_SEL) return;
   try {
     const nomesViv = String(BOT_CLI_SEL.ViveirosNomes || '').trim();
-    // ★ FIX: idem — sempre manda os dois juntos, nunca um no lugar do outro.
     const params = {
       acao: 'esp_status_list',
       viveiros: nomesViv,
@@ -1337,9 +1222,6 @@ async function atualizarEspLogs() {
   try {
     const nomesViv = String(BOT_CLI_SEL.ViveirosNomes || '').trim();
     const viveiro = document.getElementById('esp-log-filtro')?.value || '';
-    // ★ FIX: manda viveiros E chat_id juntos, sempre — antes mandava só um ou
-    // outro, o que deixava o filtro por nome vazar entre clientes com viveiro
-    // homônimo (ex: "Viveiro 01" existe em mais de um cliente).
     const params = {
       acao: 'esp_log_read',
       viveiro,
@@ -1361,9 +1243,6 @@ async function atualizarEspLogs() {
     if (estaNoFim || el.scrollTop === 0) el.scrollTop = el.scrollHeight;
   } catch(e) { console.error("Erro ao atualizar logs do ESP:", e); }
 }
-// ══════════════════════════════════════════════════════
-// BOTS
-// ══════════════════════════════════════════════════════
 function carregarBots() {
   const grid = document.getElementById('bot-cli-grid');
   if (!CLIENTES.length) { grid.innerHTML = '<div style="color:var(--text3);font-size:.8rem;padding:20px">Nenhum cliente carregado.</div>'; return; }
@@ -1598,9 +1477,6 @@ function irParaBot(id) {
   requestAnimationFrame(() => requestAnimationFrame(() => selecionarClienteBot(id)));
 }
 
-// ══════════════════════════════════════════════════════
-// ASAAS
-// ══════════════════════════════════════════════════════
 async function criarAsaas(id) {
   const c = CLIENTES.find(x=>String(x.ID)===String(id)); if (!c) return;
   if (!c.Telefone) { toast('Adicione um telefone ao cliente antes de criar no Asaas','e'); return; }
@@ -1649,9 +1525,6 @@ async function criarNoAsaas() {
   await criarAsaas(id);
 }
 
-// ══════════════════════════════════════════════════════
-// WHATSAPP
-// ══════════════════════════════════════════════════════
 function limpaTel(tel) { return (tel||'').replace(/\D/g,''); }
 
 function wpp(id) {
@@ -1702,9 +1575,6 @@ async function wppMassa() {
   toast(`✅ ${lista.length} mensagens enviadas!`,'s');
 }
 
-// ══════════════════════════════════════════════════════
-// MENSAGENS (página)
-// ══════════════════════════════════════════════════════
 const TMPLS = {
   cobranca:`Olá *{NOME}*! 👋\n\n🦐 *AquaShrimpTech* — Lembrete de Pagamento\n\nSua mensalidade de *{VIVEIROS} viveiro{S}* no valor de *R$ {VALOR}* vence em *{DATA}*.\n\n_AquaShrimpTech — Tecnologia que cultiva resultados_`,
   inadimplente:`⚠️ Olá *{NOME}*,\n\nSua mensalidade da *AquaShrimpTech* (R$ {VALOR}) está em atraso desde {DATA}.\n\nRegularize para manter o acesso ao sistema.\n\n_AquaShrimpTech_`,
@@ -1789,9 +1659,6 @@ function enviarMensagem() {
   toast(`✅ Abrindo ${comTel.length} mensagem(ns)...`,'s');
 }
 
-// ══════════════════════════════════════════════════════
-// CRUD CLIENTES
-// ══════════════════════════════════════════════════════
 function calcTotal() {
   const v=parseInt(document.getElementById('c-vivs').value)||0,p=parseFloat(document.getElementById('c-valviv').value)||0;
   document.getElementById('total-disp').textContent=R(v*p);
@@ -1956,9 +1823,6 @@ function verDetalhe(id) {
   openM('m-det');
 }
 
-// ══════════════════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════════════════
 function salvarConfig() {
   const cfg = {
     valor_viveiro: document.getElementById('cfg-val').value,
@@ -1970,9 +1834,6 @@ function salvarConfig() {
   toast('✅ Configurações salvas!','s');
 }
 
-// ══════════════════════════════════════════════════════
-// UNIT ECONOMICS
-// ══════════════════════════════════════════════════════
 function initFinMeses() {
   const sel=document.getElementById('fin-mes'); if(!sel) return;
   sel.innerHTML='';
@@ -2016,7 +1877,6 @@ async function carregarDRE() {
   }
 }
 
-// ★ NOVO — Banner do Ponto de Equilíbrio (breakeven mensal da empresa)
 function renderBreakeven(d){
   const breakeven = (d.opex||0) + (d.amort_mensal||0);
   const diff = d.mrr - breakeven;
@@ -2049,7 +1909,6 @@ function renderBreakeven(d){
   `;
 }
 
-// ★ NOVO — Payback individual por cliente (usa o global CLIENTES já carregado pelo Dashboard)
 function renderPaybackClientes(cogsDados){
   const porCliente = cogsDados.por_cliente || {};
   const tb = document.getElementById('tbl-payback-cliente');
@@ -2241,10 +2100,6 @@ async function salvarLancamento() {
   } catch { toast('⚠ Erro de conexão com o Apps Script','e'); }
 }
 
-
-// ══════════════════════════════════════════════════════
-// NAV / MODAL / UTILS
-// ══════════════════════════════════════════════════════
 const PG_TITLES = {
   dash:'Dashboard', clientes:'Clientes', financeiro:'Financeiro',
   cobrancas:'Cobranças', alertas:'Alertas', mensagens:'Mensagens',
@@ -2252,7 +2107,6 @@ const PG_TITLES = {
   mapa:'🗺️ Mapa de Viveiros'
 };
 function go(nm,el) {
-  // ★ lembra de qual aba veio ANTES de abrir o mapa, pra voltar certo
   const atual = document.querySelector('.pg.act');
   if (nm === 'mapa' && atual && atual.id !== 'pg-mapa') {
     PAGINA_ANTES_MAPA = atual.id.replace('pg-','');
@@ -2272,8 +2126,6 @@ function go(nm,el) {
   }
   if(window.innerWidth<860)closeSB();
 }
-// ★ Chamado pelo mapa.html (via window.parent) quando clica em "← ADM"
-// dentro do iframe — volta pra aba que estava aberta, sem reload nenhum.
 function voltarDoMapa(){
   go(PAGINA_ANTES_MAPA, document.querySelector(`.ni[onclick*="'${PAGINA_ANTES_MAPA}'"]`));
 }
@@ -2287,21 +2139,51 @@ function closeM(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 function toast(msg,tipo='i'){const ic={s:'✅',e:'❌',i:'ℹ️'}[tipo];const el=document.createElement('div');el.className=`toast ${tipo}`;el.innerHTML=`<span>${ic}</span><span>${msg}</span>`;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),4500);}
 
-// ══════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════
+// ★ NOVO — DEEP LINK vindo do painel-tv.html
+//   ?view=bots&cliente_id=X&viveiro=NomeDoViveiro&token=Z
+function tratarDeepLinkPainelTV(deepClienteId, deepViveiro) {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    go('bots', document.querySelector(`.ni[onclick*="'bots'"]`));
+    selecionarClienteBot(deepClienteId);
+    if (deepViveiro) {
+      const filtro = document.getElementById('esp-log-filtro');
+      if (!filtro) return;
+      const tentarSelecionar = (tentativas) => {
+        const opt = [...filtro.options].find(o => o.value === deepViveiro);
+        if (opt) { filtro.value = deepViveiro; atualizarEspLogs(); }
+        else if (tentativas < 15) setTimeout(() => tentarSelecionar(tentativas + 1), 400);
+      };
+      tentarSelecionar(0);
+    }
+  }));
+}
+
 window.addEventListener('load', () => {
   setInterval(tick,1000); tick();
   initFinMeses();
   carregarTokensLocais();
-  const salvo = localStorage.getItem('ast_admin_token'); // ★ FIX: localStorage
-  if (salvo) {
-    ADMIN_TOKEN = salvo;
+
+  const urlParams     = new URLSearchParams(window.location.search);
+  const deepView      = urlParams.get('view');
+  const deepClienteId = urlParams.get('cliente_id');
+  const deepViveiro    = urlParams.get('viveiro');
+  const tokenDaUrl     = urlParams.get('token');
+
+  const tokenParaUsar = tokenDaUrl || localStorage.getItem('ast_admin_token');
+  if (tokenParaUsar) {
+    ADMIN_TOKEN = tokenParaUsar;
+    localStorage.setItem('ast_admin_token', tokenParaUsar);
     api({acao:'dashboard'}).then(data => {
       if (data && data.status === 'ok') {
         abrirApp(data);
+        if (deepView === 'bots' && deepClienteId) {
+          tratarDeepLinkPainelTV(deepClienteId, deepViveiro);
+        }
+        if (deepView || tokenDaUrl) {
+          window.history.replaceState({}, '', window.location.pathname);
+        }
       } else {
-        localStorage.removeItem('ast_admin_token'); ADMIN_TOKEN = ''; // ★ FIX: localStorage
+        localStorage.removeItem('ast_admin_token'); ADMIN_TOKEN = '';
       }
     }).catch(() => {});
   }
