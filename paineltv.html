@@ -29,7 +29,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .section-hd{display:flex;align-items:center;justify-content:space-between;padding:0 28px;margin-bottom:14px}
 .section-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.08em;display:flex;align-items:center;gap:10px}
 .section-title .ico{font-size:1.2rem}
-.section-sub{font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.section-sub{font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;display:flex;align-items:center;gap:14px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--accent2);display:inline-block;animation:livepulse 1.6s infinite}
 @keyframes livepulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,255,163,.5)}50%{opacity:.55;box-shadow:0 0 0 5px rgba(0,255,163,0)}}
 
@@ -63,22 +63,34 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 
 /* ── FILA DE INSTALAÇÃO (Kanban) ── */
 .pipeline-section{padding:6px 0 34px;position:relative;z-index:1}
-.kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(270px,1fr);gap:16px;overflow-x:auto;padding:0 28px 8px}
+.pipe-kpis{display:flex;gap:10px;flex-wrap:wrap}
+.pipe-kpi{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:.62rem;color:var(--text2);display:flex;align-items:center;gap:5px}
+.pipe-kpi b{color:var(--text);font-family:'JetBrains Mono',monospace}
+.kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(280px,1fr);gap:16px;overflow-x:auto;padding:0 28px 8px}
 .kcol{background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:140px}
 .kcol-hd{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:2px solid var(--kc,var(--accent))}
 .kcol-nome{font-size:.8rem;font-weight:700;color:var(--text)}
 .kcol-count{font-family:'JetBrains Mono',monospace;font-size:.7rem;background:rgba(255,255,255,.06);padding:2px 9px;border-radius:20px;color:var(--text2)}
 .kcard{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--kc,var(--accent));border-radius:10px;padding:10px 12px}
 .kcard.fresh{animation:pulseFresh 2.4s ease-in-out 2}
+.kcard.late{box-shadow:inset 0 0 0 1px rgba(255,64,96,.3)}
 @keyframes pulseFresh{0%{box-shadow:0 0 0 0 rgba(0,229,255,.55)}70%{box-shadow:0 0 0 12px rgba(0,229,255,0)}100%{box-shadow:0 0 0 0 rgba(0,229,255,0)}}
-.kc-nome{font-size:.8rem;font-weight:700;margin-bottom:4px}
-.kc-meta{font-size:.63rem;color:var(--text3);line-height:1.6;font-family:'JetBrains Mono',monospace}
+.kc-nome-row{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:5px}
+.kc-nome{font-size:.8rem;font-weight:700}
+.kc-urg{font-size:.55rem;font-weight:700;color:var(--danger);background:rgba(255,64,96,.12);border:1px solid rgba(255,64,96,.3);border-radius:6px;padding:1px 5px;flex-shrink:0}
+.kc-meta{font-size:.63rem;color:var(--text3);line-height:1.75;font-family:'JetBrains Mono',monospace}
 .kc-meta b{color:var(--text2);font-family:'Space Grotesk',sans-serif}
-.kc-time{display:inline-block;margin-top:6px;font-size:.6rem;color:var(--text3);background:rgba(255,255,255,.04);padding:2px 8px;border-radius:10px}
+.kc-meta .warn{color:var(--warn)}
+.kc-check{display:flex;align-items:center;gap:7px;margin-top:7px}
+.kc-check-track{flex:1;height:4px;background:var(--bg);border-radius:3px;overflow:hidden}
+.kc-check-fill{height:100%;background:var(--accent2);border-radius:3px}
+.kc-check-lbl{font-size:.58rem;color:var(--text3);white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.kc-time{display:inline-flex;align-items:center;gap:5px;margin-top:7px;font-size:.6rem;color:var(--text3);background:rgba(255,255,255,.04);padding:2px 8px;border-radius:10px}
+.kc-time.late{color:var(--danger);background:rgba(255,64,96,.1)}
 .kcol-empty{font-size:.7rem;color:var(--text3);text-align:center;padding:24px 0}
 
 /* ============================================================
-   ★ NOVO — SEÇÃO DE LEADS
+   SEÇÃO DE LEADS
    ============================================================ */
 .leads-section{padding:6px 0 34px;position:relative;z-index:1}
 .leads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:0 28px}
@@ -134,7 +146,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
   <div class="grid" id="grid"></div>
 
   <!-- ============================================================
-       ★ NOVO — SEÇÃO DE LEADS
+       SEÇÃO DE LEADS
        ============================================================ -->
   <div class="leads-section">
     <div class="section-hd">
@@ -147,7 +159,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
   <div class="pipeline-section">
     <div class="section-hd">
       <div class="section-title"><span class="ico">🛠️</span>Fila de Instalação</div>
-      <div class="section-sub"><span class="live-dot"></span>&nbsp; atualiza a cada 15s</div>
+      <div class="section-sub"><span class="live-dot"></span>&nbsp;atualiza a cada 15s
+        <div class="pipe-kpis" id="pipe-kpis"></div>
+      </div>
     </div>
     <div class="kanban" id="kanban"></div>
   </div>
@@ -157,29 +171,31 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 const ADM_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj5evRjINYVQVBBUMvGlKZWWCEfAq5yvFIYkv8vVYi875DU9-fXtPg1GuIeo8jFi9p/exec";
 const ADM_HTML_URL   = "adm.html"; // ajuste se estiver em outro caminho
 
-// ★ NOVO — script de leads (o mesmo que recebe o formulário da landing page)
+// script de leads (o mesmo que recebe o formulário da landing page)
 const LEADS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyS13R2URKjBhRBI4vCsiYExg3RwiQcbusdVqM9brvwP-uaz0TRIU2xWbu0JaQI6lVPNw/exec";
-// ★ precisa ser IDENTICO ao valor de LEADS_SECRET no Code.gs do projeto de leads
+// precisa ser IDENTICO ao valor de LEADS_SECRET no Code.gs do projeto de leads
 const LEADS_SECRET = "troque-por-uma-senha-aleatoria-aqui";
-// ★ seu WhatsApp (DDI+DDD+numero, só digitos) — usado como fallback quando
-//   o WhatsApp do lead vier em formato estranho
+// seu WhatsApp (DDI+DDD+numero, só digitos) — usado como fallback quando
+// o WhatsApp do lead vier em formato estranho
 const MEU_WHATSAPP = "5585900000000";
 
 let TOKEN = localStorage.getItem('painel_tv_token') || '';
 let CLIENTES = [];
 let PIPELINE_ANTERIOR = {}; // id → etapa, pra detectar mudança e dar destaque
 
-// Ordem e visual de cada etapa do Kanban — cai num "Outros" cinza se a etapa
-// não bater com nenhum padrão conhecido, então nunca perde card por causa
-// de um nome de etapa diferente do esperado.
+// Etapas conhecidas do pipeline.html — casamento exato (não por substring),
+// então "Instalado" nunca é confundido com "Em Instalação".
 const ETAPAS_CONFIG = [
-  { match: /lead|negocia/i,          nome: '📋 Lead / Negociando', cor: 'var(--text3)' },
-  { match: /agend/i,                 nome: '🗓️ Agendado',          cor: 'var(--accent)' },
-  { match: /instala|andamento|obra/i,nome: '🔧 Em Instalação',     cor: 'var(--accent3)' },
-  { match: /teste|homolog/i,         nome: '🧪 Em Teste',          cor: 'var(--purple)' },
-  { match: /conclu|finaliz|ativo/i,  nome: '✅ Concluído',          cor: 'var(--accent2)' },
-  { match: /cancel|perdid/i,         nome: '❌ Cancelado',          cor: 'var(--danger)' },
+  { match: /^lead\/negociando$/i, nome: '📋 Lead / Negociando', cor: 'var(--text3)' },
+  { match: /^agendado$/i,         nome: '🗓️ Agendado',          cor: 'var(--accent)' },
+  { match: /^kit separado$/i,     nome: '📦 Kit Separado',       cor: 'var(--purple)' },
+  { match: /^em instalação$/i,    nome: '🔧 Em Instalação',      cor: 'var(--accent3)' },
+  { match: /^instalado$/i,        nome: '✅ Instalado',          cor: 'var(--accent2)' },
+  { match: /^pós-venda$/i,        nome: '🤝 Pós-venda',          cor: 'var(--accent)' },
 ];
+// dias parado na mesma etapa até considerar atrasado (mesmo critério do pipeline.html)
+const LIMITE_DIAS = {"Lead/Negociando":7,"Agendado":3,"Kit Separado":2,"Em Instalação":2,"Instalado":9999,"Pós-venda":9999};
+
 function configEtapa(etapa){
   const f = ETAPAS_CONFIG.find(e => e.match.test(etapa||''));
   return f || { nome: etapa || 'Outros', cor: 'var(--text3)' };
@@ -208,7 +224,7 @@ async function api(params){
   return resp.json();
 }
 
-// ★ NOVO — chamada ao script separado de leads
+// chamada ao script separado de leads
 async function apiLeads(params){
   params = {...params, secret: LEADS_SECRET};
   const url = LEADS_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
@@ -221,6 +237,8 @@ function tick(){
   document.getElementById('clk').textContent = n.toLocaleTimeString('pt-BR');
   document.getElementById('dt').textContent = n.toLocaleDateString('pt-BR',{weekday:'long', day:'2-digit', month:'long'});
 }
+
+function esc(t){ return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function qualidade(rssi){
   if(rssi >= -60) return {label:'Excelente', cor:'var(--accent2)', estado:'online'};
@@ -236,14 +254,15 @@ async function carregarDados(){
       api({acao:'dashboard'}),
       api({acao:'esp_status_list'}),  // sem filtro → traz TODOS os clientes
       api({acao:'pipeline_listar'}),
-      apiLeads({acao:'listar_leads'}), // ★ NOVO
+      apiLeads({acao:'listar_leads'}),
     ]);
     if(dashResp.status!=='ok'){ console.error('Erro dashboard:', dashResp.msg); return; }
     CLIENTES = dashResp.clientes || [];
     const status = (statusResp.status==='ok') ? (statusResp.status_esp||[]) : [];
     renderTudo(status);
     if(pipeResp.status==='ok') renderPipeline(pipeResp.cards || []);
-    if(leadsResp.status==='ok') renderLeads(leadsResp.leads || []); // ★ NOVO
+    else document.getElementById('kanban').innerHTML = '<div class="empty" style="padding:20px 28px">Erro ao carregar fila: '+esc(pipeResp.msg||'')+'</div>';
+    if(leadsResp.status==='ok') renderLeads(leadsResp.leads || []);
   }catch(e){ console.error(e); }
 }
 
@@ -319,7 +338,7 @@ function renderTudo(statusList){
 }
 
 // ============================================================
-//  ★ NOVO — LEADS
+//  LEADS
 // ============================================================
 function normalizarWhatsapp(numero){
   let digitos = String(numero||'').replace(/\D/g,'');
@@ -385,13 +404,13 @@ async function darBaixaLead(linha, btn){
 }
 
 // ── FILA DE INSTALAÇÃO ──
-function tempoDesde(dataHoraBR){
-  // aceita "dd/MM/yyyy HH:mm:ss" ou "dd/MM/yyyy HH:mm"
-  if(!dataHoraBR) return null;
-  const m = String(dataHoraBR).match(/(\d{2})\/(\d{2})\/(\d{4})[ ,]+(\d{2}):(\d{2})/);
-  if(!m) return null;
-  const [,dd,mm,yyyy,hh,mi] = m;
-  return new Date(+yyyy, +mm-1, +dd, +hh, +mi);
+// campos de controle (data_criacao/data_ultima_mudanca/data_conclusao) agora
+// vêm em ISO (yyyy-MM-ddTHH:mm:ss) do backend do pipeline — new Date() lê
+// direto, sem precisar de regex.
+function parseDataHora(iso){
+  if(!iso) return null;
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? null : d;
 }
 function formatarHaQuanto(data){
   if(!data) return '';
@@ -402,9 +421,30 @@ function formatarHaQuanto(data){
   if(diffSeg < 86400) return Math.floor(diffSeg/3600)+'h atrás';
   return Math.floor(diffSeg/86400)+'d atrás';
 }
+function checklistCount(c){
+  return ['hardware','config','campo','teste'].filter(k => c['checklist_'+k]==='sim' || c['checklist_'+k]===true).length;
+}
+function cardAtrasado(c, dataUpd){
+  if(!dataUpd) return false;
+  const dias = Math.floor((Date.now()-dataUpd.getTime())/86400000);
+  const limite = LIMITE_DIAS[c.etapa] ?? 9999;
+  return dias > limite;
+}
 
 function renderPipeline(cards){
   const kanban = document.getElementById('kanban');
+  const kpisEl = document.getElementById('pipe-kpis');
+
+  const ativos = cards.filter(c => c.etapa !== 'Instalado');
+  const totalViveiros = ativos.reduce((s,c)=>s+(parseInt(c.qtd_viveiros)||0),0);
+  const atrasados = ativos.filter(c => cardAtrasado(c, parseDataHora(c.data_ultima_mudanca || c.data_criacao))).length;
+  const semResp = ativos.filter(c => !c.responsavel).length;
+  kpisEl.innerHTML = `
+    <div class="pipe-kpi">🦐 <b>${totalViveiros}</b> viveiros na fila</div>
+    <div class="pipe-kpi" style="${atrasados?'color:var(--danger)':''}">⚠️ <b style="${atrasados?'color:var(--danger)':''}">${atrasados}</b> atrasado(s)</div>
+    <div class="pipe-kpi" style="${semResp?'color:var(--warn)':''}">👤 <b style="${semResp?'color:var(--warn)':''}">${semResp}</b> sem responsável</div>
+  `;
+
   if(!cards.length){
     kanban.innerHTML = '<div class="empty" style="padding:20px 28px">Nenhum cliente na fila de instalação no momento.</div>';
     return;
@@ -431,24 +471,36 @@ function renderPipeline(cards){
   kanban.innerHTML = ordemEtapas.map(etapa => {
     const cfg = configEtapa(etapa);
     const itens = grupos[etapa].slice().sort((a,b) => {
-      const ta = tempoDesde(a.atualizado_em)?.getTime() || 0;
-      const tb = tempoDesde(b.atualizado_em)?.getTime() || 0;
+      const ta = parseDataHora(a.data_ultima_mudanca || a.data_criacao)?.getTime() || 0;
+      const tb = parseDataHora(b.data_ultima_mudanca || b.data_criacao)?.getTime() || 0;
       return tb - ta; // mais recente primeiro
     });
 
     const cardsHtml = itens.map(c => {
       novoMapaEtapas[c.id] = etapa;
       const mudouDeEtapa = PIPELINE_ANTERIOR[c.id] && PIPELINE_ANTERIOR[c.id] !== etapa;
-      const dataUpd = tempoDesde(c.atualizado_em);
+      const dataUpd = parseDataHora(c.data_ultima_mudanca || c.data_criacao);
       const fresh = mudouDeEtapa || (dataUpd && (Date.now()-dataUpd.getTime()) < 90000);
-      return `<div class="kcard${fresh?' fresh':''}" style="--kc:${cfg.cor}">
-        <div class="kc-nome">${c.cliente||'—'}</div>
-        <div class="kc-meta">
-          ${c.responsavel ? `👤 <b>${c.responsavel}</b><br>` : ''}
-          ${c.data_agendada ? `🗓️ <b>${c.data_agendada}</b><br>` : ''}
-          ${c.observacoes ? `📝 ${c.observacoes}` : ''}
+      const atrasado = cardAtrasado(c, dataUpd);
+      const ckCount = checklistCount(c);
+
+      return `<div class="kcard${fresh?' fresh':''}${atrasado?' late':''}" style="--kc:${cfg.cor}">
+        <div class="kc-nome-row">
+          <div class="kc-nome">🦐 ${esc(c.cliente)||'—'}</div>
+          ${c.prioridade==='Urgente' ? '<span class="kc-urg">URGENTE</span>' : ''}
         </div>
-        <div class="kc-time">${dataUpd ? formatarHaQuanto(dataUpd) : ''}</div>
+        <div class="kc-meta">
+          🦐 <b>${c.qtd_viveiros||'?'}</b> viveiro(s)${c.localidade ? ` · 📍 <b>${esc(c.localidade)}</b>` : ''}<br>
+          ${c.responsavel ? `👤 <b>${esc(c.responsavel)}</b><br>` : `<span class="warn">⚠ sem responsável</span><br>`}
+          ${c.data_agendada ? `🗓️ <b>${c.data_agendada}</b><br>` : ''}
+          ${c.telefone ? `📞 <b>${esc(c.telefone)}</b><br>` : ''}
+          ${c.observacoes ? `📝 ${esc(c.observacoes)}` : ''}
+        </div>
+        <div class="kc-check">
+          <div class="kc-check-track"><div class="kc-check-fill" style="width:${ckCount/4*100}%"></div></div>
+          <span class="kc-check-lbl">${ckCount}/4 ✓</span>
+        </div>
+        <div class="kc-time${atrasado?' late':''}">${dataUpd ? formatarHaQuanto(dataUpd) : ''}${atrasado ? ' · ⚠️ atrasado' : ''}</div>
       </div>`;
     }).join('');
 
@@ -472,7 +524,10 @@ function formatarUptime(seg){
 
 function abrirCliente(id){
   if(!id) return;
-  window.open(ADM_HTML_URL + '?cliente_id=' + encodeURIComponent(id), '_blank');
+  // manda o token junto pra o adm.html logar sozinho — sem isso ele cai
+  // na tela de login mesmo com o painel TV já autenticado. Token e
+  // cliente_id juntos abrem direto no detalhe do cliente.
+  window.open(ADM_HTML_URL + '?cliente_id=' + encodeURIComponent(id) + '&token=' + encodeURIComponent(TOKEN), '_blank');
 }
 
 function iniciar(){
