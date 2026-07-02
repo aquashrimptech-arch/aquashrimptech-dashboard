@@ -235,9 +235,13 @@
     .trim()
     .replace(/^"|"$/g, '');
 
+  const VELOCIDADE_PADRAO = 1.5; // ← troque esse número se quiser outra velocidade (1 = normal)
+
   function abrirVideo(){
     playerSource.src = videoSrc;
     player.load();
+    player.defaultPlaybackRate = VELOCIDADE_PADRAO;
+    player.playbackRate = VELOCIDADE_PADRAO;
     videoModal.classList.add('open');
     player.play().catch(()=>{ /* alguns navegadores exigem clique extra */ });
   }
@@ -250,6 +254,12 @@
 
   playBtn.addEventListener('click', abrirVideo);
   closeBtn.addEventListener('click', fecharVideo);
+
+  // reforça a velocidade assim que o navegador carrega os dados do vídeo
+  // (alguns navegadores resetam o playbackRate nesse momento)
+  player.addEventListener('loadedmetadata', function(){
+    player.playbackRate = VELOCIDADE_PADRAO;
+  });
 
   // fecha clicando fora da caixa do vídeo
   videoModal.addEventListener('click', function(e){
