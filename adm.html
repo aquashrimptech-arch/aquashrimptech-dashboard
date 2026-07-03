@@ -1203,16 +1203,23 @@ function iniciarEspConsole() {
   pararEspConsole();
   if (!BOT_CLI_SEL) return;
   atualizarEspConsole();
-  ESP_CONSOLE_TIMER = setInterval(atualizarEspConsole, 10000);
+  ESP_CONSOLE_TIMER = setInterval(atualizarEspConsole, 12000);
 }
 
 function pararEspConsole() {
   if (ESP_CONSOLE_TIMER) { clearInterval(ESP_CONSOLE_TIMER); ESP_CONSOLE_TIMER = null; }
 }
 
+let ESP_CONSOLE_CARREGANDO = false;
 async function atualizarEspConsole() {
-  await carregarEspStatus();
-  await atualizarEspLogs();
+  if (ESP_CONSOLE_CARREGANDO) return;
+  ESP_CONSOLE_CARREGANDO = true;
+  try {
+    await carregarEspStatus();
+    await atualizarEspLogs();
+  } finally {
+    ESP_CONSOLE_CARREGANDO = false;
+  }
 }
 
 function qualidadeRSSI(rssi) {
@@ -2257,7 +2264,10 @@ function pvBuscarCliente(viveiro, chatId){
   return null;
 }
 
+let PV_CARREGANDO = false;
 async function pvCarregarDados(){
+  if (PV_CARREGANDO) return; // ★ evita empilhar chamadas se a anterior ainda não voltou
+  PV_CARREGANDO = true;
   try{
     const [statusResp, leadsResp] = await Promise.all([
       api({acao:'esp_status_list'}),
@@ -2267,6 +2277,7 @@ async function pvCarregarDados(){
     pvRenderStatus(status);
     if(leadsResp.status==='ok') pvRenderLeads(leadsResp.leads || []);
   }catch(e){ console.error('Erro Painel TV:', e); }
+  finally { PV_CARREGANDO = false; }
 }
 
 function pvRenderStatus(statusList){
@@ -2400,7 +2411,7 @@ function pvAbrirCliente(id, viveiro){
 
 function pvIniciarTimer(){
   pvPararTimer();
-  PV_TIMER = setInterval(pvCarregarDados, 15000);
+  PV_TIMER = setInterval(pvCarregarDados, 20000);
 }
 function pvPararTimer(){
   if(PV_TIMER){ clearInterval(PV_TIMER); PV_TIMER = null; }
